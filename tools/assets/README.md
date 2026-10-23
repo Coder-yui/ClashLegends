@@ -43,3 +43,13 @@ BNK/WPK 的完整事件还原用 [音频准备工具](../audio/README.md)。特�
 ## 潘森落地转换数据
 
 `pantheon_arrival_catalog.py` 只读核对七系统112层登记、67项依赖与来源哈希，支持输出CSV；`pantheon_arrival_metadata.py` 从原定义补入乘色出生滚速/偏移与拖尾平铺长度，输入输出通过参数指定。运行方式与本地来源路径见[落地接入设计](../../docs/units/effects/pantheon_arrival_resources.md)。这些工具不依赖历史制作脚本，不改外部源库。
+
+## 莎弥拉姿态烘焙
+
+`bake_samira_locomotion.gd`读取已核对的原版关节事件/遮罩映射，在联调副本内将12个片段保存为`assets/units/samira/locomotion.res`；源GLB保持只读。参数为素材库中的映射JSON与审计JSON绝对路径：
+
+```sh
+Godot --headless --path /联调副本 --script tools/assets/bake_samira_locomotion.gd -- /素材库/stance-audit/locomotion_source.json /素材库/stance-audit/locomotion_bake.json
+```
+
+使用源30Hz采样，按关节遮罩合成站立/移动下半身，再以绝对目标变换处理挂点；生成后须按资源哈希更新清单并实际渲染。

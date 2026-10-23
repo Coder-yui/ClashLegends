@@ -121,7 +121,7 @@ func qualified(id: int, expected_team: int, card_allowed: Callable) -> bool:
 	var entry: Dictionary = _entries[id]
 	var unit = entry.get("unit")
 	if not is_instance_valid(unit) or not unit is Unit or unit.hp <= 0.0: return false
-	if unit.death_form.used: return false
+	if unit.death_form.used or not unit.has_required_skill_resource(entry.skill): return false
 	if expected_team >= 0 and int(entry.team) != expected_team: return false
 	if String(entry.skill.get("kind", "")) == "bleeding_execute" and unit.is_empowered_attack_ready_visual(): return false
 	if not bool(entry.free_recast):

@@ -176,8 +176,10 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 		var radius := maxf(length, 0.0)
 		var pulse := 0.5 + 0.5 * sin(progress * TAU * 2.0)
 		draw_circle(center, radius, Color(line_color.r, line_color.g, line_color.b, 0.035 + 0.025 * pulse))
-		draw_arc(center, radius, 0.0, TAU, 72, Color(line_color.r, line_color.g, line_color.b, 0.72 * remaining_ratio), 3.0, true)
-		draw_arc(center, radius * (0.82 + 0.10 * pulse), 0.0, TAU, 64, Color(1.0, 0.88, 0.36, 0.34 * remaining_ratio), 2.0, true)
+		draw_arc(center, radius, 0.0, TAU, 72, Color(line_color.r, line_color.g, line_color.b, 0.72 * (1.0 if source is Unit and source.card_id == "samira" else remaining_ratio)), 3.0, true)
+		# 莎弥拉使用原生R粒子，仅保留阵营作用范围，不叠加通用黄色动态内圈。
+		if not (source is Unit and source.card_id == "samira"):
+			draw_arc(center, radius * (0.82 + 0.10 * pulse), 0.0, TAU, 64, Color(1.0, 0.88, 0.36, 0.34 * remaining_ratio), 2.0, true)
 		return
 	if shape == &"frost_storm":
 		# 原版粒子在3D中绘制；保留明确的权威范围阵营圈。

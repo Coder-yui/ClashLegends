@@ -11,6 +11,7 @@ func visual_team(team: int) -> int:
 	return 0 if team == viewer_team else 1
 
 var projectiles: Node2D
+var _samira_projectiles: Node3D
 var _gwen_tristana_effect: Node3D
 var _sacrifice_effect: Node3D
 var _sett_effect: Node3D
@@ -54,6 +55,8 @@ func _process(delta: float) -> void:
 		_aftershock_effect.sync_effects(skills, _camera)
 	if _riftwalk_effect != null and skills != null:
 		_riftwalk_effect.sync_effects(skills, _camera)
+	if _samira_projectiles != null:
+		_samira_projectiles.set_sources(projectiles, _camera)
 	if _gwen_tristana_effect != null:
 		_gwen_tristana_effect.sync_effects(projectiles, _camera)
 	if _sacrifice_effect != null and skills != null:
@@ -148,6 +151,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 		_camera.rotate_object_local(Vector3.BACK, PI)
 		_camera.set_meta("canvas_flipped", true)
 
+	_samira_projectiles = preload("res://scripts/presentation/samira_projectile_effect_3d.gd").new()
+	_world_root.add_child(_samira_projectiles)
 	_gwen_tristana_effect = preload("res://scripts/presentation/gwen_tristana_effect_3d.gd").new()
 	_world_root.add_child(_gwen_tristana_effect)
 	_aurelion_effect = preload("res://scripts/presentation/aurelionsol_effect_3d.gd").new()

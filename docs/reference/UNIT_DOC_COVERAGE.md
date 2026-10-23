@@ -2,7 +2,7 @@
 
 [返回单位索引](../units/README.md)
 
-更新于2026-10-22。当前覆盖全部已注册CardDB定义、对应卡牌/形态正文及4篇系统对象正文。数量包含不可组卡的形态和召唤物，不等于可选卡池数量。
+更新于2026-10-23。当前覆盖全部已注册CardDB定义、对应卡牌/形态正文及4篇系统对象正文。数量包含不可组卡的形态和召唤物，不等于可选卡池数量。
 
 本页维护注册定义、玩法正文和素材入口之间的对应关系。修改卡牌时，对照编译定义及下列消费者核对数值、条件与时序；编队采用实际成员定义，覆盖形态采用基础与transformed_stats合并值，召唤部署采用生成入口的覆盖值。本页收录不代表本次逐卡重新运行、目视或试听通过。
 
@@ -26,6 +26,7 @@
 
 | 定义 / 正文（含形态） | 当前机制与边界重点 | 动画 / 音频 |
 | --- | --- | --- |
+| `samira` · [沙漠玫瑰](../units/samira.md) | 枪刀距离切换、命中评分、满分持续范围技能 | [动作](../units/animations/samira.md) · [声音](../units/audio/samira.md) · [特效](../units/effects/samira.md) |
 | `hecarim` · [战争之影](../units/hecarim.md) | 自身圆形旋斩、3格距离蓄势、2格突进眩晕、实际生命伤害吸血领域 | [动作](../units/animations/hecarim.md) · [声音](../units/audio/hecarim.md) · [特效](../units/effects/hecarim.md) |
 | `void_summoning` · [虚空召唤](../units/void_summoning.md) | 4格8秒10鱼；首次0.5秒/之后每0.8秒召唤；固定随机落点/边界；双方死亡转化；0.8秒出生与区域到期边界 | [声音](../units/audio/void_summoning.md) · [特效](../units/effects/void_summoning.md) |
 | `scuttle_crab` · [峡谷迅捷蟹](../units/scuttle_crab.md) | 无普攻、建筑前自疗、死亡独立治疗区、范围双减速 | [动作](../units/animations/scuttle_crab.md) · [声音](../units/audio/scuttle_crab.md) · [特效](../units/effects/scuttle_crab.md) |

@@ -7,6 +7,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_egg_death_model()
 	_check_locomotion_attack_interrupts()
+	_check_samira_stances()
 	_check_repeated_attack_restart()
 	_check_skill_recovery_routes()
 	_check_dedicated_move_transition_blends()
@@ -734,3 +735,127 @@ func _check_control_pose_generation() -> void:
 			"真实致死覆盖冻结且死亡代理拒绝晚到换形，死亡片段继续推进：%d" % team)
 		view.free()
 		if is_instance_valid(unit): unit.free()
+
+
+func _check_samira_stances() -> void:
+	var stats: Dictionary = CardDB.get_card("samira").duplicate(true)
+	stats.deploy_time = 0.0
+	var unit := Unit.new()
+	unit.setup(0, stats, stats.name)
+	_main.add_child(unit)
+	_main._battle_presentation.attach_unit(unit, stats)
+	var view := _view_for(unit)
+	_expect(view != null, "莎弥拉完整姿态模型可实例化")
+	if view == null: unit.free(); return
+	view.set_process(false)
+	var player := view._animation_player
+	player.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
+	_expect(player.has_animation("Sheath_Sword_Run_anm"), "预加载包含原版遮罩烘焙收刀片段")
+	for serial in [1, 3]:
+		unit._attack_visual_serial = serial
+		unit._attacking = true
+		view._sync_visual(false, 0.0)
+		unit._attacking = false
+		unit._move_intent = Vector2.RIGHT
+		view._sync_visual(false, 0.0)
+		var weapon := "Gun" if serial == 1 else "Sword"
+		player.advance(5.0)
+		view._sync_visual(false, 0.0)
+		_expect(player.assigned_animation == "Run_%s_anm" % weapon, "权威序号选择%s攻击后持械跑步" % weapon)
+		unit._move_intent = Vector2.ZERO
+		view._sync_visual(false, 0.0)
+		_expect(player.assigned_animation == "Idle_%s_IN_anm" % weapon, "停止移动使用%s进入待机" % weapon)
+		player.advance(5.0)
+		view._sync_visual(false, 0.0)
+		_expect(player.assigned_animation == "Idle_%s_anm" % weapon, "%s进入持械待机循环" % weapon)
+		view._sync_visual(false, 4.01)
+		_expect(player.assigned_animation == "Sheath_%s_Idle_anm" % weapon, "四秒后站立收%s" % weapon)
+		player.advance(0.5)
+		unit._move_intent = Vector2.RIGHT
+		view._sync_visual(false, 0.0)
+		_expect(player.assigned_animation == "Sheath_%s_Run_anm" % weapon and is_equal_approx(player.current_animation_position, 0.5), "收%s时起跑延续源进度" % weapon)
+		player.advance(5.0)
+		view._sync_visual(false, 0.0)
+		_expect(player.assigned_animation == "Run_OOC_anm", "%s收武器完成进入脱战跑步" % weapon)
+	unit._attack_visual_serial = 9
+	unit._attacking = false
+	unit._move_intent = Vector2.RIGHT
+	view._sync_visual(false, 0.0)
+	player.advance(5.0)
+	view._sync_visual(false, 4.01)
+	player.advance(0.4)
+	unit.freeze(0.5)
+	var frozen_position := player.current_animation_position
+	view._process(0.1)
+	player.advance(0.1)
+	_expect(is_equal_approx(player.current_animation_position, frozen_position), "冻结保持收武器姿态和进度")
+	SuiteUtils.set_control_window(unit.control, &"freeze", 0.0)
+	view._process(0.0)
+	unit._attack_visual_serial = 11
+	unit._attacking = true
+	view._sync_visual(false, 0.0)
+	_expect(player.assigned_animation == "Attack1_Sword_anm" and not view._stance_sheathing, "新近战攻击立即打断旧收枪动作")
+	unit.play_visual_action(&"inferno", 2.0)
+	view._sync_visual(false, 0.0)
+	_expect(player.assigned_animation == "Spell4_Start" and view._playing_visual_action, "R优先于枪刀姿态与攻击")
+	unit._visual_action_time_left = 0.0
+	view._finish_visual_action()
+	unit._attacking = false
+	view._playing_attack = false
+	view._pending_attack_serial = 0
+	unit._move_intent = Vector2.RIGHT
+	unit.skill_resource_value = 3.0
+	view._sync_visual(false, 0.0)
+	player.advance(5.0)
+	view._sync_visual(false, 0.0)
+	_expect(player.assigned_animation == "Run_Sword_anm", "被动加速仍使用普通持刀跑步")
+	unit.sacrifice_stats.z = 1.5
+	view._sync_visual(false, 0.0)
+	_expect(player.assigned_animation == "Run_Sword_anm", "更高速度仍使用普通持刀跑步")
+	unit.sacrifice_stats.z = 1.0
+	unit.skill_resource_value = 0.0
+	for moving in [false, true]:
+		unit._attacking = false
+		unit._move_intent = Vector2.RIGHT if moving else Vector2.ZERO
+		unit.play_visual_action(&"inferno", 2.0)
+		view._sync_visual(false, 0.0)
+		view._seek_visual_action(1.9)
+		unit._visual_action_time_left = 0.0
+		view._finish_visual_action()
+		var ending := "Spell4_INTO_Run_anm" if moving else "Idle_Gun_IN_anm"
+		_expect(player.assigned_animation == ending and not view._playing_visual_action, "R自然结束按移动状态选原版衔接，不延长施法锁")
+		player.advance(0.2)
+		view._sync_visual(false, 0.2)
+		_expect(player.assigned_animation == ending, "持械状态机不会下一帧覆盖R结束衔接")
+		player.advance(3.0)
+		view._sync_visual(false, 0.0)
+		_expect(player.assigned_animation == ("Run_Gun_anm" if moving else "Idle_Gun_anm"), "R衔接后接普通持枪循环")
+	# R转跑途中可以停步或被新攻击接管。
+	unit._move_intent = Vector2.RIGHT
+	unit.play_visual_action(&"inferno", 2.0)
+	view._sync_visual(false, 0.0)
+	view._seek_visual_action(1.9)
+	unit._visual_action_time_left = 0.0
+	view._finish_visual_action()
+	unit._move_intent = Vector2.ZERO
+	view._sync_visual(false, 0.0)
+	_expect(player.assigned_animation == "Idle_Gun_IN_anm", "R转跑时停步立即转持枪待机进入")
+	unit._attack_visual_serial = 19
+	unit._attacking = true
+	view._sync_visual(false, 0.0)
+	_expect(player.assigned_animation == "Attack1_Sword_anm", "新近战攻击可打断R结束衔接")
+	unit._attacking = false
+	# 客户端模式只读复制序号，即使本地close_attack相反也必须持刀。
+	var previous_mode = _main.runtime.mode
+	_main.runtime.mode = "client"
+	unit.net_attack_visual_serial = 23
+	unit.net_visual_state = 1
+	unit.net_locomotion_state = 1
+	unit.close_attack = false
+	view._sync_visual(false, 0.0)
+	player.advance(5.0)
+	view._sync_visual(false, 0.0)
+	_expect(player.assigned_animation == "Idle_Sword_anm", "客户端刀姿态由复制序号决定，不读本地距离模式")
+	_main.runtime.mode = previous_mode
+	view.free()
+	unit.free()

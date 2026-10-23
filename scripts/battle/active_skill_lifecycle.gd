@@ -15,6 +15,7 @@ func _init(effects: ActiveSkillEffectSystem, presentation: SkillEffectPresentati
 	_commands.result_create = _effects.create_scheduled_result
 
 func start(unit: Unit, skill: Dictionary) -> bool:
+	if bool(skill.get("requires_full_resource", false)) and (unit == null or not unit.can_start_active_skill(skill)): return false
 	if unit != null and (unit.is_active_skill_rush_locked() or unit.death_form.used): return false
 	if StringName(skill.get("kind", "")) == &"undying_rage" and (unit == null or not unit.can_start_active_skill(skill)): return false
 	var prepared_skill: Dictionary = _effects.prepare_cast(unit, skill)
@@ -44,6 +45,8 @@ func _begin_cast(unit: Unit, skill: Dictionary) -> void:
 	var cast_facing: Vector2 = skill.get("cast_forward", unit.get_visual_facing_direction())
 	if cast_duration > 0.0:
 		unit.begin_active_skill_cast(cast_duration, cast_facing, cast_locks, is_offensive(skill))
+	if StringName(skill.get("kind", "")) == &"continuous_area" and not unit.is_active_skill_movement_locked() and unit.is_active_skill_attack_locked():
+		unit.active_skill_chase_radius = maxf(float(skill.get("radius", 0.0)), 0.0)
 	if action_name != &"":
 		unit.play_visual_action(action_name, cast_duration)
 	if StringName(skill.get("kind", "")) in [&"frontal", &"dual_form"]:

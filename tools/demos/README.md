@@ -1,5 +1,7 @@
 # 专项复现场景
 
+- `samira_review.gd`：工作台正式出牌、双方枪刀/R、寒冰/金克丝尺寸参照、卡面与技能图标、冰冻/死亡中断及混音录制。`--attack-audit`逐套核验莎弥拉四种普攻的四朝向、连续攻击节点、枪口投影与弹体，输出固定步实机截图和事件JSON。`--passive-review`验证双方被动叠层、原版满层特效、4秒到期与R消耗切换，并输出实机截图及层数/移速日志。`--ready-audit`固定满层时刻，核对双方四朝向、模型/附着层原点及源缩放，并输出实机截图与坐标JSON。
+
 - `void_scuttle_crab_review.gd`：虚空河蟹双方与普通河蟹尺寸对比、舞蹈、自尽/被击杀治疗区及清场录音截图。
 
 返回 [工具索引](../README.md)。联网统一用 `python3 tools/dev.py verify --network-render` 或 `bash tools/run_local_multiplayer.sh`（一服两端）。本页脚本仅作单机专项复现，旧联网参数会明确报错。
@@ -84,3 +86,8 @@ python3 tools/demos/pantheon_review_media.py --input /本次输出/pantheon-revi
 `scuttle_crab_review.gd`：峡谷迅捷蟹双方模型与艾希对比、舞蹈、兰顿施放、死亡治疗区多个时点及清场截图与运行录音。
 
 - `kassadin_review.gd -- --range`：双阵营实际战场特效叠加技能数据中的伤害半径圈，仅预览脚本创建。默认暂停在落地后0.15秒，可播放/暂停、拖动0—1.2秒时间轴，或选择0.05/0.15/0.3/0.6秒关键帧。圈内接触敌方身体即满足距离判定；不把目标半径额外画成技能半径。
+
+
+莎弥拉持枪/持刀待机、跑步、收武器与切换审核：`samira_review.gd -- --stance-review`，正式工作台出牌后以确定性表现状态驱动双方四个模型，输出截图与片段/时间JSON；不将此演示作为权威索敌验证。
+
+莎弥拉R结束衔接审核：`samira_review.gd -- --r-exit-review`，以同一表现预览场景检查双方移动/静止退出R，输出截图和片段进度JSON。

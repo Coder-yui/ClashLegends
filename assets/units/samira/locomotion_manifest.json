@@ -1,0 +1,9 @@
+{
+  "source_glb_sha256": "fac8c2329980fa3e2d553e3dcff74df134fc6e8c72102a5db8f98afe1e96022c",
+  "source_graph_sha256": "e2e0843cf4e5f5be0a42488deff30dcac5b22de50463553d1d5e2e5a2e82be7b",
+  "source_metadata": "ClashLegends-开发素材库/03-制作中/沙漠玫瑰/stance-audit/locomotion_source.json",
+  "source_metadata_sha256": "116e39e08b22caa5d19b751b37b2fa423d4bd33a3afe4f00bb3bf2613d2c0504",
+  "tool": "tools/assets/bake_samira_locomotion.gd",
+  "output_sha256": "55f61b9c30a69024b22de48e59050cdd722e79b56d4e0223b6dfa5874d85c9a3",
+  "processing": "12 source clips; Boots/Haste variants excluded, source upper-track masks sampled with Idle/Run_OOC lower body at 30Hz; absolute JointSnap targets, not additive transforms. Runtime interpolation is presentation-only."
+}

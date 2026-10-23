@@ -3,7 +3,7 @@ extends Node3D
 ## 可复用的持续 Buff 表现接口；由模型代理喂入权威/快照状态与表现时钟。
 ## 不持有 Unit，不参与玩法或网络。
 
-@export_enum("active_buff", "blood_rage", "structure_haste", "sacrifice_empowerment", "death_spawn", "attack_lifesteal", "active_buff_clock", "restoration_shield") var status_source: String = "active_buff"
+@export_enum("active_buff", "blood_rage", "structure_haste", "sacrifice_empowerment", "death_spawn", "attack_lifesteal", "active_buff_clock", "active_action", "full_resource_or_action", "restoration_shield") var status_source: String = "active_buff"
 @export var preserve_on_form_change := false
 @export var follow_model_anchor := false
 var active := false

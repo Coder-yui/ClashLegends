@@ -343,6 +343,7 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			if attack_count > 0 and attack_count != (swing as Array).size():
 				errors.append("%s.audio.%s: 声音池数量必须与 visual_animations.attack 数量一致" % [label, field])
 			for index in (swing as Array).size():
+				if field == "attack_launch_by_segment" and float(stats.get("close_attack_range", 0.0)) > 0.0 and index >= 2 and swing[index] is Array and swing[index].is_empty(): continue
 				_validate_audio_path_pool("%s.audio.%s[%d]" % [label, field, index], (swing as Array)[index], errors, inspect_resources)
 	if audio.has("attack_hit"):
 		_validate_audio_path_pool("%s.audio.attack_hit" % label, audio.attack_hit, errors, inspect_resources)
@@ -503,8 +504,31 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 		for deploy_positive in [&"deploy_sweep_duration", &"deploy_sweep_mass_factor_max"]:
 			if float(stats.get(deploy_positive, 0.0)) <= 0.0:
 				errors.append("%s.%s: 必须 > 0" % [label, deploy_positive])
+	for field in ["close_attack_damage_multiplier", "close_attack_speed_multiplier", "close_attack_hit_gain"]:
+		if stats.has(field) and not stats.has("close_attack_range"):
+			errors.append("%s.%s: 必须搭配close_attack_range" % [label, field])
+	if stats.has("close_attack_range"):
+		var close_animations: Variant = stats.get("visual_animations", {}).get("attack", [])
+		if not close_animations is Array or close_animations.size() != 4:
+			errors.append("%s.close_attack_range: 需要远程两段、近战两段动作" % label)
+		for field in ["close_attack_range", "close_attack_damage_multiplier", "close_attack_speed_multiplier", "close_attack_hit_gain"]:
+			if not (stats.get(field) is float or stats.get(field) is int) or float(stats.get(field, 0.0)) <= 0.0:
+				errors.append("%s.%s: 必须为正数" % [label, field])
+		if float(stats.get("close_attack_range", 0.0)) >= float(stats.get("range", 0.0)) or float(stats.get("projectile_speed", 0.0)) <= 0.0:
+			errors.append("%s.close_attack_range: 需要远程普攻且近战距离小于射程" % label)
+	if stats.has("skill_resource_block_during_cast") and not stats.skill_resource_block_during_cast is bool:
+		errors.append("%s.skill_resource_block_during_cast: 必须为 bool" % label)
 	if stats.has("first_strike_damage_multiplier") and float(stats.first_strike_damage_multiplier) <= 0.0:
 		errors.append("%s.first_strike_damage_multiplier: 必须 > 0" % label)
+	for field in ["skill_resource_duration", "skill_resource_move_per_stack", "skill_resource_full_move_bonus"]:
+		if stats.has(field) and (float(stats[field]) <= 0.0 or float(stats.get("skill_resource_max", 0.0)) <= 0.0):
+			errors.append("%s.%s: 需要正数和有效资源上限" % [label, field])
+	if bool(stats.get("skill_resource_passive", false)) and float(stats.get("skill_resource_max", 0.0)) <= 0.0:
+		errors.append(label + ".skill_resource_passive: 需要正资源上限")
+	if float(stats.get("skill_resource_full_move_bonus", 0.0)) > 0.0 and float(stats.get("skill_resource_move_per_stack", 0.0)) <= 0.0:
+		errors.append(label + ".skill_resource_full_move_bonus: 需要每层移速增益")
+	if float(stats.get("skill_resource_duration", 0.0)) > 0.0 and float(stats.get("skill_resource_decay_rate", 0.0)) > 0.0:
+		errors.append(label + ".skill_resource_duration: 不与渐进衰减同时配置")
 	for resource_field in [&"skill_resource_max", &"skill_resource_attack_gain", &"skill_resource_hit_gain", &"skill_resource_kill_gain", &"skill_resource_damage_gain_multiplier"]:
 		if float(stats.get(resource_field, 0.0)) < 0.0:
 			errors.append("%s.%s: 必须 >= 0" % [label, resource_field])
@@ -751,6 +775,15 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 			errors.append("%s.visual_animations.attack_reference_interval: 需要分段 attack_hit" % label)
 		if animations.has("attack_hit_duration") or animations.has("attack_recover_delay"):
 			errors.append("%s.visual_animations.attack_reference_interval: 不与手工 Hit/Recover 时长同时配置" % label)
+	for field in ["attack_idle", "attack_idle_enter", "attack_sheath_idle", "attack_sheath_move"]:
+		if animations.has(field) and not animations.has("attack_stance_duration"):
+			errors.append("%s.visual_animations.%s: 需要attack_stance_duration启用持械姿态" % [label, field])
+	if animations.has("attack_stance_duration"):
+		var duration = animations.attack_stance_duration
+		if typeof(duration) not in [TYPE_FLOAT, TYPE_INT] or not is_finite(float(duration)) or float(duration) <= 0.0:
+			errors.append("%s.visual_animations.attack_stance_duration: 必须是有限正秒数" % label)
+		for field in ["attack_idle", "attack_move", "attack_idle_enter", "attack_sheath_idle", "attack_sheath_move"]:
+			if not animations.has(field): errors.append("%s.visual_animations: 持械姿态缺少 %s" % [label, field])
 	if animations.has("clip_blends"):
 		var clip_blends = animations.clip_blends
 		if not clip_blends is Dictionary:
@@ -779,7 +812,7 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 					errors.append("%s.visual_animations.%s: 数组只能包含动画名" % [label, state])
 	var attack_values = animations.get("attack", [])
 	var attack_count: int = attack_values.size() if attack_values is Array else (1 if animations.has("attack") else 0)
-	for route_key in [&"attack_move", &"attack_to_move"]:
+	for route_key in [&"attack_move", &"attack_to_move", &"attack_idle", &"attack_idle_enter", &"attack_sheath_idle", &"attack_sheath_move"]:
 		if not animations.has(route_key):
 			continue
 		var route_values = animations.get(route_key, [])
@@ -811,6 +844,11 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 		else:
 			for transition in transitions:
 				var transition_label := "%s.visual_animations.transitions.%s" % [label, transition]
+				var descriptor = transitions[transition]
+				if descriptor is Dictionary and descriptor.has("attack_stance_index"):
+					var index = descriptor.attack_stance_index
+					if not index is int or index < 0 or index >= attack_count or not animations.has("attack_stance_duration"):
+						errors.append("%s.attack_stance_index: 需要已启用姿态的合法攻击段索引" % transition_label)
 				var route := String(transition).split(">")
 				if route.size() == 2 and route[0].contains(":"):
 					if route[1] not in ["idle", "move"] or not PresentationEvents.supports(stats, route[0]):
@@ -957,7 +995,7 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 		var skill_cost := float(skill.get("cost", -1.0))
 		if skill_cost < 0.0:
 			errors.append("%s.cost: 必须 >= 0" % label)
-		if bool(skill.get("unlimited_uses", false)) and (not skill.has("cost_by_use") or not skill.has("damage_by_use") or kind != &"blink_nova"):
+		if bool(skill.get("unlimited_uses", false)) and kind != &"continuous_area" and (not skill.has("cost_by_use") or not skill.has("damage_by_use") or kind != &"blink_nova"):
 			errors.append(label + ".unlimited_uses: 需要blink_nova及费用/伤害序列")
 		var max_uses := int(skill.get("max_uses", 0))
 		if max_uses <= 0:
@@ -1317,6 +1355,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				errors.append("%s.resource_nonfull_cast_gain: 必须搭配 resource_consume_only_full" % label)
 		if bool(skill.get("uses_skill_resource", false)) and float(stats.get("skill_resource_max", 0.0)) <= 0.0:
 			errors.append("%s.uses_skill_resource: 卡牌必须配置正数 skill_resource_max" % label)
+		if skill.has("requires_full_resource"):
+			if not skill.requires_full_resource is bool or not bool(skill.get("uses_skill_resource", false)) or float(stats.get("skill_resource_max", 0.0)) <= 0.0:
+				errors.append("%s.requires_full_resource: 必须为 bool 且声明有效技能资源" % label)
 		if skill.has("resource_shield_max"):
 			if float(skill.resource_shield_max) < 0.0:
 				errors.append("%s.resource_shield_max: 必须 >= 0" % label)

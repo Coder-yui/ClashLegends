@@ -202,7 +202,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 			if not result.landed or not landed_source is Unit or landed_source.hp <= 0.0: return
 			if counts_as_attack and is_instance_valid(landed_target): landed_source.record_structure_attack(landed_target)
 			if counts_as_attack and (movement_radius <= 0.0 or primary_hit) and radius <= 0.0 and (cleave_radius <= 0.0 or primary_hit) and self_radius <= 0.0:
-				landed_source.on_attack_landed(source_form_index, float(result.health_lost), swing, int(effects.get("source_generation", -1)))
+				landed_source.on_attack_landed(source_form_index, float(result.health_lost), swing, int(effects.get("source_generation", -1)), float(effects.get("skill_hit_gain", -1.0)))
 			if is_instance_valid(landed_target): _award_hit_kill(landed_source, landed_target, result))
 	if landed:
 		# 整次突进只发布一次主目标中心冲击与攻速，不按范围内人数叠加。
@@ -222,7 +222,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 				if not landed_source is Unit or landed_source.hp <= 0.0 or not hit_results.any(func(result): return result.landed): return
 				var total := 0.0
 				for hit in hit_results: total += float(hit.health_lost)
-				landed_source.on_attack_landed(source_form_index, total, swing, int(effects.get("source_generation", -1))))
+				landed_source.on_attack_landed(source_form_index, total, swing, int(effects.get("source_generation", -1)), float(effects.get("skill_hit_gain", -1.0))))
 		if cleave_radius > 0.0:
 			defer_effect(func():
 				var landed_source = _node_from(source_ref)
@@ -249,7 +249,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 			defer_benefit(func():
 				var landed_source = _node_from(source_ref)
 				if hit_results.any(func(result): return result.landed) and is_instance_valid(landed_source) and landed_source is Unit and landed_source.hp > 0.0:
-					landed_source.on_attack_landed(source_form_index, 0.0, swing, int(effects.get("source_generation", -1))))
+					landed_source.on_attack_landed(source_form_index, 0.0, swing, int(effects.get("source_generation", -1)), float(effects.get("skill_hit_gain", -1.0))))
 		if counts_as_attack:
 			defer_effect(func():
 				if hit_results.any(func(result): return result.landed) and not bool(effects.get("movement_strike", false)):

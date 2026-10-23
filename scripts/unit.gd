@@ -87,9 +87,14 @@ var on_hit_tower_damage := 0.0
 var _lifespan_decay_remainder := 0.0
 var _continuous_damage_stream := BattleNumbers.DamageStream.new()
 var damage := 10.0
+## 可移动持续范围施法按中心半径接近目标；只在权威施法窗口内覆盖导航射程。
+var active_skill_chase_radius := 0.0
 var base_attack_range := 20.0
 var attack_range: float:
-	get: return base_attack_range + buffs.strongest(&"ranged_attack", &"range_bonus", 0.0)
+	get:
+		if active_skill_cast_timer > 0.0 and active_skill_chase_radius > 0.0:
+			return maxf(active_skill_chase_radius - body_radius, 0.0)
+		return base_attack_range + buffs.strongest(&"ranged_attack", &"range_bonus", 0.0)
 	set(value): base_attack_range = value
 var stealth := preload("res://scripts/battle/stealth_state.gd").new()
 var net_stealth_hidden := false
@@ -138,6 +143,12 @@ var first_hit_time := 0.2
 var passive_first_hit_time := -1.0
 var empowered_first_hit := -1.0
 var projectile_speed := 0.0
+var close_attack_range := 0.0
+var close_attack_damage_multiplier := 1.0
+var close_attack_speed_multiplier := 1.0
+var close_attack_hit_gain := 0.0
+var close_attack := false
+var skill_resource_block_during_cast := false
 # 权威弹体几何；与 projectile_visual_* 完全独立。
 var projectile_spawn_at_edge := false
 var projectile_spawn_offset := 0.0
@@ -205,6 +216,11 @@ var skill_resource_decay_delay := 0.0
 var skill_resource_decay_rate := 0.0
 var skill_resource_full_color := SKILL_RESOURCE_UNFILLED_COLOR
 var skill_resource_enabled := false
+var skill_resource_passive := false
+var skill_resource_duration := 0.0
+var skill_resource_time_left := 0.0
+var skill_resource_move_per_stack := 0.0
+var skill_resource_full_move_bonus := 0.0
 var _configured_skill_resource_max := 0.0
 var _configured_skill_resource_attack_gain := 0.0
 var _configured_skill_resource_hit_gain := 0.0
@@ -512,6 +528,12 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	passive_first_hit_time = float(stats.get("passive_first_hit", -1.0))
 	empowered_first_hit = float(stats.get("empowered_first_hit", -1.0))
 	projectile_speed = stats.get("projectile_speed", 0.0)
+	close_attack_range = float(stats.get("close_attack_range", 0.0))
+	close_attack_damage_multiplier = float(stats.get("close_attack_damage_multiplier", 1.0))
+	close_attack_speed_multiplier = float(stats.get("close_attack_speed_multiplier", 1.0))
+	close_attack_hit_gain = float(stats.get("close_attack_hit_gain", 0.0))
+	skill_resource_block_during_cast = bool(stats.get("skill_resource_block_during_cast", false))
+	close_attack = false
 	projectile_spawn_at_edge = bool(stats.get("projectile_spawn_at_edge", false))
 	projectile_spawn_offset = float(stats.get("projectile_spawn_offset", 0.0))
 	projectile_collision_radius = float(stats.get("projectile_collision_radius", 4.0))
@@ -555,6 +577,11 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	_configured_skill_resource_damage_gain_multiplier = maxf(float(stats.get("skill_resource_damage_gain_multiplier", 0.0)), 0.0)
 	_configured_skill_resource_decay_delay = maxf(float(stats.get("skill_resource_decay_delay", 0.0)), 0.0)
 	_configured_skill_resource_decay_rate = maxf(float(stats.get("skill_resource_decay_rate", 0.0)), 0.0)
+	skill_resource_passive = bool(stats.get("skill_resource_passive", false))
+	skill_resource_duration = float(stats.get("skill_resource_duration", 0.0))
+	skill_resource_time_left = 0.0
+	skill_resource_move_per_stack = float(stats.get("skill_resource_move_per_stack", 0.0))
+	skill_resource_full_move_bonus = float(stats.get("skill_resource_full_move_bonus", 0.0))
 	skill_resource_full_color = stats.get("skill_resource_full_color", SKILL_RESOURCE_UNFILLED_COLOR)
 	skill_resource_max = 0.0
 	skill_resource_value = 0.0
@@ -565,6 +592,8 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	skill_resource_decay_delay = 0.0
 	skill_resource_decay_rate = 0.0
 	skill_resource_enabled = false
+	if skill_resource_passive:
+		configure_carried_active_skill({"uses_skill_resource": true})
 	if rage_crit_multiplier > 1.0:
 		skill_resource_enabled = true
 		skill_resource_max = _configured_skill_resource_max
@@ -695,7 +724,11 @@ func get_locomotion_visual_state_code() -> int:
 	return 1
 
 ## 3D 与 2D 表现都直接读取同一个最终渲染位置，不依赖彼此的 _process 执行顺序。
+func has_required_skill_resource(skill: Dictionary) -> bool:
+	return not bool(skill.get("requires_full_resource", false)) or (is_skill_resource_visible() and get_skill_resource_ratio() >= 0.999)
+
 func can_start_active_skill(skill: Dictionary) -> bool:
+	if not has_required_skill_resource(skill): return false
 	if control.hard.remaining(&"root") > 0.0 and String(skill.get("kind", "")) in ["dash_strike", "movement_strike", "terrain_charge"]: return false
 	if StringName(skill.get("kind", "")) == &"movement_strike" and movement_strike.is_armed(): return false
 	if StringName(skill.get("kind", "")) == &"undying_rage":
@@ -806,7 +839,8 @@ func get_effective_movement_rate_visual() -> float:
 	return _effective_movement_multiplier()
 
 func _effective_movement_multiplier() -> float:
-	var rate := active_speed_multiplier
+	var resource_bonus := skill_resource_full_move_bonus if skill_resource_value >= skill_resource_max and skill_resource_max > 0.0 else skill_resource_value * skill_resource_move_per_stack
+	var rate := active_speed_multiplier * (1.0 + resource_bonus)
 	if _charged:
 		rate *= charge_speed_multiplier
 	if empowered_attack_ready:
@@ -996,6 +1030,7 @@ func finish_dash_cast(serial: int) -> void:
 
 func begin_active_skill_cast(duration: float, facing: Vector2, cast_locks: Array = DEFAULT_CAST_LOCKS, offensive: bool = true) -> void:
 	if team_attack_boost_forging and battle_context != null: battle_context.interrupt_team_attack_boost(self)
+	active_skill_chase_radius = 0.0
 	active_skill_offensive = offensive
 	if offensive: record_combat_activity()
 	active_skill_cast_serial += 1
@@ -1023,6 +1058,7 @@ func grant_partial_cast_resource(amount: float) -> void:
 ## Cast Start清空旧资源，施法期间新获得的资源留给下一次技能。
 func consume_skill_resource_ratio() -> float:
 	var ratio := get_skill_resource_ratio()
+	skill_resource_time_left = 0.0
 	skill_resource_value = 0.0
 	queue_redraw()
 	return ratio
@@ -1043,7 +1079,7 @@ func get_skill_resource_segment_count() -> int:
 	var segment_count := int(round(skill_resource_max))
 	return segment_count if segment_count >= 2 and segment_count <= 10 and is_equal_approx(skill_resource_max, float(segment_count)) else 0
 
-## 卡牌数值可声明资源规则，但只有主动槽实际携带 uses_skill_resource 的实例才启用。
+## 资源默认由主动槽启用；skill_resource_passive声明独立被动，不随主动槽清除。
 func configure_carried_active_skill(skill: Dictionary) -> void:
 	if not bool(skill.get("uses_skill_resource", false)) or _configured_skill_resource_max <= 0.0:
 		clear_carried_active_skill_resource()
@@ -1059,8 +1095,8 @@ func configure_carried_active_skill(skill: Dictionary) -> void:
 	queue_redraw()
 
 func clear_carried_active_skill_resource() -> void:
-	# 怒气属于被动；主动槽被替换或未携带主动均不清空。
-	if rage_crit_multiplier > 1.0: return
+	# 被动资源不因主动槽被替换或未携带主动而清空。
+	if rage_crit_multiplier > 1.0 or skill_resource_passive: return
 	skill_resource_enabled = false
 	skill_resource_max = 0.0
 	skill_resource_value = 0.0
@@ -1073,6 +1109,7 @@ func clear_carried_active_skill_resource() -> void:
 	queue_redraw()
 
 func add_skill_resource(amount: float) -> void:
+	if skill_resource_block_during_cast and active_skill_cast_timer > 0.0: return
 	if CombatInteraction.in_stasis(self): return
 	if battle_context != null and (battle_context.damage_batch().collecting or battle_context.damage_batch().committing):
 		battle_context.damage_batch().defer_benefit(func():
@@ -1081,6 +1118,7 @@ func add_skill_resource(amount: float) -> void:
 	if skill_resource_max <= 0.0 or amount <= 0.0:
 		return
 	skill_resource_value = minf(skill_resource_value + amount, skill_resource_max)
+	skill_resource_time_left = skill_resource_duration
 	queue_redraw()
 
 func record_combat_activity(reveal: bool = false) -> void:
@@ -1100,6 +1138,10 @@ func _advance_combat_idle(dt: float) -> void:
 
 func _tick_skill_resource_decay(dt: float) -> void:
 	if not skill_resource_enabled or skill_resource_value <= 0.0: return
+	if skill_resource_duration > 0.0:
+		skill_resource_time_left = AttackTimeline.tick_remaining(skill_resource_time_left, dt)
+		if skill_resource_time_left <= 0.0: skill_resource_value = 0.0
+		return
 	var decay_dt := clampf(combat_idle_seconds - skill_resource_decay_delay, 0.0, dt)
 	if decay_dt > 0.0 and skill_resource_decay_rate > 0.0:
 		skill_resource_value = maxf(0.0, skill_resource_value - skill_resource_decay_rate * decay_dt)
@@ -1694,6 +1736,8 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 					_continuous_visual_target_id = continuous_target_id
 					_attack_visual_serial += 1
 					attack_timeline.restart_visual()
+			if not committed_attack and close_attack_range > 0.0:
+				close_attack = _target_gap(_target) <= close_attack_range
 			if not _attacking:
 				# 行军已清除旧间隔；重新进入正常射程从本刀前摇开始。
 				# 原地转火等未进入行军的路径仍保留已有攻击节奏。
@@ -2366,7 +2410,7 @@ func _attack(dt: float) -> void:
 	_try_start_attack_visual(attack_timeline.cooldown)
 	if attack_timeline.cooldown <= 0.0:
 		# 只在命中节点检查宽限；超距取消本次挥击，不伤害、不进入后摇。
-		if _target_gap(_target) > attack_range + ArenaRules.ATTACK_RANGE_TOLERANCE:
+		if _target_gap(_target) > (close_attack_range if close_attack else attack_range) + ArenaRules.ATTACK_RANGE_TOLERANCE:
 			_cancel_attack_and_chase(dt)
 			return
 		if not channel_attack.prepared.is_empty():
@@ -2377,7 +2421,7 @@ func _attack(dt: float) -> void:
 		var hit_index := _attack_hit_index
 		var next_attack_gap := _next_attack_gap()
 		attack_timeline.commit_hit(next_attack_gap)
-		var base_hit_damage := damage * _attack_damage_multiplier(hit_index) * active_damage_multiplier * (charge_damage_multiplier if _charged else 1.0)
+		var base_hit_damage := damage * (close_attack_damage_multiplier if close_attack else 1.0) * _attack_damage_multiplier(hit_index) * active_damage_multiplier * (charge_damage_multiplier if _charged else 1.0)
 		var rage_critical := rage_crit_multiplier > 1.0 and posmod(_attack_visual_serial - 1, 3) == 2
 		if rage_critical: base_hit_damage *= rage_crit_multiplier
 		var hit_damage := base_hit_damage
@@ -2428,7 +2472,7 @@ func _attack(dt: float) -> void:
 		else:
 			add_skill_resource(skill_resource_attack_gain)
 		var attack_form_index := form_index
-		if projectile_speed <= 0.0 and battle_context != null and battle_context.damage_batch().collecting:
+		if (projectile_speed <= 0.0 or close_attack) and battle_context != null and battle_context.damage_batch().collecting:
 			attack_effects["delivery_callback"] = _settle_melee_delivery.bind(form_change_serial, _attack_visual_serial, true)
 		var completed := _perform_attack_strike(_target, hit_damage, attack_effects)
 		if completed:
@@ -2455,7 +2499,7 @@ func _next_attack_gap() -> float:
 	return maxf(snappedf(gap / _effective_attack_speed_multiplier(), 0.01), 0.01)
 
 func _effective_attack_speed_multiplier() -> float:
-	var multiplier := maxf(active_attack_speed_multiplier, 0.01)
+	var multiplier := maxf(active_attack_speed_multiplier, 0.01) * (close_attack_speed_multiplier if close_attack else 1.0)
 	if control.attack_speed_slow_timer > 0.0 and not active_buff_ignores_attack_speed_slow:
 		multiplier *= control.attack_speed_slow_multiplier
 	return maxf(multiplier, 0.01)
@@ -2494,7 +2538,11 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 	_attack_visual_serial += 1
 	# 可取消的连招以前用每次尝试的序号选片，取消一拳会令动作与伤害/间隔错位。
 	# 序号仍严格递增（快照/声音去重不变），余数对齐尚未结算的权威拳段。
-	if rage_crit_multiplier > 1.0:
+	if close_attack_range > 0.0:
+		# 四个动作槽：远程两段、近战两段；沿现有单调序号同步模式。
+		var segment := posmod(_attack_swing_count, 2) + (2 if close_attack else 0)
+		_attack_visual_serial += posmod(segment - (_attack_visual_serial - 1), 4)
+	elif rage_crit_multiplier > 1.0:
 		var segment := 2 if skill_resource_value >= skill_resource_max else posmod(_attack_swing_count, 2)
 		_attack_visual_serial += posmod(segment - (_attack_visual_serial - 1), 3)
 	elif not attack_passive_multipliers.is_empty():
@@ -2541,6 +2589,7 @@ func _deal_continuous_damage(amount: float) -> void:
 
 func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary = {}) -> bool:
 	effects = effects.duplicate(true)
+	if close_attack_range > 0.0: effects["skill_hit_gain"] = close_attack_hit_gain if close_attack else skill_resource_hit_gain
 	effects.merge(on_hit_passive_effects())
 	if float(effects.get("cleave_radius", 0.0)) > 0.0:
 		effects["cleave_damage"] = float(effects.cleave_damage) * active_damage_multiplier
@@ -2548,7 +2597,7 @@ func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary =
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
 		return false
 	if battle_context != null:
-		return battle_context.launch_attack(self, target, amount, projectile_speed, splash_radius, attack_knockback, projectile_color, effects)
+		return battle_context.launch_attack(self, target, amount, 0.0 if close_attack else projectile_speed, splash_radius, attack_knockback, projectile_color, effects)
 	else:
 		var was_alive: bool = target.hp > 0.0
 		var result := BattleNumbers.hit(target, BattleNumbers.quantity(amount) + on_hit_passive_damage(target), self, team, global_position)
@@ -2558,7 +2607,7 @@ func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary =
 				target.apply_slow(float(effects.on_hit_slow_duration), float(effects.on_hit_slow_multiplier), effects.on_hit_status_source, effects.on_hit_context)
 			if target is Unit and int(effects.get("blind_charges", 0)) > 0:
 				(target as Unit).apply_blind(int(effects.blind_charges), CombatInteraction.effect_context(self))
-			on_attack_landed(-1, float(result.health_lost))
+			on_attack_landed(-1, float(result.health_lost), -1, -1, float(effects.get("skill_hit_gain", -1.0)))
 			if was_alive and target.hp <= 0.0:
 				on_enemy_killed(target)
 
@@ -2640,7 +2689,7 @@ func _tick_pending_extra_attacks(dt: float) -> void:
 		add_skill_resource(skill_resource_attack_gain)
 		basic_attack_sequence += 1
 		var effects := {"presentation_source": pending.presentation_source, "attack_id": basic_attack_sequence, "cycle_id": pending.get("cycle_id", _attack_visual_serial)}
-		if projectile_speed <= 0.0 and battle_context != null and battle_context.damage_batch().collecting:
+		if (projectile_speed <= 0.0 or close_attack) and battle_context != null and battle_context.damage_batch().collecting:
 			effects["delivery_callback"] = _settle_melee_delivery.bind(form_change_serial, int(effects.cycle_id), false)
 		if not _perform_attack_strike(target as Node2D, float(pending.damage), effects):
 			_attack_swing_count = maxi(_attack_swing_count - 1, 0)
@@ -2648,7 +2697,7 @@ func _tick_pending_extra_attacks(dt: float) -> void:
 
 ## 主机在伤害真正落到目标后调用，统一提交命中资源、形态计数与存活收益；
 ## 赵信等配置了命中回血的单位也在这里结算，未真正造成伤害的挥击不触发回复。
-func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0, submitted_swing: int = -1, source_generation: int = -1) -> void:
+func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0, submitted_swing: int = -1, source_generation: int = -1, skill_hit_gain: float = -1.0) -> void:
 	# 远程弹体可以在攻击者死亡后抵达；此时只保留已经结算给目标的伤害，
 	# 不再给已退出战斗的攻击者计层、回血、充能或触发形态切换。
 	if hp <= 0.0:
@@ -2674,7 +2723,7 @@ func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0, s
 		var stacks := mini(int(buffs.strongest(&"hit_haste", &"stacks", 0.0)) + 1, max_stacks)
 		apply_attack_speed_buff(&"hit_haste", &"attack", float(definition.hit_haste_duration), {
 			"stacks": stacks, "attack_speed": 1.0 + stacks * float(definition.hit_haste_per_stack)})
-	add_skill_resource(skill_resource_hit_gain)
+	add_skill_resource(skill_resource_hit_gain if skill_hit_gain < 0.0 else skill_hit_gain)
 	_try_heal_on_hit(submitted_swing)
 	var cycle_ratio := 0.0
 	if not attack_lifesteal_ratios.is_empty():

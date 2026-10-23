@@ -1239,6 +1239,7 @@ func _set_art_dev_skill_resource(value: float) -> void:
 	if unit == null or not unit.is_skill_resource_visible() or unit.skill_resource_max <= 0.0:
 		return
 	unit.skill_resource_value = clampf(value, 0.0, unit.skill_resource_max)
+	unit.skill_resource_time_left = unit.skill_resource_duration if unit.skill_resource_value > 0.0 else 0.0
 	unit.record_combat_activity()
 	unit.queue_redraw()
 	_sync_art_dev_panel_state()
@@ -1521,7 +1522,7 @@ func _sync_active_skill_deployment_readiness() -> void:
 		var unit = entry.get("unit")
 		if not is_instance_valid(unit): continue
 		var valid_unit := unit as Unit
-		var deployed := valid_unit.is_deployed() and not valid_unit.death_form.used
+		var deployed := valid_unit.is_deployed() and not valid_unit.death_form.used and valid_unit.has_required_skill_resource(entry.skill)
 		if _is_local_player_team(int(entry.team)) and _active_skill_bar != null:
 			var pending := _client_inputs.has_skill(ability_id) or _network_commands.has_skill(ability_id) or runtime._commands.has_pending_skill(ability_id)
 			# 仅比较投影视图以保留正在显示的倒数；它不参与提交资格。

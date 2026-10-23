@@ -47,6 +47,13 @@ var _team_ring: MeshInstance3D
 var _forward_yaw := 0.0
 var _attack_duration := 1.0
 var _current_state := -1
+var _stance_index := -1
+var _stance_serial := 0
+var _stance_age := 0.0
+var _stance_sheathed := true
+var _stance_transition := &""
+var _stance_sheathing := false
+var _stance_finished := false
 var _last_attack_serial := 0
 var _pending_attack_serial := 0
 var _last_visual_action_serial := 0
@@ -175,6 +182,13 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 			_release_model()
 		_model_root = instance as Node3D
 	_animation_names = animations.duplicate(true)
+	_stance_index = -1
+	_stance_serial = 0
+	_stance_age = 0.0
+	_stance_sheathed = true
+	_stance_transition = &""
+	_stance_sheathing = false
+	_stance_finished = false
 	_idle_transition_animation = &""
 	_forward_yaw = forward_yaw
 	_attack_duration = maxf(_source.attack_interval, 0.05)
@@ -426,6 +440,7 @@ func _sync_visual(force: bool, delta: float) -> void:
 	# 播放器已停止时，必须主动交还给基础状态，不能把最后一帧出拳姿态留住。
 	if _playing_visual_action and _source.get_visual_action_time_left() <= 0.0 and not _animation_player.is_playing():
 		_finish_visual_action()
+	_update_attack_stance(delta)
 	var state := _source.get_visual_state_code()
 	var locomotion_state := _source.get_locomotion_visual_state_code()
 	# 无部署锁的出生动作只是表现：新外力提前结束后，真实移动可直接接管。
@@ -483,6 +498,13 @@ func _sync_visual(force: bool, delta: float) -> void:
 		pass
 	# 龙王等持续攻击单位用状态区分移动/攻击，并用目标序号识别“原地换目标”。
 	# 两种进入动作最终都接循环吐息，退出攻击则在同一帧打断循环。
+	elif _has_attack_stance() and locomotion_state in [1, 2] and (state != 3 or not _playing_attack):
+		var from_attack := _playing_attack or _holding_attack_pose
+		_playing_attack = false
+		_holding_attack_pose = false
+		_attack_hit_pending = false
+		_attack_recover_pending = false
+		_play_stance_locomotion(locomotion_state, &"attack" if from_attack else &"locomotion")
 	elif _uses_continuous_state_animations():
 		_sync_continuous_state_animations(state, force, attack_serial_changed)
 	# attack_serial 只触发一次挥剑；逻辑仍处于攻击状态时，动作结束后保持末帧。
@@ -501,6 +523,7 @@ func _sync_visual(force: bool, delta: float) -> void:
 		_play_state(1)
 	if _animation_player != null:
 		var playback_scale := _state.attack_rate if _playing_attack else (_state.movement_rate if _current_state == 2 and not _playing_visual_action and _attack_pose_event == &"" else 1.0)
+		if _stance_sheathing and _stance_transition != &"": playback_scale = 1.0
 		if _playing_visual_action and _source.get_visual_action_clock().x > 0.5:
 			playback_scale = _source.get_visual_action_clock().y
 		_animation_player.speed_scale = 0.0 if _state.frozen else playback_scale
@@ -785,6 +808,9 @@ func _transition_route_blend(from_action: StringName, to_action: StringName, edg
 
 ## 普通单位也可配置 move_enter。过渡动作只表现移动起步，移动仍由权威模拟决定。
 func _transition_to_basic_state(state: int, blend_time: float = -1.0, from_action: StringName = &"locomotion") -> void:
+	if _has_attack_stance() and state in [1, 2] and not _state.stunned:
+		_play_stance_locomotion(state, from_action)
+		return
 	_idle_transition_animation = &""
 	var previous_state := _current_state
 	_current_state = state
@@ -1276,6 +1302,8 @@ func _finish_deploy_sequence() -> void:
 func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 	if _animation_player == null or serial <= 0:
 		return
+	_stance_transition = &""
+	_stance_sheathing = false
 	_idle_cycle_active_animation = &""
 	_idle_transition_animation = &""
 	# 出场演出期间权威锁定攻击，不会推进攻击序号；此防御仅兜底客户端快照乱序。
@@ -1552,6 +1580,9 @@ func _on_animation_finished(animation_name: StringName) -> void:
 				_play_continuous_attack_enter(StringName(_continuous_attack_sequence[_continuous_attack_sequence_index]), &"sequence")
 			else:
 				_play_continuous_attack_loop(&"sequence")
+		return
+	if _stance_transition != &"" and animation_name == _stance_transition:
+		_stance_finished = true
 		return
 	if _move_sequence_active:
 		if animation_name != _move_active_animation or _current_state != 2:
@@ -1989,6 +2020,10 @@ func _update_active_buff_visual(delta: float) -> void:
 	if _active_buff_visual.status_source == "attack_lifesteal":
 		_active_buff_visual.status_state = _source.lifesteal_state_visual() if is_instance_valid(_source) else Vector2.ZERO
 		status_active = _active_buff_visual.status_state.y > 0.0
+	if _active_buff_visual.status_source == "active_action":
+		status_active = is_instance_valid(_source) and _source.get_visual_action_time_left() > 0.0 and _source.get_visual_action_serial() > _source.cancelled_visual_serial
+	if _active_buff_visual.status_source == "full_resource_or_action":
+		status_active = is_instance_valid(_source) and ((_source.is_skill_resource_visible() and _source.get_skill_resource_ratio() >= 1.0) or (_source.get_visual_action_time_left() > 0.0 and _source.get_visual_action_serial() > _source.cancelled_visual_serial))
 	if _active_buff_visual.status_source == "active_buff_clock":
 		_active_buff_visual.status_state = _source.active_buff_clock_visual() if is_instance_valid(_source) else Vector2.ZERO
 		status_active = _active_buff_visual.status_state.y > 0.0
@@ -2048,3 +2083,82 @@ func _update_growth_mark() -> void:
 	_growth_mark.global_position = foot + Vector3.UP * ((CardDB.AIR_VISUAL_ELEVATION if _source.is_air else 0.0) + 0.065)
 	_growth_mark.global_basis = Basis.IDENTITY.scaled(Vector3.ONE * radius)
 	_growth_mark.show()
+
+
+## 最近一次权威攻击序号决定持械姿态；所有计时与切换仅用于表现。
+func _has_attack_stance() -> bool:
+	return float(_animation_names.get("attack_stance_duration", 0.0)) > 0.0
+
+func _update_attack_stance(delta: float) -> void:
+	if not _has_attack_stance(): return
+	var serial := _source.get_attack_visual_serial()
+	if serial > 0 and serial != _stance_serial:
+		_stance_serial = serial
+		_stance_index = posmod(serial - 1, _animation_list("attack").size())
+		_stance_sheathed = false
+		_stance_transition = &""
+		_stance_sheathing = false
+		_stance_finished = false
+		_stance_age = 0.0
+	if _source.get_visual_state_code() == 3 or _playing_visual_action or _playing_deploy_sequence:
+		_stance_age = 0.0
+	elif not _state.frozen and not _state.stunned:
+		_stance_age += maxf(delta, 0.0)
+
+func _stance_loop(state: int) -> StringName:
+	if state == 1:
+		return _indexed_animation("attack_idle", _stance_index) if not _stance_sheathed else _first_valid_animation("idle")
+	if not _stance_sheathed:
+		var armed := _indexed_animation("attack_move", _stance_index)
+		if armed != &"": return armed
+	return _first_valid_animation("move")
+
+func _play_stance_locomotion(state: int, from_action: StringName) -> void:
+	if _animation_player == null: return
+	var previous := _current_state
+	_current_state = state
+	_move_sequence_active = false
+	_idle_transition_animation = &""
+	var progress := 0.0
+	if _stance_transition != &"":
+		# 技能、攻击或控制曾接管播放器时，不补播旧的收武器结束事件。
+		if _animation_player.assigned_animation != _stance_transition:
+			_stance_transition = &""
+			_stance_sheathing = false
+		elif _stance_finished or not _animation_player.is_playing():
+			if _stance_sheathing: _stance_sheathed = true
+			_stance_transition = &""
+			_stance_sheathing = false
+		elif state == previous:
+			return
+		elif _stance_sheathing:
+			# 移动/停步切换同一收势的另一版本，延续源时间而非重新收一次。
+			progress = _animation_player.current_animation_position
+		else:
+			_stance_transition = &""
+	var transition := _transition_clip(from_action, &"move" if state == 2 else &"idle")
+	var route = _transition_config(from_action, &"move" if state == 2 else &"idle")
+	if transition != &"" and route is Dictionary and route.has("attack_stance_index"):
+		_stance_index = int(route.attack_stance_index)
+		_stance_sheathed = false
+		_stance_sheathing = false
+		_stance_age = 0.0
+	if transition == &"" and not _stance_sheathed and (_stance_sheathing or _stance_age >= float(_animation_names.attack_stance_duration)):
+		_stance_sheathing = true
+		transition = _indexed_animation("attack_sheath_move" if state == 2 else "attack_sheath_idle", _stance_index)
+	elif transition == &"" and not _stance_sheathed and state != previous:
+		if state == 2 and from_action == &"attack":
+			transition = _indexed_animation("attack_to_move", _stance_index)
+		elif state == 1 and from_action != &"attack":
+			transition = _indexed_animation("attack_idle_enter", _stance_index)
+	if transition != &"":
+		_stance_transition = transition
+		_stance_finished = false
+		_animation_player.get_animation(transition).loop_mode = Animation.LOOP_NONE
+		_play_clip(transition, &"sequence", 1.0, float(route.get("blend_in", 0.08)) if route is Dictionary else 0.08)
+		_animation_player.seek(minf(progress, _animation_player.get_animation(transition).length), true)
+		return
+	var loop := _stance_loop(state)
+	if loop != &"" and (_animation_player.assigned_animation != loop or not _animation_player.is_playing()):
+		_animation_player.get_animation(loop).loop_mode = Animation.LOOP_LINEAR
+		_play_clip(loop, &"locomotion", 1.0, 0.10)

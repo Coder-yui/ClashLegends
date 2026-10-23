@@ -573,7 +573,7 @@ func _draw() -> void:
 		match StringName(projectile.get("visual", &"orb")):
 			&"corki_missile", &"corki_missile_big": load("res://scripts/presentation/corki_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), StringName(projectile.visual) == &"corki_missile_big")
 			&"baron_siege", &"baron_ranged": preload("res://scripts/presentation/baron_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)), projectile.color)
-			&"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
+			&"samira_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
 			&"fireball": preload("res://scripts/presentation/fireball_effect_2d.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)))
 			&"magic_orb": _draw_magic_orb(projectile)
 			&"tower_orb": _draw_tower_orb(projectile)

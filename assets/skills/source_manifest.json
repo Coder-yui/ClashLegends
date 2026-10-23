@@ -779,5 +779,14 @@
     "source_path": "assets/characters/xinzhao/hud/icons2d/xinzhaoreworke.dds",
     "source_sha256": "958df03d1c9e149451f81c0e9a7044bcc4f458b479d74d549e0f90e90ae27812",
     "sha256": "3adf16139a8c02e61211d9166898da9011d3f5e83319a5e86a8e8e918536b348"
+  },
+  {
+    "card": "samira",
+    "skill_index": 0,
+    "path": "res://assets/skills/samira_r.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Samira.wad.client",
+    "source_path": "assets/characters/samira/hud/icons2d/samirar1.dds",
+    "source_sha256": "3c9a046a574ad45f1491fa72c7610558fc6337c006022638946c3f916479f72f",
+    "sha256": "6aa9a14e16de6fe0c1905cbfb29b33aaa99989e4ce20057f9f0ccbe832511d32"
   }
 ]

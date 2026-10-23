@@ -95,7 +95,7 @@ const SIZE_RADII := {
 	SIZE_LARGE: RADIUS_LARGE,
 	SIZE_EXTREMELY_LARGE: RADIUS_EXTREMELY_LARGE,
 }
-const PROJECTILE_VISUALS := [&"malzahar_missile", &"voidfish_missile", &"tristana_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
+const PROJECTILE_VISUALS := [&"samira_bullet", &"malzahar_missile", &"voidfish_missile", &"tristana_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"void_summoning", &"explosive_cask", &"corrosion", &"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
 const ACTIVE_SKILL_KINDS := [&"movement_strike", &"counter_strike", &"spell_void_summoning", &"self_sacrifice", &"blink_nova", &"channeled_attack", &"death_spawn", &"sacrifice_empower", &"spell_explosive_cask", &"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
@@ -103,12 +103,13 @@ const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
 const VISUAL_ACTION_DESCRIPTOR_FIELDS := [&"animation", &"durations", &"clip_ranges", &"kind", &"priority", &"blend_in", &"blend_out", &"sequence_blend"]
-const VISUAL_TRANSITION_DESCRIPTOR_FIELDS := [&"replace_attack", &"animation", &"blend_in", &"blend_out", &"start_time"]
+const VISUAL_TRANSITION_DESCRIPTOR_FIELDS := [&"attack_stance_index", &"replace_attack", &"animation", &"blend_in", &"blend_out", &"start_time"]
 const TRANSITION_BLEND_FIELDS := [&"default", &"locomotion", &"action_in", &"action_out", &"attack", &"sequence", &"death", &"model_swap"]
 
 ## Validator 会检测未知或未登记字段。新增字段必须同时实现运行时读取逻辑、
 ## validator 登记和对应机制测试，防止只把配置写进 CardDB、却忘记接入权威模拟或表现层。
 const CARD_FIELDS := [
+	&"close_attack_range", &"close_attack_damage_multiplier", &"close_attack_speed_multiplier", &"close_attack_hit_gain", &"skill_resource_block_during_cast",
 	&"deployment_shield", &"deployment_shield_reduction",
 	&"assist_conversion_window", &"assist_conversion_unit_id", &"assist_conversion_building_id",
 	&"resource_dependencies",
@@ -150,6 +151,7 @@ const CARD_FIELDS := [
 	&"attack_extra_hit_damage_multipliers", &"attack_extra_hit_delays",
 	&"attack_passive_multipliers", &"attack_lifesteal_ratios", &"form_lifetime", &"form_lifetime_after_transition", &"form_speed_boost_duration", &"form_speed_boost_multiplier", &"form_refresh_on_kill",
 	&"attack_recovery_cancel_every_hits", &"attack_recovery_cancel_window",
+	&"skill_resource_passive", &"skill_resource_duration", &"skill_resource_move_per_stack", &"skill_resource_full_move_bonus",
 	&"skill_resource_max", &"skill_resource_attack_gain", &"skill_resource_hit_gain", &"skill_resource_kill_gain", &"skill_resource_full_color",
 	&"skill_resource_damage_gain_multiplier", &"skill_resource_decay_delay", &"skill_resource_decay_rate",
 	&"attack_interval_display", &"transform_after_hits", &"revert_after_hits",
@@ -160,6 +162,7 @@ const CARD_FIELDS := [
 ]
 const AUDIO_FIELDS := [&"team_overrides", &"attack_launch_until_impact", &"attack_hit_once_by_segment", &"attack_swing_lead_time", &"attack_swing", &"attack_hit", &"attack_launch_by_segment", &"attack_hit_by_segment", &"empowered_hit", &"first_strike_hit", &"attack_swing_volume_db", &"attack_hit_volume_db", &"events"]
 const VISUAL_ANIMATION_FIELDS := [
+	&"attack_stance_duration", &"attack_idle", &"attack_idle_enter", &"attack_sheath_idle", &"attack_sheath_move",
 	&"stealth_idle", &"stealth_move", &"active_buff_attack",
 	&"stun_enter", &"stun_loop", &"stun_exit", &"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"charge_move", &"terrain_move", &"full_resource_move",
 	&"move_cycle", &"attack", &"attack_enter", &"attack_retarget_enter", &"attack_loop",
@@ -171,6 +174,7 @@ const VISUAL_ANIMATION_FIELDS := [
 	&"visual_action_durations", &"transitions", &"transition_blends", &"clip_blends",
 ]
 const ACTIVE_SKILL_FIELDS := [
+	&"requires_full_resource",
 	&"charge_attack_range", &"charge_dash_speed", &"charge_landing_side", &"charge_impact_radius", &"charge_visual_duration", &"ignore_blind",
 	&"damage_per_dodge", &"max_dodges",
 	&"strike_type",

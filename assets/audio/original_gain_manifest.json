@@ -63897,6 +63897,629 @@
       "sha256": "ea59cae01f618e3785218c381e8bd1a7659d988837c4d221310564ca5920ab41",
       "post_gain_db": 0.0,
       "runtime_volume_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattack2_oncast_r1.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttack2_OnCast",
+      "event_id": 4149456748,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttack2_OnCast {r1}.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack2_OnCast {r1}.txtp",
+      "media_ids": [
+        640578572,
+        658596097,
+        676475569
+      ],
+      "duration": 0.8337,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "50f3633a9a0d62369750595b0d9fb12093e04f2dd732fc9f843452a1e611c333",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttack_OnCast",
+          "event_id": 2642289492,
+          "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttack_OnCast {r1} {d}.wav",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack_OnCast {r1} {d}.txtp",
+          "media_ids": [
+            640578572,
+            658596097,
+            676475569
+          ],
+          "duration": 0.8337,
+          "processing": "vgmstream-cli -i; source event gain retained",
+          "sha256": "50f3633a9a0d62369750595b0d9fb12093e04f2dd732fc9f843452a1e611c333",
+          "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattack_oncast_r1_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattack2_oncast_r2.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttack2_OnCast",
+      "event_id": 4149456748,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttack2_OnCast {r2}.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack2_OnCast {r2}.txtp",
+      "media_ids": [
+        640578572,
+        658596097,
+        676475569
+      ],
+      "duration": 0.8132,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "1e5d5399a012441b1dde95eebe42f4511e631f5ebcad4bab7d4d3e0f49f0c49b",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttack_OnCast",
+          "event_id": 2642289492,
+          "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttack_OnCast {r2} {d}.wav",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack_OnCast {r2} {d}.txtp",
+          "media_ids": [
+            640578572,
+            658596097,
+            676475569
+          ],
+          "duration": 0.8132,
+          "processing": "vgmstream-cli -i; source event gain retained",
+          "sha256": "1e5d5399a012441b1dde95eebe42f4511e631f5ebcad4bab7d4d3e0f49f0c49b",
+          "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattack_oncast_r2_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattack2_oncast_r3.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttack2_OnCast",
+      "event_id": 4149456748,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttack2_OnCast {r3}.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack2_OnCast {r3}.txtp",
+      "media_ids": [
+        640578572,
+        658596097,
+        676475569
+      ],
+      "duration": 0.779,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "598a66f6806591e068bf8be8699084049c0b81407335053f635bd83412090c1a",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttack_OnCast",
+          "event_id": 2642289492,
+          "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttack_OnCast {r3} {d}.wav",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack_OnCast {r3} {d}.txtp",
+          "media_ids": [
+            640578572,
+            658596097,
+            676475569
+          ],
+          "duration": 0.779,
+          "processing": "vgmstream-cli -i; source event gain retained",
+          "sha256": "598a66f6806591e068bf8be8699084049c0b81407335053f635bd83412090c1a",
+          "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattack_oncast_r3_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattackmelee2_oncast_r1.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttackMelee2_OnCast",
+      "event_id": 2903856526,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttackMelee2_OnCast {r1}.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttackMelee2_OnCast {r1}.txtp",
+      "media_ids": [
+        13012876,
+        212256786,
+        909407961
+      ],
+      "duration": 0.8136,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "a639c15831425b542c7e350147a386a33abf08bfcfca632a1bea8af8ebdc8782",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttackMelee_OnCast",
+          "event_id": 2982931318,
+          "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttackMelee_OnCast {r1} {d}.wav",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttackMelee_OnCast {r1} {d}.txtp",
+          "media_ids": [
+            13012876,
+            212256786,
+            909407961
+          ],
+          "duration": 0.8136,
+          "processing": "vgmstream-cli -i; source event gain retained",
+          "sha256": "a639c15831425b542c7e350147a386a33abf08bfcfca632a1bea8af8ebdc8782",
+          "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattackmelee_oncast_r1_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattackmelee2_oncast_r2.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttackMelee2_OnCast",
+      "event_id": 2903856526,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttackMelee2_OnCast {r2}.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttackMelee2_OnCast {r2}.txtp",
+      "media_ids": [
+        13012876,
+        212256786,
+        909407961
+      ],
+      "duration": 0.824,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "7ee99e6e2f7aeb3dabc0012a55934f2b04d8b6fa3ab582766012da95d4fc0731",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttackMelee_OnCast",
+          "event_id": 2982931318,
+          "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttackMelee_OnCast {r2} {d}.wav",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttackMelee_OnCast {r2} {d}.txtp",
+          "media_ids": [
+            13012876,
+            212256786,
+            909407961
+          ],
+          "duration": 0.824,
+          "processing": "vgmstream-cli -i; source event gain retained",
+          "sha256": "7ee99e6e2f7aeb3dabc0012a55934f2b04d8b6fa3ab582766012da95d4fc0731",
+          "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattackmelee_oncast_r2_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattackmelee2_oncast_r3.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttackMelee2_OnCast",
+      "event_id": 2903856526,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttackMelee2_OnCast {r3}.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttackMelee2_OnCast {r3}.txtp",
+      "media_ids": [
+        13012876,
+        212256786,
+        909407961
+      ],
+      "duration": 0.7694,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "7f4d3a13a3c6c1a780829cabdc2bffb26abb7810d4c1e941cdd892837523ed85",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttackMelee_OnCast",
+          "event_id": 2982931318,
+          "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttackMelee_OnCast {r3} {d}.wav",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttackMelee_OnCast {r3} {d}.txtp",
+          "media_ids": [
+            13012876,
+            212256786,
+            909407961
+          ],
+          "duration": 0.7694,
+          "processing": "vgmstream-cli -i; source event gain retained",
+          "sha256": "7f4d3a13a3c6c1a780829cabdc2bffb26abb7810d4c1e941cdd892837523ed85",
+          "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattackmelee_oncast_r3_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattack2_onhit_r1.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttack2_OnHit",
+      "event_id": 2629864196,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttack2_OnHit {r1}.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack2_OnHit {r1}.txtp",
+      "media_ids": [
+        218708644,
+        232754450,
+        325051733
+      ],
+      "duration": 0.532,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "f36798c52f09fa92bd634a40f74e1b7782b876782298051d2ea0e98f296acd0d",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttack_OnHit",
+          "event_id": 206559740,
+          "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttack_OnHit {r1} {d}.wav",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack_OnHit {r1} {d}.txtp",
+          "media_ids": [
+            218708644,
+            232754450,
+            325051733
+          ],
+          "duration": 0.532,
+          "processing": "vgmstream-cli -i; source event gain retained",
+          "sha256": "f36798c52f09fa92bd634a40f74e1b7782b876782298051d2ea0e98f296acd0d",
+          "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattack_onhit_r1_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattack2_onhit_r2.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttack2_OnHit",
+      "event_id": 2629864196,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttack2_OnHit {r2}.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack2_OnHit {r2}.txtp",
+      "media_ids": [
+        218708644,
+        232754450,
+        325051733
+      ],
+      "duration": 0.5816,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "91b12fcc506606e0836e5da339afce8024b220cdac8621846c9e58bfd499868f",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttack_OnHit",
+          "event_id": 206559740,
+          "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttack_OnHit {r2} {d}.wav",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack_OnHit {r2} {d}.txtp",
+          "media_ids": [
+            218708644,
+            232754450,
+            325051733
+          ],
+          "duration": 0.5816,
+          "processing": "vgmstream-cli -i; source event gain retained",
+          "sha256": "91b12fcc506606e0836e5da339afce8024b220cdac8621846c9e58bfd499868f",
+          "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattack_onhit_r2_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattack2_onhit_r3.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttack2_OnHit",
+      "event_id": 2629864196,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttack2_OnHit {r3}.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack2_OnHit {r3}.txtp",
+      "media_ids": [
+        218708644,
+        232754450,
+        325051733
+      ],
+      "duration": 0.5274,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "85777c133777192f710a9db004e2e42992b7c0c06c8c8bfcdc26123f6eff2fd4",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttack_OnHit",
+          "event_id": 206559740,
+          "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttack_OnHit {r3} {d}.wav",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack_OnHit {r3} {d}.txtp",
+          "media_ids": [
+            218708644,
+            232754450,
+            325051733
+          ],
+          "duration": 0.5274,
+          "processing": "vgmstream-cli -i; source event gain retained",
+          "sha256": "85777c133777192f710a9db004e2e42992b7c0c06c8c8bfcdc26123f6eff2fd4",
+          "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattack_onhit_r3_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattackmelee2_onhit_1559186049_1153642577_r1.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttackMelee2_OnHit",
+      "event_id": 2365822682,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttackMelee2_OnHit [1559186049=1153642577] {r1}.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttackMelee2_OnHit [1559186049=1153642577] {r1}.txtp",
+      "media_ids": [
+        112151358,
+        348581197,
+        558361823
+      ],
+      "duration": 0.794,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "3cf1f1fc525345304e6901fc6775b783752f58493608a6301137adcac12b947c",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttackMelee_OnHit",
+          "event_id": 1882004242,
+          "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttackMelee_OnHit [1559186049=1153642577] {r1} {d}.wav",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttackMelee_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+          "media_ids": [
+            112151358,
+            348581197,
+            558361823
+          ],
+          "duration": 0.794,
+          "processing": "vgmstream-cli -i; source event gain retained",
+          "sha256": "3cf1f1fc525345304e6901fc6775b783752f58493608a6301137adcac12b947c",
+          "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattackmelee_onhit_1559186049_1153642577_r1_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattackmelee2_onhit_1559186049_1153642577_r2.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttackMelee2_OnHit",
+      "event_id": 2365822682,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttackMelee2_OnHit [1559186049=1153642577] {r2}.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttackMelee2_OnHit [1559186049=1153642577] {r2}.txtp",
+      "media_ids": [
+        112151358,
+        348581197,
+        558361823
+      ],
+      "duration": 0.7846,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "807283fccf125747dc4eca93a0d81ce7ba6de8269a742334e5f19dd510d85a2c",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttackMelee_OnHit",
+          "event_id": 1882004242,
+          "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttackMelee_OnHit [1559186049=1153642577] {r2} {d}.wav",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttackMelee_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+          "media_ids": [
+            112151358,
+            348581197,
+            558361823
+          ],
+          "duration": 0.7846,
+          "processing": "vgmstream-cli -i; source event gain retained",
+          "sha256": "807283fccf125747dc4eca93a0d81ce7ba6de8269a742334e5f19dd510d85a2c",
+          "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattackmelee_onhit_1559186049_1153642577_r2_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattackmelee2_onhit_1559186049_1153642577_r3.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttackMelee2_OnHit",
+      "event_id": 2365822682,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttackMelee2_OnHit [1559186049=1153642577] {r3}.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttackMelee2_OnHit [1559186049=1153642577] {r3}.txtp",
+      "media_ids": [
+        112151358,
+        348581197,
+        558361823
+      ],
+      "duration": 0.7412,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "f4e44b3bf42b305aace28c6b4a24aa8140c26b21cd1c7b4e15a68e35a663e92c",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttackMelee_OnHit",
+          "event_id": 1882004242,
+          "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraBasicAttackMelee_OnHit [1559186049=1153642577] {r3} {d}.wav",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttackMelee_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+          "media_ids": [
+            112151358,
+            348581197,
+            558361823
+          ],
+          "duration": 0.7412,
+          "processing": "vgmstream-cli -i; source event gain retained",
+          "sha256": "f4e44b3bf42b305aace28c6b4a24aa8140c26b21cd1c7b4e15a68e35a663e92c",
+          "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattackmelee_onhit_1559186049_1153642577_r3_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirar_oncast.wav",
+      "event": "Play_sfx_Samira_SamiraR_OnCast",
+      "event_id": 3444466532,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraR_OnCast.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraR_OnCast.txtp",
+      "media_ids": [
+        465542607
+      ],
+      "duration": 2.1137,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "713d497ec82d517f5dc7e9c343a4080ee03d5e3bfb9e5aa92d71202bd3735430",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirar_onbuffactivate.wav",
+      "event": "Play_sfx_Samira_SamiraR_OnBuffActivate",
+      "event_id": 2624194997,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraR_OnBuffActivate.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraR_OnBuffActivate.txtp",
+      "media_ids": [
+        885394566
+      ],
+      "duration": 2.6988,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "2cc3385e148a90b223f38357dd4b9af0fb4b4e42b4d94c02065b5041c07f1410",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirarreadybuff_onbuffactivate_m.wav",
+      "event": "Play_sfx_Samira_SamiraRReadyBuff_OnBuffActivate",
+      "event_id": 1355485853,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_SamiraRReadyBuff_OnBuffActivate {m}.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraRReadyBuff_OnBuffActivate {m}.txtp",
+      "media_ids": [
+        412985637,
+        642198598
+      ],
+      "duration": 2.3572,
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "sha256": "0b8dbb87949facc37b96efff7be00374fb7b82fe037e45fa85646f1c6f057cd6",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_death3d_cast.wav",
+      "event": "Play_sfx_Samira_Death3D_cast",
+      "event_id": 4010718729,
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/event_wav/Play_sfx_Samira_Death3D_cast.wav",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_Death3D_cast.txtp",
+      "media_ids": [
+        865573891
+      ],
+      "duration": 1.5,
+      "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+      "sha256": "20f27d89d5f738bc506f5960a9f31c1fb319f4f340bf7251c2d0f551d85f1150",
+      "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+      "death_envelope": {
+        "source_duration": 3.5585034013605443,
+        "source_sha256": "754e7eaa06e9ccacc9b616ed6d3623b3ae440d15038a23fdb006cf5148e2078f",
+        "keep_seconds": 1.5,
+        "fade_start_seconds": 1.0,
+        "fade_seconds": 0.5,
+        "curve": "linear_amplitude"
+      },
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/samira/deploy_voice_1.wav",
+      "event": "Play_vo_Samira_Move2DStandard",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/deploy-voice/txtp/Play_vo_Samira_Move2DStandard {r5}.txtp",
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/deploy-voice/redecoded-r5.wav",
+      "processing": "wwiser -gv=0dB; vgmstream float; PCM16, no gain adjustment",
+      "sha256": "a07bbde040d9f43c59bb7208c3be744f112c419d90b03147820c69df75985a1e",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "transcript": "啊，一朵沙漠中怒放的玫瑰。",
+      "transcript_verification": "public transcript + local ASR; subjective audition pending"
+    },
+    {
+      "file": "assets/audio/units/samira/deploy_voice_2.wav",
+      "event": "Play_vo_Samira_Move2DStandard",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/deploy-voice/txtp/Play_vo_Samira_Move2DStandard {r22}.txtp",
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/deploy-voice/redecoded-r22.wav",
+      "processing": "wwiser -gv=0dB; vgmstream float; PCM16, no gain adjustment",
+      "sha256": "884139cb3af708107d3cc5ad69de52f6e14de21f56061dd2b63ba55b2ca5292f",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "transcript": "危险怕我才对。",
+      "transcript_verification": "public transcript + local ASR; subjective audition pending"
+    },
+    {
+      "file": "assets/audio/units/samira/deploy_voice_3.wav",
+      "event": "Play_vo_Samira_Move2DStandard",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/deploy-voice/txtp/Play_vo_Samira_Move2DStandard {r12}.txtp",
+      "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/deploy-voice/wav/Play_vo_Samira_Move2DStandard {r12}.wav",
+      "processing": "wwiser -gv=0dB; vgmstream float; PCM16, no gain adjustment",
+      "sha256": "5c654434323a9fed6a55fa9c561ada9841ab10bf55936987ed7f711dbcb53cf6",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattack2_onmissilelaunch_r1.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttack2_OnMissileLaunch",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack2_OnMissileLaunch {r1}.txtp",
+      "processing": "wwiser -gv=0dB; vgmstream fresh decode, no gain adjustment",
+      "sha256": "869563122d260b90ce029769a69b12565f5ebe8b12bdfedd2e0604a6702663e5",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttack_OnMissileLaunch",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack_OnMissileLaunch {r1} {d}.txtp",
+          "processing": "wwiser -gv=0dB; vgmstream fresh decode, no gain adjustment",
+          "sha256": "869563122d260b90ce029769a69b12565f5ebe8b12bdfedd2e0604a6702663e5",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattack_onmissilelaunch_r1_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattack2_onmissilelaunch_r2.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttack2_OnMissileLaunch",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack2_OnMissileLaunch {r2}.txtp",
+      "processing": "wwiser -gv=0dB; vgmstream fresh decode, no gain adjustment",
+      "sha256": "bf5d2e3e35b3f7bc44f95aab7bac1b6c78efb2fe68b4a6ec5321259a8a5e6b50",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttack_OnMissileLaunch",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack_OnMissileLaunch {r2} {d}.txtp",
+          "processing": "wwiser -gv=0dB; vgmstream fresh decode, no gain adjustment",
+          "sha256": "bf5d2e3e35b3f7bc44f95aab7bac1b6c78efb2fe68b4a6ec5321259a8a5e6b50",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattack_onmissilelaunch_r2_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/samira/play_sfx_samira_samirabasicattack2_onmissilelaunch_r3.wav",
+      "event": "Play_sfx_Samira_SamiraBasicAttack2_OnMissileLaunch",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack2_OnMissileLaunch {r3}.txtp",
+      "processing": "wwiser -gv=0dB; vgmstream fresh decode, no gain adjustment",
+      "sha256": "5888d50625850b3b2f844644582e932727362f09a9d5c740e38299e86c27c828",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": 0.0,
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_Samira_SamiraBasicAttack_OnMissileLaunch",
+          "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠玫瑰/audio-source/samira/txtp/Play_sfx_Samira_SamiraBasicAttack_OnMissileLaunch {r3} {d}.txtp",
+          "processing": "wwiser -gv=0dB; vgmstream fresh decode, no gain adjustment",
+          "sha256": "5888d50625850b3b2f844644582e932727362f09a9d5c740e38299e86c27c828",
+          "post_gain_db": 0.0,
+          "runtime_volume_db": 0.0,
+          "former_filename": "play_sfx_samira_samirabasicattack_onmissilelaunch_r3_d.wav"
+        }
+      ]
     }
   ]
 }

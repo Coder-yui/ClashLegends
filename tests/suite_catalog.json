@@ -656,5 +656,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "SamiraSuite",
+    "script": "res://tests/suites/cards/samira_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "cards"
   }
 ]
