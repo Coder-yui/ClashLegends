@@ -268,6 +268,8 @@ var shield_timer: float:
 var bleeding := BleedState.new()
 var bleed_definition: Dictionary = {}
 var empowered_execute: Dictionary = {}
+var death_burst_execute_ratio := 0.0
+var _death_burst_done := false
 var buffs := StatusInstances.new()
 var _structure_assists: Dictionary = {}
 var target_protection := TargetProtectionState.new()
@@ -3370,6 +3372,9 @@ func _die(trigger_death_effect: bool = false) -> void:
 		_death_reward_paid = true
 		if not _death_reward_suppressed:
 			battle_context.grant_team_elixir(1 - team, float(_base_form_stats.get("death_enemy_elixir", 0.0)), self)
+	if is_true_death() and not _in_client_mode() and battle_context != null and not _death_burst_done and float(_base_form_stats.get("death_burst_radius", 0.0)) > 0.0:
+		_death_burst_done = true
+		battle_context.burst_on_death(self)
 	if is_true_death() and not _in_client_mode() and battle_context != null and float(_base_form_stats.get("death_heal_radius", 0.0)) > 0.0:
 		battle_context.begin_death_heal(self, _base_form_stats)
 	if is_true_death() and not _in_client_mode() and battle_context != null and buffs.remaining(&"death_spawn") > 0.0 and not active_death_spawn_id.is_empty():

@@ -424,6 +424,10 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 			errors.append("%s.%s: 必须为非负有限数值" % [label, field])
 	if float(stats.get("on_hit_max_health_ratio", 0.0)) > 1.0:
 		errors.append("%s.on_hit_max_health_ratio: 必须 <= 1" % label)
+	if stats.has("death_burst_radius") or stats.has("death_burst_damage") or stats.has("death_burst_reward"):
+		for field in ["death_burst_radius", "death_burst_damage", "death_burst_reward"]:
+			if float(stats.get(field, 0.0)) <= 0.0: errors.append(label + "." + field + ": 必须为正数")
+		if not bool(stats.get("is_building", false)): errors.append(label + ": 死亡爆炸需要建筑")
 	if stats.has("death_enemy_elixir") and (not (stats.death_enemy_elixir is float or stats.death_enemy_elixir is int) or not is_finite(float(stats.death_enemy_elixir)) or float(stats.death_enemy_elixir) <= 0.0):
 		errors.append(label + ".death_enemy_elixir: 必须为正有限数")
 	if stats.has("structure_mend_per_second"):
@@ -1280,6 +1284,11 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 		for bool_field in [&"ignore_movement_slow", &"ignore_attack_speed_slow"]:
 			if skill.has(bool_field) and typeof(skill.get(bool_field)) != TYPE_BOOL:
 				errors.append("%s.%s: 必须是 bool" % [label, bool_field])
+		if String(skill.get("kind", "")) == "detonate":
+			if float(skill.get("impact_delay", 0.0)) > 0.0 or float(skill.get("cast_duration", 0.0)) > 0.0 or float(stats.get("death_burst_radius", 0.0)) <= 0.0 or float(skill.get("execute_health_ratio", 0.0)) <= 0.0 or float(skill.get("execute_health_ratio", 0.0)) >= 1.0:
+				errors.append(label + ": 引爆需要死亡爆炸及(0,1)内的斩杀阈值")
+		elif skill.has("execute_health_ratio"):
+			errors.append(label + ": 斩杀阈值仅用于引爆")
 		if skill.has("impact_visual_shape"):
 			if String(skill.get("kind", "")) not in ["frontal", "dual_form", "nova"]: errors.append("%s.impact_visual_shape: 仅适用于即时范围命中" % label)
 			if not skill.impact_visual_shape is String or String(skill.impact_visual_shape).is_empty(): errors.append("%s.impact_visual_shape: 必须为非空 String" % label)

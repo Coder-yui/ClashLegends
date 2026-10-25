@@ -92,3 +92,4 @@ python3 tools/demos/pantheon_review_media.py --input /本次输出/pantheon-revi
 莎弥拉持枪/持刀待机、跑步、收武器与切换审核：`samira_review.gd -- --stance-review`，正式工作台出牌后以确定性表现状态驱动双方四个模型，输出截图与片段/时间JSON；不将此演示作为权威索敌验证。
 
 莎弥拉R结束衔接审核：`samira_review.gd -- --r-exit-review`，以同一表现预览场景检查双方移动/静止退出R，输出截图和片段进度JSON。
+- `powder_keg_review.gd`：双阵营火药桶/木桩尺寸、Timer受击、主动与普通爆炸、金币及实际混音截图录音。

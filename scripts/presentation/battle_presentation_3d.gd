@@ -23,6 +23,7 @@ var skills: RefCounted
 var _sion_w_effect: Node3D
 var _scuttle_effect: Node3D
 var _aftershock_effect: Node3D
+var _powder_keg_effect: Node3D
 var _malphite_effect: Node3D
 var _rewind_effect: Node3D
 var _riftwalk_effect: Node3D
@@ -52,6 +53,8 @@ func _process(delta: float) -> void:
 		_malphite_effect.sync_effects(skills, _camera)
 	if _scuttle_effect != null and skills != null:
 		_scuttle_effect.sync_effects(skills, _camera, viewer_team)
+	if _powder_keg_effect != null and skills != null:
+		_powder_keg_effect.sync_effects(skills, _camera)
 	if _aftershock_effect != null and skills != null:
 		_aftershock_effect.sync_effects(skills, _camera)
 	if _riftwalk_effect != null and skills != null:
@@ -174,6 +177,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_sion_w_effect)
 	_scuttle_effect = preload("res://scripts/presentation/scuttle_effect_3d.gd").new()
 	_world_root.add_child(_scuttle_effect)
+	_powder_keg_effect = preload("res://scripts/presentation/powder_keg_effect_3d.gd").new()
+	_world_root.add_child(_powder_keg_effect)
 	_aftershock_effect = preload("res://scripts/presentation/aftershock_effect_3d.gd").new()
 	_world_root.add_child(_aftershock_effect)
 	_malphite_effect = preload("res://scripts/presentation/malphite_effect_3d.gd").new()

@@ -1,0 +1,70 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gangplank.wad.client",
+  "system": "Characters/Gangplank/Skins/Skin0/Particles/Gangplank_Base_E_Explosion",
+  "raw_sha256": "885b06947ce3902e54a5e5e5d2452c4fa9149e67079462b379dfe32d9c48f030",
+  "fps": 120,
+  "duration": 2.0,
+  "dependencies": [
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/gangplank_base_e_barrel_smoke.tex",
+      "sha256": "4c6a1968655d4a70ad5bd3e046e276b7ef39a1779cb16c93fc2ebbeec425b622"
+    },
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/common_distort-soft-shockwave.tex",
+      "sha256": "38e97daffd711e55af080f42a51f1b4326b1706b6b9b19d36d40c7010e156e19"
+    },
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/gangplank_base_e_crit_woodpieces.tex",
+      "sha256": "dcdbd5712860563799e2e07ed78170765ac4ebaa7b6f64e68190233f39887121"
+    },
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/gangplank_base_outerring_aoe_mesh.scb",
+      "sha256": "ed53fdab99c935ca2d836d7bf5fa3a7284d4b1ce31bdaeee79598def2d255dc7"
+    },
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/gangplank_base_e_barrel_image.tex",
+      "sha256": "bede4f379f90c2d6f385ce1ee2d40009da824e4d38d7d25091d1eec07a09f1ed"
+    },
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/gangplank_base_e_barrel_lightflash.tex",
+      "sha256": "d9c84f2930fe34938194316d412c48c38c521e547bf59fb4ee263fa3b1a2be99"
+    },
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/common_fb_explosion_centerflare.tex",
+      "sha256": "2ca586cafd38d0ae09802aef3efab18a2a3b452c06700b2f42c115830add1ca9"
+    },
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/gangplank_base_aoe_outerring_tex.tex",
+      "sha256": "a743bbde6d9f7abc31dfa2a000c1cf44a227895b1b0ac9eccc103768df6064c6"
+    },
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/gangplank_base_e_ground_shadow.tex",
+      "sha256": "4b331c5d9812c2e8be5b799fbc56dc2824c76a0b208e9fe8537b4842c6e9c16b"
+    },
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/common_fb_explosion_smoke_mult.tex",
+      "sha256": "a8f27368dd495db6702c16d9a22ba107e02d2cc8985738520f0a35db0c7b1531"
+    },
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/common_sru_explosion_smoke.tex",
+      "sha256": "9bf643611aa534884cf768a23213fefbda36c46c87d42a0e04d777a6abc5793b"
+    },
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/gangplank_base_e_barrel_spikes.tex",
+      "sha256": "fe113c637bec5320a77e3a4fcee3dc34ef2aa4204a465e6233323660e36ad084"
+    },
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/common_fb_brazierfire_ash_01.tex",
+      "sha256": "f83a9e6834f11d60a473269f91c01ba81477ccf564827e8844ca335154573eee"
+    },
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/common_aura_self.tex",
+      "sha256": "41241eafa700d7aa8a280bc7d943c090005324d146d33777a5b8b4bda3ab977b"
+    },
+    {
+      "path": "assets/characters/gangplank/skins/base/particles/common_color-rampdown32.tex",
+      "sha256": "6251a66108ce6a5ef1c816d2e4632898bf7f28cb24dd8949a89a4ff48d9d3430"
+    }
+  ],
+  "runtime_sample_sha256": "f2c2b1affd30daa37b82027abee5e61cd9980299bedc735e492d26c0cacbcd0a"
+}

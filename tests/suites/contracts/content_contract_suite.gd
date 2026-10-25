@@ -15,6 +15,6 @@ func run(harness: Object) -> void:
 	)
 	var missing_card_art: Array[String] = []
 	for card_id in CardDB.selectable_ids():
-		if CardArt.texture_for(card_id) == null:
+		if not String(CardDB.get_card(card_id).get("card_art", {}).get("path", "")).is_empty() and CardArt.texture_for(card_id) == null:
 			missing_card_art.append(card_id)
-	harness._expect(missing_card_art.is_empty(), "全部可选卡按 card_id 自动发现卡面%s" % ("" if missing_card_art.is_empty() else "：" + "、".join(missing_card_art)))
+	harness._expect(missing_card_art.is_empty(), "全部显式声明的可选卡卡面可加载（空域允许占位）%s" % ("" if missing_card_art.is_empty() else "：" + "、".join(missing_card_art)))

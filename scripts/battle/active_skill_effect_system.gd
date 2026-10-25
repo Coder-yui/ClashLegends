@@ -150,6 +150,9 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 	match StringName(skill.get("kind", "")):
 		&"movement_strike":
 			source.movement_strike.arm(skill)
+		&"detonate":
+			source.death_burst_execute_ratio = float(skill.execute_health_ratio)
+			source.sacrifice_without_reward()
 		&"self_sacrifice":
 			source.sacrifice_without_reward()
 		&"effect_shield":
@@ -1042,3 +1045,34 @@ func clear() -> void:
 	_next_result_id = 1
 	expanding_shockwaves.clear()
 	continuous_area_effects.clear()
+
+func burst_on_death(source: Unit) -> void:
+	var stats: Dictionary = source._base_form_stats
+	var radius := float(stats.death_burst_radius)
+	var resolver: CombatResolver = _controller.combat_service()
+	assert(not resolver.collecting and not resolver.committing)
+	_presentation.present_fixed_area(source.global_position, radius, radius, 2.0, source.team, &"powder_keg_burst")
+	resolver.begin_batch(_controller.get_authoritative_server_tick(), "death_burst")
+	var hits: Array[Dictionary] = []
+	for target in _controller.get_tree().get_nodes_in_group("combatants"):
+		if target == source or not is_instance_valid(target) or target.hp <= 0.0 or target.team == source.team: continue
+		if target is Unit and target.is_air: continue
+		if target.global_position.distance_to(source.global_position) > radius + target.body_radius: continue
+		var receipt := resolver.resolve_damage_hit(target, float(stats.death_burst_damage), source, source.team, source.global_position)
+		hits.append({"target": target, "receipt": receipt})
+	resolver.defer_effect(func():
+		for hit in hits:
+			var target = hit.target
+			if not hit.receipt.landed or float(hit.receipt.health_lost) <= 0.0: continue
+			if not target is Unit or target.is_building or target.hp <= 0.0: continue
+			if source.death_burst_execute_ratio <= 0.0 or target.hp >= target.max_hp * source.death_burst_execute_ratio: continue
+			if target.buffs.remaining(&"undying") > 0.0: continue
+			# 斩杀绕过护盾/减伤，但保留死亡替身、复生及死亡召唤规则。
+			target._die(true))
+	resolver.defer_benefit(func():
+		for hit in hits:
+			var target = hit.target
+			if hit.receipt.landed and float(hit.receipt.health_lost) > 0.0 and target.hp <= 0.0 and (not target is Unit or target.is_true_death()):
+				source.battle_context.grant_team_elixir(source.team, float(stats.death_burst_reward), source)
+				break)
+	resolver.commit_batch()

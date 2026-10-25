@@ -670,5 +670,12 @@
     "method": "run",
     "scene": "none",
     "group": "cards"
+  },
+  {
+    "id": "PowderKegSuite",
+    "script": "res://tests/suites/cards/powder_keg_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

@@ -11,7 +11,12 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	# 固定结界仅读取权威/快照状态；不使用渲染时间改变位置、半径或有效期。
 	for actor in get_tree().get_nodes_in_group("combatants"):
-		if not actor is Unit or actor.hp <= 0.0 or not actor.target_protection.active(): continue
+		if not actor is Unit or actor.hp <= 0.0: continue
+		var burst_radius := float(actor._base_form_stats.get("death_burst_radius", 0.0))
+		if burst_radius > 0.0 and actor.visible_to_local_player():
+			var edge := Color(0.25, 0.65, 1.0, 0.72) if actor.team == 0 else Color(1.0, 0.28, 0.25, 0.72)
+			draw_arc(actor.global_position, burst_radius, 0.0, TAU, 96, edge, 1.8, true)
+		if not actor.target_protection.active(): continue
 		var protection: TargetProtectionState = actor.target_protection
 		var center: Vector2 = protection.center
 		var radius: float = protection.radius
@@ -165,7 +170,7 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 		draw_arc(coin, 6.0, 0.0, TAU, 24, Color(0.67, 0.37, 0.04, alpha), 1.5, true)
 		draw_line(coin + Vector2(0.0, -3.5), coin + Vector2(0.0, 3.5), Color(1.0, 0.94, 0.61, alpha), 2.0, true)
 		return
-	if shape in [&"malphite_slam", &"scuttle_void_shrine", &"scuttle_shrine", &"randuin", &"counter_strike", &"counter_strike_hit", &"aftershock", &"rewind_hit", &"rewind_appear", &"rewind_vanish", &"riftwalk_appear", &"riftwalk_vanish"]: return # 由3D原版余震粒子播放器消费。
+	if shape in [&"powder_keg_burst", &"malphite_slam", &"scuttle_void_shrine", &"scuttle_shrine", &"randuin", &"counter_strike", &"counter_strike_hit", &"aftershock", &"rewind_hit", &"rewind_appear", &"rewind_vanish", &"riftwalk_appear", &"riftwalk_vanish"]: return # 由3D原版余震粒子播放器消费。
 	if shape == &"trapezoid" and source is Unit and source.card_id == "sett": return
 	if shape == &"shield_explosion": return # 3D 原版 W 粒子读取同一表现事件。
 

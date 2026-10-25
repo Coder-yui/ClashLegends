@@ -26,6 +26,7 @@
 
 | 定义 / 正文（含形态） | 当前机制与边界重点 | 动画 / 音频 |
 | --- | --- | --- |
+| `powder_keg` · [火药桶](../units/powder_keg.md) | 死亡爆炸、单次击杀金币、主动伤后斩杀 | [动画](../units/animations/powder_keg.md) · [声音](../units/audio/powder_keg.md) · [特效](../units/effects/powder_keg.md) |
 | `ekko` · [时间刺客](../units/ekko.md) | 同目标第三击、历史回溯与不可选中 | [动作](../units/animations/ekko.md) · [声音](../units/audio/ekko.md) · [特效](../units/effects/ekko.md) |
 | `samira` · [沙漠玫瑰](../units/samira.md) | 枪刀距离切换、命中评分、满分持续范围技能 | [动作](../units/animations/samira.md) · [声音](../units/audio/samira.md) · [特效](../units/effects/samira.md) |
 | `hecarim` · [战争之影](../units/hecarim.md) | 自身圆形旋斩、3格距离蓄势、2格突进眩晕、实际生命伤害吸血领域 | [动作](../units/animations/hecarim.md) · [声音](../units/audio/hecarim.md) · [特效](../units/effects/hecarim.md) |

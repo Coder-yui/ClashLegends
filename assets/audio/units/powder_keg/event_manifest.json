@@ -1,0 +1,245 @@
+[
+  {
+    "file": "assets/audio/units/powder_keg/death_1.wav",
+    "sha256": "d2326d297e000e0199f45087a525a4eb8418929a50d0a7bf4d808df0cf3495b6",
+    "source_events": [
+      {
+        "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/火药桶/audio/gangplank/txtp/gangplank_base_sfx_events-0274-event {r1}.txtp",
+        "txtp_sha256": "33f49751e0406f9d4ee4b3f1e29f64b36290cd660f3d485ea149ab1f0ed6ea2b",
+        "event_ids": [
+          "3466163195"
+        ]
+      }
+    ],
+    "processing": {
+      "filters": [
+        "atrim=0:1.5",
+        "afade=t=out:st=1.35:d=0.15"
+      ],
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "sample_rate": 44100,
+      "channels": 1
+    },
+    "duration": 1.5,
+    "verified_by_listening": false,
+    "cue": "death",
+    "source_note": "事件ID 3466163195，FNV核对 Play_sfx_Gangplank_GangplankEBarrelExplosionSound_buffcast；保留三个随机变体"
+  },
+  {
+    "file": "assets/audio/units/powder_keg/death_2.wav",
+    "sha256": "1e480e902cdb1e58911d61115c558ba914b9e4ac57717a823d0212a2d0f88194",
+    "source_events": [
+      {
+        "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/火药桶/audio/gangplank/txtp/gangplank_base_sfx_events-0274-event {r2}.txtp",
+        "txtp_sha256": "0fde38dfc191c8b391de82a924d1807be5093a7e9bfb11558a052f3d5d4146d4",
+        "event_ids": [
+          "3466163195"
+        ]
+      }
+    ],
+    "processing": {
+      "filters": [
+        "atrim=0:1.5",
+        "afade=t=out:st=1.35:d=0.15"
+      ],
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "sample_rate": 44100,
+      "channels": 1
+    },
+    "duration": 1.5,
+    "verified_by_listening": false,
+    "cue": "death",
+    "source_note": "事件ID 3466163195，FNV核对 Play_sfx_Gangplank_GangplankEBarrelExplosionSound_buffcast；保留三个随机变体"
+  },
+  {
+    "file": "assets/audio/units/powder_keg/death_3.wav",
+    "sha256": "d148cdc3b8461bde0bba128902b5bebf53056ceff3fb502e5c94a954ed63d551",
+    "source_events": [
+      {
+        "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/火药桶/audio/gangplank/txtp/gangplank_base_sfx_events-0274-event {r3}.txtp",
+        "txtp_sha256": "5f0f016334355933e88aa94abe08a1790b3a9e6ff0361534d1a2c895acf10292",
+        "event_ids": [
+          "3466163195"
+        ]
+      }
+    ],
+    "processing": {
+      "filters": [
+        "atrim=0:1.5",
+        "afade=t=out:st=1.35:d=0.15"
+      ],
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "sample_rate": 44100,
+      "channels": 1
+    },
+    "duration": 1.5,
+    "verified_by_listening": false,
+    "cue": "death",
+    "source_note": "事件ID 3466163195，FNV核对 Play_sfx_Gangplank_GangplankEBarrelExplosionSound_buffcast；保留三个随机变体"
+  },
+  {
+    "file": "assets/audio/units/powder_keg/hit_1.wav",
+    "sha256": "8078bcbb18b4f106073cc46c82c2184d97c70d9bff282ab95fbc96e5ccf5386b",
+    "source_events": [
+      {
+        "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/火药桶/audio/gangplank/txtp/gangplank_base_sfx_events-0224-event {r1}.txtp",
+        "txtp_sha256": "8ee4eb208299880724f14bafa1fa4069056bf6381db1d4e94cd5b42aee4d9240",
+        "event_ids": [
+          "1011790323"
+        ]
+      }
+    ],
+    "processing": {
+      "filters": [],
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "sample_rate": 44100,
+      "channels": 1
+    },
+    "duration": 1.0968480725623582,
+    "verified_by_listening": false,
+    "cue": "hit",
+    "source_note": "Play_sfx_Gangplank_GangplankEBarrelLife_OnBuffDeactivate；用户原版实听确认为桶掉血声音，本项目用于受击Timer反馈；非自然寿命逐帧播放"
+  },
+  {
+    "file": "assets/audio/units/powder_keg/hit_2.wav",
+    "sha256": "ae835d34d76ef090d6b5120739c3f70b3ab65b906700cd2caa4a004e6f131fa0",
+    "source_events": [
+      {
+        "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/火药桶/audio/gangplank/txtp/gangplank_base_sfx_events-0224-event {r2}.txtp",
+        "txtp_sha256": "6c6564cd34dfdd54b7e6dffb53089243a1a146251eefc70a211aba16a942d8bf",
+        "event_ids": [
+          "1011790323"
+        ]
+      }
+    ],
+    "processing": {
+      "filters": [],
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "sample_rate": 44100,
+      "channels": 1
+    },
+    "duration": 0.8466666666666667,
+    "verified_by_listening": false,
+    "cue": "hit",
+    "source_note": "Play_sfx_Gangplank_GangplankEBarrelLife_OnBuffDeactivate；用户原版实听确认为桶掉血声音，本项目用于受击Timer反馈；非自然寿命逐帧播放"
+  },
+  {
+    "file": "assets/audio/units/powder_keg/hit_3.wav",
+    "sha256": "0e5da76a84ec539e9af59bc72eea081a0d8f4c80382edff167e760f0d83176cd",
+    "source_events": [
+      {
+        "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/火药桶/audio/gangplank/txtp/gangplank_base_sfx_events-0224-event {r3}.txtp",
+        "txtp_sha256": "045c523af3635dd9c9ad08c7770f6e03b9e6b4507c0bbca7147e61f346bf9cae",
+        "event_ids": [
+          "1011790323"
+        ]
+      }
+    ],
+    "processing": {
+      "filters": [],
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "sample_rate": 44100,
+      "channels": 1
+    },
+    "duration": 0.769501133786848,
+    "verified_by_listening": false,
+    "cue": "hit",
+    "source_note": "Play_sfx_Gangplank_GangplankEBarrelLife_OnBuffDeactivate；用户原版实听确认为桶掉血声音，本项目用于受击Timer反馈；非自然寿命逐帧播放"
+  },
+  {
+    "file": "assets/audio/units/powder_keg/deploy_start_1.wav",
+    "sha256": "b8dddb6daaec06762cbe2080618b43cee368908334af61875a9d132f680e6251",
+    "source_events": [
+      {
+        "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/火药桶/audio/gangplank/txtp/Play_sfx_Gangplank_GangplankEBarrelLife_OnBuffCast {r1}.txtp",
+        "txtp_sha256": "2a4b0d1228e4e89959f84945a423018e334a5afaa693bfd845b41807bf78cd68",
+        "event_ids": [
+          "2290568732"
+        ]
+      }
+    ],
+    "processing": {
+      "filters": [],
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "sample_rate": 44100,
+      "channels": 1
+    },
+    "duration": 1.6827891156462584,
+    "verified_by_listening": false,
+    "cue": "deploy:start",
+    "source_note": "用户指定桶生命开始声用于部署，Play_sfx_Gangplank_GangplankEBarrelLife_OnBuffCast，三个随机变体"
+  },
+  {
+    "file": "assets/audio/units/powder_keg/deploy_start_2.wav",
+    "sha256": "bb3d7b5e5d77ee6cb088b5a277f0f8f3de763e28d4cd39a2259bd6c13ce5f4b7",
+    "source_events": [
+      {
+        "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/火药桶/audio/gangplank/txtp/Play_sfx_Gangplank_GangplankEBarrelLife_OnBuffCast {r2}.txtp",
+        "txtp_sha256": "3ea8661a2314e234baed18cbcd5186a79525f9088013d020b61c97f1ed5fb6fa",
+        "event_ids": [
+          "2290568732"
+        ]
+      }
+    ],
+    "processing": {
+      "filters": [],
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "sample_rate": 44100,
+      "channels": 1
+    },
+    "duration": 1.3942403628117914,
+    "verified_by_listening": false,
+    "cue": "deploy:start",
+    "source_note": "用户指定桶生命开始声用于部署，Play_sfx_Gangplank_GangplankEBarrelLife_OnBuffCast，三个随机变体"
+  },
+  {
+    "file": "assets/audio/units/powder_keg/deploy_start_3.wav",
+    "sha256": "8773db9f1e7b45b2973852c1a02486fcd66ab687f74a1313c4aa5537e2703812",
+    "source_events": [
+      {
+        "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/火药桶/audio/gangplank/txtp/Play_sfx_Gangplank_GangplankEBarrelLife_OnBuffCast {r3}.txtp",
+        "txtp_sha256": "90be96f51461c1602398138faeb3897368c36f4afd4151b090459c3f264be883",
+        "event_ids": [
+          "2290568732"
+        ]
+      }
+    ],
+    "processing": {
+      "filters": [],
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "sample_rate": 44100,
+      "channels": 1
+    },
+    "duration": 1.446984126984127,
+    "verified_by_listening": false,
+    "cue": "deploy:start",
+    "source_note": "用户指定桶生命开始声用于部署，Play_sfx_Gangplank_GangplankEBarrelLife_OnBuffCast，三个随机变体"
+  }
+]

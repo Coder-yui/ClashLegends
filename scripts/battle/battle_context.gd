@@ -44,6 +44,9 @@ func grant_team_elixir(team: int, amount: float, source: Unit = null) -> void:
 		_controller._skill_presentation.present_fixed_area(source.global_position, gained, gained, 1.2, team, &"gold_reward")
 		_controller.present_skill_projectile_hit({"card_id": source.card_id, "team": team}, "bounty", source.global_position, "gain")
 
+func burst_on_death(unit: Unit) -> void:
+	_controller._active_skill_effect_system.burst_on_death(unit)
+
 func begin_death_heal(unit: Unit, stats: Dictionary) -> void:
 	_controller._active_skill_effect_system.begin_death_heal(unit, stats)
 

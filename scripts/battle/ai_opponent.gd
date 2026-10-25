@@ -81,6 +81,13 @@ func _try_skills(reserve: float) -> void:
 
 ## 根据效果和当前收益决定是否值得消耗次数；不强制清空所有主动。
 func _skill_useful(unit: Unit, skill: Dictionary) -> bool:
+	if skill.get("kind", "") == "detonate":
+		for enemy in get_tree().get_nodes_in_group("combatants"):
+			if enemy.team == unit.team or enemy.hp <= 0.0 or not CombatInteraction.allows(enemy, unit): continue
+			if enemy is Unit and enemy.is_air: continue
+			if enemy.global_position.distance_to(unit.global_position) > float(unit._base_form_stats.death_burst_radius) + enemy.body_radius: continue
+			if unit.hp < unit.max_hp * 0.35 or enemy.hp <= float(unit._base_form_stats.death_burst_damage) + enemy.max_hp * float(skill.execute_health_ratio): return true
+		return false
 	if skill.get("kind", "") == "self_sacrifice" and unit.hp > unit.max_hp * 0.25: return false
 	if float(skill.get("heal_amount", 0.0)) > 0.0:
 		return unit.max_hp - unit.hp >= minf(float(skill.heal_amount) * 0.6, unit.max_hp * 0.25)

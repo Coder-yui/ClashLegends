@@ -198,6 +198,8 @@ static func volume_name(stats: Dictionary) -> String:
 
 static func passives(stats: Dictionary) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
+	if float(stats.get("death_burst_radius", 0.0)) > 0.0:
+		result.append({"name": "爆炸赏金", "description": "死亡对周围%s格地面敌人造成%s伤害；同次爆炸击杀任意敌方目标获得%s金币，多杀只奖励一次，提示显示在桶的位置。" % [format_number(float(stats.death_burst_radius) / TILE_SIZE), format_number(float(stats.death_burst_damage)), format_number(float(stats.death_burst_reward))]})
 	if float(stats.get("structure_assist_window", 0.0)) > 0.0:
 		result.append({"name": "罪恶快感", "description": "普攻命中建筑、防御塔或水晶后3秒内被摧毁，获得6秒被动，每层增加30%攻速；再次触发增加一层并刷新全部层数6秒。移速加成不叠加，每次触发重新从100%在6秒内线性衰减至0。与其他同类攻速增益取最强。"})
 	if float(stats.get("rage_crit_multiplier", 1.0)) > 1.0:

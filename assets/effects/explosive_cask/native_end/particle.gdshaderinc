@@ -1,5 +1,7 @@
 uniform float p[38];
 uniform bool is_mesh=false;
+// Optional original UV_MODE=lockAlpha: 1=quad corner, 2=unscrolled mesh UV.
+uniform int alpha_lock=0;
 uniform bool cull_mesh=false;
 uniform bool billboard=false;
 uniform bool directed=false;
@@ -38,6 +40,7 @@ uniform vec3 erosion_band=vec3(1.5,10.0,10.0);
 uniform vec4 soft_params=vec4(0.0,1e8,1.0,1.0);
 uniform float alpha_ref=0.0;
 uniform float warp_strength=0.0;
+varying vec2 raw_uv;
 varying vec2 base_uv;
 varying vec2 mult_uv;
 varying vec4 tint;
@@ -88,6 +91,7 @@ void vertex() {
  if(is_mesh || (!billboard && !is_ray))pos=projection_basis*center+shape_basis*(pos-center);
  // Preserve sampled native height; camera projection supplies foreshortening.
  VERTEX=pos;
+ raw_uv=texuv;
  base_uv=layer_uv(texuv,21,uv_center,uv_flip,cell);
  mult_uv=layer_uv(texuv,28,mult_center,mult_flip,cell_mult);
  tint=vec4(p[7],p[8],p[9],p[10])*COLOR;
@@ -97,6 +101,13 @@ void vertex() {
 void fragment() {
  if(is_mesh && cull_mesh && !FRONT_FACING)discard;
  vec4 texel=texture(source_texture,addressed(base_uv,address_mode));
+ if(alpha_lock==1){texel.a=texture(source_texture,raw_uv).a;}
+ else if(alpha_lock==2){
+  vec2 held=raw_uv*vec2(p[22],p[23]);
+  float c=cos(p[21]),s=sin(p[21]);
+  held=vec2(held.x*c-held.y*s,held.x*s+held.y*c);
+  texel.a=texture(source_texture,addressed(mix(held,vec2(1.0)-held,uv_flip),address_mode)).a;
+ }
  if(has_ramp) texel*=texture(ramp_texture,has_mult?mult_uv:vec2(p[35],p[36]));
  if(has_mult) texel*=texture(mult_texture,addressed(mult_uv,mult_address));
  vec4 lit=texel*tint;

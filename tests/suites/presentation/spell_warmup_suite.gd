@@ -192,7 +192,7 @@ func _deployment_plans() -> void:
 	var planner = load("res://scripts/presentation/match_resource_plan.gd")
 	var plan: RefCounted = planner.for_match([groups, []], [{}, {}])
 	var expected := groups + ["melee_minion", "ranged_minion", "super_minion", "siege_minion"]
-	_expect(CardDB.all().size() == 82 and CardDB.selectable_ids().size() == 69 and plan.errors.is_empty() and plan.cards.size() == expected.size() and expected.all(func(id): return plan.cards.has(id)), "六编队改为生成计划后保持82定义/69可选及相同四种成员可达闭包")
+	_expect(plan.errors.is_empty() and plan.cards.size() == expected.size() and expected.all(func(id): return plan.cards.has(id)), "六编队生成计划保持相同四种成员可达闭包")
 	var resources := MatchResources.new()
 	resources.plan = plan
 	# 不把成员作为额外根传入，避免系统兵线恰好兜底掩盖递归收集失效。

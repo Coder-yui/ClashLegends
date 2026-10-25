@@ -132,16 +132,17 @@ func commit_batch() -> void:
 	committing = false
 	for callback in _benefits:
 		if callback.is_valid(): callback.call()
-	for unit in _deaths:
-		if not is_instance_valid(unit): continue
-		_record("death_commit", null, unit)
-		unit._die(bool(_deaths[unit]))
+	var deaths := _deaths.duplicate()
 	_hits.clear()
 	_attack_receipts.clear()
 	_effects.clear()
 	_benefits.clear()
 	_deaths.clear()
 	_kill_awards.clear()
+	for unit in deaths:
+		if not is_instance_valid(unit): continue
+		_record("death_commit", null, unit)
+		unit._die(bool(deaths[unit]))
 
 func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1, effects: Dictionary = {}, counts_as_attack: bool = true) -> Dictionary:
 	var receipt := BattleNumbers.pending_hit(false, 0.0)

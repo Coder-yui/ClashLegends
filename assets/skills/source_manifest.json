@@ -797,5 +797,14 @@
     "source_path": "assets/characters/ekko/hud/icons2d/ekko_r.dds",
     "source_sha256": "ce75590ca67349dbdf6421bb5c5b964fe5afebb19dc6c780abb8cb4e7ad8375a",
     "sha256": "be97c2d855e71132136ea85eabfd4b15974281cc90b4f07b12e9f6a9c2df5d4c"
+  },
+  {
+    "card": "powder_keg",
+    "skill_index": 0,
+    "path": "res://assets/skills/gangplank_e.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gangplank.wad.client",
+    "source_path": "assets/characters/gangplank/hud/icons2d/gangplank_e.dds",
+    "source_sha256": "22b2ecc4ad5d00d9b46f773592d3bcec6823b2ced37184c5cb81333eca0dd08a",
+    "sha256": "9cd05290299854568443bc03c2969afc779b80b4ec3679279eb4ddd3fa1a441e"
   }
 ]
