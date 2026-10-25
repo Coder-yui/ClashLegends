@@ -83,7 +83,7 @@ python3 tools/dev.py effect --provider=res://assets/effects/kassadin/player.gd -
 
 直接使用项目粒子播放器，默认查看虚空行走。支持暂停/播放、重播、0.25/0.5/1倍速、拖动时间轴、1/120秒逐帧、粒子层开关、旋转/缩放、项目54度/俯视/侧视、实体地面开关及临时抬高。拖动时间轴会暂停；这些操作不保存到游戏。
 
-可复用范围：提供 `load_kind(kind)`、`setup_native(scale)`、`seek(age)` 和采样数据 `_data`、粒子池 `_pools`、帧缓存 `_frame` 的项目播放器；不是任意特效格式的通用导入器。默认使用源坐标的0.01缩放和单位投影，正式战场范围适配仍需工作台复核。输出诊断截图可传 `--capture-dir=<素材库内绝对路径>`。
+可复用范围：提供 `load_kind(kind)`、`setup_native(scale)`、`seek(age)` 和采样数据 `_data`、粒子池 `_pools`、帧缓存 `_frame` 的项目播放器；不是任意特效格式的通用导入器。默认使用源坐标的0.01缩放和单位投影，正式战场范围适配仍需工作台复核。输出诊断截图可传 `--capture-dir=<素材库内绝对路径>`。用 `--capture-time=1.0` 指定截图采样秒数，`--layers=Lightning_AoE_Telegraph` 仅显示指定发射器（多个名字逗号分隔），可单独核对主提示圈。
 
 此工具沿用虚空先知HTML预览的时间轴/分层交互，使用Godot实际着色器复核项目遮挡。旧HTML原生模拟预览仍保留在素材库，不替换其源素材研究用途。
 
@@ -108,3 +108,5 @@ python3 tools/dev.py effect --provider=res://assets/effects/ekko/player.gd --var
 艾克范围层 `end`、`r-Tar` 使用 `--native-scale=0.0093333333` 对应140像素；人物附着与六套回卷姿态使用0.01345。两类比例分别检查，不能用人物比例衡量伤害圈。
 
 特效展台支持 `--range-radius=130 --range-team=0`，以40像素/世界单位显示项目自绘地面范围边线，可开关显示、切换红蓝。与`--native-scale`配合检查特效与权威半径；范围线不会跟随诊断抬高。
+
+浪潮展台：`python3 tools/dev.py effect --provider=res://assets/effects/tidal_wave/player.gd --variants=wave --effect-rotation=-90,0,0 --native-scale=0.006666667 --zoom=8`。通用`--effect-rotation=X,Y,Z`以度为单位设置源特效刚性朝向，不修改源数据；展台为固定位置逐层观察，实际移动轨迹在工作台检查。

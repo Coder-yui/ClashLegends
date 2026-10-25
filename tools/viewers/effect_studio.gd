@@ -29,6 +29,9 @@ var attachment: Node3D
 var preview_motion := false
 var model_scale := 1.0
 var native_scale := 0.01
+var capture_time := 0.15
+var only_layers := PackedStringArray()
+var effect_rotation := Vector3.ZERO
 var trail_ghost_kind := ""
 var trail_ghost: Node3D
 var trail_ghost_fx: Node3D
@@ -37,7 +40,12 @@ var attachment_meshes: Array[Dictionary]=[]
 func _initialize() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--check-only": check_only=true
+		if arg.begins_with("--capture-time="): capture_time=maxf(float(arg.trim_prefix("--capture-time=")),0.0)
+		if arg.begins_with("--layers="): only_layers=arg.trim_prefix("--layers=").split(",")
 		if arg == "--motion": preview_motion=true
+		if arg.begins_with("--effect-rotation="):
+			var angles := arg.trim_prefix("--effect-rotation=").split(",")
+			if angles.size() == 3: effect_rotation = Vector3(float(angles[0]),float(angles[1]),float(angles[2]))
 		if arg.begins_with("--range-radius="): range_radius=maxf(float(arg.trim_prefix("--range-radius=")),0.0)
 		if arg.begins_with("--range-team="): range_team=clampi(int(arg.trim_prefix("--range-team=")),0,1)
 		if arg.begins_with("--native-scale="): native_scale=float(arg.trim_prefix("--native-scale="))
@@ -85,7 +93,7 @@ func _build() -> void:
 	_button(panel,"侧视",func(): yaw=0; elevation=10; _camera())
 	_label(panel,"整体抬高（诊断用，不保存到游戏）")
 	var lift := HSlider.new(); lift.min_value=0; lift.max_value=2; lift.step=0.01; panel.add_child(lift)
-	lift.value_changed.connect(func(v): height=v; player.position.y=height)
+	lift.value_changed.connect(func(v): height=v; player.position.y=height;player.rotation_degrees=effect_rotation)
 	attachment_base=CheckBox.new();attachment_base.text="显示附着对象原模型";panel.add_child(attachment_base)
 	attachment_base.toggled.connect(func(_value): _update_attachment_base())
 	if range_radius > 0.0:
@@ -129,7 +137,7 @@ func _load_variant(kind: String) -> void:
 	player=script.new()
 	for method in ["load_kind","setup_native","seek"]:
 		if not player.has_method(method): push_error("Unsupported provider: "+method);player.free();return
-	viewport.add_child(player);player.load_kind(kind);player.setup_native(native_scale);player.position.y=height
+	viewport.add_child(player);player.load_kind(kind);player.setup_native(native_scale);player.position.y=height;player.rotation_degrees=effect_rotation
 	duration=float(player._data.duration);timeline.max_value=duration
 	if not attachment_path.is_empty() and player.has_method("make_overlay") and player._data.emitters.any(func(e): return int(e.get("quadType",-1))in [5,11]):
 		attachment=load(attachment_path).instantiate()
@@ -149,7 +157,9 @@ func _load_variant(kind: String) -> void:
 			mesh.material_override=trail_ghost_fx.make_overlay(null)
 			mesh.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	for i in player._data.emitters.size():
-		var toggle:=CheckBox.new();toggle.text=String(player._data.emitters[i].name);toggle.button_pressed=true;layer_box.add_child(toggle)
+		var enabled := only_layers.is_empty() or String(player._data.emitters[i].name) in only_layers
+		hidden_layers[i] = not enabled
+		var toggle:=CheckBox.new();toggle.text=String(player._data.emitters[i].name);toggle.button_pressed=enabled;layer_box.add_child(toggle)
 		toggle.toggled.connect(func(v): hidden_layers[i]=not v;player._frame=-1;_seek())
 	_jump(0.15)
 func _attach_layers(node: Node) -> void:
@@ -220,7 +230,7 @@ func _captures() -> void:
 	DirAccess.make_dir_recursive_absolute(capture_dir)
 	for label in ["ground","no-ground","raised","top"]:
 		floor_mesh.visible=label!="no-ground";player.position.y=1.2 if label=="raised" else 0.0
-		elevation=89.9 if label=="top" else 54.0;_camera();_jump(0.15)
+		elevation=89.9 if label=="top" else 54.0;_camera();_jump(capture_time)
 		for frame in 8: await process_frame
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png(capture_dir.path_join(label+".png"))
