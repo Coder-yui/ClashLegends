@@ -799,15 +799,6 @@
     "sha256": "be97c2d855e71132136ea85eabfd4b15974281cc90b4f07b12e9f6a9c2df5d4c"
   },
   {
-    "card": "powder_keg",
-    "skill_index": 0,
-    "path": "res://assets/skills/gangplank_e.png",
-    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gangplank.wad.client",
-    "source_path": "assets/characters/gangplank/hud/icons2d/gangplank_e.dds",
-    "source_sha256": "22b2ecc4ad5d00d9b46f773592d3bcec6823b2ced37184c5cb81333eca0dd08a",
-    "sha256": "9cd05290299854568443bc03c2969afc779b80b4ec3679279eb4ddd3fa1a441e"
-  },
-  {
     "card": "blitzcrank",
     "skill_index": 0,
     "path": "res://assets/skills/blitzcrank_e.png",
@@ -835,6 +826,15 @@
     "sha256": "195a2ba7217c101a5a11c47af877e1b7baf2ec71cb97a426ed005142698e6acf"
   },
   {
+    "card": "powder_keg",
+    "skill_index": 0,
+    "path": "res://assets/skills/gangplank_e.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gangplank.wad.client",
+    "source_path": "assets/characters/gangplank/hud/icons2d/gangplank_e.dds",
+    "source_sha256": "22b2ecc4ad5d00d9b46f773592d3bcec6823b2ced37184c5cb81333eca0dd08a",
+    "sha256": "9cd05290299854568443bc03c2969afc779b80b4ec3679279eb4ddd3fa1a441e"
+  },
+  {
     "card": "jayce",
     "skill_index": 0,
     "form_index": 1,
@@ -843,5 +843,23 @@
     "source_path": "assets/characters/jayce/hud/icons2d/jaycew_melee.dds",
     "source_sha256": "3eec949707c9c399737bc7f176960c3a0db3fd36dcc25a85bd0a32784c8cacf2",
     "sha256": "e1bd0c051a208c6182590e5454744e71c173192560c5f05b8511f23e742f8b6d"
+  },
+  {
+    "card": "jinx",
+    "skill_index": 0,
+    "path": "res://assets/skills/jinx_q2.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Jinx.wad.client",
+    "source_path": "assets/characters/jinx/hud/icons2d/jinx_q2.dds",
+    "source_sha256": "eefba6d5b9bbd8bb025f85af3552f390466f1470513843e895457d754dda9e3d",
+    "sha256": "72a9034936f6e9d89b0cfee52edd9efa3725bf5f62220f9c1a38c7b9dc15e7d0"
+  },
+  {
+    "card": "gnar",
+    "skill_index": 0,
+    "path": "res://assets/skills/gnar_w.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gnar.wad.client",
+    "source_path": "assets/characters/gnar/hud/icons2d/gnar_w.dds",
+    "source_sha256": "2cbcf259d8cd04621124d9f80094515c58b9b430b9c58cfdc376e82519c72e7d",
+    "sha256": "04fc905f2def4fb604ac28e675c2830c648b76303907910fc3e43aad98b6babc"
   }
 ]

@@ -24,6 +24,28 @@ func run(harness: Object, main: Node2D) -> void:
 	var skill: Dictionary = CardDB.active_skills_for("garen")[1]
 	_expect(main.runtime._start_active_skill_cast(unit, skill), "主动技能成功起手")
 	_expect(notice.entries[-1].texture == CardArt.skill_icon(skill), "主动技能显示实际候选图标")
+	var jayce := _spawn_ready_unit("jayce", 0, Vector2(350, 950))
+	var split_skill: Dictionary = CardDB.active_skills_for("jayce")[0]
+	var composite := CardArt.skill_icon(split_skill)
+	_expect(composite != CardArt.skill_icon(split_skill, 0) and composite != CardArt.skill_icon(split_skill, 1), "按钮使用斜分双图标")
+	for cast_form in [0, 1]:
+		jayce._apply_form(cast_form, false)
+		_expect(main.runtime._start_active_skill_cast(jayce, split_skill), "两形态技能均可释放")
+		jayce._apply_form(1-cast_form, false)
+		_expect(notice.entries[-1].texture == CardArt.skill_icon(split_skill, cast_form), "水晶提示固化释放形态，不随后续换形变化")
+	for card_id in ["jinx", "gnar"]:
+		for cast_form in [0, 1]:
+			var actor := _spawn_ready_unit(card_id, 0, Vector2(400, 950))
+			actor._apply_form(cast_form, false)
+			var form_skill: Dictionary = CardDB.active_skills_for(card_id)[0]
+			_expect(main.runtime._start_active_skill_cast(actor, form_skill), "双形态技能成功释放")
+			_expect(notice.entries[-1].texture == CardArt.skill_icon(form_skill, cast_form), "换形技能提示保留释放前选定的实际动作图标")
+	for card_id in ["kayn", "kayn_assassin", "kayn_slayer"]:
+		var actor := _spawn_ready_unit(card_id, 0, Vector2(450, 950))
+		actor.active_skill_card_id = "kayn"
+		var form_skill: Dictionary = CardDB.active_skills_for(card_id)[0]
+		_expect(main.runtime._start_active_skill_cast(actor, form_skill), "凯隐各成长形态成功释放")
+		_expect(notice.entries[-1].texture == CardArt.skill_icon(form_skill), "凯隐水晶提示使用实例形态原版Q图标")
 	notice._process(1.4)
 	_expect(notice.entries.is_empty(), "消散后释放提示数据")
 	main._present_cast_notice(1, "heal", 1)
@@ -44,5 +66,9 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(notice.entries.size() == 1, "客户端重复消息不重播")
 	main._rpc_card_event("expired-session", event_id + 1, "heal", "cast:notice", Vector2.ZERO, 0, 0)
 	_expect(notice.entries.size() == 1, "旧会话提示拒绝")
+	for cast_form in [0, 1]:
+		var form_args := [event_id + 2 + cast_form, "jayce", "cast:notice:form%d" % cast_form, Vector2.ZERO, 0, 1]
+		preload("res://tests/fixtures/network_fixture.gd").deliver(main, &"_rpc_card_event", form_args)
+		_expect(notice.entries[-1].texture == CardArt.skill_icon(split_skill, cast_form), "客户端可靠事件还原实际释放形态图标")
 	main.runtime.mode = old_mode
 	notice.clear()

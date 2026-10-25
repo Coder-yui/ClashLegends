@@ -71,7 +71,7 @@ static func definition() -> Dictionary:
 				"fields": [
 					"transformed_stats"
 				]
-			}, "icon_path": "res://assets/skills/jinx_0.png"}],
+			}, "icon_path": "res://assets/skills/jinx_0.png", "form_icon_paths": ["res://assets/skills/jinx_q2.png", "res://assets/skills/jinx_0.png"]}],
 		},
 		"card_art": {"path": "res://assets/cards/jinx_loading.png"}, "audio": {
   "events": {
