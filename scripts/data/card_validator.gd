@@ -1452,6 +1452,11 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			var full_cast := float(skill.get("full_resource_cast_duration", skill.get("cast_duration", 0.0)))
 			if float(skill.full_resource_impact_delay) < 0.0 or (float(skill.full_resource_impact_delay) > full_cast and not bool(skill.get("independent_on_creation", false))):
 				errors.append("%s.full_resource_impact_delay: 必须位于满层施法窗口内" % label)
+		if skill.has("cast_move_forward"):
+			if not skill.cast_move_forward is bool:
+				errors.append("%s.cast_move_forward: 必须是 bool" % label)
+			elif skill.cast_move_forward and (float(skill.get("cast_duration", 0.0)) <= 0.0 or not skill.get("cast_locks", []) is Array or not "attack" in skill.get("cast_locks", []) or not "facing" in skill.get("cast_locks", []) or "movement" in skill.get("cast_locks", [])):
+				errors.append("%s.cast_move_forward: 需要正施法时长、attack/facing锁且允许移动" % label)
 		if skill.has("cast_locks"):
 			if not skill.cast_locks is Array:
 				errors.append("%s.cast_locks: 必须是 Array" % label)

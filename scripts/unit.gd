@@ -249,6 +249,7 @@ var active_skill_cast_serial := 0
 var cancelled_skill_cast_serial := -1
 var active_skill_cast_timer := 0.0
 var active_skill_cast_facing := Vector2.ZERO
+var active_skill_move_forward := false
 var active_skill_cast_locks: Array[StringName] = []
 
 ## 预留的减攻速控制状态；高原血统在 Buff 期间会忽略它。
@@ -1028,11 +1029,13 @@ func finish_dash_cast(serial: int) -> void:
 	_visual_action_time_left = 0.0
 	active_skill_cast_timer = 0.0
 	active_skill_cast_facing = Vector2.ZERO
+	active_skill_move_forward = false
 	active_skill_cast_locks.clear()
 
 func begin_active_skill_cast(duration: float, facing: Vector2, cast_locks: Array = DEFAULT_CAST_LOCKS, offensive: bool = true) -> void:
 	if team_attack_boost_forging and battle_context != null: battle_context.interrupt_team_attack_boost(self)
 	active_skill_chase_radius = 0.0
+	active_skill_move_forward = false
 	active_skill_offensive = offensive
 	if offensive: record_combat_activity()
 	active_skill_cast_serial += 1
@@ -1764,6 +1767,11 @@ func _cancel_attack_and_chase(dt: float) -> void:
 ## 让 cast 窗口结束的同一权威 tick 可以立即开始普通攻击。
 func _tick_attack_locked_cast_movement(dt: float) -> void:
 	_cancel_attack_for_cast()
+	if active_skill_move_forward:
+		if not is_active_skill_movement_locked():
+			_move_direction = active_skill_cast_facing
+			_prepare_movement(active_skill_cast_facing, dt)
+		return
 	_update_target(false)
 	if _target != null and is_instance_valid(_target) and _target_gap(_target) <= attack_range:
 		return
@@ -1965,6 +1973,7 @@ func prepare_action_clocks(dt: float) -> void:
 		if active_skill_cast_timer < 0.000001:
 			active_skill_cast_timer = 0.0
 			active_skill_cast_facing = Vector2.ZERO
+			active_skill_move_forward = false
 			active_skill_cast_locks.clear()
 	# 限时形态按权威时间到期，硬控不延长增益或转换窗口。
 	if age_form:
@@ -2864,6 +2873,7 @@ func cancel_skill_cast(recover_position: bool = true) -> void:
 	_visual_action_name = &""
 	active_skill_cast_timer = 0.0
 	active_skill_cast_facing = Vector2.ZERO
+	active_skill_move_forward = false
 	active_skill_cast_locks.clear()
 
 ## 有效眩晕/击退只取消正在自主位移的技能，不取消已停下的普通尾段。

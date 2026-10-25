@@ -21,6 +21,9 @@ func run(harness: Object) -> void:
 		var bad: Dictionary = CardDB.get_card("samira").duplicate(true)
 		bad.visual_animations.transitions["Spell4>move"].attack_stance_index = index
 		_expect(not CardDB.VALIDATOR.validate_all({"samira":bad}, false).is_empty(), "R结束姿态拒绝非法攻击段索引")
+	var bad_movement: Dictionary = CardDB.get_card("samira").duplicate(true)
+	bad_movement.active_skills[0]["cast_move_forward"] = "yes"
+	_expect(not CardDB.VALIDATOR.validate_all({"samira": bad_movement}, false).is_empty(), "固定方向移动拒绝非布尔配置")
 	var skill: Dictionary = CardDB.active_skills_for("samira")[0]
 	_expect(skill.radius == 180.0 and is_equal_approx(preload("res://assets/effects/samira/player.gd").NATIVE_SCALE * 600.0 * ArenaRules.TILE_SIZE, skill.radius), "R指定180像素半径与原生600单位的特效缩放一致")
 	var unit := _spawn_ready_unit("samira", 0, Vector2(300, 950))
@@ -159,23 +162,18 @@ func run(harness: Object) -> void:
 	unit.configure_carried_active_skill(skill)
 	unit.skill_resource_value = 5.0
 	_expect(_main.preview_active_skill(unit, skill), "移动R从正式入口开始")
-	_expect(is_equal_approx(unit.attack_range + unit.body_radius, 180.0), "移动R导航按技能中心半径而非普攻射程")
 	var start := unit.global_position
+	var direction := unit.active_skill_cast_facing
 	var attacks_before := unit.get_attack_visual_serial()
-	for tick in 20: _main._sim_step(0.05)
-	_expect(unit.position.x > start.x + 15.0 and unit.global_position.distance_to(target.global_position) <= 180.0 + target.body_radius, "R向圈外目标移动直至进入技能范围")
-	_expect(unit.get_attack_visual_serial() == attacks_before and unit.skill_resource_value == 0.0, "移动R不偷普攻且不积累评分")
-	var settled := unit.global_position
-	for tick in 3: _main._sim_step(0.05)
-	_expect(unit.global_position.distance_to(settled) < 0.1, "目标在R范围内停止追赶")
-	target.position.x += 90.0
-	for tick in 4: _main._sim_step(0.05)
-	_expect(unit.position.x > settled.x, "目标离开R范围后继续追赶")
+	for tick in 10: _main._sim_step(0.05)
+	_expect(unit.global_position.distance_to(start + direction * 30.0) < 0.1, "R沿释放朝向按基础移速移动")
+	target.position = unit.position - direction * 100.0
+	for tick in 10: _main._sim_step(0.05)
+	_expect(unit.global_position.distance_to(start + direction * 60.0) < 0.1, "目标移到身后不改变R方向")
 	target.free()
-	var march_start := unit.global_position
-	for tick in 5: _main._sim_step(0.05)
-	_expect(unit._target is Tower and unit.global_position.y < march_start.y - 1.0, "R无附近敌军时恢复向敌塔正常推进")
-	_expect(unit.active_skill_cast_timer > 0.0 and unit.get_attack_visual_serial() == attacks_before, "无目标推进保持R施法且不普攻")
+	for tick in 10: _main._sim_step(0.05)
+	_expect(unit.global_position.distance_to(start + direction * 90.0) < 0.1, "目标消失仍保持方向，不向塔寻路")
+	_expect(unit.get_attack_visual_serial() == attacks_before and unit.skill_resource_value == 0.0, "移动R不普攻且不积累评分")
 	unit.freeze(1.0)
 	_expect(is_equal_approx(unit.attack_range, 165.0), "取消R恢复基础射程")
 	for actor in _main.get_tree().get_nodes_in_group("combatants"):

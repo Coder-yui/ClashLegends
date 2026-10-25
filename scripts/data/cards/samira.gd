@@ -24,8 +24,8 @@ static func definition() -> Dictionary:
 				"uses_skill_resource": true, "requires_full_resource": true,
 				"radius": 180.0, "damage": 24, "duration": 2.0, "tick_interval": 0.2,
 				"impact_delay": 0.0, "cast_duration": 2.0,
-				"cast_locks": ["attack"], "ground_only": false,
-				"description": "消耗悍勇本色全部5层，旋转射击2秒并向目标移动至技能范围内，每秒对半径180内的地面与空中敌军造成120伤害；期间不能普攻或叠加被动层数。每次1金币，冷却5秒，次数不限。",
+				"cast_locks": ["attack", "facing"], "cast_move_forward": true, "ground_only": false,
+				"description": "消耗悍勇本色全部5层，旋转射击2秒并沿释放时记住的朝向持续移动，每秒对半径180内的地面与空中敌军造成120伤害；期间不能普攻或叠加被动层数。每次1金币，冷却5秒，次数不限。",
 			}],
 		},
 		"visual": {

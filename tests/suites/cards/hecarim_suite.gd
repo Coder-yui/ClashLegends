@@ -3,6 +3,9 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_expect(CardDB.get_unit_stats("hecarim").charge_attack_range == 100.0, "冲刺起手距离为2.5格")
+	var audio_events: Dictionary = CardDB.get_card("hecarim").audio.events
+	_expect(audio_events.has("death") and not audio_events.has("death:voice"), "保留死亡音效并移除死亡语音")
 	_check_deployment()
 	_check_w_upperbody()
 	_check_w_release()
@@ -83,7 +86,7 @@ func run(harness: Object, main: Node2D) -> void:
 		source.position += source._move_intent * 0.05
 		source._move_intent = Vector2.ZERO
 		source.movement_strike.tick(source, 0.05)
-	_expect(source.position.is_equal_approx(contact_position + Vector2(24,0)) and source.position.is_equal_approx(fixed_endpoint), "目标横移和继续击退不改变24像素固定续冲终点")
+	_expect(source.position.is_equal_approx(contact_position + Vector2(48,0)) and source.position.is_equal_approx(fixed_endpoint), "目标横移和继续击退不改变48像素固定续冲终点")
 	_expect(target.hp == 770.0 and source.basic_attack_sequence == 1, "续冲不重复命中")
 	target.position = Vector2(410,1000)
 	_expect(is_equal_approx(target.knockback.remaining, 0.5), "击退持续0.5秒")
@@ -134,11 +137,11 @@ func run(harness: Object, main: Node2D) -> void:
 	source.cancel_charge()
 	source.attack_timeline.cancel(true)
 	source.position = Vector2(300,1000)
-	target.position = Vector2(423,1000)
+	target.position = Vector2(443,1000)
 	source._charged = true
-	_expect(not source.movement_strike.tick(source,0.05), "两格之外不触发冲刺")
-	target.position = Vector2(420,1000)
-	_expect(source.movement_strike.tick(source,0.05), "两格内触发冲刺")
+	_expect(not source.movement_strike.tick(source,0.05), "2.5格之外不触发冲刺")
+	target.position = Vector2(442,1000)
+	_expect(source.movement_strike.tick(source,0.05), "2.5格边界内触发冲刺")
 	for tick in 40:
 		if source.movement_strike.target_ref == null: break
 		main._movement.tick(0.05)
@@ -166,7 +169,7 @@ func run(harness: Object, main: Node2D) -> void:
 		source.global_position += source._move_intent * 0.05
 		source._move_intent = Vector2.ZERO
 		source.movement_strike.tick(source, 0.05)
-	_expect(is_equal_approx(source.position.x, 350.0) and source.blind_attack_charges == 0, "致盲仍完成接触加24像素续冲并消费一次致盲")
+	_expect(is_equal_approx(source.position.x, 374.0) and source.blind_attack_charges == 0, "致盲仍完成接触加48像素续冲并消费一次致盲")
 	_expect(target.hp == hp_before and target.control.stun_timer == 0.0 and target.knockback.remaining == 0.0, "致盲强化普攻不造成伤害击退眩晕")
 	source.position = Vector2(300,1000)
 	source.hp = 400.0

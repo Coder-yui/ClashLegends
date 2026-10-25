@@ -4,15 +4,15 @@ static func definition() -> Dictionary:
 	return {
 		"gameplay": {
 			"name": "战争之影", "cost": 4, "type": "unit",
-			"description": "旋斩攻击四周地面敌人。连续自主移动3.5格后加速，下一击可从2格内接触目标时踢击，随后沿原方向续冲；击退0.5秒并眩晕1.5秒；致盲时只突进，不造成伤害或控制；蓄势时受阻会重置；突进可穿障，踢击不被眩晕打断，冰冻、凝滞、禁锢和击退会打断；落地可立即普攻。",
+			"description": "旋斩攻击四周地面敌人。连续自主移动3.5格后加速，下一击可从2.5格内接触目标时踢击，随后沿原方向续冲；击退0.5秒并眩晕1.5秒；致盲时只突进，不造成伤害或控制；蓄势时受阻会重置；突进可穿障，踢击不被眩晕打断，冰冻、凝滞、禁锢和击退会打断；落地可立即普攻。",
 			"hp": 850, "damage": 80, "range": 32.0, "attack_self_radius": 85.0,
 			"speed": SPEED_FAST, "interval": 1.2, "first_hit": 0.15,
 			"size_tier": SIZE_SLIGHTLY_LARGE, "radius": RADIUS_SLIGHTLY_LARGE,
 			"mass": 6.0, "sight": 240.0,
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"charge_distance": 140.0, "charge_speed_multiplier": 1.5,
-			"charge_attack_range": 80.0, "charge_dash_speed": 420.0, "charge_stun_duration": 1.5,
-			"charge_landing_side": "front", "charge_follow_distance": 24.0, "charge_follow_duration": 0.67, "charge_contact_duration": 0.4, "charge_knockback": 40.0, "charge_knockback_duration": 0.5,
+			"charge_attack_range": 100.0, "charge_dash_speed": 420.0, "charge_stun_duration": 1.5,
+			"charge_landing_side": "front", "charge_follow_distance": 48.0, "charge_follow_duration": 0.67, "charge_contact_duration": 0.4, "charge_knockback": 40.0, "charge_knockback_duration": 0.5,
 			"active_skills": [{
 				"name": "恐惧之灵", "kind": "continuous_area", "cost": 2, "max_uses": 1, "cooldown": 15.0,
 				"description": "起手0.44秒期间锁攻击，随后开启4秒领域，每0.5秒对周围地面敌人造成20伤害。领域伤害和普通攻击按实际生命伤害的30%治疗自身；期间可以移动和攻击。",
@@ -66,15 +66,6 @@ static func definition() -> Dictionary:
 					],
 					"volume_db": 0.0,
 					"bus": "Combat"
-				},
-				"death:voice": {
-					"pool": [
-						"res://assets/audio/units/hecarim/play_vo_hecarim_death3d_r1_zh_cn.wav",
-						"res://assets/audio/units/hecarim/play_vo_hecarim_death3d_r2_zh_cn.wav",
-						"res://assets/audio/units/hecarim/play_vo_hecarim_death3d_r3_zh_cn.wav"
-					],
-					"volume_db": 0.0,
-					"bus": "Voice"
 				},
 				"deploy:voice": {
 					"pool": [

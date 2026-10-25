@@ -45,9 +45,10 @@ func _begin_cast(unit: Unit, skill: Dictionary) -> void:
 	var cast_facing: Vector2 = skill.get("cast_forward", unit.get_visual_facing_direction())
 	if cast_duration > 0.0:
 		unit.begin_active_skill_cast(cast_duration, cast_facing, cast_locks, is_offensive(skill))
+	unit.active_skill_move_forward = cast_duration > 0.0 and bool(skill.get("cast_move_forward", false))
 	# 仅施法窗口覆盖领域生效阶段时按领域范围导航；纯起手锁沿用普通追击，避免提前停步清空蓄势。
 	var area_during_cast := cast_duration > maxf(float(skill.get("impact_delay", 0.0)), 0.0)
-	if StringName(skill.get("kind", "")) == &"continuous_area" and area_during_cast and not unit.is_active_skill_movement_locked() and unit.is_active_skill_attack_locked():
+	if StringName(skill.get("kind", "")) == &"continuous_area" and area_during_cast and not unit.active_skill_move_forward and not unit.is_active_skill_movement_locked() and unit.is_active_skill_attack_locked():
 		unit.active_skill_chase_radius = maxf(float(skill.get("radius", 0.0)), 0.0)
 	if action_name != &"":
 		unit.play_visual_action(action_name, cast_duration)
