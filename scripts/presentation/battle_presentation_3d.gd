@@ -11,6 +11,8 @@ func visual_team(team: int) -> int:
 	return 0 if team == viewer_team else 1
 
 var projectiles: Node2D
+var _blitzcrank_projectiles: Node3D
+var _jayce_projectiles: Node3D
 var _samira_projectiles: Node3D
 var _gwen_tristana_effect: Node3D
 var _sacrifice_effect: Node3D
@@ -33,6 +35,7 @@ var _freeze_ground: Node3D
 var _summoning_ground: Node3D
 var _corrosion_ground: Node3D
 var _cask_effect: Node3D
+var _tidal_effect: Node3D
 var _stasis_effect: Node3D
 var _lightning_effect: Node3D
 
@@ -61,6 +64,11 @@ func _process(delta: float) -> void:
 		_riftwalk_effect.sync_effects(skills, _camera)
 	if _rewind_effect != null and skills != null:
 		_rewind_effect.sync_effects(skills, _camera)
+	if _blitzcrank_projectiles != null:
+		_blitzcrank_projectiles.sync_effects(projectiles, _camera)
+	if _jayce_projectiles != null:
+		_jayce_projectiles.set_sources(projectiles, _camera)
+		if skills != null: _jayce_projectiles.sync_field_hits(skills, _camera)
 	if _samira_projectiles != null:
 		_samira_projectiles.set_sources(projectiles, _camera)
 	if _gwen_tristana_effect != null:
@@ -90,6 +98,8 @@ func _process(delta: float) -> void:
 		_summoning_ground.sync_effects(spells, _camera)
 	if _corrosion_ground != null and spells != null:
 		_corrosion_ground.sync_effects(spells, _camera)
+	if _tidal_effect != null and spells != null:
+		_tidal_effect.sync_effects(spells, _camera)
 	if _cask_effect != null and spells != null:
 		_cask_effect.sync_effects(spells, _camera)
 	if pending_deployments.is_valid():
@@ -157,6 +167,10 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 		_camera.rotate_object_local(Vector3.BACK, PI)
 		_camera.set_meta("canvas_flipped", true)
 
+	_blitzcrank_projectiles = preload("res://scripts/presentation/blitzcrank_projectile_3d.gd").new()
+	_world_root.add_child(_blitzcrank_projectiles)
+	_jayce_projectiles = preload("res://scripts/presentation/jayce_projectile_3d.gd").new()
+	_world_root.add_child(_jayce_projectiles)
 	_samira_projectiles = preload("res://scripts/presentation/samira_projectile_effect_3d.gd").new()
 	_world_root.add_child(_samira_projectiles)
 	_gwen_tristana_effect = preload("res://scripts/presentation/gwen_tristana_effect_3d.gd").new()
@@ -195,6 +209,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_summoning_ground)
 	_corrosion_ground = preload("res://scripts/presentation/corrosion_ground_3d.gd").new()
 	_world_root.add_child(_corrosion_ground)
+	_tidal_effect = preload("res://scripts/presentation/tidal_wave_3d.gd").new()
+	_world_root.add_child(_tidal_effect)
 	_cask_effect = preload("res://scripts/presentation/explosive_cask_3d.gd").new()
 	_world_root.add_child(_cask_effect)
 	_stasis_effect = preload("res://scripts/presentation/stasis_spell_effect_3d.gd").new()

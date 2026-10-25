@@ -157,6 +157,17 @@ static func displacement_legal(unit: Unit, point: Vector2) -> bool:
 static func displacement_recovery(unit: Unit, point: Vector2) -> Vector2:
 	return _nearest(point, unit.team, displacement_circles(unit), _regions(unit.body_radius, unit.is_air or unit.terrain_traversal.enabled or unit.river_traversal), 0.02)
 
+## 拉取目的地策略：优先身前，否则在出手中心的有限邻域内选最近合法点。
+## 不改变直线强制位移；普通单位仍交给落地后的自然分离。
+static func pull_destination(unit: Unit, cast_origin: Vector2, preferred: Vector2, search_radius: float) -> Vector2:
+	if preferred.distance_to(cast_origin) <= search_radius and displacement_legal(unit, preferred): return preferred
+	var nearby := _nearest(cast_origin, unit.team, displacement_circles(unit),
+		_regions(unit.body_radius, unit.is_air or unit.terrain_traversal.enabled or unit.river_traversal),
+		0.02, cast_origin, search_radius)
+	if nearby.is_finite(): return nearby
+	return displacement_endpoint(unit, unit.global_position, unit.global_position.direction_to(preferred),
+		unit.global_position.distance_to(preferred), search_radius + unit.body_radius + 2.0)
+
 ## 在一条有限线段上枚举几何边界，不以采样步长漏掉狭窄合法区间。
 ## 优先原终点，其次向前最近合法点，再退回起点方向；无解INF。
 static func displacement_endpoint(unit: Unit, origin: Vector2, direction: Vector2, distance: float, extension: float) -> Vector2:

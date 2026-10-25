@@ -672,6 +672,27 @@
     "group": "cards"
   },
   {
+    "id": "BlitzcrankSuite",
+    "script": "res://tests/suites/cards/blitzcrank_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
+    "id": "JayceSuite",
+    "script": "res://tests/suites/cards/jayce_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
+    "id": "TidalWaveSuite",
+    "script": "res://tests/suites/cards/tidal_wave_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
     "id": "PowderKegSuite",
     "script": "res://tests/suites/cards/powder_keg_suite.gd",
     "method": "run",

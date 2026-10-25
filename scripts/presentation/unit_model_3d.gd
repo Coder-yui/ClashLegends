@@ -171,6 +171,8 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 		return false
 	var had_model := _model_root != null and is_instance_valid(_model_root)
 	var reuse := had_model and _model_root.has_method("set_visual_form") and _model_root.has_method("can_reuse_visual") and bool(_model_root.call("can_reuse_visual", packed.resource_path))
+	var preserve_stride := reuse and _model_root.has_method("preserves_form_locomotion") and bool(_model_root.call("preserves_form_locomotion")) and _current_state == 2 and _animation_player != null
+	var stride_phase := _animation_player.current_animation_position / maxf(_animation_player.current_animation_length, 0.001) if preserve_stride else -1.0
 	var previous_height := _model_root.position.y if had_model else 0.0
 	var air_changed := had_model and _visual_air != _source.is_air
 	if not reuse:
@@ -285,6 +287,10 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 		if _animation_player != null:
 			_animation_player.advance(0.0)
 		_update_hit_flash(0.0)
+	if stride_phase >= 0.0:
+		_sync_visual(true, 0.0)
+		if _current_state == 2 and not _playing_visual_action and not _playing_attack:
+			_animation_player.seek(stride_phase * _animation_player.current_animation_length, true)
 	_update_health_bar_anchor()
 	return true
 
@@ -1322,6 +1328,8 @@ func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 	var attack_key := "empowered_attack" if _active_attack_empowered else ("attack_structure" if _source.is_attacking_structure_visual() else "attack")
 	if not _active_attack_empowered and _state.active_buff and _animation_names.has("active_buff_attack"):
 		attack_key = "active_buff_attack"
+	if _source.is_attack_visual_first_strike() and _animation_names.has("first_strike_attack"):
+		attack_key = "first_strike_attack"
 	var configured = _animation_names.get(attack_key, _animation_names.get("attack", []))
 	var attacks: Array = configured if configured is Array else [configured]
 	if attacks.is_empty():
@@ -1513,7 +1521,7 @@ func _configure_looping_animations() -> void:
 		if continuous_animation != null:
 			continuous_animation.loop_mode = Animation.LOOP_LINEAR
 	# 出场技能与攻击分段动画都必须是非循环完整动作。
-	for key in ["active_buff_attack", "attack", "attack_structure", "attack_hit", "attack_recover", "empowered_attack", "empowered_attack_hit", "empowered_attack_recover", "empowered_attack_to_move", "deploy", "attack_enter", "attack_retarget_enter", "attack_to_move", "idle_cycle", "move_enter", "move_cycle"]:
+	for key in ["active_buff_attack", "attack", "attack_structure", "attack_hit", "attack_recover", "first_strike_attack", "empowered_attack", "empowered_attack_hit", "empowered_attack_recover", "empowered_attack_to_move", "deploy", "attack_enter", "attack_retarget_enter", "attack_to_move", "idle_cycle", "move_enter", "move_cycle"]:
 		for value in _animation_list(key):
 			var animation_name := StringName(value)
 			if animation_name != &"" and _animation_player.has_animation(animation_name):

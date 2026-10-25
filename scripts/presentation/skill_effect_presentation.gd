@@ -208,6 +208,15 @@ func present_fixed_area(center: Vector2, start_radius: float, end_radius: float,
 	add_fixed_area_effect(center, start_radius, end_radius, duration, team, shape)
 	_controller.publish_skill_fx(frontal_effects.back())
 
+## 持续领域逐目标命中：可靠事件携带目标身份，客户端只跟随，不重判伤害。
+func present_target_hit(target: Node2D, center: Vector2, duration: float, team: int, shape: StringName) -> void:
+	add_fixed_area_effect(center, 0.0, 0.0, duration, team, shape)
+	var effect: Dictionary = frontal_effects.back()
+	effect["target_net_id"] = target.net_id if is_instance_valid(target) and target is Unit else -1
+	effect["target_instance_id"] = target.get_instance_id() if is_instance_valid(target) else 0
+	if target is Tower: effect["target_tower_position"] = target.position
+	_controller.publish_skill_fx(effect)
+
 func present_shield_explosion(source: Unit, radius: float) -> void:
 	add_frontal_effect(source, {"shape": "shield_explosion", "length": radius}, 1.3, Vector2.UP)
 	frontal_effects.back()["fixed_position"] = true

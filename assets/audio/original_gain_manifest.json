@@ -65045,6 +65045,1150 @@
       "runtime_volume_db": 0.0
     },
     {
+      "file": "assets/audio/units/blitzcrank/play_sfx_blitzcrank_blitzcrankbasicattack2_oncast_r1.wav",
+      "sha256": "42a76abe23158b4efce4327c74765b4e02f786eb0fd242f6577f147082e34c67",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast {r1}.wav",
+          "sha256": "42a76abe23158b4efce4327c74765b4e02f786eb0fd242f6577f147082e34c67"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast {r1}.txtp",
+          "txtp_sha256": "51a5dc97912b2c0a5b6f6c7d20f56d2a389e408ada16ba4cc05247d023016c6b",
+          "event_ids": [
+            "981632910"
+          ],
+          "media_ids": [
+            "167525856",
+            "507184743",
+            "638514227"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/play_sfx_blitzcrank_blitzcrankbasicattack2_oncast_r2.wav",
+      "sha256": "ad86a1a09fe563380df6b9a460dd70a80d9fbfed93a76524ae31842bcda59038",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast {r2}.wav",
+          "sha256": "ad86a1a09fe563380df6b9a460dd70a80d9fbfed93a76524ae31842bcda59038"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast {r2}.txtp",
+          "txtp_sha256": "51f5af529710c507aec54993b8f77e17e729a7d54c394d8a856a6d269a563a23",
+          "event_ids": [
+            "981632910"
+          ],
+          "media_ids": [
+            "167525856",
+            "507184743",
+            "638514227"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/play_sfx_blitzcrank_blitzcrankbasicattack2_oncast_r3.wav",
+      "sha256": "9c99170b99823f75fba1c78220f19eb04d6483e4f5a81638344a4a10a88b7128",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast {r3}.wav",
+          "sha256": "9c99170b99823f75fba1c78220f19eb04d6483e4f5a81638344a4a10a88b7128"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast {r3}.txtp",
+          "txtp_sha256": "f9a4d57121b78c68ed2fd7d39f6236c8c36b8a1e92f42c9e801c5c7abca7284c",
+          "event_ids": [
+            "981632910"
+          ],
+          "media_ids": [
+            "167525856",
+            "507184743",
+            "638514227"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/play_sfx_blitzcrank_blitzcrankbasicattack2_onhit_1559186049_1153642577_r1.wav",
+      "sha256": "044d181e6e047763044871b1d412dfba8e0d16462643373e20c7bda01ce4515a",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit [1559186049=1153642577] {r1}.wav",
+          "sha256": "044d181e6e047763044871b1d412dfba8e0d16462643373e20c7bda01ce4515a"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
+          "txtp_sha256": "50f2368fc5def72bfd23cbd6bfb3b4b7139af12ddabba15a1039fb1dc098c151",
+          "event_ids": [
+            "2808667354"
+          ],
+          "media_ids": [
+            "43367388",
+            "252277694",
+            "378438823"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/play_sfx_blitzcrank_blitzcrankbasicattack2_onhit_1559186049_1153642577_r2.wav",
+      "sha256": "0ab92896cd2ea4a92ec714982369be3a4215af916f13492823f3b971b8288ea3",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit [1559186049=1153642577] {r2}.wav",
+          "sha256": "0ab92896cd2ea4a92ec714982369be3a4215af916f13492823f3b971b8288ea3"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
+          "txtp_sha256": "0a02b2797275b97a6b7804f4a0233dcf94ab85f75faac6f60553e14373dfbf52",
+          "event_ids": [
+            "2808667354"
+          ],
+          "media_ids": [
+            "43367388",
+            "252277694",
+            "378438823"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/play_sfx_blitzcrank_blitzcrankbasicattack2_onhit_1559186049_1153642577_r3.wav",
+      "sha256": "3bb79db80b7bc438104061ab940d64c90196e7d8340dcd9451f5806318bd2e11",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit [1559186049=1153642577] {r3}.wav",
+          "sha256": "3bb79db80b7bc438104061ab940d64c90196e7d8340dcd9451f5806318bd2e11"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
+          "txtp_sha256": "80de41757b8110f95ed937b51e7d9450395736e043f6d498b2fea17413ff7e8d",
+          "event_ids": [
+            "2808667354"
+          ],
+          "media_ids": [
+            "43367388",
+            "252277694",
+            "378438823"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/play_sfx_blitzcrank_powerfist_hit.wav",
+      "sha256": "9dbd9271e034090346fccc9fcf483f2ebe22c9a29115ffa8bd7e918ea80118eb",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_PowerFist_hit.wav",
+          "sha256": "9dbd9271e034090346fccc9fcf483f2ebe22c9a29115ffa8bd7e918ea80118eb"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_PowerFist_hit.txtp",
+          "txtp_sha256": "01ed957eca6fb2531aadff3ca4f67e52d4552107cf2bf0a5c3994ffc7d201c3f",
+          "event_ids": [
+            "1281106626"
+          ],
+          "media_ids": [
+            "760940080"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/play_sfx_blitzcrank_rocketgrab_oncast.wav",
+      "sha256": "40819ef8cd122c1d688285fd2a30fd3f0f34819d05d50e75eca97d9e947060cf",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_RocketGrab_OnCast.wav",
+          "sha256": "40819ef8cd122c1d688285fd2a30fd3f0f34819d05d50e75eca97d9e947060cf"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_RocketGrab_OnCast.txtp",
+          "txtp_sha256": "cdd15caf0c085400bbab730837811ab6b95039bcf4c60e6a5904ad7f96417624",
+          "event_ids": [
+            "1230117342"
+          ],
+          "media_ids": [
+            "399029776"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/play_sfx_blitzcrank_rocketgrabmissile_onhit.wav",
+      "sha256": "8bc51a44e0d9603879da9b232f400488df1e2e0d5c948a54e58f5a9e141ecc0c",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_RocketGrabMissile_OnHit.wav",
+          "sha256": "8bc51a44e0d9603879da9b232f400488df1e2e0d5c948a54e58f5a9e141ecc0c"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_RocketGrabMissile_OnHit.txtp",
+          "txtp_sha256": "c0d48c3e0c8005062501258f076abe7d1ded815ee8ed97da1781f700cb6413ea",
+          "event_ids": [
+            "754381436"
+          ],
+          "media_ids": [
+            "255492812"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/play_sfx_blitzcrank_powerfist_onbuffactivate.wav",
+      "sha256": "180c93b1cddaf51c2f085666abdc2d8c37b03f7c6b1ce29e5864e8556aa40140",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_PowerFist_OnBuffActivate.wav",
+          "sha256": "180c93b1cddaf51c2f085666abdc2d8c37b03f7c6b1ce29e5864e8556aa40140"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_PowerFist_OnBuffActivate.txtp",
+          "txtp_sha256": "829ad3a10a10e953dbf169d58352e2025c7df216df6a5f86e2321437382464e1",
+          "event_ids": [
+            "2707073360"
+          ],
+          "media_ids": [
+            "169350163"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/play_sfx_blitzcrank_powerfist_oncast.wav",
+      "sha256": "d02e52ebda45b1c5d12e400db85cdee0c0d77b6024d2141e4a1ae195fceca338",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_PowerFist_OnCast.wav",
+          "sha256": "d02e52ebda45b1c5d12e400db85cdee0c0d77b6024d2141e4a1ae195fceca338"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_PowerFist_OnCast.txtp",
+          "txtp_sha256": "0ef33142f9bf204ff99f45fec9f049ad7c70289d2aec7f0194c9abf333e4be66",
+          "event_ids": [
+            "2467756705"
+          ],
+          "media_ids": [
+            "790371558"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/play_sfx_blitzcrank_death3d_cast.wav",
+      "sha256": "9f566ed189e375618a5b56724bd881ff196a139b6c1eb12998cf0d4fde0ed5c5",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_Death3D_cast.wav",
+          "sha256": "4bee827f3a4ea7246126b4d0f3cd193fbfdf26366923829e10e8fcfdccb3edf4"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_Death3D_cast.txtp",
+          "txtp_sha256": "c8c62a6372017df14bf9496a5ddbecd43db9e4d074a6273d3f3440a472c69d3a",
+          "event_ids": [
+            "2885421824"
+          ],
+          "media_ids": [
+            "173539313"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "death_envelope": {
+          "source_duration": 1.7979138321995465,
+          "source_sha256": "4bee827f3a4ea7246126b4d0f3cd193fbfdf26366923829e10e8fcfdccb3edf4",
+          "keep_seconds": 1.5,
+          "fade_start_seconds": 1.0,
+          "fade_seconds": 0.5,
+          "curve": "linear_amplitude"
+        }
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/play_vo_blitzcrank_death3d_r1_zh_cn.wav",
+      "sha256": "4e29c7590dad5fc2de6c8ab3da94e599ee919b2ba864e5e2e365efe872841d53",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank_vo/event_wav/Play_vo_Blitzcrank_Death3D {r1}.wav",
+          "sha256": "1259c68ef8e7fc856b5b7c993313189e0c354690077eb49e1927f9d58232596f"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank_vo/txtp/Play_vo_Blitzcrank_Death3D {r1}.txtp",
+          "txtp_sha256": "19bae90b26b6eafcbb7f76df779fe04951440a24e5a53715414374886f6bab3b",
+          "event_ids": [
+            "3628120362"
+          ],
+          "media_ids": [
+            "1753649639",
+            "1900072740",
+            "2110759633"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "death_envelope": {
+          "source_duration": 2.3498639455782313,
+          "source_sha256": "1259c68ef8e7fc856b5b7c993313189e0c354690077eb49e1927f9d58232596f",
+          "keep_seconds": 1.5,
+          "fade_start_seconds": 1.0,
+          "fade_seconds": 0.5,
+          "curve": "linear_amplitude"
+        }
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/play_vo_blitzcrank_death3d_r2_zh_cn.wav",
+      "sha256": "c37285f750416bc97f196737b4202d0afb46a513b54d10754ada5cfa84a0c6e7",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank_vo/event_wav/Play_vo_Blitzcrank_Death3D {r2}.wav",
+          "sha256": "3b880845fa4d770e13661fc0c23d6efaa12af7b5221a4b87dc3483bb34f33248"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank_vo/txtp/Play_vo_Blitzcrank_Death3D {r2}.txtp",
+          "txtp_sha256": "b596fbf04bee0aa39a87fff886dcb014b498eebe55b1fda7c3b9c592bf3724ac",
+          "event_ids": [
+            "3628120362"
+          ],
+          "media_ids": [
+            "1753649639",
+            "1900072740",
+            "2110759633"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "death_envelope": {
+          "source_duration": 2.0300907029478457,
+          "source_sha256": "3b880845fa4d770e13661fc0c23d6efaa12af7b5221a4b87dc3483bb34f33248",
+          "keep_seconds": 1.5,
+          "fade_start_seconds": 1.0,
+          "fade_seconds": 0.5,
+          "curve": "linear_amplitude"
+        }
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/play_vo_blitzcrank_death3d_r3_zh_cn.wav",
+      "sha256": "2fed3b4da4d626d23286525fad3d23efb44b0c3c3f2b07aa5d1d69bb2022378d",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank_vo/event_wav/Play_vo_Blitzcrank_Death3D {r3}.wav",
+          "sha256": "6cdf9a34c67aae41934b68064618fa2c7841f2290cc41f2c101330915970b7ec"
+        }
+      ],
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank_vo/txtp/Play_vo_Blitzcrank_Death3D {r3}.txtp",
+          "txtp_sha256": "0970eba8ffcb5621913c522c28bc792450bffe23288f86d8a4f384f0d21b13dc",
+          "event_ids": [
+            "3628120362"
+          ],
+          "media_ids": [
+            "1753649639",
+            "1900072740",
+            "2110759633"
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "death_envelope": {
+          "source_duration": 2.561269841269841,
+          "source_sha256": "6cdf9a34c67aae41934b68064618fa2c7841f2290cc41f2c101330915970b7ec",
+          "keep_seconds": 1.5,
+          "fade_start_seconds": 1.0,
+          "fade_seconds": 0.5,
+          "curve": "linear_amplitude"
+        }
+      }
+    },
+    {
+      "file": "assets/audio/units/blitzcrank/champion_choose_53_zh_cn.ogg",
+      "sha256": "e12a5b6d1cb4945d0dd3f9a895058ef838d86825ec17cdc83750b1fe7f9dcadb",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/client-voice/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/53.ogg",
+          "sha256": "e12a5b6d1cb4945d0dd3f9a895058ef838d86825ec17cdc83750b1fe7f9dcadb"
+        }
+      ],
+      "source_events": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": -8.0,
+        "normalization": false,
+        "original_ogg": true,
+        "notes": "original OGG copied without re-encoding; deploy playback -8 dB"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycerangedattack_oncast_r1_d.wav",
+      "sha256": "d854b2c41d92e6f7f5f08dc2f71456638916d367ec7b777720c5d4cbafad5b3c",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnCast {r1} {d}.txtp",
+          "txtp_sha256": "65d5dec33dc16bf2e3542549a143e649c07a93c7398473f62e10d37c0d992715",
+          "event_ids": [
+            "2686785767"
+          ],
+          "media_ids": [
+            351068205,
+            379962618,
+            668172140,
+            669443932
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycerangedattack_oncast_r2_d.wav",
+      "sha256": "9b7109da9567d0a5275eb3949ba5ff313da3d4abc7a27b16fc4c3a1e9cafcc77",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnCast {r2} {d}.txtp",
+          "txtp_sha256": "e182b4f3f4719a9930ccf55e8f9652147ca000412b5a44884b6adbb7999022cf",
+          "event_ids": [
+            "2686785767"
+          ],
+          "media_ids": [
+            351068205,
+            379962618,
+            668172140,
+            669443932
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycerangedattack_oncast_r3_d.wav",
+      "sha256": "87a3e016f6bdd5db24b18f84371b7768126680931cdb52be78b7f5cd25c50444",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnCast {r3} {d}.txtp",
+          "txtp_sha256": "4f1223d0b557c6239a59c956736880d33bc6746b4b8b3d776f4946c607cef1a4",
+          "event_ids": [
+            "2686785767"
+          ],
+          "media_ids": [
+            351068205,
+            379962618,
+            668172140,
+            669443932
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycerangedattack_onmissilelaunch_r1_d.wav",
+      "sha256": "39c0b4cdcae9ff0aeeb433b147694ad66edf4aae1290559dcf447c87d84b2b79",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnMissileLaunch {r1} {d}.txtp",
+          "txtp_sha256": "0a3676613e9ccbd14089569387b5afc784440e85b08bde348d2c931843e3f51d",
+          "event_ids": [
+            "368713887"
+          ],
+          "media_ids": [
+            164858832,
+            293299447,
+            355881247,
+            440739832
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycerangedattack_onmissilelaunch_r2_d.wav",
+      "sha256": "38b15b670408a52f84f30f06319e40aea8a4a2fe83b0bcafde5aa3a8780e5650",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnMissileLaunch {r2} {d}.txtp",
+          "txtp_sha256": "6ca0df8555145a093067e98cfe851ecea9889e4acc8b174717688ab99a6306fe",
+          "event_ids": [
+            "368713887"
+          ],
+          "media_ids": [
+            164858832,
+            293299447,
+            355881247,
+            440739832
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycerangedattack_onmissilelaunch_r3_d.wav",
+      "sha256": "f3e23d502ad591dce0fa4d1261b6e246d471ccd6ec562f1058d8dccd91858fab",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnMissileLaunch {r3} {d}.txtp",
+          "txtp_sha256": "6e59c6f31b09e2edbfe2ba65b0caaa3bacd66614b318577aba80e0cc543ff1d8",
+          "event_ids": [
+            "368713887"
+          ],
+          "media_ids": [
+            164858832,
+            293299447,
+            355881247,
+            440739832
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycerangedattack_onhit_r1_d.wav",
+      "sha256": "6bc626f116f7c934023cc924013ccd0e1350c4147b5f04fb755dbf309eaeb585",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnHit {r1} {d}.txtp",
+          "txtp_sha256": "85206899f0c8b9159ee6f893822e32544d88412fe1a570545dd461c8b1971088",
+          "event_ids": [
+            "964666405"
+          ],
+          "media_ids": [
+            726082666,
+            855867948,
+            872800774,
+            898581500,
+            997434646
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycerangedattack_onhit_r2_d.wav",
+      "sha256": "4985e603401bdac92ce988f4e4c6d1a670b130a8e476b8f664e654606d4312e1",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnHit {r2} {d}.txtp",
+          "txtp_sha256": "bbb29f0da3cb271ab25f39e0b73abe6d4b15d133bc28ae9f9e7bd53a6000a1b5",
+          "event_ids": [
+            "964666405"
+          ],
+          "media_ids": [
+            726082666,
+            855867948,
+            872800774,
+            898581500,
+            997434646
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycerangedattack_onhit_r3_d.wav",
+      "sha256": "00ea6eec6dc43a303b83aa53b90432a052849efcca3287bd7a18a5dda2ed3170",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnHit {r3} {d}.txtp",
+          "txtp_sha256": "954a0791fdd45f55eafbe02dd380d1a6d42fbc5119c471a492c5ba11fef757e0",
+          "event_ids": [
+            "964666405"
+          ],
+          "media_ids": [
+            726082666,
+            855867948,
+            872800774,
+            898581500,
+            997434646
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycestancehtg_oncast.wav",
+      "sha256": "c5891ee79ecab3370027aad123fdb66943d157a362ae49e19932a8b18e36f1f3",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceStanceHtG_OnCast.txtp",
+          "txtp_sha256": "b7f484f4fa8d63e43e791cea0602e552d886b611b9e67330dccaeae44784e5a0",
+          "event_ids": [
+            "4117630803"
+          ],
+          "media_ids": [
+            768250984
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycehypercharge_oncast.wav",
+      "sha256": "ab0fa843b108da1e53a146460a5c11e5662a99b8a047868dcd1a5b2618813775",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperCharge_OnCast.txtp",
+          "txtp_sha256": "de3c4a7808f10eb9df6b6b18c245779c97eb207a86b224fa73848d91d81904d7",
+          "event_ids": [
+            "1632365608"
+          ],
+          "media_ids": [
+            817944486
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycehypercharge_onbuffdeactivate.wav",
+      "sha256": "a6874884cde6cc8a27e56772a11f5e7a564b1a1675479885395d02f613917893",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperCharge_OnBuffDeactivate.txtp",
+          "txtp_sha256": "435ee3c4880a621c7d2fc3b12e653eeb0392575edf180b40494e3d89ec7db31b",
+          "event_ids": [
+            "2178575608"
+          ],
+          "media_ids": [
+            55065671
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_death3d_cast.wav",
+      "sha256": "f553a536a41ecc88ba0fc553c8b07955988fd9bbe6df6bc092d0df7d866ebe1e",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_Death3D_cast.txtp",
+          "txtp_sha256": "83ed3c3879856c7c4f924e578c0debd161ebaae5e68baf4d9ba7ef062f3c2067",
+          "event_ids": [
+            "459166314"
+          ],
+          "media_ids": [
+            699979098
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
+      },
+      "death_envelope": {
+        "source_duration": 4.2240816326530615,
+        "source_sha256": "ccc277793598eac2ff6c532a2059f744e24150564a571b49bc993ea9ca6e7ce7",
+        "keep_seconds": 1.5,
+        "fade_start_seconds": 1.0,
+        "fade_seconds": 0.5,
+        "curve": "linear_amplitude"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_vo_jayce_death3d_r1_zh_cn.wav",
+      "sha256": "83ccd875c84f7a642c259d92ec34a30e76cd395d6ccd082c9da5b63dff6b59dc",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce_vo/txtp/Play_vo_Jayce_Death3D {r1}.txtp",
+          "txtp_sha256": "7fdd98ef19d55682739ea9b69259aad719295d19ccb2228f68f69c05b8db2571",
+          "event_ids": [
+            "2948315612"
+          ],
+          "media_ids": [
+            652596703,
+            817382101,
+            1098984582,
+            1246205642
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_vo_jayce_death3d_r2_zh_cn.wav",
+      "sha256": "2d283260a355e6f61a33daccd6216cbf8bc535c5a9fe80babead1a381390433c",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce_vo/txtp/Play_vo_Jayce_Death3D {r2}.txtp",
+          "txtp_sha256": "d9e65dd28d7139980c424b91bfe8f073d474e5a182f81c8b9325ae43c0576ad1",
+          "event_ids": [
+            "2948315612"
+          ],
+          "media_ids": [
+            652596703,
+            817382101,
+            1098984582,
+            1246205642
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_vo_jayce_death3d_r3_zh_cn.wav",
+      "sha256": "8901172b7bbf637e1ebed894953f9f386781e89cb96897ce59635a68e5193044",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce_vo/txtp/Play_vo_Jayce_Death3D {r3}.txtp",
+          "txtp_sha256": "9d70e3c571d137b6d826679d831c9d2a077bf4840d4b1833dee53daf590595d4",
+          "event_ids": [
+            "2948315612"
+          ],
+          "media_ids": [
+            652596703,
+            817382101,
+            1098984582,
+            1246205642
+          ]
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycebasicattack_oncast_r1_d.wav",
+      "sha256": "346256d4b18693df55d11de70fff778d156b6f7ca84dd91b1736b392a882d96a",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack_OnCast {r1} {d}.txtp",
+          "txtp_sha256": "825be82273b3cd0133c2fc5ad315dcf9dca81ada4aecd927dc38310105b846d1",
+          "event_ids": [
+            "826098616"
+          ],
+          "media_ids": []
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycebasicattack_oncast_r2_d.wav",
+      "sha256": "f431d376de34fef2eafd000de336a06b713313790a2f2dce1b37c2787d3ba443",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack_OnCast {r2} {d}.txtp",
+          "txtp_sha256": "af454deb74bd6b79d589d25df03968f4316389b280fad1159838f051aa3ad772",
+          "event_ids": [
+            "826098616"
+          ],
+          "media_ids": []
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycebasicattack_oncast_r3_d.wav",
+      "sha256": "6d62ed1d29273b628568ab73515e45e01064ef525ae2faba92cb01bffb8a922f",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack_OnCast {r3} {d}.txtp",
+          "txtp_sha256": "c54f7bba067378a3a79049dc8027af592b4367b0f8a7817c8b3ad431b2ac9590",
+          "event_ids": [
+            "826098616"
+          ],
+          "media_ids": []
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycebasicattack_onhit_1559186049_1153642577_r1_d.wav",
+      "sha256": "211143b0b71187b4fccb9027cf61767108b1252b511f92103798d3f14f50e063",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+          "txtp_sha256": "c3a2c42316f5cbcd10e4102d1dd636affc14c40861a1557fcc64392620ca3f17",
+          "event_ids": [
+            "3129358664"
+          ],
+          "media_ids": []
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycebasicattack_onhit_1559186049_1153642577_r2_d.wav",
+      "sha256": "09eff35df16f123014357fdd3606e0ced4e0e43d12afe9bbd35facfb1b97a0cf",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+          "txtp_sha256": "9352e4e5b54b5b45a9b4641763f3b25d205c4f68fc345b040ac4ed04fd1af723",
+          "event_ids": [
+            "3129358664"
+          ],
+          "media_ids": []
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycebasicattack_onhit_1559186049_1153642577_r3_d.wav",
+      "sha256": "28a4194c9b4a1006d3eb5266f65a7e580f42ef1afb605273b685ba5dbec69c1a",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+          "txtp_sha256": "53f647e17dc81c9c487b2e15fd46890cff1305ebd64c0e21a661766fa563f512",
+          "event_ids": [
+            "3129358664"
+          ],
+          "media_ids": []
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycestancegth_oncast.wav",
+      "sha256": "3d40cff232945ffdca2e45c0bdf3b865d85dd744b590593cdbc057d5f2bc0cf4",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceStanceGtH_OnCast.txtp",
+          "txtp_sha256": "8facfeb0f0c9b9b4a9d176e2775c4f5af2ad9d171812142d8a153f09463410ec",
+          "event_ids": [
+            "3715360435"
+          ],
+          "media_ids": []
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained"
+      },
+      "death_envelope": null
+    },
+    {
+      "file": "assets/audio/units/jayce/champion_choose_126_zh_cn.ogg",
+      "sha256": "786f97c7033a437f9cebeabe9fbc7774b2aa01c96be322009349518662aed20a",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/deploy-voice/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/126.ogg",
+          "sha256": "786f97c7033a437f9cebeabe9fbc7774b2aa01c96be322009349518662aed20a"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": -8.0,
+        "normalization": false,
+        "original_ogg": true,
+        "notes": "原版中文客户端选人语音，保留OGG，部署播放补偿-8dB"
+      }
+    },
+    {
       "file": "assets/audio/units/powder_keg/death_1.wav",
       "sha256": "d2326d297e000e0199f45087a525a4eb8418929a50d0a7bf4d808df0cf3495b6",
       "source_events": [
@@ -65286,6 +66430,970 @@
       "verified_by_listening": false,
       "cue": "deploy:start",
       "source_note": "用户指定桶生命开始声用于部署，Play_sfx_Gangplank_GangplankEBarrelLife_OnBuffCast，三个随机变体"
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/wave_1.wav",
+      "sha256": "ea8421358b736031744d1aeff81b6fd94735e690799aec7a537092de17768ce6",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiR_missilelaunch {r1}.txtp",
+          "txtp_sha256": "028d6583714a1e796384f6403de083035b8b7049ee47d7104b1040703a029a3f",
+          "event_ids": [
+            "2121432243"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [
+          "atrim=duration=1.65",
+          "afade=t=out:st=1.4:d=0.25"
+        ],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 2
+      },
+      "duration": 1.65,
+      "verified_by_listening": false,
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/浪潮法术/11格音效/wave_1.wav",
+          "sha256": "e0171fbc312fa3612083eeb53e87bba48b3b16ef5eac0031b846dcba85ec405f"
+        }
+      ],
+      "cue": "spell:launch"
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/wave_2.wav",
+      "sha256": "61dd973bd626ffc8c5d340117335d8818c442edc5787e663f459f01889d15d3b",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiR_missilelaunch {r2}.txtp",
+          "txtp_sha256": "dee6a62d0d9b4b882272aac38555336af828ea9337e9f24677ada3ce260a52e9",
+          "event_ids": [
+            "2121432243"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [
+          "atrim=duration=1.65",
+          "afade=t=out:st=1.4:d=0.25"
+        ],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 2
+      },
+      "duration": 1.65,
+      "verified_by_listening": false,
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/浪潮法术/11格音效/wave_2.wav",
+          "sha256": "4336d6991f42f0f7556b8b8019b5ae2657ae969ad7b4405c163248b1c76928ed"
+        }
+      ],
+      "cue": "spell:launch"
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/cast_1.wav",
+      "sha256": "7529d840b4070780b379be20a6ea9cc5b237bf8f08064b7f423125db5f34cc55",
+      "cue": "spell:cast",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiR_OnCast {r1}.txtp",
+          "txtp_sha256": "e4e462f171d263eb3593fa8ea661eddf604ee53367520bc3f8548a6bbcae91ad",
+          "event_ids": [
+            "4165359500"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 3.6813378684807256,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/cast_2.wav",
+      "sha256": "094bfd3712def68a2035bc4c5c638428a2b8215a9ced6668494f60b15ee1ac74",
+      "cue": "spell:cast",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiR_OnCast {r2}.txtp",
+          "txtp_sha256": "a7a114ef6160eb71668113c794648198f4e3d54c66a971b5223435eb76f5fc66",
+          "event_ids": [
+            "4165359500"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 3.8069160997732427,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/cast_3.wav",
+      "sha256": "2ad79aa02f860f4cb31244aa09692a9b864146739af0b41fa527ce381f6aa008",
+      "cue": "spell:cast",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiR_OnCast {r3}.txtp",
+          "txtp_sha256": "ef1838b22ec8e6455eaf404983a3147c1769cd687c83a4103f39c5caa41c99b9",
+          "event_ids": [
+            "4165359500"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 4.332471655328798,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/hit_1.wav",
+      "sha256": "bb99404864470622c5372171771edb314ee098c9324aed8de7996e18b4c850b3",
+      "cue": "spell:hit",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiRMissile_hit {r1}.txtp",
+          "txtp_sha256": "5117c1a4944cb1d635372830330693a6ae0c8ac80402c1abc228b35eb40cf397",
+          "event_ids": [
+            "1293277759"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 2.9056009070294784,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/hit_2.wav",
+      "sha256": "95281d5ae29e47b2356d76798f46bacd90274f1f56906d9c5708fe64c1a73c8b",
+      "cue": "spell:hit",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiRMissile_hit {r2}.txtp",
+          "txtp_sha256": "f966bead875956e06263f57fe0cc6453cac190e390898e3c1128892e63573ba3",
+          "event_ids": [
+            "1293277759"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 2.327687074829932,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/hit_3.wav",
+      "sha256": "4e29395dc6a0d9db0fccfeb65a6b468b9bd126113cba80f7ee1d11d39da0e6ab",
+      "cue": "spell:hit",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiRMissile_hit {r3}.txtp",
+          "txtp_sha256": "9fe3c7a81610fec1762e542b4d5cd07922023f285913869bec89a964e9fe463d",
+          "event_ids": [
+            "1293277759"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 3.081859410430839,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycepassiverangedattack_oncast_r1.wav",
+      "sha256": "b5f69615a17aa4b9960750d31144b8b54e743968e7d68988bdab201b379c7c25",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveRangedAttack_OnCast {r1}.txtp",
+          "txtp_sha256": "4c067b64e42a6aa2065d3309d690e542a818a19517044853c9ad4b3f60a76213",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycepassiverangedattack_oncast_r2.wav",
+      "sha256": "c4bfba07ad34fc8162e9a792dbd9e907ed7a9471b1aa2922a706e000f18b1fc9",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveRangedAttack_OnCast {r2}.txtp",
+          "txtp_sha256": "1cb17412634afd0ed5a963019b9f8246268362379e1b089f461045b051de79ff",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycepassiverangedattack_oncast_r3.wav",
+      "sha256": "b035baf92ef7505a3eda17bbc6c4ab94cf6c697011bcdb84d41c64f157ca4dca",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveRangedAttack_OnCast {r3}.txtp",
+          "txtp_sha256": "1519472a3605ef8a3d762de09e2d022168b40532bde91a3d008cea973bcdd7ab",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycepassiverangedattack_hit.wav",
+      "sha256": "0b2961c828549d7b14245f33b59c9bb759c53f9382a77feac1769d8ff30702c4",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveRangedAttack_hit.txtp",
+          "txtp_sha256": "83b68243a72133a1faaabc862f36ae387384ce40bdf3883f762f7b65f2fefe14",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycepassivemeleeattack_oncast.wav",
+      "sha256": "9d2d4b3a6423cd6daf444b3e4e7b15b6e813c2364861e141e8a500ec55f62d4f",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveMeleeAttack_OnCast.txtp",
+          "txtp_sha256": "2e76048cb68bb67ee34bca2fa2f4d1ae4e61b9260903ca4db6fa4b8ec45d86e1",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycepassivemeleeattack_onhit_r.wav",
+      "sha256": "1a474e3e1c151e2bb2d9b0afda3f3edc6014480f3b01231413d234c75ec664d4",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveMeleeAttack_OnHit {r}.txtp",
+          "txtp_sha256": "2f93c708447f991cc40cb76f617f6a2a28c1c96660d4a7f3ef2380b5d2571d97",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycepassiverangedattack_onmissilelaunch_r1.wav",
+      "sha256": "f7dcf8ea49ff2d25cdf14e5720e26a915b9b5bd2c294cf0855f70eb865416778",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveRangedAttack_OnMissileLaunch {r1}.txtp",
+          "txtp_sha256": "6148a78ed14a938623927dc511bc75e6bf40b989d8137c044e680de42ae9f2c4",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycepassiverangedattack_onmissilelaunch_r2.wav",
+      "sha256": "a3d4c80df78ff71d6372a3b8c063a951139aabaddbf8d9230fa0940c015f1085",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveRangedAttack_OnMissileLaunch {r2}.txtp",
+          "txtp_sha256": "6143242f765d724b52f60e9eb6d09d8bfefb9035af1bd6d8e12fcd6423b53180",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycepassiverangedattack_onmissilelaunch_r3.wav",
+      "sha256": "1593667165a0340f58f6f8ac0dc017f9a000203b770ea9d3e6e2f8cae1267d4b",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveRangedAttack_OnMissileLaunch {r3}.txtp",
+          "txtp_sha256": "53ce183f507b9aa9aa232ae73ff56273a50f800398e8b104718ca102f6520248",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycehyperchargerangedattack_oncast_r1.wav",
+      "sha256": "8a4b7be504e471dffc623f892e2c04ce29d312430b0041dc846bfccea3765e1b",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnCast {r1}.txtp",
+          "txtp_sha256": "268a5403ec5444f0b055308a5a314e2e9e4c38c63c548ff635ea7d2f15558069",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycehyperchargerangedattack_oncast_r2.wav",
+      "sha256": "917dba236f3d2967dccdba9aec605990b50b7c39885d7ba92f3abc48a00d6bf8",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnCast {r2}.txtp",
+          "txtp_sha256": "aa65363737c442b74805ad9433fb22264374316e72bc3e1e428ae919af6a0777",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycehyperchargerangedattack_oncast_r3.wav",
+      "sha256": "56b77f765bda769d5f3ebbcf69838428e06afdf8e503d2039cadbd966a318ab7",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnCast {r3}.txtp",
+          "txtp_sha256": "1883c61603a821cf4494c1e0b006e51f7bbfac365518cb9aa07f4a6a8ff59ace",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycehyperchargerangedattack_onmissilelaunch_r1.wav",
+      "sha256": "44ad775651f3487a62d011299ea987f9cfc06c5bbd58a78e3642a0848133de90",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnMissileLaunch {r1}.txtp",
+          "txtp_sha256": "2888bc999baf53ccbab526bec8a9e48f638481541c084b8bec23542bb999c0cc",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycehyperchargerangedattack_onmissilelaunch_r2.wav",
+      "sha256": "3cd0e45575457b455289477ef4c0a256bee3d3d79aee2ca10a7b312f1263d92f",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnMissileLaunch {r2}.txtp",
+          "txtp_sha256": "c7494144f39125169821ea6c84eff4309d6c49c2588c8f2e887e23e318cc64ff",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycehyperchargerangedattack_onmissilelaunch_r3.wav",
+      "sha256": "20ee4cb894745265f412b7ea445ac4b5ed4af9268930e5d393c8ff92e7beafb6",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnMissileLaunch {r3}.txtp",
+          "txtp_sha256": "734961244ecdabf6ae017afee5aab6979267bb41d7c744e0343559f4228e73d5",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycehyperchargerangedattack_onhit_r1.wav",
+      "sha256": "99c8353209924ac5c2df87b23be65d4e6ca6c290dd5bdff03f3b8e16ba2fe95b",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnHit {r1}.txtp",
+          "txtp_sha256": "98dae1b677eca3d71a734027e3cda90b69af11c3fe5f2cbd61865d4eb3775c56",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycehyperchargerangedattack_onhit_r2.wav",
+      "sha256": "afff38d36fef2b7491db734a88fc2df92735864f6a2aec5a71f424936e172b02",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnHit {r2}.txtp",
+          "txtp_sha256": "efba4fae4dd84045e191e824a4813f0e8cfb50eb81c31fafd36e5e830c5c96db",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycehyperchargerangedattack_onhit_r3.wav",
+      "sha256": "f61b9e6d841ce96f43c5c874829f152bbb42f95678795f139f86b5db6ffb9167",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnHit {r3}.txtp",
+          "txtp_sha256": "e6d3a4d7208caf4d0ac88217e0324abe41f69bc56e7205a46d98180bfdfec56c",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycehypercharge_onbuffactivate.wav",
+      "sha256": "5bc03e4f4e17339fc500de250a7d8821692d523617978732efafcbaadbc6dad8",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperCharge_OnBuffActivate.txtp",
+          "txtp_sha256": "8f62f4a208161268e8722f233e48b678e764b3a53678ffc06f6204fe0192db71",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycestaticfield_oncast.wav",
+      "sha256": "38cda423f5cb974bf39ed4c3303104d1911c443984fbd45bac58790b21c0916e",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceStaticField_OnCast.txtp",
+          "txtp_sha256": "d61fc034017eda1db992267e8337d29248092421c8da93b1f4902c13eb98f435",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycestaticfield_onbuffdeactivate.wav",
+      "sha256": "59de3c8ed47cf9bc090a11bb78a88810ca77f7e7ab17e153f6754f3faff6454f",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceStaticField_OnBuffDeactivate.txtp",
+          "txtp_sha256": "16696c221d2ea969879772c87c92d1a4bde2acd56d49f6c101e5891e0078c658",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
+    },
+    {
+      "file": "assets/audio/units/jayce/play_sfx_jayce_jaycestaticfield_onbuffactivate.wav",
+      "sha256": "3668554197345a7f22b795b342879d487371c630a6a223152ce3d75b674de31a",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceStaticField_OnBuffActivate.txtp",
+          "txtp_sha256": "0bcc9932b833d13973d8bf5e3ce0476e6f2b61edd937019cbad16d294e1b0f39",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/assets/sounds/wwise2016/sfx/characters/jayce/skins/base/jayce_base_sfx_audio.bnk",
+              "sha256": "16986543b1c6c9b950c65045b81e63c58d4b71400e4d462c41d468d80a3d0fb1"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "notes": "vgmstream-cli -i; source event gain retained"
+      }
     }
   ]
 }

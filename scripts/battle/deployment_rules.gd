@@ -94,7 +94,7 @@ func is_structure_deployment_tile_blocked(tile: Vector2i) -> bool:
 			return true
 	return false
 
-func tile_in_ground_deploy_zone(tile: Vector2i, p_team: int, require_both_towers: bool = false) -> bool:
+func tile_in_own_ground_deploy_zone(tile: Vector2i, p_team: int) -> bool:
 	if tile.x < 0 or tile.x >= ArenaRules.ARENA_COLUMNS or tile.y < 0 or tile.y >= ArenaRules.ARENA_ROWS:
 		return false
 	var local_row := tile.y if p_team == 0 else ArenaRules.ARENA_ROWS - 1 - tile.y
@@ -103,6 +103,14 @@ func tile_in_ground_deploy_zone(tile: Vector2i, p_team: int, require_both_towers
 		if local_row == ArenaRules.TEAM_0_LAST_ROW and (tile.x < ArenaRules.BACK_CENTER_MIN_COLUMN or tile.x > ArenaRules.BACK_CENTER_MAX_COLUMN):
 			return false
 		return true
+	return false
+
+func tile_in_ground_deploy_zone(tile: Vector2i, p_team: int, require_both_towers: bool = false) -> bool:
+	if tile_in_own_ground_deploy_zone(tile, p_team):
+		return true
+	if tile.x < 0 or tile.x >= ArenaRules.ARENA_COLUMNS or tile.y < 0 or tile.y >= ArenaRules.ARENA_ROWS:
+		return false
+	var local_row := tile.y if p_team == 0 else ArenaRules.ARENA_ROWS - 1 - tile.y
 	# 摧毁某一路公主塔后，只解锁该路塔后至河岸的 6 行 pocket。
 	if local_row < ArenaRules.POCKET_FIRST_ROW or local_row > ArenaRules.POCKET_LAST_ROW:
 		return false
@@ -179,6 +187,8 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2, c
 	#    「河道非桥面不可下」统一放在下一段占位层里（和塔/水晶/建筑同开关），不重复耦合到区域分类。
 	# 塔墟被动仅允许在已毁公主塔的精确中心重建；该位置可能在普通 pocket
 	# 部署区之外。中心未对齐塔墟时仍严格执行原部署区域。
+	if player_deployment and bool(stats.get("deploy_half_only", false)):
+		return tile_in_own_ground_deploy_zone(world_to_arena_tile(pos), p_team)
 	match deploy_zone if foundation_tower == null else "tower_ruin":
 		"global":
 			if pos.x < 0.0 or pos.x >= ArenaRules.FIELD_W or pos.y < 0.0 or pos.y >= ArenaRules.FIELD_H:

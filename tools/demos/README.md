@@ -92,4 +92,13 @@ python3 tools/demos/pantheon_review_media.py --input /本次输出/pantheon-revi
 莎弥拉持枪/持刀待机、跑步、收武器与切换审核：`samira_review.gd -- --stance-review`，正式工作台出牌后以确定性表现状态驱动双方四个模型，输出截图与片段/时间JSON；不将此演示作为权威索敌验证。
 
 莎弥拉R结束衔接审核：`samira_review.gd -- --r-exit-review`，以同一表现预览场景检查双方移动/静止退出R，输出截图和片段进度JSON。
+
+`blitzcrank_review.gd`（`--hook-interrupt` 检查出钩后冻结/死亡与目标移远；`--tower-pull` 检查隔塔拉取正在攻击防御塔的人马）：正式工作台双阵营Q牵引、E强化眩晕、冻结、死亡语音、卡面与实际混音；`-- --viewer-team=1`复核红方观察视角。
+
+`jayce_review.gd`：工作台双阵营周期换形、超能电荷、冻结、死亡、卡面图标和运行录音检查。
+
+`tidal_wave_review.gd`：正式工作台双方浪潮、友军加速、空军排除、卡面与运行音轨记录。`-- --no-units`用于空场粒子遮挡观察；输出由DevelopmentPaths统一管理。
+
 - `powder_keg_review.gd`：双阵营火药桶/木桩尺寸、Timer受击、主动与普通爆炸、金币及实际混音截图录音。
+
+杰斯 `jayce_review.gd -- --anchors-review`：在现有工作台固定双形态位置，依次拍摄首击待发、换形、远程W与出手；仅演示夹具，不改变对战规则。

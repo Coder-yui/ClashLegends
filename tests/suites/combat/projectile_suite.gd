@@ -247,6 +247,7 @@ func _attack_trace(card_id: String, configured: Dictionary, team: int, lethal: b
 	# 独立几何基线：旧卡保持迁移前规则；远程天使、璐璐、图奇、麦林炮手与库奇采用身体边缘+7.5。
 	var legacy_edge := card_id in ["ashe", "teemo", "gnar", "anivia", "kayle_ranged", "lulu", "twitch", "tristana", "corki", "jinx"]
 	var expected_start := attacker.position + Vector2(attacker.body_radius + 7.5, 0) if legacy_edge else attacker.position
+	if card_id == "jayce": expected_start = attacker.position + Vector2(attacker.body_radius, 0)
 	var expected_radius := 7.0 if card_id == "tower" else (3.0 if card_id == "ashe" else 4.0)
 	if not change_visual:
 		_expect(shot.pos == expected_start and shot.radius == expected_radius, "%s：保持迁移前权威出生点与碰撞半径" % card_id)

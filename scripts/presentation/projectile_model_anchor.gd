@@ -27,3 +27,19 @@ static func create(model: Node3D) -> Node3D:
 	model.add_child(anchor)
 	anchor.position = bounds.get_center()
 	return anchor
+
+## 命中挂目标身体，不能复用自定义出弹口；优先原版胸部挂点，缺省用通用躯干骨。
+static func body_position(body: Node2D) -> Variant:
+	if not body.has_meta("projectile_model_anchor"): return null
+	var reference = body.get_meta("projectile_model_anchor")
+	if not reference is WeakRef: return null
+	var anchor = reference.get_ref()
+	if not is_instance_valid(anchor): return null
+	if anchor is BoneAttachment3D:
+		var skeleton := anchor.get_parent() as Skeleton3D
+		if skeleton != null:
+			for preferred in ["cbuffboneglbchestloc", "buffboneglbchestloc", "spine2", "chest", "spine1", "spine"]:
+				for index in skeleton.get_bone_count():
+					if String(skeleton.get_bone_name(index)).to_lower().replace("_", "") == preferred:
+						return skeleton.to_global(skeleton.get_bone_global_pose(index).origin)
+	return anchor.global_position

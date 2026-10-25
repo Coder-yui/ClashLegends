@@ -78,6 +78,10 @@
     ],
     "pix_single": [
       "pix"
+    ],
+    "jayce": [
+      "jayce",
+      "jayce_hammer"
     ]
   }
 }

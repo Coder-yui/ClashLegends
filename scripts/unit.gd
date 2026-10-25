@@ -229,6 +229,11 @@ var _configured_skill_resource_damage_gain_multiplier := 0.0
 var _configured_skill_resource_decay_delay := 0.0
 var _configured_skill_resource_decay_rate := 0.0
 ## 双形态单位配置。0 为初始形态，1 为 transformed_stats；命中次数可让两形态循环切换。
+var cyclic_form = preload("res://scripts/battle/cyclic_form_state.gd").new()
+var burst_attacks_left := 0
+var burst_finishing := false
+var burst_attack_speed := 1.0
+var burst_expiry_tick := -1
 var transform_after_hits := 0
 var revert_after_hits := 0
 var transform_hit_count := 0
@@ -388,6 +393,7 @@ var _move_direction := Vector2.ZERO
 var _avoidance_turn := 0.0
 ## 本 Tick 由击退或先锋自主冲撞接管意图；不是未实现的强制位移能力。
 var _forced_movement := false
+var auto_pull := AutoPullState.new()
 var knockback := KnockbackState.new()
 var _knockback_velocity: Vector2:
 	get: return knockback.velocity
@@ -731,6 +737,7 @@ func has_required_skill_resource(skill: Dictionary) -> bool:
 	return not bool(skill.get("requires_full_resource", false)) or (is_skill_resource_visible() and get_skill_resource_ratio() >= 0.999)
 
 func can_start_active_skill(skill: Dictionary) -> bool:
+	if auto_pull.active(): return false
 	if not has_required_skill_resource(skill): return false
 	if control.hard.remaining(&"root") > 0.0 and String(skill.get("kind", "")) in ["dash_strike", "movement_strike", "terrain_charge"]: return false
 	if StringName(skill.get("kind", "")) == &"movement_strike" and movement_strike.is_armed(): return false
@@ -922,6 +929,7 @@ func is_empowered_attack_ready_visual() -> bool:
 		return net_empowered_attack_ready
 	if not attack_passive_multipliers.is_empty():
 		return float(attack_passive_multipliers[posmod(_attack_swing_count, attack_passive_multipliers.size())]) > 0.0
+	if float(_base_form_stats.get("form_cycle_interval", 0.0)) > 0.0: return cyclic_form.first_attack
 	return empowered_attack_ready
 
 func get_skill_resource_ratio() -> float:
@@ -949,7 +957,7 @@ func active_buff_clock_visual() -> Vector2:
 	return Vector2(age, _buff_visual_duration)
 
 func get_active_buff_active_visual() -> bool:
-	return net_active_buff_active if _in_client_mode() else active_buff_timer > 0.0 or buffs.remaining(&"timed_lifesteal") > 0.0 or buffs.remaining(&"counter_strike") > 0.0 or buffs.remaining(&"damage_reduction") > 0.0 or buffs.remaining(&"effect_shield") > 0.0
+	return net_active_buff_active if _in_client_mode() else ((burst_attacks_left > 0 or burst_finishing) and not CombatInteraction.in_stasis(self)) or active_buff_timer > 0.0 or buffs.remaining(&"timed_lifesteal") > 0.0 or buffs.remaining(&"counter_strike") > 0.0 or buffs.remaining(&"damage_reduction") > 0.0 or buffs.remaining(&"effect_shield") > 0.0
 
 func get_active_speed_multiplier_visual() -> float:
 	return net_active_speed_multiplier if _in_client_mode() else active_speed_multiplier
@@ -1307,7 +1315,13 @@ func toggle_weapon_form() -> void:
 	buffs.clear_family(&"hit_haste")
 	_apply_form(1 - form_index, false)
 	form_transition_timer = transform_duration
-	play_visual_action(&"transform", form_transition_timer)
+	# 瞬时换形仍发布独立的表现窗口；它不参与攻击/移动权限判断。
+	var visual_duration := form_transition_timer
+	if visual_duration <= 0.0:
+		var action: Dictionary = PresentationConfig.for_form(_base_form_stats, form_index).get("visual_animations", {}).get("visual_actions", {}).get("transform", {})
+		var durations: Array = action.get("durations", [])
+		if not durations.is_empty(): visual_duration = maxf(float(durations[0]), 0.0)
+	play_visual_action(&"transform", visual_duration)
 
 ## 仅真实普通攻击（含溅射）登记建筑助攻；以权威 Tick 计时。
 func record_structure_attack(target: Node2D) -> void:
@@ -1605,6 +1619,8 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 	if knockback.recovery_pending: recover_displacement_position()
 	if _knockback_timer > 0.0:
 		_tick_knockback_movement(dt)
+	# 瞄准由取消入口打断；已发出的钩子由独立弹体时钟推进。
+	var pulling := auto_pull.tick(self, dt)
 	var summons_started := false
 	# 卡牌生成后进入部署时间：自身不索敌、不移动、不攻击，但实体已经存在，
 	# 会参与碰撞，也能被敌方索敌、命中、受伤和施加状态。
@@ -1661,14 +1677,18 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		return
 	# 突进期间由技能效果推进位置；结束后仍由施法锁阻止普攻和自主移动。
 	if skill_dash_active: return
+	if pulling: return
 	# 攻击锁和移动锁彼此独立：移动施法会继续追击/行军，但在技能窗口内绝不普攻；
 	# 只锁移动的技能仍可原地攻击。纯 Buff 可配置空 locks，完全不改变基础行为。
 	if is_active_skill_attack_locked():
 		_tick_attack_locked_cast_movement(dt)
 		return
+	# 到期换形优先于本Tick普攻前摇/后摇推进；硬控和强制位移已在上方拦截。
+	cyclic_form.try_switch(self)
 	if form_transition_timer > 0.0:
 		_tick_form_transition_movement(dt)
 		return
+	if auto_pull.try_start(self): return
 	if movement_strike.tick(self, dt): return
 	if structure_rush.phase == StructureRushState.Phase.RECOVERY or structure_rush.tick(self, dt):
 		return
@@ -1723,6 +1743,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 			_attacking = true
 			if attack_timeline.recovery > 0.0:
 				return
+	if burst_finishing: _end_attack_burst()
 	# 已准备的突进必须由通用突进状态消费；后摇刚结束也不能落回普通攻击。
 	if movement_strike.is_armed():
 		_update_target(false)
@@ -1947,6 +1968,7 @@ func surface_gap_to_circle(center: Vector2, radius: float) -> float:
 
 ## 旧动作窗口在命令执行前推进一次；本边界新动作从下个边界开始推进。
 func prepare_action_clocks(dt: float) -> void:
+	cyclic_form.advance(self, dt)
 	if not _in_client_mode() and float(_base_form_stats.get("position_history_duration", 0.0)) > 0.0:
 		if _position_history.is_empty(): _position_history.append({"time": 0.0, "position": global_position})
 		_position_history_age += dt
@@ -2454,6 +2476,7 @@ func _attack(dt: float) -> void:
 		var attack_effects: Dictionary = {"attack_id": basic_attack_sequence, "cycle_id": _attack_visual_serial}
 		if float(_base_form_stats.get("attack_self_radius", 0.0)) > 0.0:
 			attack_effects["self_radius"] = float(_base_form_stats.attack_self_radius)
+		cyclic_form.consume(self, attack_effects)
 		if first_strike:
 			# 效果随弹体携带到真实命中点；表现层不会在出手或预判 first_hit 时播放被动音。
 			attack_effects["first_strike"] = true
@@ -2492,6 +2515,9 @@ func _attack(dt: float) -> void:
 		if (projectile_speed <= 0.0 or close_attack) and battle_context != null and battle_context.damage_batch().collecting:
 			attack_effects["delivery_callback"] = _settle_melee_delivery.bind(form_change_serial, _attack_visual_serial, true)
 		var completed := _perform_attack_strike(_target, hit_damage, attack_effects)
+		if burst_attacks_left > 0:
+			burst_attacks_left -= 1
+			burst_finishing = burst_attacks_left == 0
 		if completed:
 			_queue_extra_attack_hits(hit_index, base_hit_damage, _target)
 		else:
@@ -2516,7 +2542,7 @@ func _next_attack_gap() -> float:
 	return maxf(snappedf(gap / _effective_attack_speed_multiplier(), 0.01), 0.01)
 
 func _effective_attack_speed_multiplier() -> float:
-	var multiplier := maxf(active_attack_speed_multiplier, 0.01) * (close_attack_speed_multiplier if close_attack else 1.0)
+	var multiplier := maxf(maxf(active_attack_speed_multiplier, burst_attack_speed if (burst_attacks_left > 0 or burst_finishing) and not CombatInteraction.in_stasis(self) else 1.0), 0.01) * (close_attack_speed_multiplier if close_attack else 1.0)
 	if control.attack_speed_slow_timer > 0.0 and not active_buff_ignores_attack_speed_slow:
 		multiplier *= control.attack_speed_slow_multiplier
 	return maxf(multiplier, 0.01)
@@ -2549,7 +2575,7 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 		return
 	record_combat_activity(true)
 	_attack_visual_pending = false
-	_attack_visual_first_strike = false
+	_attack_visual_first_strike = float(_base_form_stats.get("form_cycle_interval", 0.0)) > 0.0 and cyclic_form.first_attack
 	if first_strike_damage_multiplier != 1.0 and _target != null and is_instance_valid(_target):
 		_attack_visual_first_strike = not _first_strike_hit_target_ids.has(_target.get_instance_id())
 	_attack_visual_serial += 1
@@ -2864,6 +2890,7 @@ func _try_attack_lifesteal(landed_damage: float, cycle_ratio: float = 0.0) -> vo
 	_receive_health_gain(landed_damage * ratio, health_cap, false)
 
 func cancel_skill_cast(recover_position: bool = true) -> void:
+	auto_pull.cancel()
 	if recover_position and skill_dash_active and hp > 0.0: recover_displacement_position()
 	visual_action_clock_managed = false
 	visual_action_clock_rate = 1.0
@@ -2879,7 +2906,7 @@ func cancel_skill_cast(recover_position: bool = true) -> void:
 ## 有效眩晕/击退只取消正在自主位移的技能，不取消已停下的普通尾段。
 func cancel_controlled_action(reason: StringName, recover_position: bool = true) -> void:
 	if reason == ActionCancellation.STUN and movement_strike.stun_protected(): return
-	var cancel_displacement := skill_dash_active
+	var cancel_displacement := skill_dash_active or (auto_pull.active() and not auto_pull.launched)
 	if movement_strike.in_transit(): cancelled_visual_serial = maxi(cancelled_visual_serial, get_visual_action_serial())
 	if cancel_displacement:
 		cancelled_visual_serial = maxi(cancelled_visual_serial, get_visual_action_serial())
@@ -3086,6 +3113,23 @@ func grant_effect_shield_reward(duration: float, attack_speed: float) -> void:
 	apply_attack_speed_buff(&"hit_haste", status_source("effect_shield_reward"), duration, {"attack_speed": attack_speed})
 	queue_redraw()
 
+func prepare_attack_burst(count: int, multiplier: float, duration: float) -> void:
+	var previous_speed := _effective_attack_speed_multiplier()
+	burst_finishing = false
+	burst_attacks_left = count
+	burst_attack_speed = multiplier
+	burst_expiry_tick = buffs.tick_index + maxi(1, ceili(duration * StatusInstances.TICKS_PER_SECOND))
+	_rescale_attack_phase(previous_speed)
+
+## Called after the last recovery or at the authoritative expiry tick, once.
+func _end_attack_burst() -> void:
+	var was_active := burst_attacks_left > 0 or burst_finishing
+	burst_attacks_left = 0
+	burst_finishing = false
+	burst_expiry_tick = -1
+	if was_active and hp > 0.0 and battle_context != null:
+		battle_context.notify_unit_audio_event(self, &"burst:end", global_position)
+
 func apply_active_buff(duration: float, speed_multiplier: float, damage_multiplier: float, attack_speed_multiplier: float, ignores_movement_slow: bool = false, ignores_attack_speed_slow: bool = false, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0: return
@@ -3175,6 +3219,8 @@ func _tick_active_statuses(dt: float) -> void:
 			battle_context.notify_unit_audio_event(self, &"effect_shield:end", global_position)
 		if expired.family == &"damage_reduction" and expired.potency.has("expiry_skill") and hp > 0.0 and not CombatInteraction.in_stasis(self) and battle_context != null:
 			battle_context.queue_expiry_explosion(self, expired.potency.expiry_skill)
+	if burst_expiry_tick >= 0 and buffs.tick_index >= burst_expiry_tick:
+		_end_attack_burst()
 	_rescale_attack_phase(previous_speed)
 	_tick_skill_resource_decay(dt)
 

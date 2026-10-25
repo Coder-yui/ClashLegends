@@ -32,7 +32,27 @@ static func retain_match_textures(card_ids: Array) -> Dictionary:
 	return {"before": before, "after": _textures.size(), "released_cache_entries": before - _textures.size()}
 
 ## 缺省图标返回 null，由 UI 保留既有文字占位。
-static func skill_icon(skill: Dictionary) -> Texture2D:
+static func skill_icon(skill: Dictionary, form_index: int = -1) -> Texture2D:
+	var forms: Array = skill.get("form_icon_paths", [])
+	if forms.size() == 2:
+		if form_index >= 0: return load(String(forms[clampi(form_index, 0, 1)])) as Texture2D
+		var key := "skill_split:" + "|".join(forms)
+		if _textures.has(key): return _textures[key]
+		var first := (load(String(forms[0])) as Texture2D).get_image()
+		var second := (load(String(forms[1])) as Texture2D).get_image()
+		if first.is_compressed(): first.decompress()
+		if second.is_compressed(): second.decompress()
+		first.convert(Image.FORMAT_RGBA8)
+		second.convert(Image.FORMAT_RGBA8)
+		second.resize(first.get_width(), first.get_height(), Image.INTERPOLATE_LANCZOS)
+		# 从左下到右上的对角线等分；外侧圆形由各UI的既有裁切绘制。
+		for y in first.get_height():
+			for x in first.get_width():
+				if float(x) / first.get_width() + float(y) / first.get_height() >= 1.0:
+					first.set_pixel(x, y, second.get_pixel(x, y))
+		var combined := ImageTexture.create_from_image(first)
+		_textures[key] = combined
+		return combined
 	var path := String(skill.get("icon_path", ""))
 	if path.is_empty(): return null
 	var texture := load(path) as Texture2D

@@ -1,0 +1,159 @@
+{
+  "source": "Jayce.wad.client / base skin",
+  "source_scale": 0.0095,
+  "sampling_fps": 120,
+  "systems": {
+    "bullet": {
+      "native": "Jayce_Base_Range_Basic_Mis",
+      "raw_sha256": "44ebc5c9ebf4b8d2157c131bacf16acbfd801a8cfb126f2486f086c1c49db612",
+      "sampled_sha256": "b5280a696cee83ca6510fced63ee936b600117deb713671f3c52aedc90fae601"
+    },
+    "first_hit_m": {
+      "native": "Jayce_Base_P_charged_hit",
+      "raw_sha256": "18b01ce924a6a2c03f42b12a88c76dd2f1b84fb0144a778ef8974b44db6738e4",
+      "sampled_sha256": "a86236b943bcae71c908f9c6cf8ac2c1aaeaab8fff5afdf5ba9c91ee103ee7c4"
+    },
+    "first_hit_r": {
+      "native": "Jayce_Base_P_charged_hit_ranged",
+      "raw_sha256": "b4084219860c9938da863a3e05ee6763a9f73b70bc52e7ab77c994f3c0e85ab3",
+      "sampled_sha256": "297c035f8f1ac059d2033ec3a3aa468ae9ed47ce266a68997d9369544cd014f6"
+    },
+    "ready_m": {
+      "native": "Jayce_Base_PassiveReadyMelee",
+      "raw_sha256": "6f0399cb66dc3d78f8bee1bf3303cc2d6b8d3971a171864157c283f7eba8f93c",
+      "sampled_sha256": "008768d9b642bfe6ef73d327f5398cb394c595269e3b6fe55307fecef96b620f"
+    },
+    "ready_r": {
+      "native": "Jayce_Base_PassiveReadyRange",
+      "raw_sha256": "c726b2f3dac2bd538ea067b77cd601884df34e0d97608f41a46f10d9e0ea23ce",
+      "sampled_sha256": "1fef16d26f60fb3628176bdd4fad8fdf13478a960e03f341c627a678c7f5d8f8"
+    },
+    "field": {
+      "native": "Jayce_Base_StaticStormShock",
+      "raw_sha256": "71462f06b54db2b97dd7611677521c742db89b0c639e1f5c79d98649f71de5f5",
+      "sampled_sha256": "243e193781c1fcdae6962fe0081b098a5f3521cb9abe580d4814b49439757c2f"
+    },
+    "stance_m": {
+      "native": "Jayce_Base_Stance_Melee",
+      "raw_sha256": "f4f858114944396709c948dd1fcd27cd3e98441dcb5a7f1d1e0f10e6184aa092",
+      "sampled_sha256": "62d7a1cbd0a6bd99833f4b05514d2e67e985a2c3f1b48e8bb63699bb9d50593e",
+      "lifecycle": "UNVERIFIED: retained project 0.3s emission window, native particle tails. Source emitters have no finite system lifetime; original stopping callsite is absent."
+    },
+    "stance_r": {
+      "native": "Jayce_Base_Stance_Range",
+      "raw_sha256": "8bc3090f67ff937d7030255ccee69c1dc9d0faeb01156472491ec61b4a11e148",
+      "sampled_sha256": "39dd73431f7f7b35ece9b440e43d94e3a96c491ef6c77a1e8fc187284ae59cdb",
+      "lifecycle": "UNVERIFIED: retained project 0.3s emission window, native particle tails. Source emitters have no finite system lifetime; original stopping callsite is absent."
+    },
+    "stance_hammer": {
+      "native": "Jayce_Base_Stance_Range_Hammer",
+      "raw_sha256": "2145abf157e60c55051e7a3f0feaf1720817e28984a05dbb47a25a7af17cf65f",
+      "sampled_sha256": "3fee381ef396d2b89cb7ea8fdef9d2111c4532f2de417370d6a3f685f30f5ddb",
+      "lifecycle": "UNVERIFIED: retained project 0.3s emission window, native particle tails. Source emitters have no finite system lifetime; original stopping callsite is absent."
+    },
+    "field_hit": {
+      "native": "Jayce_Base_StaticStorm_Hit",
+      "raw_sha256": "1d23353da17373fb12f761f61d57225b7b7744043b4d3d0c7c69d0efe243cc10",
+      "sampled_sha256": "0e4b3e8e4ffcc2e960734e0841a4c39ee9ff386ebef25b5cbdf94f38eb4b083a"
+    },
+    "swap_m": {
+      "native": "Jayce_Base_Model_Swap",
+      "raw_sha256": "fabcdd8c6337b8825365ea4020353a2eaf21cf9ebb5fce41220dd5855fb2e2a7",
+      "sampled_sha256": "6df9c642181ef689038dd60b9397be0fbef3075c1175cff7d273e96a2fc35b07"
+    },
+    "swap_r": {
+      "native": "Jayce_Base_Model_Swap2",
+      "raw_sha256": "b7b849a42bb6c597ec0745a3c1acd8453b307e446dff5ea33ef80664dcdcbab7",
+      "sampled_sha256": "8d6dc481e4f42d6a0a5be6221a91390cc40da7e27acccc73e50954fedef265e0"
+    },
+    "w_ready2": {
+      "native": "Jayce_Base_Hex_Buff_Ready2",
+      "raw_sha256": "68762eb129f183b472d4c7d348b1f3d0f162cb924b7cdb902fb2a992740f8e2a",
+      "sampled_sha256": "82487d4711b6158427dcdc74e9182d158250bace00f5a0e35c8af62a74490856",
+      "render_rgb_multiplier": 1,
+      "project_uniform_scale_multiplier": 1,
+      "scale_reason": "Approved original Ready2 at unified 0.0095 model scale; no color, brightness or size overrides",
+      "source_disabled": false,
+      "runtime_enabled": true
+    }
+  },
+  "excluded": {
+    "StaticStorm_aura": "empty",
+    "BA_ranged": "ordinary target hit; not a muzzle effect; removed per user request",
+    "CA_1": "critical target hit; not a weapon effect; removed per user request",
+    "Hex_Buff_Ready": "Source disabled; not used",
+    "W_Attk1_Hex_Buff_01": "source disabled; handle-end animation layer excluded"
+  },
+  "range_alignment": {
+    "layer": "Lightning_AoE_Telegraph",
+    "native_bright_band_radius": 250.9623,
+    "model_scale": 0.0095,
+    "pixels_per_world_unit": 40,
+    "projected_ground_radius": 95.365674,
+    "gameplay_radius": 95,
+    "criterion": "main telegraph bright band, not outer mesh or stray lightning"
+  },
+  "attachment_evidence": {
+    "package": "Scripts.wad.client",
+    "ready_r": {
+      "script": "data/characters/jayce/spells/jaycehyperchargerangedattack.luabin64",
+      "bones": [
+        "BUFFBONE_CSTM_WEAPON_1",
+        "BUFFBONE_CSTM_WEAPON_GAP_1",
+        "BUFFBONE_CSTM_WEAPON_GAP_2"
+      ],
+      "scope": "native same-resource automatic mount configuration; current passive script itself has no attachment fields"
+    },
+    "unresolved": [
+      "stance_m",
+      "stance_r",
+      "stance_hammer",
+      "ready_m"
+    ],
+    "w_ready": {
+      "script": "data/characters/jayce/spells/jaycehypercharge.luabin64",
+      "bones": [
+        "BUFFBONE_CSTM_EXHAUST_1",
+        "BUFFBONE_CSTM_EXHAUST_2",
+        "BUFFBONE_CSTM_EXHAUST_3"
+      ],
+      "runtime_enabled": false
+    },
+    "w_exhaust": {
+      "animation_events": [
+        "Ranged_Spell2_Attack1",
+        "Ranged_Spell2_Attack2"
+      ],
+      "bones": [
+        "BUFFBONE_CSTM_EXHAUST_1",
+        "BUFFBONE_CSTM_EXHAUST_2",
+        "BUFFBONE_CSTM_EXHAUST_3",
+        "BUFFBONE_CSTM_EXHAUST_4",
+        "BUFFBONE_CSTM_EXHAUST_5",
+        "BUFFBONE_CSTM_EXHAUST_6"
+      ],
+      "runtime_enabled": false
+    },
+    "w_ready2": {
+      "bones": [
+        "BUFFBONE_CSTM_WEAPON_GAP_1",
+        "BUFFBONE_CSTM_WEAPON_GAP_2"
+      ],
+      "scope": "Original script proves GAP1; GAP1/2 head-side preview explicitly approved by user for production."
+    }
+  },
+  "rebuild": {
+    "source_audit": "ClashLegends-开发素材库/04-中间产物/未来守护者/原始依据重查",
+    "disabled_emitters_preserved": [],
+    "brightness_multiplier": 1,
+    "added_depth_bias": 0,
+    "transform_mapping": {
+      "swap_m": "Model_Swap on own root, project mapping by melee charged-hit palette",
+      "swap_r": "Model_Swap2 on own root, project mapping by ranged charged-hit palette"
+    },
+    "unverified": "Original dynamic transform callsite, direction mapping and exact bone/timing not present in local client metadata",
+    "ranged_w_adaptation": "User-approved original Ready2/Vents at GAP1/2; unified model scale 0.0095; FLIP_X coordinate conversion. No whitening, RGB gain, extra size multiplier or disabled emitter activation.",
+    "w_geometry_evidence": "ClashLegends-开发素材库/03-制作中/未来守护者/w-direction/evidence.json",
+    "weapon_attachment_frame": "All attached weapon effects compose bone basis with FLIP_X before seek_motion; original bone origins and uniform 0.0095 scale retained. Melee ready bone selection remains unverified."
+  }
+}

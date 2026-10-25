@@ -229,6 +229,13 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 	queue_redraw()
 	return true
 
+func launch_pull(source: Unit, target: Unit) -> int:
+	var id := _next_id
+	_next_id += 1
+	projectiles[id] = PullProjectile.create(source, target)
+	_invalidate_visible_view()
+	return id
+
 func _queue_attack_wave(source: Unit, target: Node2D, sword_id: int) -> void:
 	var wave := source.attack_wave
 	var sword: Dictionary = projectiles[sword_id]
@@ -276,9 +283,10 @@ func invalidate_target_locks(target: Node2D) -> void:
 	for id in projectiles.keys():
 		var projectile: Dictionary = projectiles[id]
 		if bool(projectile.get("skill_fan", false)) or projectile.get("target") != target: continue
-		var source = projectile.get("attacker")
+		var source = null if bool(projectile.get("pull", false)) else projectile.get("attacker")
 		if CombatInteraction.allows(target, source if is_instance_valid(source) else null, int(projectile.team), projectile.source_pos): continue
 		if bool(projectile.get("owned_launch_audio", false)): launch_audio_stopped.emit(id)
+		if bool(projectile.get("pull", false)): PullProjectile.cancel_return(projectile)
 		projectiles.erase(id)
 		changed = true
 	if changed: _invalidate_visible_view()
@@ -300,6 +308,9 @@ func tick(dt: float) -> void:
 			break
 	for id in projectiles:
 		var projectile: Dictionary = projectiles[id]
+		if bool(projectile.get("pull", false)):
+			if PullProjectile.tick(projectile, dt, self): finished.append(id)
+			continue
 		if projectile.get("skill_fan", false):
 			if _tick_skill_arrow(projectile, dt, fan_colliders):
 				finished.append(id)
@@ -573,7 +584,7 @@ func _draw() -> void:
 		match StringName(projectile.get("visual", &"orb")):
 			&"corki_missile", &"corki_missile_big": load("res://scripts/presentation/corki_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), StringName(projectile.visual) == &"corki_missile_big")
 			&"baron_siege", &"baron_ranged": preload("res://scripts/presentation/baron_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)), projectile.color)
-			&"samira_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
+			&"blitzcrank_hook", &"jayce_bullet", &"samira_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
 			&"fireball": preload("res://scripts/presentation/fireball_effect_2d.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)))
 			&"magic_orb": _draw_magic_orb(projectile)
 			&"tower_orb": _draw_tower_orb(projectile)

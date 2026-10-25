@@ -1,0 +1,739 @@
+[
+  {
+    "file": "play_sfx_jayce_jaycerangedattack_oncast_r1_d.wav",
+    "event": "Play_sfx_Jayce_JayceRangedAttack_OnCast",
+    "event_id": 2686785767,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack_OnCast {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnCast {r1} {d}.txtp",
+    "media_ids": [
+      351068205,
+      379962618,
+      668172140,
+      669443932
+    ],
+    "duration": 0.8718,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d854b2c41d92e6f7f5f08dc2f71456638916d367ec7b777720c5d4cbafad5b3c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycerangedattack2_oncast_r1.wav",
+        "event": "Play_sfx_Jayce_JayceRangedAttack2_OnCast",
+        "event_id": 3733319681,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack2_OnCast {r1}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack2_OnCast {r1}.txtp",
+        "media_ids": [
+          351068205,
+          379962618,
+          668172140,
+          669443932
+        ],
+        "duration": 0.8718,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "d854b2c41d92e6f7f5f08dc2f71456638916d367ec7b777720c5d4cbafad5b3c",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycerangedattack_oncast_r2_d.wav",
+    "event": "Play_sfx_Jayce_JayceRangedAttack_OnCast",
+    "event_id": 2686785767,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack_OnCast {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnCast {r2} {d}.txtp",
+    "media_ids": [
+      351068205,
+      379962618,
+      668172140,
+      669443932
+    ],
+    "duration": 0.9361,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9b7109da9567d0a5275eb3949ba5ff313da3d4abc7a27b16fc4c3a1e9cafcc77",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycerangedattack2_oncast_r2.wav",
+        "event": "Play_sfx_Jayce_JayceRangedAttack2_OnCast",
+        "event_id": 3733319681,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack2_OnCast {r2}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack2_OnCast {r2}.txtp",
+        "media_ids": [
+          351068205,
+          379962618,
+          668172140,
+          669443932
+        ],
+        "duration": 0.9361,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "9b7109da9567d0a5275eb3949ba5ff313da3d4abc7a27b16fc4c3a1e9cafcc77",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycerangedattack_oncast_r3_d.wav",
+    "event": "Play_sfx_Jayce_JayceRangedAttack_OnCast",
+    "event_id": 2686785767,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack_OnCast {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnCast {r3} {d}.txtp",
+    "media_ids": [
+      351068205,
+      379962618,
+      668172140,
+      669443932
+    ],
+    "duration": 0.9305,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "87a3e016f6bdd5db24b18f84371b7768126680931cdb52be78b7f5cd25c50444",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycerangedattack2_oncast_r3.wav",
+        "event": "Play_sfx_Jayce_JayceRangedAttack2_OnCast",
+        "event_id": 3733319681,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack2_OnCast {r3}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack2_OnCast {r3}.txtp",
+        "media_ids": [
+          351068205,
+          379962618,
+          668172140,
+          669443932
+        ],
+        "duration": 0.9305,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "87a3e016f6bdd5db24b18f84371b7768126680931cdb52be78b7f5cd25c50444",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycerangedattack_onmissilelaunch_r1_d.wav",
+    "event": "Play_sfx_Jayce_JayceRangedAttack_OnMissileLaunch",
+    "event_id": 368713887,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack_OnMissileLaunch {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnMissileLaunch {r1} {d}.txtp",
+    "media_ids": [
+      164858832,
+      293299447,
+      355881247,
+      440739832
+    ],
+    "duration": 0.65,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "39c0b4cdcae9ff0aeeb433b147694ad66edf4aae1290559dcf447c87d84b2b79",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycerangedattack2_onmissilelaunch_r1_d.wav",
+        "event": "Play_sfx_Jayce_JayceRangedAttack2_OnMissileLaunch",
+        "event_id": 488253365,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack2_OnMissileLaunch {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack2_OnMissileLaunch {r1} {d}.txtp",
+        "media_ids": [
+          164858832,
+          293299447,
+          355881247,
+          440739832
+        ],
+        "duration": 0.65,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "39c0b4cdcae9ff0aeeb433b147694ad66edf4aae1290559dcf447c87d84b2b79",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycerangedattack_onmissilelaunch_r2_d.wav",
+    "event": "Play_sfx_Jayce_JayceRangedAttack_OnMissileLaunch",
+    "event_id": 368713887,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack_OnMissileLaunch {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnMissileLaunch {r2} {d}.txtp",
+    "media_ids": [
+      164858832,
+      293299447,
+      355881247,
+      440739832
+    ],
+    "duration": 0.5959,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "38b15b670408a52f84f30f06319e40aea8a4a2fe83b0bcafde5aa3a8780e5650",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycerangedattack2_onmissilelaunch_r2_d.wav",
+        "event": "Play_sfx_Jayce_JayceRangedAttack2_OnMissileLaunch",
+        "event_id": 488253365,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack2_OnMissileLaunch {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack2_OnMissileLaunch {r2} {d}.txtp",
+        "media_ids": [
+          164858832,
+          293299447,
+          355881247,
+          440739832
+        ],
+        "duration": 0.5959,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "38b15b670408a52f84f30f06319e40aea8a4a2fe83b0bcafde5aa3a8780e5650",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycerangedattack_onmissilelaunch_r3_d.wav",
+    "event": "Play_sfx_Jayce_JayceRangedAttack_OnMissileLaunch",
+    "event_id": 368713887,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack_OnMissileLaunch {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnMissileLaunch {r3} {d}.txtp",
+    "media_ids": [
+      164858832,
+      293299447,
+      355881247,
+      440739832
+    ],
+    "duration": 0.5415,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f3e23d502ad591dce0fa4d1261b6e246d471ccd6ec562f1058d8dccd91858fab",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycerangedattack2_onmissilelaunch_r3_d.wav",
+        "event": "Play_sfx_Jayce_JayceRangedAttack2_OnMissileLaunch",
+        "event_id": 488253365,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack2_OnMissileLaunch {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack2_OnMissileLaunch {r3} {d}.txtp",
+        "media_ids": [
+          164858832,
+          293299447,
+          355881247,
+          440739832
+        ],
+        "duration": 0.5415,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "f3e23d502ad591dce0fa4d1261b6e246d471ccd6ec562f1058d8dccd91858fab",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycerangedattack_onhit_r1_d.wav",
+    "event": "Play_sfx_Jayce_JayceRangedAttack_OnHit",
+    "event_id": 964666405,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack_OnHit {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnHit {r1} {d}.txtp",
+    "media_ids": [
+      726082666,
+      855867948,
+      872800774,
+      898581500,
+      997434646
+    ],
+    "duration": 0.7653,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6bc626f116f7c934023cc924013ccd0e1350c4147b5f04fb755dbf309eaeb585",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycerangedattack2_onhit_r1.wav",
+        "event": "Play_sfx_Jayce_JayceRangedAttack2_OnHit",
+        "event_id": 656931227,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack2_OnHit {r1}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack2_OnHit {r1}.txtp",
+        "media_ids": [
+          726082666,
+          855867948,
+          872800774,
+          898581500,
+          997434646
+        ],
+        "duration": 0.7653,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "6bc626f116f7c934023cc924013ccd0e1350c4147b5f04fb755dbf309eaeb585",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycerangedattack_onhit_r2_d.wav",
+    "event": "Play_sfx_Jayce_JayceRangedAttack_OnHit",
+    "event_id": 964666405,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack_OnHit {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnHit {r2} {d}.txtp",
+    "media_ids": [
+      726082666,
+      855867948,
+      872800774,
+      898581500,
+      997434646
+    ],
+    "duration": 0.7356,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4985e603401bdac92ce988f4e4c6d1a670b130a8e476b8f664e654606d4312e1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycerangedattack2_onhit_r2.wav",
+        "event": "Play_sfx_Jayce_JayceRangedAttack2_OnHit",
+        "event_id": 656931227,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack2_OnHit {r2}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack2_OnHit {r2}.txtp",
+        "media_ids": [
+          726082666,
+          855867948,
+          872800774,
+          898581500,
+          997434646
+        ],
+        "duration": 0.7356,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "4985e603401bdac92ce988f4e4c6d1a670b130a8e476b8f664e654606d4312e1",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycerangedattack_onhit_r3_d.wav",
+    "event": "Play_sfx_Jayce_JayceRangedAttack_OnHit",
+    "event_id": 964666405,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack_OnHit {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack_OnHit {r3} {d}.txtp",
+    "media_ids": [
+      726082666,
+      855867948,
+      872800774,
+      898581500,
+      997434646
+    ],
+    "duration": 0.7997,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "00ea6eec6dc43a303b83aa53b90432a052849efcca3287bd7a18a5dda2ed3170",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycerangedattack2_onhit_r3.wav",
+        "event": "Play_sfx_Jayce_JayceRangedAttack2_OnHit",
+        "event_id": 656931227,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceRangedAttack2_OnHit {r3}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceRangedAttack2_OnHit {r3}.txtp",
+        "media_ids": [
+          726082666,
+          855867948,
+          872800774,
+          898581500,
+          997434646
+        ],
+        "duration": 0.7997,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "00ea6eec6dc43a303b83aa53b90432a052849efcca3287bd7a18a5dda2ed3170",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycestancehtg_oncast.wav",
+    "event": "Play_sfx_Jayce_JayceStanceHtG_OnCast",
+    "event_id": 4117630803,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceStanceHtG_OnCast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceStanceHtG_OnCast.txtp",
+    "media_ids": [
+      768250984
+    ],
+    "duration": 3.1641,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c5891ee79ecab3370027aad123fdb66943d157a362ae49e19932a8b18e36f1f3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jayce_jaycehypercharge_oncast.wav",
+    "event": "Play_sfx_Jayce_JayceHyperCharge_OnCast",
+    "event_id": 1632365608,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceHyperCharge_OnCast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperCharge_OnCast.txtp",
+    "media_ids": [
+      817944486
+    ],
+    "duration": 2.3669,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ab0fa843b108da1e53a146460a5c11e5662a99b8a047868dcd1a5b2618813775",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jayce_jaycehypercharge_onbuffdeactivate.wav",
+    "event": "Play_sfx_Jayce_JayceHyperCharge_OnBuffDeactivate",
+    "event_id": 2178575608,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_JayceHyperCharge_OnBuffDeactivate.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperCharge_OnBuffDeactivate.txtp",
+    "media_ids": [
+      55065671
+    ],
+    "duration": 0.7087,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a6874884cde6cc8a27e56772a11f5e7a564b1a1675479885395d02f613917893",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jayce_death3d_cast.wav",
+    "event": "Play_sfx_Jayce_Death3D_cast",
+    "event_id": 459166314,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/event_wav/Play_sfx_Jayce_Death3D_cast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_Death3D_cast.txtp",
+    "media_ids": [
+      699979098
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "f553a536a41ecc88ba0fc553c8b07955988fd9bbe6df6bc092d0df7d866ebe1e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 4.2240816326530615,
+      "source_sha256": "ccc277793598eac2ff6c532a2059f744e24150564a571b49bc993ea9ca6e7ce7",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_jayce_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Jayce_Death3D",
+    "event_id": 2948315612,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce_vo/event_wav/Play_vo_Jayce_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce_vo/txtp/Play_vo_Jayce_Death3D {r1}.txtp",
+    "media_ids": [
+      652596703,
+      817382101,
+      1098984582,
+      1246205642
+    ],
+    "duration": 1.1378,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "83ccd875c84f7a642c259d92ec34a30e76cd395d6ccd082c9da5b63dff6b59dc",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_jayce_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Jayce_Death3D",
+    "event_id": 2948315612,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce_vo/event_wav/Play_vo_Jayce_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce_vo/txtp/Play_vo_Jayce_Death3D {r2}.txtp",
+    "media_ids": [
+      652596703,
+      817382101,
+      1098984582,
+      1246205642
+    ],
+    "duration": 1.2771,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2d283260a355e6f61a33daccd6216cbf8bc535c5a9fe80babead1a381390433c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_jayce_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Jayce_Death3D",
+    "event_id": 2948315612,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce_vo/event_wav/Play_vo_Jayce_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce_vo/txtp/Play_vo_Jayce_Death3D {r3}.txtp",
+    "media_ids": [
+      652596703,
+      817382101,
+      1098984582,
+      1246205642
+    ],
+    "duration": 1.4396,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8901172b7bbf637e1ebed894953f9f386781e89cb96897ce59635a68e5193044",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jayce_jaycebasicattack_oncast_r1_d.wav",
+    "event": "Play_sfx_Jayce_JayceBasicAttack_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack_OnCast {r1} {d}.txtp",
+    "duration": 0.6739229024943311,
+    "sha256": "346256d4b18693df55d11de70fff778d156b6f7ca84dd91b1736b392a882d96a",
+    "processing": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycebasicattack2_oncast_r1.wav",
+        "event": "Play_sfx_Jayce_JayceBasicAttack2_OnCast",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack2_OnCast {r1}.txtp",
+        "duration": 0.6739229024943311,
+        "sha256": "346256d4b18693df55d11de70fff778d156b6f7ca84dd91b1736b392a882d96a",
+        "processing": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycebasicattack_oncast_r2_d.wav",
+    "event": "Play_sfx_Jayce_JayceBasicAttack_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack_OnCast {r2} {d}.txtp",
+    "duration": 0.7542857142857143,
+    "sha256": "f431d376de34fef2eafd000de336a06b713313790a2f2dce1b37c2787d3ba443",
+    "processing": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycebasicattack2_oncast_r2.wav",
+        "event": "Play_sfx_Jayce_JayceBasicAttack2_OnCast",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack2_OnCast {r2}.txtp",
+        "duration": 0.7542857142857143,
+        "sha256": "f431d376de34fef2eafd000de336a06b713313790a2f2dce1b37c2787d3ba443",
+        "processing": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycebasicattack_oncast_r3_d.wav",
+    "event": "Play_sfx_Jayce_JayceBasicAttack_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack_OnCast {r3} {d}.txtp",
+    "duration": 0.6768253968253968,
+    "sha256": "6d62ed1d29273b628568ab73515e45e01064ef525ae2faba92cb01bffb8a922f",
+    "processing": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycebasicattack2_oncast_r3.wav",
+        "event": "Play_sfx_Jayce_JayceBasicAttack2_OnCast",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack2_OnCast {r3}.txtp",
+        "duration": 0.6768253968253968,
+        "sha256": "6d62ed1d29273b628568ab73515e45e01064ef525ae2faba92cb01bffb8a922f",
+        "processing": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycebasicattack_onhit_1559186049_1153642577_r1_d.wav",
+    "event": "Play_sfx_Jayce_JayceBasicAttack_OnHit",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "duration": 1.0207256235827664,
+    "sha256": "211143b0b71187b4fccb9027cf61767108b1252b511f92103798d3f14f50e063",
+    "processing": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycebasicattack2_onhit_1559186049_1153642577_r1.wav",
+        "event": "Play_sfx_Jayce_JayceBasicAttack2_OnHit",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
+        "duration": 1.0207256235827664,
+        "sha256": "211143b0b71187b4fccb9027cf61767108b1252b511f92103798d3f14f50e063",
+        "processing": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycebasicattack_onhit_1559186049_1153642577_r2_d.wav",
+    "event": "Play_sfx_Jayce_JayceBasicAttack_OnHit",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "duration": 1.0649659863945578,
+    "sha256": "09eff35df16f123014357fdd3606e0ced4e0e43d12afe9bbd35facfb1b97a0cf",
+    "processing": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycebasicattack2_onhit_1559186049_1153642577_r2.wav",
+        "event": "Play_sfx_Jayce_JayceBasicAttack2_OnHit",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
+        "duration": 1.0649659863945578,
+        "sha256": "09eff35df16f123014357fdd3606e0ced4e0e43d12afe9bbd35facfb1b97a0cf",
+        "processing": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycebasicattack_onhit_1559186049_1153642577_r3_d.wav",
+    "event": "Play_sfx_Jayce_JayceBasicAttack_OnHit",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "duration": 0.9206122448979592,
+    "sha256": "28a4194c9b4a1006d3eb5266f65a7e580f42ef1afb605273b685ba5dbec69c1a",
+    "processing": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_jayce_jaycebasicattack2_onhit_1559186049_1153642577_r3.wav",
+        "event": "Play_sfx_Jayce_JayceBasicAttack2_OnHit",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
+        "duration": 0.9206122448979592,
+        "sha256": "28a4194c9b4a1006d3eb5266f65a7e580f42ef1afb605273b685ba5dbec69c1a",
+        "processing": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_jayce_jaycestancegth_oncast.wav",
+    "event": "Play_sfx_Jayce_JayceStanceGtH_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceStanceGtH_OnCast.txtp",
+    "duration": 3.1643537414965985,
+    "sha256": "3d40cff232945ffdca2e45c0bdf3b865d85dd744b590593cdbc057d5f2bc0cf4",
+    "processing": "Fresh vgmstream -i; wwiser master 0dB; source event gain retained"
+  },
+  {
+    "file": "play_sfx_jayce_jaycepassiverangedattack_oncast_r1.wav",
+    "event": "Play_sfx_Jayce_JaycePassiveRangedAttack_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveRangedAttack_OnCast {r1}.txtp",
+    "duration": 0.9304988662131519,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b5f69615a17aa4b9960750d31144b8b54e743968e7d68988bdab201b379c7c25"
+  },
+  {
+    "file": "play_sfx_jayce_jaycepassiverangedattack_oncast_r2.wav",
+    "event": "Play_sfx_Jayce_JaycePassiveRangedAttack_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveRangedAttack_OnCast {r2}.txtp",
+    "duration": 0.9361451247165533,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c4bfba07ad34fc8162e9a792dbd9e907ed7a9471b1aa2922a706e000f18b1fc9"
+  },
+  {
+    "file": "play_sfx_jayce_jaycepassiverangedattack_oncast_r3.wav",
+    "event": "Play_sfx_Jayce_JaycePassiveRangedAttack_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveRangedAttack_OnCast {r3}.txtp",
+    "duration": 0.8718140589569161,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b035baf92ef7505a3eda17bbc6c4ab94cf6c697011bcdb84d41c64f157ca4dca"
+  },
+  {
+    "file": "play_sfx_jayce_jaycepassiverangedattack_hit.wav",
+    "event": "Play_sfx_Jayce_JaycePassiveRangedAttack_hit",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveRangedAttack_hit.txtp",
+    "duration": 2.402312925170068,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0b2961c828549d7b14245f33b59c9bb759c53f9382a77feac1769d8ff30702c4"
+  },
+  {
+    "file": "play_sfx_jayce_jaycepassivemeleeattack_oncast.wav",
+    "event": "Play_sfx_Jayce_JaycePassiveMeleeAttack_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveMeleeAttack_OnCast.txtp",
+    "duration": 0.6739229024943311,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9d2d4b3a6423cd6daf444b3e4e7b15b6e813c2364861e141e8a500ec55f62d4f"
+  },
+  {
+    "file": "play_sfx_jayce_jaycepassivemeleeattack_onhit_r.wav",
+    "event": "Play_sfx_Jayce_JaycePassiveMeleeAttack_OnHit",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveMeleeAttack_OnHit {r}.txtp",
+    "duration": 2.959092970521542,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1a474e3e1c151e2bb2d9b0afda3f3edc6014480f3b01231413d234c75ec664d4"
+  },
+  {
+    "file": "play_sfx_jayce_jaycepassiverangedattack_onmissilelaunch_r1.wav",
+    "event": "Play_sfx_Jayce_JaycePassiveRangedAttack_OnMissileLaunch",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveRangedAttack_OnMissileLaunch {r1}.txtp",
+    "duration": 0.5414965986394558,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f7dcf8ea49ff2d25cdf14e5720e26a915b9b5bd2c294cf0855f70eb865416778"
+  },
+  {
+    "file": "play_sfx_jayce_jaycepassiverangedattack_onmissilelaunch_r2.wav",
+    "event": "Play_sfx_Jayce_JaycePassiveRangedAttack_OnMissileLaunch",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveRangedAttack_OnMissileLaunch {r2}.txtp",
+    "duration": 0.46,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a3d4c80df78ff71d6372a3b8c063a951139aabaddbf8d9230fa0940c015f1085"
+  },
+  {
+    "file": "play_sfx_jayce_jaycepassiverangedattack_onmissilelaunch_r3.wav",
+    "event": "Play_sfx_Jayce_JaycePassiveRangedAttack_OnMissileLaunch",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JaycePassiveRangedAttack_OnMissileLaunch {r3}.txtp",
+    "duration": 0.6499773242630386,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1593667165a0340f58f6f8ac0dc017f9a000203b770ea9d3e6e2f8cae1267d4b"
+  },
+  {
+    "file": "play_sfx_jayce_jaycehyperchargerangedattack_oncast_r1.wav",
+    "event": "Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnCast {r1}.txtp",
+    "duration": 0.8718140589569161,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8a4b7be504e471dffc623f892e2c04ce29d312430b0041dc846bfccea3765e1b"
+  },
+  {
+    "file": "play_sfx_jayce_jaycehyperchargerangedattack_oncast_r2.wav",
+    "event": "Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnCast {r2}.txtp",
+    "duration": 0.9361451247165533,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "917dba236f3d2967dccdba9aec605990b50b7c39885d7ba92f3abc48a00d6bf8"
+  },
+  {
+    "file": "play_sfx_jayce_jaycehyperchargerangedattack_oncast_r3.wav",
+    "event": "Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnCast {r3}.txtp",
+    "duration": 0.9304988662131519,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "56b77f765bda769d5f3ebbcf69838428e06afdf8e503d2039cadbd966a318ab7"
+  },
+  {
+    "file": "play_sfx_jayce_jaycehyperchargerangedattack_onmissilelaunch_r1.wav",
+    "event": "Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnMissileLaunch",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnMissileLaunch {r1}.txtp",
+    "duration": 0.6499773242630386,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "44ad775651f3487a62d011299ea987f9cfc06c5bbd58a78e3642a0848133de90"
+  },
+  {
+    "file": "play_sfx_jayce_jaycehyperchargerangedattack_onmissilelaunch_r2.wav",
+    "event": "Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnMissileLaunch",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnMissileLaunch {r2}.txtp",
+    "duration": 0.5959183673469388,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3cd0e45575457b455289477ef4c0a256bee3d3d79aee2ca10a7b312f1263d92f"
+  },
+  {
+    "file": "play_sfx_jayce_jaycehyperchargerangedattack_onmissilelaunch_r3.wav",
+    "event": "Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnMissileLaunch",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnMissileLaunch {r3}.txtp",
+    "duration": 0.5414965986394558,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "20ee4cb894745265f412b7ea445ac4b5ed4af9268930e5d393c8ff92e7beafb6"
+  },
+  {
+    "file": "play_sfx_jayce_jaycehyperchargerangedattack_onhit_r1.wav",
+    "event": "Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnHit",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnHit {r1}.txtp",
+    "duration": 0.8079818594104309,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "99c8353209924ac5c2df87b23be65d4e6ca6c290dd5bdff03f3b8e16ba2fe95b"
+  },
+  {
+    "file": "play_sfx_jayce_jaycehyperchargerangedattack_onhit_r2.wav",
+    "event": "Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnHit",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnHit {r2}.txtp",
+    "duration": 0.765328798185941,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "afff38d36fef2b7491db734a88fc2df92735864f6a2aec5a71f424936e172b02"
+  },
+  {
+    "file": "play_sfx_jayce_jaycehyperchargerangedattack_onhit_r3.wav",
+    "event": "Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnHit",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperChargeRangedAttack_OnHit {r3}.txtp",
+    "duration": 0.7356462585034014,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f61b9e6d841ce96f43c5c874829f152bbb42f95678795f139f86b5db6ffb9167"
+  },
+  {
+    "file": "play_sfx_jayce_jaycehypercharge_onbuffactivate.wav",
+    "event": "Play_sfx_Jayce_JayceHyperCharge_OnBuffActivate",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceHyperCharge_OnBuffActivate.txtp",
+    "duration": 4.152448979591837,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5bc03e4f4e17339fc500de250a7d8821692d523617978732efafcbaadbc6dad8"
+  },
+  {
+    "file": "play_sfx_jayce_jaycestaticfield_oncast.wav",
+    "event": "Play_sfx_Jayce_JayceStaticField_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceStaticField_OnCast.txtp",
+    "duration": 2.41297052154195,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "38cda423f5cb974bf39ed4c3303104d1911c443984fbd45bac58790b21c0916e"
+  },
+  {
+    "file": "play_sfx_jayce_jaycestaticfield_onbuffdeactivate.wav",
+    "event": "Play_sfx_Jayce_JayceStaticField_OnBuffDeactivate",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceStaticField_OnBuffDeactivate.txtp",
+    "duration": 1.3918140589569161,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "59de3c8ed47cf9bc090a11bb78a88810ca77f7e7ab17e153f6754f3faff6454f"
+  },
+  {
+    "file": "play_sfx_jayce_jaycestaticfield_onbuffactivate.wav",
+    "event": "Play_sfx_Jayce_JayceStaticField_OnBuffActivate",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/未来守护者/audio/jayce/txtp/Play_sfx_Jayce_JayceStaticField_OnBuffActivate.txtp",
+    "duration": 6.648956916099773,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3668554197345a7f22b795b342879d487371c630a6a223152ce3d75b674de31a"
+  }
+]

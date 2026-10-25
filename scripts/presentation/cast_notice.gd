@@ -8,12 +8,12 @@ var presentation: BattlePresentation3D
 func color_for(team: int) -> Color:
 	return Color(0.25, 0.65, 1.0) if presentation.visual_team(team) == 0 else Color(1.0, 0.3, 0.35)
 
-func show_cast(card_id: String, skill_index: int, team: int) -> void:
+func show_cast(card_id: String, skill_index: int, team: int, cast_form: int = -1) -> void:
 	if team < 0 or team >= nexuses.size(): return
 	var skills := CardDB.active_skills_for(card_id)
 	var texture: Texture2D = CardArt.skill_icon(CardDB.get_card(card_id))
 	if texture == null and not skills.is_empty():
-		texture = CardArt.skill_icon(skills[clampi(skill_index, 0, skills.size() - 1)])
+		texture = CardArt.skill_icon(skills[clampi(skill_index, 0, skills.size() - 1)], cast_form)
 	if texture == null: texture = CardArt.texture_for(card_id)
 	entries.append({"team": team, "texture": texture, "age": 0.0})
 

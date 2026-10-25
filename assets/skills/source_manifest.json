@@ -806,5 +806,42 @@
     "source_path": "assets/characters/gangplank/hud/icons2d/gangplank_e.dds",
     "source_sha256": "22b2ecc4ad5d00d9b46f773592d3bcec6823b2ced37184c5cb81333eca0dd08a",
     "sha256": "9cd05290299854568443bc03c2969afc779b80b4ec3679279eb4ddd3fa1a441e"
+  },
+  {
+    "card": "blitzcrank",
+    "skill_index": 0,
+    "path": "res://assets/skills/blitzcrank_e.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Blitzcrank.wad.client",
+    "source_path": "assets/characters/blitzcrank/hud/icons2d/blitzcranke.dds",
+    "source_sha256": "1f2c1165c4e235a0c77d7d2b45da63b7c4fe627202084ca7323f1a539dcece41",
+    "sha256": "23473dbe75400784038140883412787089f3d4912b7af60dbe39c6dc02226b00"
+  },
+  {
+    "card": "jayce",
+    "skill_index": 0,
+    "path": "res://assets/skills/jayce_w.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Jayce.wad.client",
+    "source_path": "assets/characters/jayce/hud/icons2d/jaycew_ranged.dds",
+    "source_sha256": "5efbd1babe5f61a783a49beade428fed575495a6b96c20ce58c334395d834c4c",
+    "sha256": "ca6e0c0ae77612fdc0ee5f26254b115f0073f3217164d8f544ede8213af0e947"
+  },
+  {
+    "card": "tidal_wave",
+    "skill_index": 0,
+    "path": "res://assets/skills/nami_passive.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Nami.wad.client",
+    "source_path": "assets/characters/nami/hud/icons2d/namipassive.dds",
+    "source_sha256": "70fbdf5114224d95cec9943a9ea2455ce772f85b2e63265117045ee56cd37373",
+    "sha256": "195a2ba7217c101a5a11c47af877e1b7baf2ec71cb97a426ed005142698e6acf"
+  },
+  {
+    "card": "jayce",
+    "skill_index": 0,
+    "form_index": 1,
+    "path": "res://assets/skills/jayce_w_melee.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Jayce.wad.client",
+    "source_path": "assets/characters/jayce/hud/icons2d/jaycew_melee.dds",
+    "source_sha256": "3eec949707c9c399737bc7f176960c3a0db3fd36dcc25a85bd0a32784c8cacf2",
+    "sha256": "e1bd0c051a208c6182590e5454744e71c173192560c5f05b8511f23e742f8b6d"
   }
 ]

@@ -37,6 +37,8 @@ func _init(controller: Node2D, presentation: SkillEffectPresentation) -> void:
 ## 不回写 CardDB，也不会让动画决定伤害。
 func prepare_cast(source: Unit, skill: Dictionary) -> Dictionary:
 	var prepared := skill.duplicate(true)
+	var form_kinds: Array = prepared.get("form_kinds", [])
+	if not form_kinds.is_empty(): prepared["kind"] = form_kinds[clampi(source.form_index, 0, form_kinds.size()-1)]
 	prepared["effect_delivery"] = CombatInteraction.Delivery.new()
 	if StringName(prepared.get("kind", "")) == &"rewind_nova": prepared["rewind_position"] = source.historical_position(float(prepared.rewind_seconds))
 	if StringName(prepared.get("kind", "")) == &"blink_nova": prepared["cast_forward"] = frontal_forward(source)
@@ -92,6 +94,8 @@ func prepare_cast(source: Unit, skill: Dictionary) -> Dictionary:
 ## 双形态技能只在 Cast Start 决定形态分支和锁定朝向，之后进入 Main 的通用 Impact 队列。
 func prepare_dual_form_cast(source: Unit, skill: Dictionary) -> Dictionary:
 	var prepared := skill.duplicate(true)
+	var form_kinds: Array = prepared.get("form_kinds", [])
+	if not form_kinds.is_empty(): prepared["kind"] = form_kinds[clampi(source.form_index, 0, form_kinds.size()-1)]
 	prepared["effect_delivery"] = CombatInteraction.Delivery.new()
 	prepared["cast_forward"] = frontal_forward(source)
 	if source.form_index == 0:
@@ -184,6 +188,9 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 			source.begin_target_protection(float(skill.radius), float(skill.duration))
 		&"timed_form":
 			return source.transform_to_mega(true)
+		&"attack_burst":
+			source.prepare_attack_burst(int(skill.attack_count), float(skill.attack_speed_multiplier), float(skill.duration))
+			_controller.notify_unit_audio_event(source, &"burst:start", source.global_position)
 		&"buff":
 			for target in _skill_target_units(source, skill):
 				var target_skill := _member_buff_skill(target, skill)
@@ -249,7 +256,7 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 				float(skill.get("empowered_damage_multiplier", 1.0)),
 				float(skill.get("empowered_speed_multiplier", 1.0)),
 				int(skill.get("blind_charges", 0)),
-				{"hit_heal": float(skill.get("hit_heal", 0.0)), "strike_type": skill.get("strike_type", "basic_attack"), "cleave_damage": float(skill.get("cleave_damage", 0.0)), "cleave_radius": float(skill.get("cleave_radius", 0.0)), "cleave_heal_ratio": float(skill.get("heal_ratio", 0.0))}
+				{"stun_duration": float(skill.get("stun_duration", 0.0)), "hit_heal": float(skill.get("hit_heal", 0.0)), "strike_type": skill.get("strike_type", "basic_attack"), "cleave_damage": float(skill.get("cleave_damage", 0.0)), "cleave_radius": float(skill.get("cleave_radius", 0.0)), "cleave_heal_ratio": float(skill.get("heal_ratio", 0.0))}
 			)
 		&"attack_lifesteal":
 			for target in _skill_target_units(source, skill):
@@ -426,11 +433,17 @@ func activate_continuous_area(source: Unit, skill: Dictionary) -> void:
 	var amount := maxf(float(skill.get("damage", 0.0)), 0.0)
 	if duration <= 0.0 or radius <= 0.0 or amount <= 0.0:
 		return
+	if bool(skill.get("persistent_area", false)):
+		source._buff_visual_start_tick = source.buffs.tick_index
+		source._buff_visual_duration = duration
 	if float(skill.get("heal_ratio", 0.0)) > 0.0:
 		source.apply_timed_lifesteal(duration, float(skill.heal_ratio), source.status_source("skill_area"))
 		source._buff_visual_start_tick = source.buffs.tick_index
 		source._buff_visual_duration = duration
 	continuous_area_effects.append({
+		"persistent_area": bool(skill.get("persistent_area", false)),
+		"impact_visual_shape": String(skill.get("impact_visual_shape", "")),
+		"impact_visual_duration": float(skill.get("impact_visual_duration", 1.0)),
 		"heal_ratio": float(skill.get("heal_ratio", 0.0)),
 		"effect_delivery": CombatInteraction.current_delivery, "created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1,
 		"status_source": source.status_source("skill_area"), "cast_serial": source.active_skill_cast_serial, "action_serial": source.get_visual_action_serial(),
@@ -470,10 +483,19 @@ func _apply_continuous_delivery(source: Unit, effect: Dictionary) -> void:
 		if combatant.global_position.distance_to(center) > radius + combatant.body_radius:
 			continue
 		if amount > 0.0:
+			var receipt: Dictionary
 			if source != null and is_instance_valid(source):
-				receipts.append(_damage_combatant(source, combatant, amount, center))
+				receipt = _damage_combatant(source, combatant, amount, center)
 			else:
-				receipts.append(BattleNumbers.hit(combatant, amount, null, source_team, effect.get("source_position", center)))
+				receipt = BattleNumbers.hit(combatant, amount, null, source_team, effect.get("source_position", center))
+			receipts.append(receipt)
+			var hit_shape := StringName(effect.get("impact_visual_shape", ""))
+			if hit_shape != &"":
+				var target_ref: WeakRef = weakref(combatant)
+				var hit_position: Vector2 = combatant.global_position
+				_after_damage(func():
+					if receipt.landed:
+						_presentation.present_target_hit(target_ref.get_ref(), hit_position, float(effect.get("impact_visual_duration", 1.0)), source_team, hit_shape))
 		if is_instance_valid(combatant) and combatant is Unit and combatant.hp > 0.0 and float(effect.get("slow_duration", 0.0)) > 0.0:
 			(combatant as Unit).apply_slow(float(effect.get("slow_duration", 0.0)), float(effect.get("slow_multiplier", 1.0)), effect.status_source, CombatInteraction.effect_context(source, int(effect.team), effect.get("source_position", center)))
 	var action := String(effect.get("visual_action", ""))
@@ -928,7 +950,7 @@ func _tick_continuous_area_effects(dt: float) -> void:
 			continue
 		# 跟随施法者的持续范围在冰冻取消后终止；固定落点区域
 		# 已经脱离施法动作，不因凤凰死亡或被控制而缩短 3 秒寿命。
-		if not fixed_position and source is Unit and (source.is_frozen() or int(effect.get("cast_serial", source.active_skill_cast_serial)) <= source.cancelled_skill_cast_serial or int(effect.get("action_serial", 2147483647)) <= source.cancelled_visual_serial):
+		if not fixed_position and not bool(effect.get("persistent_area", false)) and source is Unit and (source.is_frozen() or int(effect.get("cast_serial", source.active_skill_cast_serial)) <= source.cancelled_skill_cast_serial or int(effect.get("action_serial", 2147483647)) <= source.cancelled_visual_serial):
 			if float(effect.get("heal_ratio", 0.0)) > 0.0:
 				source.buffs.remove_source(&"timed_lifesteal", effect.status_source)
 				source._buff_visual_start_tick = -1

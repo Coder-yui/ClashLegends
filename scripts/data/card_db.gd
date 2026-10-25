@@ -5,6 +5,9 @@ const DEFINITION_COMPILER = preload("res://scripts/data/card_definition_compiler
 const VALIDATOR = preload("res://scripts/data/card_validator.gd")
 const DEFINITIONS = [
 	preload("res://scripts/data/cards/powder_keg.gd"),
+	preload("res://scripts/data/cards/tidal_wave.gd"),
+	preload("res://scripts/data/cards/jayce.gd"),
+	preload("res://scripts/data/cards/blitzcrank.gd"),
 	preload("res://scripts/data/cards/ekko.gd"),
 	preload("res://scripts/data/cards/samira.gd"),
 	preload("res://scripts/data/cards/hecarim.gd"),

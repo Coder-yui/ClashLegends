@@ -2,6 +2,8 @@ class_name PresentationEvents
 extends RefCounted
 ## 当前实际派发能力表；新增 cue 必须同时实现权威派发与消费者。
 static func supports(stats: Dictionary, cue: String) -> bool:
+	if cue in ["burst:start", "burst:end"]: return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "attack_burst")
+	if cue == "transform:start" and float(stats.get("form_cycle_interval", 0.0)) > 0.0: return true
 	if cue == "shrine:leap": return float(stats.get("death_heal_radius", 0.0)) > 0.0 and stats.has("death_transition_delay")
 	if cue == "shrine:start": return float(stats.get("death_heal_radius", 0.0)) > 0.0
 	if cue == "bounty:gain": return float(stats.get("death_enemy_elixir", 0.0)) > 0.0 or float(stats.get("death_burst_reward", 0.0)) > 0.0
@@ -34,14 +36,18 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		return float(stats.get("rush_distance", 0.0)) > 0.0
 	if cue in ["forge:pulse", "forge:strike", "forge:arrive", "forge:cancel"]:
 		return stats.has("team_attack_boost_multiplier")
+	if cue in ["pull:start", "pull:hit"] and float(stats.get("auto_pull_range", 0.0)) > 0.0: return true
 	if cue in ["charge:start", "charge:hit"] and (float(stats.get("charge_attack_range", 0.0)) > 0.0 or (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "movement_strike")): return true
 	if cue in ["charge:start", "charge:trail_hit", "charge:impact", "charge:step", "charge:knockup"]:
 		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "terrain_charge")
 	var spell := String(stats.get("type", "")) == "spell"
 	if spell:
+		if String(stats.get("spell_kind", "")) == "tidal_wave" and cue in ["spell:launch", "spell:hit"]: return true
 		return (cue == "spell:zone_sustain" and String(stats.get("spell_kind", "")) in ["corrosion", "void_summoning"]) or cue == "spell:cast" or (cue == "spell:strike" and String(stats.get("spell_kind", "")) in ["zap", "lightning", "stasis", "explosive_cask"])
 	if cue in ["sanctuary:sustain", "sanctuary:end"]:
 		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "sanctuary")
+	if cue in ["persistent_area:sustain", "persistent_area:end"]:
+		return (stats.get("active_skills", []) as Array).any(func(skill): return bool(skill.get("persistent_area", false)))
 	if cue == "active:cast":
 		# 没有独立 visual_action 的瞬时主动技能也需要一个稳定的 Cast Start 音频入口。
 		var active_skills: Variant = stats.get("active_skills", [])
@@ -80,7 +86,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 	if cue == "passive_heal":
 		return int(stats.get("heal_every_hits", 0)) > 0 and float(stats.get("heal_amount", 0.0)) > 0.0
 	if cue.begins_with("first_strike:"):
-		return attacks and not bool(stats.get("is_continuous_attack", false)) and float(stats.get("first_strike_damage_multiplier", 1.0)) != 1.0 and (cue in ["first_strike:cast", "first_strike:hit_location"] or (cue in ["first_strike:missile_cast", "first_strike:missile_launch"] and float(stats.get("projectile_speed", 0.0)) > 0.0))
+		return attacks and not bool(stats.get("is_continuous_attack", false)) and (float(stats.get("first_strike_damage_multiplier", 1.0)) != 1.0 or float(stats.get("form_first_attack_damage", 0.0)) > 0.0 or float(stats.get("form_first_attack_health_ratio", 0.0)) > 0.0) and (cue in ["first_strike:cast", "first_strike:hit_location"] or (cue in ["first_strike:missile_cast", "first_strike:missile_launch"] and float(stats.get("projectile_speed", 0.0)) > 0.0))
 	var lifecycle := cue.split(":")
 	if lifecycle.size() == 2 and lifecycle[1] in ["start", "end", "sustain"] and stats.get("visual_animations", {}).get("visual_actions", {}).has(lifecycle[0]):
 		if lifecycle[0] == "transform" and int(stats.get("transform_after_hits", 0)) > 0 and float(stats.get("transform_duration", 0.0)) > 0.0:
@@ -95,6 +101,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 			return float(stats.get("active_transform_duration", stats.get("transform_duration", 0.0))) > 0.0
 		if cue in ["empowered_ready", "empowered_swing"] and kind in ["empowered_attack", "bleeding_execute"]:
 			return true
+		if kind == "attack_burst" and cue in ["active_buff:attack_swing", "active_buff:attack_launch", "active_buff:attack_hit", "active_buff:start", "active_buff:end", "active_buff:sustain"]: return true
 		if cue in ["active_buff:start", "active_buff:end", "active_buff:sustain", "active_buff:attack_launch", "active_buff:attack_hit"] and (kind in ["buff", "undying_rage", "aftershock", "counter_strike", "movement_strike"] or (kind == "continuous_area" and float(skill.get("heal_ratio", 0.0)) > 0.0)):
 			return float(skill.get("duration", 0.0)) > 0.0
 		var actions: Array = [String(skill.get("visual_action", "")), String(skill.get("full_resource_visual_action", ""))]

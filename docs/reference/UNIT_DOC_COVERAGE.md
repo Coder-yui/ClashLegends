@@ -27,6 +27,9 @@
 | 定义 / 正文（含形态） | 当前机制与边界重点 | 动画 / 音频 |
 | --- | --- | --- |
 | `powder_keg` · [火药桶](../units/powder_keg.md) | 死亡爆炸、单次击杀金币、主动伤后斩杀 | [动画](../units/animations/powder_keg.md) · [声音](../units/audio/powder_keg.md) · [特效](../units/effects/powder_keg.md) |
+| `jayce` · [未来守护者](../units/jayce.md) | 周期换形、首击主目标附伤与3次攻速强化 | [动画](../units/animations/jayce.md) · [声音](../units/audio/jayce.md) · [特效](../units/effects/jayce.md) |
+| `jayce`覆盖形态 · [战锤](../units/jayce_hammer.md) | 主目标百分比首击与地面溅射 | 复用杰斯素材入口 |
+| `blitzcrank` [蒸汽机器人](../units/blitzcrank.md) | [动画](../units/animations/blitzcrank.md) | [声音](../units/audio/blitzcrank.md) | [特效](../units/effects/blitzcrank.md) |
 | `ekko` · [时间刺客](../units/ekko.md) | 同目标第三击、历史回溯与不可选中 | [动作](../units/animations/ekko.md) · [声音](../units/audio/ekko.md) · [特效](../units/effects/ekko.md) |
 | `samira` · [沙漠玫瑰](../units/samira.md) | 枪刀距离切换、命中评分、满分持续范围技能 | [动作](../units/animations/samira.md) · [声音](../units/audio/samira.md) · [特效](../units/effects/samira.md) |
 | `hecarim` · [战争之影](../units/hecarim.md) | 自身圆形旋斩、3格距离蓄势、2格突进眩晕、实际生命伤害吸血领域 | [动作](../units/animations/hecarim.md) · [声音](../units/audio/hecarim.md) · [特效](../units/effects/hecarim.md) |
@@ -48,6 +51,7 @@
 | `aurelionsol` · [龙王](../units/aurelionsol.md) | 持续吐息免致盲；星辰创建即独立 | [动作](../units/animations/aurelionsol.md) · [声音](../units/audio/aurelionsol.md) |
 | `belveth` · [虚空女皇](../units/belveth.md) | 空军攻城；空中突进受控取消、死亡8鱼 | [动作](../units/animations/belveth.md) · [声音](../units/audio/belveth.md) |
 | `corki` · [库奇](../units/corki.md) | 三枚导弹首碰爆炸、第三枚1.8倍；空地溅射不重复直接命中 | [动作](../units/animations/corki.md) · [声音](../units/audio/corki.md) |
+| `tidal_wave` · [浪潮法术](../units/tidal_wave.md) | 2费地面浪潮、120伤害、4格宽10格长；强化友军2秒30%加速 | [动画](../units/animations/tidal_wave.md) · [声音](../units/audio/tidal_wave.md) · [特效](../units/effects/tidal_wave.md) |
 | `explosive_cask` · [爆破酒桶](../units/explosive_cask.md) | 3费径向爆炸、180伤害、击退40；强化270 | [动画](../units/animations/explosive_cask.md) · [声音](../units/audio/explosive_cask.md) · [特效](../units/effects/explosive_cask.md) |
 | `corrosion` · [腐蚀法术](../units/corrosion.md) | 5秒10次伤害；塔/水晶30%、强化减速20% | [无模型/特效](../units/effects/corrosion.md) · [声音](../units/audio/corrosion.md) |
 | `darius` · [德莱厄斯](../units/darius.md) | 来源流血/血怒；劈砍与免费追斩 | [动作](../units/animations/darius.md) · [声音](../units/audio/darius.md) |

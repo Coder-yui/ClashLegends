@@ -26,7 +26,7 @@ CardDB 提供卡牌查询、可选卡列表、单位数据和技能候选；新�
 | --- | --- |
 | 单位 | 通用 Unit；目标、攻击、速度、半径与状态由数据决定 |
 | 建筑卡 | 不自主移动；占地格用于部署，身体半径用于碰撞；可有寿命和召唤 |
-| 法术 | 必须有已实现的法术类型；冰冻、治疗、凝滞、电击、大型电击、腐蚀、爆破酒桶与虚空召唤由SpellSystem执行；镜像先由出牌入口解析为被复制卡 |
+| 法术 | 必须有已实现的法术类型；冰冻、治疗、凝滞、电击、大型电击、腐蚀、爆破酒桶、浪潮与虚空召唤由SpellSystem执行；镜像先由出牌入口解析为被复制卡 |
 
 `radius` 是唯一权威身体半径，模型缩放与 `visual_radius` 只影响画面。标准体型按档位校验；明确使用非标准半径时声明 `custom_radius`，仍要求合法正数。
 
@@ -363,6 +363,18 @@ nova可配置`attack_slow_multiplier`，要求正数slow_duration及[0.1,1)倍�
 
 时间刺客的同目标第三击与4秒回溯见[单位手册](units/ekko.md)。`repeat_hit_*`按来源单位与目标分别累计有效命中，每个目标达到阈值仅触发一次，切换目标不重置；仅支持单体离散近战；`position_history_duration`限制历史窗口，`rewind_nova`在Cast Start锁定历史点并回复满血，Impact结算合法落点与范围伤害；均由权威执行。
 
+## 周期换形与按次数攻速
+
+`form_cycle_interval`按20Hz权威时间推进，到期打断当前攻击前摇/后摇并清空冷却；部署、眩晕、冻结/凝滞、强制位移和变形/施法锁延后切换，实际切换后重计周期。复用同实体形态序号与快照；每形态`form_first_attack_damage / form_first_attack_health_ratio / form_first_attack_tower_damage`在首个正式出手固化，只附加给主目标。
+
+`attack_burst`主动以`attack_count`正整数、`attack_speed_multiplier > 1`和正数`duration`准备限次限时攻速加成，每次正式出手消费一次，未出手取消保留次数。剩余次数跨形态保留；控制/换形不延长时限，到期清空次数并恢复攻速，末击后摇也不能超过截止Tick。重复施加刷新次数和时限；与普通攻速加成取最大，仍受减攻速影响。客户端复用有效攻速与增益标志快照。
+
+## 推进浪潮
+
+`tidal_wave`先按`spell_windup`等待权威施法前奏，前奏期间不生成浪潮或结算接触；清场一并取消。生成时发射音效、成功结算时命中音效沿统一卡牌事件复制。随后使用`wave_width`、`range`、`speed`与`duration`定义矩形浪头扫掠，持续时间为射程除以速度后向上取整至20Hz Tick，末Tick扫掠截断到射程。每次施法持有去重目标与Delivery，地面敌军一次受伤并向前击退，地面友军仅在携带`spell_tidal_wave`时获得技能配置的移速增益。`deploy_half_only`仅用于忽略占位的`own_side`法术，复用普通兵种初始己方部署格掩码，排除河道与桥面，破塔不解锁敌方区域。详见[浪潮法术](units/tidal_wave.md)。
+
 ### 死亡爆炸
 
 限时建筑可声明正数death_burst_radius、death_burst_damage、death_burst_reward。Unit仅在权威真死亡中触发一次，由ActiveSkillEffectSystem建立独立伤害批次；上一批死亡列表先分离并清空，避免连锁爆炸污染旧批次。detonate为瞬时自毁主动，execute_health_ratio在伤害提交后检查单位生命比例，效果阶段斩杀，收益阶段按真实死亡至多发一次奖励。沿用可靠固定区域、Hit、死亡和金币表现，无新快照字段；规则见[火药桶](units/powder_keg.md)。
+
+双形态主动可配置 `form_kinds: ["attack_burst", "continuous_area"]`，在 prepare_cast 中复制技能并按释放时形态固化 kind，不改共享定义。`persistent_area` 仅用于持续领域，允许瞬时开启，并让已建立的领域独立于施法/换形/冻结取消序号，仍在来源死亡后结束。领域时钟复用已有 buff visual clock；连射次数与其独立。两分支均经现有技能校验。

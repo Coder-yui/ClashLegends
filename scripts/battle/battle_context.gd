@@ -158,3 +158,9 @@ func has_presentation() -> bool:
 
 func local_player_team() -> int:
 	return _controller.runtime.local_team
+
+func launch_pull(source: Unit, target: Unit) -> int:
+	return _controller.projectile_service().launch_pull(source, target)
+
+func pull_projectile_active(id: int) -> bool:
+	return _controller.projectile_service().projectiles.has(id)

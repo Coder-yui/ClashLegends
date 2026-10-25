@@ -585,13 +585,15 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	return true
 
 func _start_active_skill_cast(unit: Unit, skill: Dictionary) -> bool:
+	var cast_form := unit.form_index if skill.has("form_icon_paths") else -1
 	if not _skill_lifecycle.start(unit, skill): return false
 	var source := unit.active_skill_card_id if not unit.active_skill_card_id.is_empty() else unit.card_id
+	if CardDB.get_card(source).has("growth_ranged_id"): source = unit.card_id
 	var skills := CardDB.active_skills_for(source)
 	var index := 0
 	for i in skills.size():
 		if String(skills[i].get("icon_path", "")) == String(skill.get("icon_path", "")): index = i
-	cast_notice(unit.team, source, index)
+	cast_notice(unit.team, source, index, cast_form)
 	return true
 
 func _tick_minion_waves(dt: float) -> void:
@@ -775,8 +777,8 @@ func _complete_network_command(id: int, outcome: String) -> void:
 func card_event(card_id: String, cue: String, pos: Vector2, team: int) -> void:
 	event.emit("card_event", {"card_id": card_id, "cue": cue, "pos": pos, "team": team})
 
-func cast_notice(team: int, card_id: String, index: int) -> void:
-	event.emit("cast_notice", {"team": team, "card_id": card_id, "index": index})
+func cast_notice(team: int, card_id: String, index: int, cast_form: int = -1) -> void:
+	event.emit("cast_notice", {"team": team, "card_id": card_id, "index": index, "cast_form": cast_form})
 
 func _emit_skill_used(id: int) -> void:
 	var data := get_active_skill_snapshot(id)

@@ -178,6 +178,12 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		if cleave_radius > 0.0 and (target.team == p_team or (target != primary and target.global_position.distance_to(effects.cleave_center) > cleave_radius + target.body_radius)): continue
 		var hit_amount := float(BattleNumbers.quantity(amount)) if cleave_radius <= 0.0 or target == primary else 0.0
 		if cleave_radius > 0.0: hit_amount += float(effects.cleave_damage)
+		if target == primary:
+			hit_amount += float(effects.get("primary_bonus_damage", 0.0))
+			if target is Tower or (target is Unit and target.is_building):
+				hit_amount += float(effects.get("primary_bonus_tower_damage", 0.0))
+			else:
+				hit_amount += target.max_hp * float(effects.get("primary_bonus_health_ratio", 0.0))
 		if counts_as_attack and from is Unit and (movement_radius <= 0.0 or target == primary): hit_amount += from.on_hit_passive_damage(target) + from.repeat_hit_bonus(target, hit_amount)
 		# 到达目标时判断，包含在途普攻和溅射；技能攻击不消费免疫次数。
 		if counts_as_attack and String(effects.get("strike_type", "basic_attack")) == "basic_attack" and target is Unit and CombatInteraction.allows(target, from, p_team, source_position) and target.try_dodge_basic_attack(): continue
@@ -255,7 +261,10 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		if counts_as_attack:
 			defer_effect(func():
 				if hit_results.any(func(result): return result.landed) and not bool(effects.get("movement_strike", false)):
-					attack_hit.emit(effects.get("presentation_source", {}), impact, bool(effects.get("first_strike", false))))
+					var first := bool(effects.get("first_strike", false))
+					var presentation: Dictionary = effects.get("presentation_source", {}).duplicate(true)
+					presentation["first_strike"] = first
+					attack_hit.emit(presentation, impact, first))
 	if landed:
 		receipt.accepted = true
 		receipt.settled = false

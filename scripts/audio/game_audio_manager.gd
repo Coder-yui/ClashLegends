@@ -15,6 +15,7 @@ const WORLD_PANNING_STRENGTH := 0.35
 
 ## 同一层表负责位置跟随、清理与循环策略；空cue保留原始单段音轨。
 const UNIT_SUSTAIN_LAYERS := {
+	&"persistent_area": &"persistent_area:sustain",
 	&"mend": &"mend:sustain", &"empowered": &"empowered_buff:sustain",
 	&"idle": &"idle:sustain", &"explosive_shield": &"explosive_shield:sustain",
 	&"berserk": &"berserk:sustain", &"blood_rage": &"blood_rage:sustain", &"terrain": &"terrain:sustain",
@@ -296,12 +297,15 @@ func _tick_attached_units() -> void:
 				if int(owner.get("unit", -1)) == instance_id: player.stop()
 			continue
 		if int(entry.form) != unit.get_form_index():
-			_stop_sustain(instance_id)
+			var carries_burst := (entry.stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "attack_burst")
+			for layer in UNIT_SUSTAIN_LAYERS:
+				if layer != &"persistent_area" and not (layer == &"buff" and carries_burst): _stop_sustain(instance_id, layer)
 			entry.form = unit.get_form_index()
 			entry.audio = PresentationConfig.audio_for(entry.stats, unit.team, entry.form)
 			entry.active_action = &""
 			entry.action_serial = -1
-			entry.active_buff = false
+			if not carries_burst:
+				entry.active_buff = false
 			entry.continuous_active = false
 			entry.idle_active = false
 		var state: UnitPresentationState = unit.presentation_state()
@@ -386,6 +390,8 @@ func _tick_attached_units() -> void:
 			entry.last_swing_serial = serial
 			if unit.is_attack_visual_first_strike():
 				play_event(unit, &"first_strike:cast", unit.get_visual_screen_position())
+			elif unit.get_active_buff_active_visual() and entry.audio.get("events", {}).has("active_buff:attack_swing"):
+				play_event(unit, &"active_buff:attack_swing", unit.get_visual_screen_position())
 			else:
 				_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial, {"unit": instance_id, "kind": "attack", "serial": serial})
 		entry.last_attack_serial = serial
@@ -414,6 +420,13 @@ func _tick_attached_units() -> void:
 				if due > float(entry.action_audio_elapsed) and due <= elapsed + 0.00001:
 					play_event(unit, StringName(cue), unit.get_visual_screen_position(), -1, true)
 			entry.action_audio_elapsed = maxf(float(entry.action_audio_elapsed), elapsed)
+		var area_clock: Vector2 = unit.active_buff_clock_visual()
+		var area_active: bool = area_clock.y > 0.0 and area_clock.x < area_clock.y and not state.dead and entry.audio.get("events", {}).has("persistent_area:sustain")
+		if area_active and not bool(entry.get("persistent_area", false)): _start_sustain(unit, entry, &"persistent_area", &"persistent_area")
+		elif not area_active and bool(entry.get("persistent_area", false)):
+			_stop_sustain(instance_id, &"persistent_area", true)
+			if not state.dead: play_event(unit, &"persistent_area:end", unit.get_visual_screen_position())
+		entry.persistent_area = area_active
 		var active_buff := state.active_buff
 		if active_buff and not bool(entry.active_buff):
 			play_event(unit, &"active_buff:start", unit.get_visual_screen_position())
@@ -520,10 +533,12 @@ func complete_revival(unit: Unit) -> void:
 	player.finished.connect(_on_sustain_finished.bind(tail_key, player))
 
 func _event_owner(unit: Unit, cue: StringName) -> Dictionary:
+	# 死亡语音属于死亡结果，不能被之前的冻结/技能取消序号吞掉。
+	if cue == &"death:voice": return {}
 	var name := String(cue)
 	if cue == &"structure_haste:start": return {"unit": unit.get_instance_id(), "kind": "structure_haste", "serial": 0}
 	if cue == &"forge:pulse": return {"unit": unit.get_instance_id(), "kind": "forge", "serial": 0}
-	if cue in [&"empowered_swing", &"first_strike:cast", &"attack_swing", &"continuous_attack:start", &"continuous_attack:release"]:
+	if cue in [&"empowered_swing", &"active_buff:attack_swing", &"first_strike:cast", &"attack_swing", &"continuous_attack:start", &"continuous_attack:release"]:
 		return {"unit": unit.get_instance_id(), "kind": "attack", "serial": unit.get_attack_visual_serial()}
 	if cue in [&"active:cast", &"active:spin", &"charge:step"] and unit.active_skill_cast_timer > 0.0:
 		return {"unit": unit.get_instance_id(), "kind": "action", "serial": unit.get_visual_action_serial()}

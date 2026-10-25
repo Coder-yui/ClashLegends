@@ -18,6 +18,8 @@ var heal_effects: Array[Dictionary] = []
 var cask_hits: Array[Dictionary] = []
 var cask_effects: Array[Dictionary] = []
 var spell_flights: Array[Dictionary] = []
+var tidal_waves: Array[Dictionary] = []
+var tidal_effects: Array[Dictionary] = []
 var stasis_effects: Array[Dictionary] = []
 
 var lightning_casts: Array[Dictionary] = []
@@ -44,6 +46,9 @@ func cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool 
 
 func _resolve_cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool, active_skill_index: int) -> bool:
 	match StringName(stats.get("spell_kind", "")):
+		&"tidal_wave":
+			_start_tidal_wave(team, stats, position, active_enabled, active_skill_index)
+			return true
 		&"void_summoning":
 			_start_summoning(team, stats, position, active_enabled)
 			return true
@@ -162,6 +167,7 @@ func tick(dt: float) -> void:
 	_tick_summoning()
 	_tick_corrosion()
 	_tick_flights()
+	_tick_tidal_waves()
 	_tick_lightning()
 	var alive: Array[Dictionary] = []
 	for zone in slow_zones:
@@ -196,6 +202,11 @@ func _apply_slow_zone(zone: Dictionary, dt: float) -> void:
 
 
 func tick_visuals(delta: float) -> void:
+	for effect in tidal_effects:
+		var tick: float = float(_controller.get_presentation_tick()) + (0.0 if _controller.is_net_client() else _controller.get_sim_interpolation_alpha())
+		effect.progress = clampf((tick - float(effect.start_tick)) / float(effect.end_tick - effect.start_tick), 0.0, 1.0)
+		effect.tail = maxf(0.0, tick - float(effect.end_tick)) * FixedStepClock.STEP
+	tidal_effects.assign(tidal_effects.filter(func(effect): return float(effect.tail) < 2.2))
 	for effect in summon_effects: effect.timer = maxf(0.0, float(effect.timer) - delta)
 	summon_effects.assign(summon_effects.filter(func(effect): return float(effect.timer) > 0.0))
 	for hit in cask_hits: hit.timer = maxf(0.0, float(hit.timer) - delta)
@@ -242,6 +253,8 @@ func clear() -> void:
 	corrosion_zones.clear()
 	corrosion_effects.clear()
 	spell_flights.clear()
+	tidal_waves.clear()
+	tidal_effects.clear()
 	stasis_effects.clear()
 	cask_effects.clear()
 	cask_hits.clear()
@@ -371,6 +384,9 @@ func _apply_stasis(team: int, stats: Dictionary, position: Vector2, enhanced: bo
 
 func show_flight(id: int, kind: String, origin: Vector2, position: Vector2, radius: float, start_tick: int, impact_tick: int) -> void:
 	if not _controller.has_presentation(): return
+	if kind == "tidal_wave":
+		tidal_effects.append({"id": id, "origin": origin, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "progress": 0.0, "tail": 0.0})
+		return
 	# 首个皮肤为凝滞；其他法术复用调度并沿用自身抵达表现。
 	if kind not in ["stasis", "explosive_cask"]: return
 	var effects := cask_effects if kind == "explosive_cask" else stasis_effects
@@ -551,3 +567,70 @@ func on_unit_death(unit: Unit) -> void:
 func show_summoning(pos: Vector2, radius: float, duration: float, team: int) -> void:
 	if not _controller.has_presentation(): return
 	summon_effects.append({"pos": pos, "radius": radius, "duration": duration, "timer": duration, "team": team})
+
+
+func _start_tidal_wave(team: int, stats: Dictionary, pos: Vector2, enhanced: bool, skill_index: int) -> void:
+	_effect_serial += 1
+	var tick: int = _controller.get_authoritative_server_tick() + ceili(float(stats.spell_windup) / FixedStepClock.STEP)
+	var direction := Vector2.UP if team == 0 else Vector2.DOWN
+	var end_tick := tick + maxi(1, ceili(float(stats.duration) / FixedStepClock.STEP))
+	var wave := {"id": _effect_serial, "team": team, "origin": pos, "direction": direction,
+		"stats": stats, "skill": _active_heal_skill(stats, skill_index) if enhanced else {},
+		"start_tick": tick, "end_tick": end_tick, "distance": 0.0, "last_tick": tick - 1, "launched": false,
+		"contacts": {}, "delivery": CombatInteraction.Delivery.new(), "source": StringName("tidal:%d:%d" % [team, _effect_serial])}
+	tidal_waves.append(wave)
+
+func _tick_tidal_waves() -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	for wave in tidal_waves:
+		if tick < int(wave.start_tick): continue
+		if not wave.launched:
+			wave.launched = true
+			_controller.present_spell_flight(int(wave.id), "tidal_wave", wave.origin, Vector2(wave.origin) + Vector2(wave.direction) * float(wave.stats.range), float(wave.stats.wave_width) * 0.5, int(wave.start_tick), int(wave.end_tick), int(wave.team))
+			_controller.runtime.card_event("tidal_wave", "spell:launch", wave.origin, int(wave.team))
+		if tick <= int(wave.last_tick): continue
+		var distance := minf(float(wave.stats.range), float(tick - int(wave.start_tick)) * FixedStepClock.STEP * float(wave.stats.speed))
+		_contact_tidal_wave(wave, float(wave.distance), distance)
+		wave.distance = distance
+		wave.last_tick = tick
+	tidal_waves.assign(tidal_waves.filter(func(wave): return tick < int(wave.end_tick)))
+
+func _contact_tidal_wave(wave: Dictionary, from_distance: float, to_distance: float) -> void:
+	var interaction := _spell_context(int(wave.team))
+	interaction["delivery"] = wave.delivery
+	var resolver: CombatResolver = _controller.combat_service()
+	var source: Node2D = interaction.get("source")
+	var order := resolver.next_displacement_order(source)
+	for target in _controller.get_tree().get_nodes_in_group("combatants"):
+		if not is_instance_valid(target) or target.is_queued_for_deletion() or target.hp <= 0: continue
+		if target is Unit and target.is_air: continue
+		var id: int = target.get_instance_id()
+		if wave.contacts.has(id): continue
+		var relative: Vector2 = target.global_position - Vector2(wave.origin)
+		var along := relative.dot(Vector2(wave.direction))
+		# Circle against swept wave-front rectangle, including rounded corner distance.
+		var nearest := Vector2(clampf(relative.x, -float(wave.stats.wave_width) * 0.5, float(wave.stats.wave_width) * 0.5), clampf(along, from_distance, to_distance))
+		if Vector2(relative.x, along).distance_squared_to(nearest) > float(target.body_radius) * float(target.body_radius): continue
+		wave.contacts[id] = true
+		if target.team == int(wave.team):
+			if not wave.skill.is_empty() and target is Unit and not target.is_building:
+				target.apply_active_buff(float(wave.skill.duration), float(wave.skill.speed_multiplier), 1.0, 1.0, false, false, wave.source, interaction)
+			continue
+		if not CombatInteraction.allows_effect(target, interaction): continue
+		var previous := CombatInteraction.current_delivery
+		CombatInteraction.current_delivery = wave.delivery
+		var amount := float(wave.stats.damage) * (float(wave.stats.tower_damage_multiplier) if target is Tower else 1.0)
+		var result := BattleNumbers.hit(target, amount, source, int(wave.team), interaction.get("position", Vector2.INF))
+		CombatInteraction.current_delivery = previous
+		var hit_position: Vector2 = target.global_position
+		var hit_audio := func():
+			if result.landed:
+				_controller.runtime.card_event("tidal_wave", "spell:hit", hit_position, int(wave.team))
+		if resolver.collecting: resolver.defer_effect(hit_audio)
+		else: hit_audio.call()
+		if target is Unit:
+			var push_origin: Vector2 = target.global_position - Vector2(wave.direction)
+			if resolver.collecting:
+				resolver.submit_knockback(target, push_origin, float(wave.stats.knockback), 0.2, 1.4, order, result, interaction)
+			elif bool(result.landed) and is_instance_valid(target) and target.hp > 0:
+				target.apply_knockback(push_origin, float(wave.stats.knockback), 0.2, 1.4, order, interaction)

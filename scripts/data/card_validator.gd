@@ -151,6 +151,14 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			elif float(stats.get("duration", 0.0)) <= 0.0:
 				errors.append("%s.duration: 法术持续时间必须 > 0" % card_id)
 			match spell_kind:
+				&"tidal_wave":
+					_require_fields(card_id, stats, [&"spell_windup", &"wave_width", &"range", &"speed", &"damage", &"knockback", &"tower_damage_multiplier"], errors)
+					for field in ["spell_windup", "wave_width", "range", "speed", "damage", "knockback"]:
+						if float(stats.get(field, 0)) <= 0: errors.append(card_id + "." + field + ": 必须为正")
+					if float(stats.get("speed", 0)) > 0 and not is_equal_approx(float(stats.duration), ceilf(float(stats.get("range", 0)) / float(stats.speed) / 0.05) * 0.05):
+						errors.append(card_id + ": 浪潮持续时间必须为射程除以速度后向上取整到20Hz Tick")
+					if float(stats.get("tower_damage_multiplier", -1)) < 0 or float(stats.get("tower_damage_multiplier", -1)) > 1:
+						errors.append(card_id + ": 防御塔伤害倍率必须为0到1")
 				&"void_summoning":
 					_require_fields(card_id, stats, [&"spawn_id", &"spawn_count", &"spawn_deploy_time", &"interval", &"spawn_initial_delay"], errors)
 					if int(stats.get("spawn_count", 0)) <= 0 or float(stats.get("spawn_deploy_time", -1.0)) < 0.0:
@@ -352,7 +360,7 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			errors.append("%s.audio.empowered_hit: 无强化普攻机制" % label)
 		_validate_audio_path_pool("%s.audio.empowered_hit" % label, audio.empowered_hit, errors, inspect_resources)
 	if (audio as Dictionary).has("first_strike_hit"):
-		if float(stats.get("first_strike_damage_multiplier", 1.0)) == 1.0 or bool(stats.get("is_continuous_attack", false)):
+		if (float(stats.get("first_strike_damage_multiplier", 1.0)) == 1.0 and float(stats.get("form_first_attack_damage", 0.0)) <= 0.0 and float(stats.get("form_first_attack_health_ratio", 0.0)) <= 0.0) or bool(stats.get("is_continuous_attack", false)):
 			errors.append("%s.audio.first_strike_hit: 无首击机制" % label)
 		_validate_audio_path_pool("%s.audio.first_strike_hit" % label, (audio as Dictionary).get("first_strike_hit", []), errors, inspect_resources)
 	for volume_field in [&"attack_swing_volume_db", &"attack_hit_volume_db"]:
@@ -383,6 +391,11 @@ static func _validate_audio_path_pool(label: String, configured: Variant, errors
 			errors.append("%s[%d]: 资源不是 AudioStream" % [label, index])
 
 static func _validate_combat_stats(label: String, stats: Dictionary, require_size_tier: bool, errors: PackedStringArray) -> void:
+	if stats.has("form_cycle_interval") and (float(stats.form_cycle_interval) <= 0.0 or stats.get("transformed_stats", {}).is_empty() or bool(stats.get("is_continuous_attack", false))):
+		errors.append(label + ": 周期换形需要正周期、第二形态与离散普攻")
+	for field in ["form_first_attack_damage", "form_first_attack_health_ratio", "form_first_attack_tower_damage"]:
+		if stats.has(field) and float(stats[field]) <= 0.0: errors.append(label + "." + field + ": 必须为正数")
+	if float(stats.get("form_first_attack_health_ratio", 0.0)) > 1.0: errors.append(label + ": 最大生命值比例不得超过1")
 	if not SHAPES.validate(label, stats, errors):
 		return
 	for field in ["attack_passive_multipliers", "attack_lifesteal_ratios"]:
@@ -477,6 +490,14 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 	if stats.has("timed_revival_delay"):
 		if float(stats.get("timed_revival_delay", 0.0)) <= 0.0:
 			errors.append("%s.timed_revival_delay: 必须 > 0" % label)
+	if ["auto_pull_min_range", "auto_pull_range", "auto_pull_break_range", "auto_pull_windup", "auto_pull_flight", "auto_pull_duration"].any(func(field): return stats.has(field)):
+		for field in ["auto_pull_min_range", "auto_pull_range", "auto_pull_break_range", "auto_pull_windup", "auto_pull_flight", "auto_pull_duration"]:
+			if not is_finite(float(stats.get(field, 0.0))) or float(stats.get(field, 0.0)) <= 0.0:
+				errors.append(label + "." + field + ": 自动牵引需要成组正数")
+		if float(stats.get("auto_pull_range", 0.0)) <= float(stats.get("range", 0.0)) or bool(stats.get("is_air", false)) or bool(stats.get("is_building", false)):
+			errors.append(label + ": 自动牵引需要地面单位且牵引距离大于普攻距离")
+	if stats.has("auto_pull_range") and not (float(stats.get("range", 0)) < float(stats.get("auto_pull_min_range", 0)) and float(stats.get("auto_pull_min_range", 0)) <= float(stats.auto_pull_range) and float(stats.auto_pull_range) <= float(stats.get("auto_pull_break_range", 0)) and float(stats.get("auto_pull_break_range", 0)) <= float(stats.get("sight", 0))):
+		errors.append(label + ": 牵引距离须满足普攻 < 最小距离 <= 起手距离 <= 宽限 <= 视野")
 	if stats.has("attack_self_radius") and (not is_finite(float(stats.attack_self_radius)) or float(stats.attack_self_radius) <= 0.0 or float(stats.get("projectile_speed", 0.0)) > 0.0 or float(stats.get("splash_radius", 0.0)) > 0.0):
 		errors.append(label + ".attack_self_radius: 只支持正半径直接近战")
 	if float(stats.get("charge_impact_radius", 0.0)) < 0.0: errors.append(label + ".charge_impact_radius: 必须非负")
@@ -588,8 +609,8 @@ static func _validate_projectile(label: String, stats: Dictionary, errors: Packe
 	var speed := float(stats.get("projectile_speed", 0.0))
 	if speed < 0.0:
 		errors.append("%s.projectile_speed: 必须 >= 0" % label)
-	if stats.has("attack_hit_visual") and (String(stats.attack_hit_visual) not in ["azir_beam", "splash_circle", "hecarim_q"] or speed > 0.0):
-		errors.append("%s.attack_hit_visual: 仅支持直接命中的 azir_beam / splash_circle / hecarim_q 表现" % label)
+	if stats.has("attack_hit_visual") and (String(stats.attack_hit_visual) not in ["azir_beam", "splash_circle", "hecarim_q", "blitzcrank_e", "jayce"] or (speed > 0.0 and String(stats.attack_hit_visual) != "jayce")):
+		errors.append("%s.attack_hit_visual: 仅支持直接命中的 azir_beam / splash_circle / hecarim_q / blitzcrank_e 表现" % label)
 	if stats.has("active_buff_projectile_visual"):
 		if speed <= 0.0 or not (stats.active_buff_projectile_visual is String or stats.active_buff_projectile_visual is StringName) or StringName(stats.active_buff_projectile_visual) not in PROJECTILE_VISUALS + [&"baron_siege", &"baron_ranged"]:
 			errors.append("%s.active_buff_projectile_visual: 需要远程弹体及已实现的弹体外观" % label)
@@ -807,7 +828,7 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 					errors.append("%s.visual_animations.clip_blends.%s: 必须是有限非负秒数" % [label, edge])
 	for state in [
 		&"deploy", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"charge_move", &"terrain_move", &"full_resource_move", &"move_cycle", &"attack", &"attack_hit", &"attack_recover",
-		&"initial_move", &"attack_structure", &"attack_move", &"attack_to_move", &"active_buff_idle", &"active_buff_move", &"empowered_idle", &"empowered_move", &"empowered_attack",
+		&"initial_move", &"attack_structure", &"attack_move", &"attack_to_move", &"active_buff_idle", &"active_buff_move", &"empowered_idle", &"empowered_move", &"first_strike_attack", &"empowered_attack",
 		&"empowered_attack_hit", &"empowered_attack_recover", &"empowered_attack_to_move",
 	]:
 		if not animations.has(state):
@@ -978,6 +999,30 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s: 必须是 Dictionary" % label)
 			continue
 		_validate_known_fields(label, skill, ACTIVE_SKILL_FIELDS, errors)
+		if skill.has("form_kinds"):
+			if skill.form_kinds.size() != 2 or stats.get("transformed_stats", {}).is_empty(): errors.append(label + ".form_kinds: 需要两个形态与两个效果类型")
+			for form_kind in skill.form_kinds:
+				if form_kind not in ["attack_burst", "continuous_area"]:
+					errors.append(label + ".form_kinds: 当前仅支持 attack_burst / continuous_area")
+					continue
+				var branch: Dictionary = skill.duplicate(true)
+				branch.erase("form_kinds")
+				branch["kind"] = form_kind
+				if form_kind != "continuous_area":
+					branch.erase("persistent_area")
+					branch.erase("impact_visual_shape")
+					branch.erase("impact_visual_duration")
+				var branch_stats: Dictionary = stats.duplicate(true)
+				branch_stats["active_skills"] = [branch]
+				_validate_active_skills(label + "." + String(form_kind), branch_stats, errors, inspect_resources)
+		if bool(skill.get("persistent_area", false)) and String(skill.get("kind", "")) != "continuous_area" and not skill.get("form_kinds", []).has("continuous_area"):
+			errors.append(label + ".persistent_area: 需要持续领域效果")
+		if skill.has("form_icon_paths"):
+			if skill.form_icon_paths.size() != 2 or stats.get("transformed_stats", {}).is_empty():
+				errors.append(label + ".form_icon_paths: 需要两个形态与两个图标")
+			for icon_path in skill.form_icon_paths:
+				if not String(icon_path).begins_with("res://assets/") or not ResourceLoader.exists(icon_path) or (inspect_resources and not load(icon_path) is Texture2D):
+					errors.append(label + ".form_icon_paths: 必须指向 assets 内有效的 Texture2D")
 		if skill.has("icon_path"):
 			var path := String(skill.icon_path)
 			if not path.begins_with("res://assets/") or not ResourceLoader.exists(path) or (inspect_resources and not load(path) is Texture2D):
@@ -1093,6 +1138,11 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			&"timed_form":
 				if stats.get("transformed_stats", {}).is_empty() or float(stats.get("form_lifetime", 0.0)) <= 0.0:
 					errors.append("%s: 限时变形需要 transformed_stats 与正数 form_lifetime" % label)
+			&"attack_burst":
+				if float(skill.get("duration", 0.0)) <= 0.0:
+					errors.append(label + ": 连续攻速强化需要正持续时间")
+				if float(skill.get("attack_count", 0)) <= 0 or float(skill.get("attack_count", 0)) != int(skill.get("attack_count", 0)) or float(skill.get("attack_speed_multiplier", 0.0)) <= 1.0:
+					errors.append(label + ": 连续攻速强化需要正整数次数与大于1的攻速倍率")
 			&"buff":
 				_require_fields(label, skill, [&"duration"], errors)
 				if skill.has("heal_ratio") and (not is_finite(float(skill.heal_ratio)) or float(skill.heal_ratio) <= 0.0 or float(skill.get("duration", 0.0)) <= 0.0):
@@ -1172,8 +1222,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			&"continuous_area":
 				if skill.has("heal_ratio") and (not is_finite(float(skill.heal_ratio)) or float(skill.heal_ratio) <= 0.0 or float(skill.heal_ratio) > 1.0):
 					errors.append(label + ".heal_ratio: 必须在 (0,1] 内")
-				_require_fields(label, skill, [&"radius", &"damage", &"duration", &"tick_interval", &"cast_duration"], errors)
-				for positive_field in [&"radius", &"duration", &"tick_interval", &"cast_duration"]:
+				_require_fields(label, skill, [&"radius", &"damage", &"duration", &"tick_interval"] if bool(skill.get("persistent_area", false)) else [&"radius", &"damage", &"duration", &"tick_interval", &"cast_duration"], errors)
+				for positive_field in ([&"radius", &"duration", &"tick_interval"] if bool(skill.get("persistent_area", false)) else [&"radius", &"duration", &"tick_interval", &"cast_duration"]):
 					if float(skill.get(positive_field, 0.0)) <= 0.0:
 						errors.append("%s.%s: 必须 > 0" % [label, positive_field])
 				if float(skill.get("damage", 0.0)) < 0.0:
@@ -1214,6 +1264,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append(label + ": 突进攻击需要离散近战和至少1倍攻速")
 				if skill.has("ignore_blind") and not skill.ignore_blind is bool: errors.append(label + ".ignore_blind: 必须为布尔值")
 			&"empowered_attack":
+				if skill.has("stun_duration") and (not is_finite(float(skill.stun_duration)) or float(skill.stun_duration) <= 0.0):
+					errors.append(label + ".stun_duration: 强化眩晕必须为正数")
 				if skill.has("hit_heal") and float(skill.hit_heal) <= 0.0:
 					errors.append(label + ".hit_heal: 命中回血必须为正数")
 				if skill.has("cleave_damage") or skill.has("cleave_radius"):
@@ -1240,6 +1292,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				_require_fields(label, skill, [&"strike_count", &"strike_damage_multiplier"], errors)
 				if int(skill.get("strike_count", 0)) < 1 or float(skill.get("strike_damage_multiplier", 0)) < 1:
 					errors.append("%s: 电击次数必须为正，逐次倍率必须>=1" % label)
+			&"spell_tidal_wave":
+				if String(stats.get("spell_kind", "")) != "tidal_wave" or float(skill.get("duration", 0)) <= 0 or float(skill.get("speed_multiplier", 0)) <= 1:
+					errors.append(card_id + ": 踏浪而行需要浪潮法术、正持续时间与大于1的移速倍率")
 			&"spell_explosive_cask":
 				if String(stats.get("spell_kind", "")) != "explosive_cask" or float(skill.get("damage", 0)) <= float(stats.get("damage", 0)):
 					errors.append("%s: 酒桶强化只用于爆破酒桶且伤害必须高于基础值" % label)
@@ -1290,7 +1345,7 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 		elif skill.has("execute_health_ratio"):
 			errors.append(label + ": 斩杀阈值仅用于引爆")
 		if skill.has("impact_visual_shape"):
-			if String(skill.get("kind", "")) not in ["frontal", "dual_form", "nova"]: errors.append("%s.impact_visual_shape: 仅适用于即时范围命中" % label)
+			if String(skill.get("kind", "")) not in ["frontal", "dual_form", "nova", "continuous_area"] and not skill.get("form_kinds", []).has("continuous_area"): errors.append("%s.impact_visual_shape: 仅适用于范围命中" % label)
 			if not skill.impact_visual_shape is String or String(skill.impact_visual_shape).is_empty(): errors.append("%s.impact_visual_shape: 必须为非空 String" % label)
 			if not skill.get("impact_visual_duration") is float and not skill.get("impact_visual_duration") is int: errors.append("%s.impact_visual_duration: 必须为数值" % label)
 			elif float(skill.impact_visual_duration) <= 0.0: errors.append("%s.impact_visual_duration: 必须 > 0" % label)
@@ -1616,6 +1671,8 @@ static func _validate_deployment(card_id: String, stats: Dictionary, errors: Pac
 		var dz := StringName(stats.get("deploy_zone", ""))
 		if dz not in DEPLOY_ZONES:
 			errors.append("%s.deploy_zone: 必须是 DEPLOY_ZONES 之一 (%s)；global_no_river 已退役，全场部署请迁移为 global 并沿用落点合法性校验" % [card_id, "、".join(DEPLOY_ZONES)])
+	if bool(stats.get("deploy_half_only", false)) and (card_type != &"spell" or String(stats.get("deploy_zone", "")) != "own_side" or not bool(stats.get("deploy_ignore_structures", false))):
+		errors.append(card_id + ".deploy_half_only: 仅支持忽略占位的own_side法术")
 	if bool(stats.get("deploy_pocket_requires_both_towers", false)) and (String(stats.get("deploy_zone", "own_side")) != "own_side" or card_type == &"spell"):
 		errors.append("%s.deploy_pocket_requires_both_towers: 仅支持 own_side 单位或建筑" % card_id)
 	if stats.has("deploy_ignore_structures") and typeof(stats.deploy_ignore_structures) != TYPE_BOOL:

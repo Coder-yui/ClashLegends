@@ -1,0 +1,377 @@
+[
+  {
+    "file": "play_sfx_blitzcrank_blitzcrankbasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast",
+    "event_id": 981632910,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast {r1}.txtp",
+    "media_ids": [
+      167525856,
+      507184743,
+      638514227
+    ],
+    "duration": 0.7771,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "42a76abe23158b4efce4327c74765b4e02f786eb0fd242f6577f147082e34c67",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_blitzcrank_blitzcrankbasicattack_oncast_r1_d.wav",
+        "event": "Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnCast",
+        "event_id": 3425775990,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnCast {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnCast {r1} {d}.txtp",
+        "media_ids": [
+          167525856,
+          507184743,
+          638514227
+        ],
+        "duration": 0.7771,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "42a76abe23158b4efce4327c74765b4e02f786eb0fd242f6577f147082e34c67",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_blitzcrank_blitzcrankbasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast",
+    "event_id": 981632910,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast {r2}.txtp",
+    "media_ids": [
+      167525856,
+      507184743,
+      638514227
+    ],
+    "duration": 0.7771,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ad86a1a09fe563380df6b9a460dd70a80d9fbfed93a76524ae31842bcda59038",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_blitzcrank_blitzcrankbasicattack_oncast_r2_d.wav",
+        "event": "Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnCast",
+        "event_id": 3425775990,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnCast {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnCast {r2} {d}.txtp",
+        "media_ids": [
+          167525856,
+          507184743,
+          638514227
+        ],
+        "duration": 0.7771,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "ad86a1a09fe563380df6b9a460dd70a80d9fbfed93a76524ae31842bcda59038",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_blitzcrank_blitzcrankbasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast",
+    "event_id": 981632910,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnCast {r3}.txtp",
+    "media_ids": [
+      167525856,
+      507184743,
+      638514227
+    ],
+    "duration": 0.7771,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9c99170b99823f75fba1c78220f19eb04d6483e4f5a81638344a4a10a88b7128",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_blitzcrank_blitzcrankbasicattack_oncast_r3_d.wav",
+        "event": "Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnCast",
+        "event_id": 3425775990,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnCast {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnCast {r3} {d}.txtp",
+        "media_ids": [
+          167525856,
+          507184743,
+          638514227
+        ],
+        "duration": 0.7771,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "9c99170b99823f75fba1c78220f19eb04d6483e4f5a81638344a4a10a88b7128",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_blitzcrank_blitzcrankbasicattack2_onhit_1559186049_1153642577_r1.wav",
+    "event": "Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit",
+    "event_id": 2808667354,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit [1559186049=1153642577] {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
+    "media_ids": [
+      43367388,
+      252277694,
+      378438823
+    ],
+    "duration": 0.9729,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "044d181e6e047763044871b1d412dfba8e0d16462643373e20c7bda01ce4515a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_blitzcrank_blitzcrankbasicattack_onhit_1559186049_1153642577_r1_d.wav",
+        "event": "Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnHit",
+        "event_id": 4195777810,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+        "media_ids": [
+          43367388,
+          252277694,
+          378438823
+        ],
+        "duration": 0.9729,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "044d181e6e047763044871b1d412dfba8e0d16462643373e20c7bda01ce4515a",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_blitzcrank_blitzcrankbasicattack2_onhit_1559186049_1153642577_r2.wav",
+    "event": "Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit",
+    "event_id": 2808667354,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit [1559186049=1153642577] {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
+    "media_ids": [
+      43367388,
+      252277694,
+      378438823
+    ],
+    "duration": 0.9729,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0ab92896cd2ea4a92ec714982369be3a4215af916f13492823f3b971b8288ea3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_blitzcrank_blitzcrankbasicattack_onhit_1559186049_1153642577_r2_d.wav",
+        "event": "Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnHit",
+        "event_id": 4195777810,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+        "media_ids": [
+          43367388,
+          252277694,
+          378438823
+        ],
+        "duration": 0.9729,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "0ab92896cd2ea4a92ec714982369be3a4215af916f13492823f3b971b8288ea3",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_blitzcrank_blitzcrankbasicattack2_onhit_1559186049_1153642577_r3.wav",
+    "event": "Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit",
+    "event_id": 2808667354,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit [1559186049=1153642577] {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
+    "media_ids": [
+      43367388,
+      252277694,
+      378438823
+    ],
+    "duration": 0.9729,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3bb79db80b7bc438104061ab940d64c90196e7d8340dcd9451f5806318bd2e11",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_blitzcrank_blitzcrankbasicattack_onhit_1559186049_1153642577_r3_d.wav",
+        "event": "Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnHit",
+        "event_id": 4195777810,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_BlitzcrankBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+        "media_ids": [
+          43367388,
+          252277694,
+          378438823
+        ],
+        "duration": 0.9729,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "3bb79db80b7bc438104061ab940d64c90196e7d8340dcd9451f5806318bd2e11",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_blitzcrank_powerfist_hit.wav",
+    "event": "Play_sfx_Blitzcrank_PowerFist_hit",
+    "event_id": 1281106626,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_PowerFist_hit.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_PowerFist_hit.txtp",
+    "media_ids": [
+      760940080
+    ],
+    "duration": 1.8995,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9dbd9271e034090346fccc9fcf483f2ebe22c9a29115ffa8bd7e918ea80118eb",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_blitzcrank_rocketgrab_oncast.wav",
+    "event": "Play_sfx_Blitzcrank_RocketGrab_OnCast",
+    "event_id": 1230117342,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_RocketGrab_OnCast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_RocketGrab_OnCast.txtp",
+    "media_ids": [
+      399029776
+    ],
+    "duration": 0.5417,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "40819ef8cd122c1d688285fd2a30fd3f0f34819d05d50e75eca97d9e947060cf",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_blitzcrank_rocketgrabmissile_onhit.wav",
+    "event": "Play_sfx_Blitzcrank_RocketGrabMissile_OnHit",
+    "event_id": 754381436,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_RocketGrabMissile_OnHit.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_RocketGrabMissile_OnHit.txtp",
+    "media_ids": [
+      255492812
+    ],
+    "duration": 0.7406,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8bc51a44e0d9603879da9b232f400488df1e2e0d5c948a54e58f5a9e141ecc0c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_blitzcrank_powerfist_onbuffactivate.wav",
+    "event": "Play_sfx_Blitzcrank_PowerFist_OnBuffActivate",
+    "event_id": 2707073360,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_PowerFist_OnBuffActivate.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_PowerFist_OnBuffActivate.txtp",
+    "media_ids": [
+      169350163
+    ],
+    "duration": 5.25,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "180c93b1cddaf51c2f085666abdc2d8c37b03f7c6b1ce29e5864e8556aa40140",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_blitzcrank_powerfist_oncast.wav",
+    "event": "Play_sfx_Blitzcrank_PowerFist_OnCast",
+    "event_id": 2467756705,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_PowerFist_OnCast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_PowerFist_OnCast.txtp",
+    "media_ids": [
+      790371558
+    ],
+    "duration": 2.0,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d02e52ebda45b1c5d12e400db85cdee0c0d77b6024d2141e4a1ae195fceca338",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_blitzcrank_death3d_cast.wav",
+    "event": "Play_sfx_Blitzcrank_Death3D_cast",
+    "event_id": 2885421824,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/event_wav/Play_sfx_Blitzcrank_Death3D_cast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank/txtp/Play_sfx_Blitzcrank_Death3D_cast.txtp",
+    "media_ids": [
+      173539313
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "9f566ed189e375618a5b56724bd881ff196a139b6c1eb12998cf0d4fde0ed5c5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 1.7979138321995465,
+      "source_sha256": "4bee827f3a4ea7246126b4d0f3cd193fbfdf26366923829e10e8fcfdccb3edf4",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_blitzcrank_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Blitzcrank_Death3D",
+    "event_id": 3628120362,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank_vo/event_wav/Play_vo_Blitzcrank_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank_vo/txtp/Play_vo_Blitzcrank_Death3D {r1}.txtp",
+    "media_ids": [
+      1753649639,
+      1900072740,
+      2110759633
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "4e29c7590dad5fc2de6c8ab3da94e599ee919b2ba864e5e2e365efe872841d53",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.3498639455782313,
+      "source_sha256": "1259c68ef8e7fc856b5b7c993313189e0c354690077eb49e1927f9d58232596f",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_blitzcrank_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Blitzcrank_Death3D",
+    "event_id": 3628120362,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank_vo/event_wav/Play_vo_Blitzcrank_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank_vo/txtp/Play_vo_Blitzcrank_Death3D {r2}.txtp",
+    "media_ids": [
+      1753649639,
+      1900072740,
+      2110759633
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "c37285f750416bc97f196737b4202d0afb46a513b54d10754ada5cfa84a0c6e7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.0300907029478457,
+      "source_sha256": "3b880845fa4d770e13661fc0c23d6efaa12af7b5221a4b87dc3483bb34f33248",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_blitzcrank_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Blitzcrank_Death3D",
+    "event_id": 3628120362,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank_vo/event_wav/Play_vo_Blitzcrank_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/audio/blitzcrank_vo/txtp/Play_vo_Blitzcrank_Death3D {r3}.txtp",
+    "media_ids": [
+      1753649639,
+      1900072740,
+      2110759633
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "2fed3b4da4d626d23286525fad3d23efb44b0c3c3f2b07aa5d1d69bb2022378d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.561269841269841,
+      "source_sha256": "6cdf9a34c67aae41934b68064618fa2c7841f2290cc41f2c101330915970b7ec",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "champion_choose_53_zh_cn.ogg",
+    "event": "champion-choose-vo/53",
+    "source_file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/蒸汽机器人/源件与过程记录/client-voice/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/53.ogg",
+    "processing": "original OGG copied without re-encoding; deploy playback -8 dB",
+    "sha256": "e12a5b6d1cb4945d0dd3f9a895058ef838d86825ec17cdc83750b1fe7f9dcadb"
+  }
+]

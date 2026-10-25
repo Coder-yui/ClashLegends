@@ -18,7 +18,7 @@ func _process(_delta: float) -> void:
 		if not is_instance_valid(hit.camera): continue
 		if not hit.get("fixed", false): _update_endpoints(hit.view, true)
 		_place_hit_entry(hit)
-		hit.player.seek(hit.age)
+		if not hit.get("motion", false): hit.player.seek(hit.age)
 
 func setup(system: ProjectileSystem) -> void:
 	_context = system._context
@@ -26,6 +26,33 @@ func setup(system: ProjectileSystem) -> void:
 
 func play_hit(source: Dictionary, position: Vector2, world: Node3D = null, camera: Camera3D = null) -> void:
 	var stats := PresentationConfig.for_form(CardDB.get_card(String(source.get("card_id", ""))), int(source.get("form", 0)))
+	if String(stats.get("attack_hit_visual", "")) == "jayce":
+		if not bool(source.get("first_strike", false)): return
+		if is_instance_valid(world) and is_instance_valid(camera):
+			var hit = load("res://assets/effects/jayce/player.gd").new()
+			world.add_child(hit)
+			var suffix := "_r" if int(source.get("form", 0)) == 0 else "_m"
+			hit.load_kind("first_hit" + suffix)
+			hit.setup_native(0.0095)
+			var view := {"source": source.duplicate(true), "camera": camera, "start": position, "end": position, "target_body": true}
+			_update_endpoints(view, true)
+			_place_hit(hit, camera, view.end)
+			_hits.append({"player": hit, "camera": camera, "age": 0.0, "duration": 2.0, "motion": true, "view": view})
+		return
+	if String(stats.get("attack_hit_visual", "")) == "blitzcrank_e":
+		if bool(source.get("empowered", false)) and is_instance_valid(world) and is_instance_valid(camera):
+			var hit = load("res://assets/effects/blitzcrank/player.gd").new()
+			world.add_child(hit)
+			hit.load_kind("etar")
+			var caster := _body(int(source.get("unit_id", -1)), not _context.is_net_client())
+			var effect_scale := float(caster.get_meta("blitzcrank_vfx_scale", 0.0085 * 1.25)) if is_instance_valid(caster) else 0.0085 * 1.25
+			hit.setup_native(effect_scale)
+			var view := {"source": source.duplicate(true), "camera": camera, "start": source.get("hit_origin", position), "end": position}
+			_update_endpoints(view, true)
+			_place_hit(hit, camera, view.end)
+			# 原版E_tar_1挂目标胸部；非绑定爆闪留在出生位置，电弧随目标移动。
+			_hits.append({"player": hit, "camera": camera, "age": 0.0, "duration": 1.5, "motion": true, "view": view})
+		return
 	if String(stats.get("attack_hit_visual", "")) == "hecarim_q":
 		if is_instance_valid(world) and is_instance_valid(camera):
 			var hit := HECARIM_PLAYER.new()
@@ -75,9 +102,15 @@ func advance(delta: float) -> void:
 		else:
 			if not hit.get("fixed", false): _update_endpoints(hit.view)
 			_place_hit_entry(hit)
-			hit.player.seek(hit.age)
+			if not hit.get("motion", false): hit.player.seek(hit.age)
 
 func _place_hit_entry(hit: Dictionary) -> void:
+	if hit.get("motion", false):
+		if hit.view.has("target_world"):
+			hit.player.global_position = hit.view.target_world
+		else: _place_hit(hit.player, hit.camera, hit.view.end)
+		hit.player.seek_motion(hit.age, hit.player.global_position, Basis.IDENTITY)
+		return
 	if hit.has("ground_height"):
 		hit.player.global_position = preload("res://scripts/presentation/spell_effect_projection.gd").ground(hit.camera, hit.view.end) + Vector3.UP * float(hit.ground_height)
 	else:
@@ -108,12 +141,19 @@ func _update_endpoints(view: Dictionary, current_pose: bool = false) -> void:
 	if is_instance_valid(source): view.start = source.global_position + source.get_meta("projectile_model_offset", Vector2(0,-60))
 	if is_instance_valid(target): view.end = target.global_position + target.get_meta("projectile_model_offset", view.source.get("hit_target_offset", Vector2(0,-30)))
 
+	if bool(view.get("target_body", false)) and is_instance_valid(target):
+		var attachment: Variant = preload("res://scripts/presentation/projectile_model_anchor.gd").body_position(target)
+		if attachment != null:
+			view.target_world = attachment
+			view.end = BattleGroundProjection.unproject(view.camera, attachment)
+			return
 	if current_pose and is_instance_valid(view.camera):
 		if is_instance_valid(source): view.start = _anchor_position(source, view.camera, view.start)
 		if is_instance_valid(target): view.end = _anchor_position(target, view.camera, view.end)
 
 func _anchor_position(body: Node2D, camera: Camera3D, fallback: Vector2) -> Vector2:
-	var reference = body.get_meta("projectile_model_anchor", null)
+	if not body.has_meta("projectile_model_anchor"): return fallback
+	var reference = body.get_meta("projectile_model_anchor")
 	if not reference is WeakRef: return fallback
 	var anchor = reference.get_ref()
 	if not is_instance_valid(anchor): return fallback

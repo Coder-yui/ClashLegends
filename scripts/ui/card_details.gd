@@ -26,6 +26,14 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 		var target := "友方单位" if StringName(stats.get("spell_kind", "")) == &"heal" else "敌方单位"
 		if String(stats.get("spell_kind", "")) == "void_summoning": target = "区域召唤己方虚空鱼"
 		if String(stats.get("spell_kind", "")) == "stasis": target = "双方单位（含空军、建筑卡）"
+		if String(stats.get("spell_kind", "")) == "tidal_wave":
+			result.append({"name": "目标", "value": "敌方地面目标（含建筑）"})
+			result.append({"name": "范围", "value": "%s格宽 × %s格长" % [format_number(float(stats.wave_width) / TILE_SIZE), format_number(float(stats.range) / TILE_SIZE)]})
+			result.append({"name": "伤害", "value": format_number(float(stats.damage))})
+			result.append({"name": "向前击退", "value": "%s格（受质量与地形影响）" % format_number(float(stats.knockback) / TILE_SIZE)})
+			result.append({"name": "推进时间", "value": "%s秒" % format_number(float(stats.duration))})
+			result.append({"name": "塔 / 水晶伤害", "value": format_number(float(stats.damage) * float(stats.tower_damage_multiplier))})
+			return result
 		result.append({"name": "目标", "value": target})
 		result.append({"name": "作用范围", "value": "%s（%.2f格）" % [format_number(float(stats.get("radius", 0.0))), float(stats.get("radius", 0.0)) / TILE_SIZE]})
 		if String(stats.get("spell_kind", "")) in ["zap", "lightning"]:
@@ -213,6 +221,8 @@ static func passives(stats: Dictionary) -> Array[Dictionary]:
 
 	if float(stats.get("attack_self_radius", 0.0)) > 0.0:
 		result.append({"name": "旋斩", "description": "普通攻击以自身为中心，对周围%s格内的地面敌人造成同等伤害。" % format_number(float(stats.attack_self_radius) / TILE_SIZE)})
+	if float(stats.get("form_cycle_interval", 0.0)) > 0.0:
+		result.append({"name": "墨丘利变形", "description": "每%s秒到时打断普攻换形，硬控结束后补换形。部署与切换后的首击获得加成，具体规则见卡牌说明。" % format_number(float(stats.form_cycle_interval))})
 	if float(stats.get("charge_distance", 0.0)) > 0.0:
 		result.append({"name": "毁灭冲锋", "description": "连续自主移动%s格后移速提高%s%%，下一击从%s格内冲到目标面前并眩晕%s秒。蓄势时受阻停下、硬控及击退会重置；突进途中无碰撞，可穿河和建筑，硬控打断后恢复合法落点。" % [format_number(float(stats.charge_distance) / TILE_SIZE), format_number((float(stats.charge_speed_multiplier) - 1.0) * 100.0), format_number(float(stats.charge_attack_range) / TILE_SIZE), format_number(float(stats.charge_stun_duration))]})
 	if bool(stats.get("is_continuous_attack", false)):

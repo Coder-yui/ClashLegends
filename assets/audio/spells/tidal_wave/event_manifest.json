@@ -1,0 +1,215 @@
+{
+  "events": {
+    "spell:cast": "Play_sfx_Nami_NamiR_OnCast",
+    "spell:launch": "Play_sfx_Nami_NamiR_missilelaunch",
+    "spell:hit": "Play_sfx_Nami_NamiRMissile_hit"
+  },
+  "entries": [
+    {
+      "file": "assets/audio/spells/tidal_wave/wave_1.wav",
+      "sha256": "ea8421358b736031744d1aeff81b6fd94735e690799aec7a537092de17768ce6",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiR_missilelaunch {r1}.txtp",
+          "txtp_sha256": "028d6583714a1e796384f6403de083035b8b7049ee47d7104b1040703a029a3f",
+          "event_ids": [
+            "2121432243"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [
+          "atrim=duration=1.65",
+          "afade=t=out:st=1.4:d=0.25"
+        ],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 2
+      },
+      "duration": 1.65,
+      "verified_by_listening": false,
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/浪潮法术/11格音效/wave_1.wav",
+          "sha256": "e0171fbc312fa3612083eeb53e87bba48b3b16ef5eac0031b846dcba85ec405f"
+        }
+      ],
+      "cue": "spell:launch"
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/wave_2.wav",
+      "sha256": "61dd973bd626ffc8c5d340117335d8818c442edc5787e663f459f01889d15d3b",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiR_missilelaunch {r2}.txtp",
+          "txtp_sha256": "dee6a62d0d9b4b882272aac38555336af828ea9337e9f24677ada3ce260a52e9",
+          "event_ids": [
+            "2121432243"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [
+          "atrim=duration=1.65",
+          "afade=t=out:st=1.4:d=0.25"
+        ],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 2
+      },
+      "duration": 1.65,
+      "verified_by_listening": false,
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/浪潮法术/11格音效/wave_2.wav",
+          "sha256": "4336d6991f42f0f7556b8b8019b5ae2657ae969ad7b4405c163248b1c76928ed"
+        }
+      ],
+      "cue": "spell:launch"
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/cast_1.wav",
+      "sha256": "7529d840b4070780b379be20a6ea9cc5b237bf8f08064b7f423125db5f34cc55",
+      "cue": "spell:cast",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiR_OnCast {r1}.txtp",
+          "txtp_sha256": "e4e462f171d263eb3593fa8ea661eddf604ee53367520bc3f8548a6bbcae91ad",
+          "event_ids": [
+            "4165359500"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 3.6813378684807256,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/cast_2.wav",
+      "sha256": "094bfd3712def68a2035bc4c5c638428a2b8215a9ced6668494f60b15ee1ac74",
+      "cue": "spell:cast",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiR_OnCast {r2}.txtp",
+          "txtp_sha256": "a7a114ef6160eb71668113c794648198f4e3d54c66a971b5223435eb76f5fc66",
+          "event_ids": [
+            "4165359500"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 3.8069160997732427,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/cast_3.wav",
+      "sha256": "2ad79aa02f860f4cb31244aa09692a9b864146739af0b41fa527ce381f6aa008",
+      "cue": "spell:cast",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiR_OnCast {r3}.txtp",
+          "txtp_sha256": "ef1838b22ec8e6455eaf404983a3147c1769cd687c83a4103f39c5caa41c99b9",
+          "event_ids": [
+            "4165359500"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 4.332471655328798,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/hit_1.wav",
+      "sha256": "bb99404864470622c5372171771edb314ee098c9324aed8de7996e18b4c850b3",
+      "cue": "spell:hit",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiRMissile_hit {r1}.txtp",
+          "txtp_sha256": "5117c1a4944cb1d635372830330693a6ae0c8ac80402c1abc228b35eb40cf397",
+          "event_ids": [
+            "1293277759"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 2.9056009070294784,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/hit_2.wav",
+      "sha256": "95281d5ae29e47b2356d76798f46bacd90274f1f56906d9c5708fe64c1a73c8b",
+      "cue": "spell:hit",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiRMissile_hit {r2}.txtp",
+          "txtp_sha256": "f966bead875956e06263f57fe0cc6453cac190e390898e3c1128892e63573ba3",
+          "event_ids": [
+            "1293277759"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 2.327687074829932,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/spells/tidal_wave/hit_3.wav",
+      "sha256": "4e29395dc6a0d9db0fccfeb65a6b468b9bd126113cba80f7ee1d11d39da0e6ab",
+      "cue": "spell:hit",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/浪潮法术/源件与过程记录/audio-source/nami/txtp/Play_sfx_Nami_NamiRMissile_hit {r3}.txtp",
+          "txtp_sha256": "9fe3c7a81610fec1762e542b4d5cd07922023f285913869bec89a964e9fe463d",
+          "event_ids": [
+            "1293277759"
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 3.081859410430839,
+      "verified_by_listening": false
+    }
+  ]
+}

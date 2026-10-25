@@ -1046,6 +1046,9 @@ func _clear_deployment_preview() -> void:
 
 ## 把鼠标位置转换成当前卡牌的部署预览。预览会保留在非法格上并显示红色，
 ## 让玩家知道为什么点击不会生效，而不是把鼠标悄悄吸到另一个格子。
+func _deployment_preview_team() -> int:
+	return _workbench.team if _workbench.enabled else runtime.local_team
+
 func _update_deployment_preview(pointer_pos: Vector2) -> void:
 	_clear_deployment_preview()
 	if _selected_card.is_empty() or not CardDB.has_card(_selected_card):
@@ -1054,7 +1057,7 @@ func _update_deployment_preview(pointer_pos: Vector2) -> void:
 	if pointer_pos.x < 0.0 or pointer_pos.x >= ArenaRules.FIELD_W or pointer_pos.y < 0.0 or pointer_pos.y >= ArenaRules.FIELD_H:
 		queue_redraw()
 		return
-	var my_team := runtime.local_team
+	var my_team := _deployment_preview_team()
 	var tile := runtime._deployment_rules.world_to_arena_tile(pointer_pos)
 	tile.x = clampi(tile.x, 0, ArenaRules.ARENA_COLUMNS - 1)
 	tile.y = clampi(tile.y, 0, ArenaRules.ARENA_ROWS - 1)
@@ -2085,16 +2088,22 @@ func _draw() -> void:
 	# 正式 3D 地图在下层视口绘制；此处只画部署提示。
 	# 选中卡牌时高亮可部署区域
 	if _selected_card != "":
-		var sel_stats: Dictionary = CardDB.get_card(runtime.resolved_card_for_team(runtime.local_team, _selected_card))
+		var sel_stats: Dictionary = CardDB.get_card(runtime.resolved_card_for_team(_deployment_preview_team(), _selected_card))
 		var deploy_zone: String = String(sel_stats.get("deploy_zone", "own_side"))
-		match deploy_zone:
+		match "own_half" if bool(sel_stats.get("deploy_half_only", false)) else deploy_zone:
+			"own_half":
+				for row in ArenaRules.ARENA_ROWS:
+					for column in ArenaRules.ARENA_COLUMNS:
+						var tile := Vector2i(column, row)
+						if runtime._deployment_rules.tile_in_own_ground_deploy_zone(tile, _deployment_preview_team()):
+							draw_rect(Rect2(Vector2(tile) * ArenaRules.TILE_SIZE, Vector2.ONE * ArenaRules.TILE_SIZE), Color(0.40, 0.70, 1.00, 0.15))
 			"global":
 				# global 级卡（冰冻、卡牌大师）：整个竞技场提示为范围提示色；
 				# 具体水面/塔上等占位不可点的位置，由红/绿圆形落点预览精确反馈。
 				draw_rect(Rect2(0, 0, ArenaRules.FIELD_W, ArenaRules.FIELD_H), Color(0.40, 0.70, 1.00, 0.08))
 			_:
 				# own_side：逐格按己方部署掩码绘制
-				var deploy_team := runtime.local_team
+				var deploy_team := _deployment_preview_team()
 				for row in ArenaRules.ARENA_ROWS:
 					for column in ArenaRules.ARENA_COLUMNS:
 						var tile := Vector2i(column, row)
@@ -2178,7 +2187,14 @@ func _draw_deployment_preview(stats: Dictionary) -> void:
 	draw_rect(preview_rect, Color(color.r, color.g, color.b, 0.18), true)
 	draw_rect(preview_rect, color, false, 3.0)
 
-	if type == "spell":
+	if type == "spell" and String(stats.get("spell_kind", "")) == "tidal_wave":
+		var direction := Vector2.UP if _deployment_preview_team() == 0 else Vector2.DOWN
+		var end := _deployment_preview_pos + direction * float(stats.range)
+		var rect := Rect2(Vector2(_deployment_preview_pos.x - float(stats.wave_width) * 0.5, minf(_deployment_preview_pos.y, end.y)), Vector2(float(stats.wave_width), float(stats.range)))
+		draw_rect(rect, Color(color.r, color.g, color.b, 0.12))
+		draw_rect(rect, color, false, 2.0)
+		draw_line(_deployment_preview_pos, end, color, 2.0)
+	elif type == "spell":
 		var spell_radius: float = stats.get("radius", ArenaRules.TILE_SIZE * 0.5)
 		draw_circle(_deployment_preview_pos, spell_radius, Color(color.r, color.g, color.b, 0.12))
 		draw_arc(_deployment_preview_pos, spell_radius, 0.0, TAU, 48, color, 2.0, true)
@@ -2193,19 +2209,21 @@ func _draw_deployment_preview(stats: Dictionary) -> void:
 		draw_line(_deployment_preview_pos - Vector2(cross_size, 0.0), _deployment_preview_pos + Vector2(cross_size, 0.0), color, 2.0, true)
 		draw_line(_deployment_preview_pos - Vector2(0.0, cross_size), _deployment_preview_pos + Vector2(0.0, cross_size), color, 2.0, true)
 
-func _present_cast_notice(team: int, card_id: String, skill_index: int) -> void:
+func _present_cast_notice(team: int, card_id: String, skill_index: int, cast_form: int = -1) -> void:
 	_presentation_event_id += 1
-	_play_card_event(_presentation_event_id, card_id, "cast:notice", Vector2.ZERO, skill_index, team)
+	var cue := "cast:notice" if cast_form < 0 else "cast:notice:form%d" % cast_form
+	_play_card_event(_presentation_event_id, card_id, cue, Vector2.ZERO, skill_index, team)
 	if runtime.mode == "server":
-		_broadcast(_rpc_card_event, [runtime.session.session_id, _presentation_event_id, card_id, "cast:notice", Vector2.ZERO, skill_index, team])
+		_broadcast(_rpc_card_event, [runtime.session.session_id, _presentation_event_id, card_id, cue, Vector2.ZERO, skill_index, team])
 
 func _play_card_event(event_id: int, card_id: String, cue: String, pos: Vector2, form: int = 0, team: int = 0) -> void:
 	if not has_presentation(): return
 	if event_id <= _last_card_event_id:
 		return
 	_last_card_event_id = event_id
-	if cue == "cast:notice":
-		if _cast_notice != null: _cast_notice.show_cast(card_id, form, team)
+	if cue in ["cast:notice", "cast:notice:form0", "cast:notice:form1"]:
+		var cast_form := -1 if cue == "cast:notice" else int(cue.right(1))
+		if _cast_notice != null: _cast_notice.show_cast(card_id, form, team, cast_form)
 		return
 	if card_id == "match":
 		if not runtime.game_over and _audio_manager != null: _audio_manager.play_match_event(cue)
@@ -2519,7 +2537,7 @@ func _on_runtime_event(kind: String, data: Dictionary) -> void:
 		"card_event": _emit_card_event(String(data.card_id), String(data.cue), data.pos, int(data.team))
 		"pre_deploy":
 			if runtime.mode == "server": _broadcast(_rpc_card_pre_deploy_started, [runtime.session.session_id, int(data.id), String(data.card_id), int(data.team), data.pos, float(data.duration)])
-		"cast_notice": _present_cast_notice(int(data.team), String(data.card_id), int(data.index))
+		"cast_notice": _present_cast_notice(int(data.team), String(data.card_id), int(data.index), int(data.get("cast_form", -1)))
 		"announcement": _present_match_announcement(String(data.cue))
 		"match_finished": _end_game(int(data.winner_team), String(data.reason))
 		"growth_changed":

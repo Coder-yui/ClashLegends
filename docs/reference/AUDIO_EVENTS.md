@@ -18,6 +18,7 @@
 | `stasis_target:sustain` | 仅凝滞法术配置；受影响单位/防御塔持有，状态开始播放、状态解除/死亡/移除时截断；暂停冻结，终局清理；不循环、不驱动权威时长 |
 | `spell:strike` | 凝滞由权威抵达事件派发；电击/大型电击每次权威落雷派发；电击空放仍播放中心落雷，大型电击无合法目标时该次静音。可靠表现序号去重，清场取消后续电击 |
 | `attack_wave:launch / attack_wave:hit` | 携带 attack_wave_damage 的单位；延迟波真正创建 / 每波首次真实有效命中，通过保存的出手来源走可靠卡牌事件；空波与清场不补播 |
+| `pull:start / pull:hit` | auto_pull_range单位的自动牵引起手 / 通过准入的拉取；不从动画派发 |
 | `attack_swing / attack_hit` | 普攻出手 / 真实伤害成功；空挥与免疫不伪造命中 |
 | `attack_hit_by_segment / attack_launch_by_segment` | 与普攻段对齐；分段发射替代普通发射池 |
 | `attack_hit_once_by_segment` | 单文件已含多刀时按出手去重，只影响声音 |
@@ -111,3 +112,5 @@
 河蟹死亡衔接动作于配置的 `death_transition_delay`（当前1秒）派发 `shrine:leap`，要求同时具有死亡治疗区与该阶段配置；祭坛展开阶段于 `death_shrine_delay`（当前2秒）派发 `shrine:start`，条件为 `death_heal_radius > 0`；死亡赏金实际入账时派发 `bounty:gain`，条件为 `death_enemy_elixir > 0`。两者通过可靠卡牌事件消费，不依附已死亡单位，重复死亡不重播；自尽仍生成祭坛声但免除赏金声。
 
 虚空召唤的 `spell:zone_sustain` 使用虚空女皇大招施放、激活、持续循环预合成的3条8秒序列，`natural_tail=true`避免开始段重播；到8秒区域结束停止。1秒激活衔接属于项目适配。出生/攻击/死亡由各虚空鱼自身事件派发。
+
+杰斯双形态补充：`first_strike:cast` / `first_strike:missile_launch` / `first_strike_hit` 也支持换形首击；`active_buff:attack_swing` 属于可取消的当前攻击，连同既有launch/hit覆盖远程W。`persistent_area:sustain` / `persistent_area:end` 读取独立领域时钟，换形保留持续音，死亡/清场停止。
