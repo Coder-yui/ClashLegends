@@ -53,6 +53,7 @@ def build_catalog(directories=(), manifests=(), cards=()):
                        'team': '蓝方' if 'order' in path.parts else ('红方' if 'chaos' in path.parts else ''),
                        'cue': str(entry.get('cue', entry.get('label', '素材试听'))),
                        'event': str(entry.get('event', '未提供事件标签；以实际接入配置为准')),
+                       'event_label': str(entry.get('event_label', '')),
                        'file': path.name, 'path': str(path), 'duration': duration, 'url': f'/audio/{len(result)}'})
     if not result: raise ValueError('No WAV files matched the selected inputs.')
     return result

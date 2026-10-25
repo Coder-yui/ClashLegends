@@ -19,6 +19,9 @@ var height := 0.0
 var hidden_layers := {}
 var provider := "res://assets/effects/kassadin/player.gd"
 var variants := PackedStringArray(["appear", "vanish"])
+var range_radius := 0.0
+var range_team := 0
+var range_view: MeshInstance3D
 var capture_dir := ""
 var check_only := false
 var attachment_path := ""
@@ -35,13 +38,15 @@ func _initialize() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--check-only": check_only=true
 		if arg == "--motion": preview_motion=true
+		if arg.begins_with("--range-radius="): range_radius=maxf(float(arg.trim_prefix("--range-radius=")),0.0)
+		if arg.begins_with("--range-team="): range_team=clampi(int(arg.trim_prefix("--range-team=")),0,1)
 		if arg.begins_with("--native-scale="): native_scale=float(arg.trim_prefix("--native-scale="))
 		if arg.begins_with("--zoom="): zoom=float(arg.trim_prefix("--zoom="))
 		if arg.begins_with("--trail-ghost="): trail_ghost_kind=arg.trim_prefix("--trail-ghost=")
 		if arg.begins_with("--model-scale="): model_scale=float(arg.trim_prefix("--model-scale="))
 		if arg.begins_with("--attachment-model="): attachment_path=arg.trim_prefix("--attachment-model=")
 		if arg == "--help":
-			print("effect --provider=res://path/player.gd --variants=appear,vanish [--capture-dir=/absolute/path] [--attachment-model=res://model.glb] [--motion]")
+			print("effect --provider=res://path/player.gd --variants=appear,vanish [--capture-dir=/absolute/path] [--attachment-model=res://model.glb] [--motion] [--range-radius=130] [--range-team=0|1]")
 			quit(); return
 		if arg.begins_with("--provider="): provider = arg.trim_prefix("--provider=")
 		if arg.begins_with("--variants="): variants = arg.trim_prefix("--variants=").split(",")
@@ -83,6 +88,16 @@ func _build() -> void:
 	lift.value_changed.connect(func(v): height=v; player.position.y=height)
 	attachment_base=CheckBox.new();attachment_base.text="显示附着对象原模型";panel.add_child(attachment_base)
 	attachment_base.toggled.connect(func(_value): _update_attachment_base())
+	if range_radius > 0.0:
+		var range_toggle := CheckBox.new()
+		range_toggle.text="显示范围边线 · %.0f像素" % range_radius
+		range_toggle.button_pressed=true
+		panel.add_child(range_toggle)
+		range_toggle.toggled.connect(func(value): range_view.visible=value)
+		var range_color := OptionButton.new()
+		range_color.add_item("蓝方范围");range_color.add_item("红方范围")
+		range_color.select(range_team);panel.add_child(range_color)
+		range_color.item_selected.connect(func(value): range_team=value;_update_range_color())
 	_label(panel,"粒子层")
 	layer_box=VBoxContainer.new();panel.add_child(layer_box)
 	_label(panel,"读取现有项目播放器；不改源数据。\n未实现 load_kind/setup_native/seek\n接口的特效不能直接加载。")
@@ -93,6 +108,7 @@ func _build() -> void:
 	var environment := WorldEnvironment.new();var env:=Environment.new();env.background_mode=Environment.BG_COLOR;env.background_color=Color(0.045,0.06,0.09);environment.environment=env;viewport.add_child(environment)
 	floor_mesh=MeshInstance3D.new();var plane:=PlaneMesh.new();plane.size=Vector2(20,20);floor_mesh.mesh=plane
 	var material:=StandardMaterial3D.new();material.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;material.albedo_color=Color(0.20,0.28,0.22);floor_mesh.material_override=material;viewport.add_child(floor_mesh)
+	_build_range()
 	_camera();_load_variant(variants[0])
 	if not capture_dir.is_empty(): call_deferred("_captures")
 func _label(parent: Node,text: String) -> Label:
@@ -235,3 +251,32 @@ func _check_variants() -> void:
 		checked+=variant_checked
 	print("[Effect depth check] ", checked, " emitters, ",errors," errors")
 	quit(0 if errors == 0 else 1)
+
+## 项目自绘边线的3D展台参考：40权威像素/世界单位，固定地面半径。
+func _build_range() -> void:
+	if range_radius <= 0.0: return
+	range_view=MeshInstance3D.new()
+	var mesh:=ImmediateMesh.new()
+	mesh.surface_begin(Mesh.PRIMITIVE_TRIANGLES)
+	var radius:=range_radius/40.0
+	var half_width:=0.9/40.0
+	for i in 128:
+		var a:=Vector3(cos(TAU*i/128.0),0.015,sin(TAU*i/128.0))
+		var b:=Vector3(cos(TAU*(i+1)/128.0),0.015,sin(TAU*(i+1)/128.0))
+		for point in [a*(radius-half_width),a*(radius+half_width),b*(radius+half_width),a*(radius-half_width),b*(radius+half_width),b*(radius-half_width)]:
+			point.y=0.015
+			mesh.surface_add_vertex(point)
+	mesh.surface_end()
+	range_view.mesh=mesh
+	var material:=StandardMaterial3D.new()
+	material.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.transparency=BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.cull_mode=BaseMaterial3D.CULL_DISABLED
+	material.no_depth_test=true
+	range_view.material_override=material
+	viewport.add_child(range_view)
+	_update_range_color()
+
+func _update_range_color() -> void:
+	if is_instance_valid(range_view):
+		range_view.material_override.albedo_color=Color(0.25,0.65,1.0,0.72) if range_team==0 else Color(1.0,0.28,0.25,0.72)

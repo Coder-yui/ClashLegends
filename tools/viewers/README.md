@@ -106,3 +106,5 @@ python3 tools/dev.py effect --provider=res://assets/effects/ekko/player.gd --var
 项目实际比例可使用 `--native-scale=0.01345 --model-scale=1.48 --zoom=14`；默认仍为源粒子0.01。艾克已撤销end/Avatar本体附着和TrailEndPose1持续拖影，当前变体列表应排除r-TrailEndPose1。
 
 艾克范围层 `end`、`r-Tar` 使用 `--native-scale=0.0093333333` 对应140像素；人物附着与六套回卷姿态使用0.01345。两类比例分别检查，不能用人物比例衡量伤害圈。
+
+特效展台支持 `--range-radius=130 --range-team=0`，以40像素/世界单位显示项目自绘地面范围边线，可开关显示、切换红蓝。与`--native-scale`配合检查特效与权威半径；范围线不会跟随诊断抬高。

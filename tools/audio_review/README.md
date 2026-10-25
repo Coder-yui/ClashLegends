@@ -9,7 +9,7 @@ python3 tools/dev.py audio --cards garen anivia
 python3 tools/dev.py audio --manifest assets/audio/units/garen/event_manifest.json
 ```
 
-打开终端显示的本机地址（默认 `http://127.0.0.1:18765`）。按清单的 group → event 折叠分组，同事件各变体放在一起；支持搜索事件/文件名。可筛选、切换声音、看波形、拖动时间、设置片段循环与复制选段信息。`--directory` 和 `--manifest` 可重复；自定义端口用 `--port`。`--catalog-only` 只输出清单，方便检查来源和时长。
+打开终端显示的本机地址（默认 `http://127.0.0.1:18765`）。浅色界面按清单的 group → event 折叠分组，同事件各变体放在一起；列表与详情直接显示原始事件名。清单可用 `event_label` 提供中文含义（不替换原始 `event`），支持搜索中文含义、事件或文件名。点击某个变体立即从头播放一次，并停止上一条、退出片段循环；首次打开页面不自动播放。可筛选、切换声音、看波形、拖动时间、设置片段循环与复制选段信息。`--directory` 和 `--manifest` 可重复；自定义端口用 `--port`。`--catalog-only` 只输出清单，方便检查来源和时长。
 
 未指定目录或清单时读取项目 `assets/audio`；清单仅纳入实际存在的 WAV。网页只提供列入目录的声音，不暴露任意文件路径。结束时在终端按 Ctrl+C。
 
