@@ -26,7 +26,7 @@ CardDB 提供卡牌查询、可选卡列表、单位数据和技能候选；新�
 | --- | --- |
 | 单位 | 通用 Unit；目标、攻击、速度、半径与状态由数据决定 |
 | 建筑卡 | 不自主移动；占地格用于部署，身体半径用于碰撞；可有寿命和召唤 |
-| 法术 | 必须有已实现的法术类型；冰冻、治疗、凝滞、电击、中型雷电、大型电击、腐蚀、爆破酒桶、浪潮、扭曲空间与虚空召唤由SpellSystem执行；镜像先由出牌入口解析为被复制卡 |
+| 法术 | 必须有已实现的法术类型；冰冻、治疗、凝滞、电击、中型雷电、大型电击、腐蚀、爆破酒桶、浪潮、扭曲空间、庇护清泉、终极爆弹与虚空召唤由SpellSystem执行；镜像先由出牌入口解析为被复制卡 |
 
 `radius` 是唯一权威身体半径，模型缩放与 `visual_radius` 只影响画面。标准体型按档位校验；明确使用非标准半径时声明 `custom_radius`，仍要求合法正数。
 
@@ -382,3 +382,9 @@ nova可配置`attack_slow_multiplier`，要求正数slow_duration及[0.1,1)倍�
 ## 空间边界
 
 `event_horizon`按`spell_windup`等待成形，`duration`限定有效窗口，`radius`为圆周半径，`stun_duration`控制单次眩晕。每次施法独立去重；身体圆与相邻权威Tick线段扫掠接触边界，纯圈内不触发。`spell_event_horizon`强化在首个成功眩晕位置建立独立结果，`dark_matter_delay`后按`radius`、`damage`与`tower_damage_multiplier`结算；同Tick按出生身份稳定排序。详情见[扭曲空间](units/event_horizon.md)。
+
+## 孤立与硬控落雷
+
+`severing_bolt`按`spell_windup`前奏和`duration`预警等待后固定落点结算。`isolated_damage_multiplier`与`controlled_damage_multiplier`按落雷时可受影响集合、目标硬控状态取最大值；强化`spell_severing_bolt`覆盖两个倍率。塔系数最后应用，法术盾沿单次Delivery拒绝，暂停/清场沿统一生命周期。见[攢聚雷](units/severing_bolt.md)。
+
+`solar_flare`按`spell_windup`延迟落光，以`inner_radius`区分眩晕/外围减速。强化`spell_solar_flare`施加日光，后续有效正伤害在Unit提交入口消费并附加伤害，StatusInstances管理到期。见[太阳耀斑](units/solar_flare.md)。

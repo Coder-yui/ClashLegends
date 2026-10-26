@@ -1455,7 +1455,7 @@ func _tick_slow_zones(dt: float) -> void:
 
 func _tick_slow_effect_visuals(delta: float) -> void:
 	_spell_system.tick_visuals(delta)
-	_audio_manager.update_spell_flight_audio(_spell_system.stasis_effects)
+	_audio_manager.update_spell_flight_audio(_spell_system.stasis_effects + _spell_system.bomb_effects)
 
 func _spawn_unit(request: UnitSpawnRequest) -> Unit:
 	if runtime.game_over: return null
@@ -2198,6 +2198,11 @@ func _draw_deployment_preview(stats: Dictionary) -> void:
 		var spell_radius: float = stats.get("radius", ArenaRules.TILE_SIZE * 0.5)
 		draw_circle(_deployment_preview_pos, spell_radius, Color(color.r, color.g, color.b, 0.12))
 		draw_arc(_deployment_preview_pos, spell_radius, 0.0, TAU, 48, color, 2.0, true)
+		if String(stats.get("spell_kind", "")) in ["solar_flare", "mega_inferno_bomb"]:
+			var inner_radius := float(stats.inner_radius)
+			var inner_color := Color("ffe27a") if _deployment_preview_valid else color
+			draw_circle(_deployment_preview_pos, inner_radius, Color(inner_color, 0.18))
+			draw_arc(_deployment_preview_pos, inner_radius, 0.0, TAU, 48, inner_color, 2.5, true)
 	elif type == "unit":
 		var unit_stats: Dictionary = CardDB.get_unit_stats(String(stats.spawn_plan.members[0])) if stats.has("spawn_plan") else stats
 		var unit_radius: float = minf(float(unit_stats.radius), ArenaRules.TILE_SIZE * 0.42)
@@ -2432,7 +2437,7 @@ func _show_spell_flight(event_id: int, flight_id: int, kind: String, origin: Vec
 	if not has_presentation(): return
 	if event_id <= _last_card_event_id: return
 	_spell_system.show_flight(flight_id, kind, origin, pos, radius, start_tick, impact_tick, team)
-	if kind in ["stasis", "explosive_cask"]:
+	if kind in ["stasis", "explosive_cask", "mega_inferno_bomb"]:
 		_play_card_event(event_id, kind, "spell:cast", origin, 0, team)
 		_audio_manager.start_spell_flight_audio(flight_id, kind, team, origin)
 	else: _last_card_event_id = event_id
@@ -2453,13 +2458,20 @@ func _show_spell_arrival(event_id: int, flight_id: int, kind: String, pos: Vecto
 	if event_id <= _last_card_event_id: return
 	_spell_system.show_arrival(flight_id)
 	_audio_manager.stop_spell_flight_audio(flight_id)
-	if kind in ["stasis", "explosive_cask"]: _play_card_event(event_id, kind, "spell:strike", pos, 0, team)
+	if kind in ["stasis", "explosive_cask", "mega_inferno_bomb"]: _play_card_event(event_id, kind, "spell:strike", pos, 0, team)
 	else: _last_card_event_id = event_id
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_spell_arrival(epoch: String, event_id: int, flight_id: int, kind: String, pos: Vector2, team: int) -> void:
 	if not runtime.session.accepts(1, epoch, MatchSession.Phase.RUNNING) or runtime.game_over or runtime.mode != "client": return
 	_show_spell_arrival(event_id, flight_id, kind, pos, team)
+
+func present_pool_zone_audio(pos: Vector2, duration: float, team: int) -> void:
+	_presentation_event_id += 1
+	if _audio_manager:
+		_audio_manager.start_zone_audio(_presentation_event_id, "pool_of_reflection", 0, "spell", pos, duration, team)
+	if runtime.mode == "server":
+		_broadcast(_rpc_zone_audio, [network_session_id(), _presentation_event_id, "pool_of_reflection", 0, "spell", pos, duration, team])
 
 func present_horizon_zone_audio(pos: Vector2, duration: float, team: int) -> void:
 	_presentation_event_id += 1

@@ -879,5 +879,48 @@
     "source_path": "assets/characters/volibear/hud/icons2d/volibear_icon_e.dds",
     "source_sha256": "e515c0ac259fbdc5e3829a1c5a35413edd47d033d881b2440bfc76d70edc5c15",
     "sha256": "9fb7ab19ce87ea112eb1903636c9d60a5c6869a2b6c350446705c3987552014b"
+  },
+  {
+    "card": "severing_bolt",
+    "skill_index": 0,
+    "path": "res://assets/skills/hwei_qw.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Hwei.wad.client",
+    "source_path": "assets/characters/hwei/hud/icons2d/hweiqw.dds",
+    "source_sha256": "fbdaed71a4810431c12c0f29d2deae8976c3a20363b131fbc1761f7ba07ab77e",
+    "sha256": "81b5c2f0b3f3d467dd50524eb988dd95063c47b5483037e715168248fccb1da1"
+  },
+  {
+    "card": "solar_flare",
+    "skill_index": 0,
+    "path": "res://assets/skills/leona_p.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Leona.wad.client",
+    "source_path": "assets/characters/leona/hud/icons2d/leonap.dds",
+    "source_sha256": "69b4744836e3890d524ccdefd0a99e0213d41403ea9c2eee25718535cd1121e0",
+    "sha256": "87bddc6d476fcc9d3be82c891f1776eb4d8109870f8492d15af8b00911c45e41"
+  },
+  {
+    "card": "pool_of_reflection",
+    "skill_index": 0,
+    "path": "res://assets/skills/hwei_ww.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Hwei.wad.client",
+    "source_path": "assets/characters/hwei/hud/icons2d/hweiww.dds",
+    "source_sha256": "8b27af0a2d34b1a2f3074d3a90a43a04a5bd87f66a669dbde7804c3dcce93749",
+    "sha256": "ec5087ce152d1b155e02718a67d41df018be823588a6f14532f45ffe406a6606"
+  },
+  {
+    "card": "mega_inferno_bomb",
+    "skill_index": 0,
+    "path": "res://assets/skills/inferno_cannon.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+    "source_paths": [
+      "assets/items/icons2d/6695_assassin_t3_serpentsfang.dds",
+      "assets/items/icons2d/3165_mage_t3_morellonomicon.dds"
+    ],
+    "source_sha256": [
+      "23fe8abfcc64a166b79d287c6da24a66ef39d4dc3299eef16f93bb12b43b3208",
+      "8115f0454fcfe496ed0e5a0a1a58e32d92d39e07cdb53ca39ac629ee87388338"
+    ],
+    "sha256": "ae87f991f48c8fb2ad9bdb156fd530821f23443c278656bef3cc929bed5d57cc",
+    "processing": "FFmpeg DDS decode; same diagonal split algorithm as CardArt.skill_icon; upper-left Serpents Fang, lower-right Morellonomicon"
   }
 ]

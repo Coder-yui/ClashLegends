@@ -24,6 +24,8 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 	if card_type == "spell":
 		result.append({"name": "类型", "value": type_name(card_type, stats)})
 		var target := "友方单位" if StringName(stats.get("spell_kind", "")) == &"heal" else "敌方单位"
+		if String(stats.get("spell_kind", "")) == "pool_of_reflection": target = "友方地面 / 空中单位（不含建筑）"
+		if String(stats.get("spell_kind", "")) in ["severing_bolt", "mega_inferno_bomb"]: target = "敌方地面 / 空中 / 建筑"
 		if String(stats.get("spell_kind", "")) == "void_summoning": target = "区域召唤己方虚空鱼"
 		if String(stats.get("spell_kind", "")) == "stasis": target = "双方单位（含空军、建筑卡）"
 		if String(stats.get("spell_kind", "")) == "tidal_wave":
@@ -36,6 +38,10 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 			return result
 		result.append({"name": "目标", "value": target})
 		result.append({"name": "作用范围", "value": "%s（%.2f格）" % [format_number(float(stats.get("radius", 0.0))), float(stats.get("radius", 0.0)) / TILE_SIZE]})
+		if String(stats.get("spell_kind", "")) == "pool_of_reflection":
+			result.append({"name": "每秒护盾", "value": format_number(float(stats.shield_per_second))})
+			result.append({"name": "清泉 / 离圈护盾", "value": "%s秒 / %s秒" % [format_number(float(stats.duration)), format_number(float(stats.shield_duration))]})
+			return result
 		if String(stats.get("spell_kind", "")) == "medium_lightning":
 			result.append({"name": "单次伤害", "value": format_number(float(stats.damage))})
 			result.append({"name": "塔 / 水晶伤害", "value": format_number(float(stats.damage) * float(stats.tower_damage_multiplier))})
@@ -49,6 +55,11 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 			result.append({"name": "眩晕", "value": "%s秒" % format_number(float(stats.stun_duration))})
 			result.append({"name": "塔 / 水晶伤害", "value": "%s%%" % format_number(float(stats.tower_damage_multiplier) * 100.0)})
 			return result
+		if String(stats.get("spell_kind", "")) == "mega_inferno_bomb":
+			result.append({"name": "中心 / 外围伤害", "value": "%s / %s" % [format_number(float(stats.inner_damage)), format_number(float(stats.damage))]})
+			result.append({"name": "中心半径", "value": "%s格" % format_number(float(stats.inner_radius) / TILE_SIZE)})
+			result.append({"name": "塔 / 水晶伤害", "value": "%s%%" % format_number(float(stats.tower_damage_multiplier) * 100.0)})
+			return result
 		if String(stats.get("spell_kind", "")) == "explosive_cask":
 			result.append({"name": "爆炸伤害", "value": format_number(float(stats.damage))})
 			result.append({"name": "向外击退", "value": "%s（受质量与地形影响）" % format_number(float(stats.knockback))})
@@ -59,6 +70,12 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 			result.append({"name": "首次召唤", "value": "%s秒" % format_number(float(stats.spawn_initial_delay))})
 			result.append({"name": "召唤间隔", "value": "%s秒" % format_number(float(stats.interval))})
 			result.append({"name": "出生等待", "value": "%s秒" % format_number(float(stats.spawn_deploy_time))})
+		if String(stats.get("spell_kind", "")) == "severing_bolt":
+			result.append({"name": "基础伤害", "value": format_number(float(stats.damage))})
+			result.append({"name": "单体 / 硬控伤害", "value": "%s / %s（取较高值）" % [format_number(float(stats.damage) * float(stats.isolated_damage_multiplier)), format_number(float(stats.damage) * float(stats.controlled_damage_multiplier))]})
+			result.append({"name": "前奏 / 预警", "value": "%s秒 / %s秒" % [format_number(float(stats.spell_windup)), format_number(float(stats.duration))]})
+			result.append({"name": "塔 / 水晶伤害", "value": "%s%%" % format_number(float(stats.tower_damage_multiplier) * 100.0)})
+			return result
 		if String(stats.get("spell_kind", "")) == "event_horizon":
 			result.append({"name": "成形延迟", "value": "%s秒" % format_number(float(stats.spell_windup))})
 			result.append({"name": "边界眩晕", "value": "%s秒 / 每目标一次" % format_number(float(stats.stun_duration))})

@@ -15,6 +15,7 @@ const WORLD_PANNING_STRENGTH := 0.35
 
 ## 同一层表负责位置跟随、清理与循环策略；空cue保留原始单段音轨。
 const UNIT_SUSTAIN_LAYERS := {
+	&"pool_shield": &"pool_shield:sustain",
 	&"persistent_area": &"persistent_area:sustain",
 	&"mend": &"mend:sustain", &"empowered": &"empowered_buff:sustain",
 	&"idle": &"idle:sustain", &"explosive_shield": &"explosive_shield:sustain",
@@ -321,6 +322,13 @@ func _tick_attached_units() -> void:
 				var owner: Dictionary = player.get_meta("action_owner", {})
 				if int(owner.get("unit", -1)) == instance_id: player.stop()
 			continue
+		var pool_shield: bool = unit.pool_shield_visual() and unit.hp > 0.0
+		if pool_shield and not _sustain_players.has(_sustain_key(instance_id, &"pool_shield")):
+			_start_sustain(unit, {"audio": _card_audio("pool_of_reflection", unit.team), "card_id": "pool_of_reflection"}, &"pool_shield", &"pool_shield")
+		elif not pool_shield and bool(entry.get("pool_shield", false)):
+			_stop_sustain(instance_id, &"pool_shield")
+			if unit.hp > 0.0: play_card_event("pool_of_reflection", "spell:shield_end", unit.global_position, 0, unit.team)
+		entry.pool_shield = pool_shield
 		if int(entry.form) != unit.get_form_index():
 			var carries_burst := (entry.stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "attack_burst")
 			for layer in UNIT_SUSTAIN_LAYERS:
@@ -870,7 +878,7 @@ func prepare_audio(value: Variant, looping: bool = false) -> bool:
 			var paths := PackedStringArray(value.pool)
 			_randomized_stream(paths)
 			if looping: _randomized_stream(paths, true)
-		for key in value: prepare_audio(value[key], StringName(key) in UNIT_SUSTAIN_LAYERS.values())
+		for key in value: prepare_audio(value[key], StringName(key) in UNIT_SUSTAIN_LAYERS.values() or key == "spell:flight")
 	elif value is Array:
 		for child in value: prepare_audio(child)
 	return preparation_errors.is_empty()
@@ -1316,8 +1324,9 @@ func start_spell_flight_audio(id: int, card_id: String, team: int, position: Vec
 	var player := _new_world_player()
 	player.bus = StringName(event.get("bus", COMBAT_BUS))
 	player.volume_db = float(event.get("volume_db", 0.0))
-	player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])))
+	player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])), card_id == "mega_inferno_bomb")
 	add_child(player)
+	player.set_meta("spell_kind", card_id)
 	player.global_position = position
 	_spell_flight_players[id] = player
 	player.play()
@@ -1342,7 +1351,10 @@ func update_spell_flight_audio(effects: Array[Dictionary]) -> void:
 		var player: AudioStreamPlayer2D = _spell_flight_players.get(id)
 		if not is_instance_valid(player): continue
 		var t := float(effect.progress)
-		player.global_position = (effect.origin as Vector2).lerp(effect.pos, t) + Vector2(0, -sin(t * PI) * 160.0 - (1.0 - t) * 60.0)
+		if player.get_meta("spell_kind", "") == "mega_inferno_bomb":
+			player.global_position = preload("res://scripts/presentation/mega_inferno_bomb_motion.gd").canvas_position(effect.origin, effect.pos, t)
+		else:
+			player.global_position = (effect.origin as Vector2).lerp(effect.pos, t) + Vector2(0, -sin(t * PI) * 160.0 - (1.0 - t) * 60.0)
 	for id in _spell_flight_players.keys():
 		if not active.has(id): stop_spell_flight_audio(int(id))
 

@@ -102,6 +102,8 @@ func commit_batch() -> void:
 		for hit in groups[target]:
 			if float(hit.result.damage) > 0.0:
 				target.assist_conversion.record(target, hit.result.assist_conversion)
+		# 护盾破除先于整批伤害；普通盾的清除不消费效果免疫盾，也不成为伤害收益。
+		if groups[target].any(func(hit): return bool(hit.result.get("break_shields", false))): target.clear_shields()
 		var before_hp := float(target.hp)
 		var before_shield := float(target.shield_hp)
 		for hit in groups[target]:

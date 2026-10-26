@@ -1,0 +1,152 @@
+[
+  {
+    "file": "play_sfx_leona_leonasolarflare_oncast_r1.wav",
+    "event": "Play_sfx_Leona_LeonaSolarFlare_OnCast",
+    "event_id": 3620717411,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/event_wav/Play_sfx_Leona_LeonaSolarFlare_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/txtp/Play_sfx_Leona_LeonaSolarFlare_OnCast {r1}.txtp",
+    "media_ids": [
+      9767343,
+      268813398,
+      301505004,
+      963566819
+    ],
+    "duration": 1.2144,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "07187ecadc68d5e0ee7c4c3e8fdd0714a3a5cc6b0c5c5e4b0d2a4beaff48bab7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_leona_leonasolarflare_oncast_r2.wav",
+    "event": "Play_sfx_Leona_LeonaSolarFlare_OnCast",
+    "event_id": 3620717411,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/event_wav/Play_sfx_Leona_LeonaSolarFlare_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/txtp/Play_sfx_Leona_LeonaSolarFlare_OnCast {r2}.txtp",
+    "media_ids": [
+      9767343,
+      268813398,
+      301505004,
+      963566819
+    ],
+    "duration": 1.1121,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d5bc657d7c1ae5d2b5216a1c8cf996e974a5f033dfc15306aec65a0a85a672f1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_leona_leonasolarflare_oncast_r3.wav",
+    "event": "Play_sfx_Leona_LeonaSolarFlare_OnCast",
+    "event_id": 3620717411,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/event_wav/Play_sfx_Leona_LeonaSolarFlare_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/txtp/Play_sfx_Leona_LeonaSolarFlare_OnCast {r3}.txtp",
+    "media_ids": [
+      9767343,
+      268813398,
+      301505004,
+      963566819
+    ],
+    "duration": 1.1214,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "baa48f805f7d4bd695f45fd25a1a5e73904b7b617a857b70c9c577658c70b33d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_leona_leonasolarflare_hit_r1.wav",
+    "event": "Play_sfx_Leona_LeonaSolarFlare_hit",
+    "event_id": 1912507152,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/event_wav/Play_sfx_Leona_LeonaSolarFlare_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/txtp/Play_sfx_Leona_LeonaSolarFlare_hit {r1}.txtp",
+    "media_ids": [
+      88061807,
+      895356404,
+      1021210821,
+      1039384851
+    ],
+    "duration": 2.2531,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a259ef80a4ab55a7faaf6a46e94ab25da82aaa51d61237b1d07f392264fc087c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_leona_leonasolarflare_hit_r2.wav",
+    "event": "Play_sfx_Leona_LeonaSolarFlare_hit",
+    "event_id": 1912507152,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/event_wav/Play_sfx_Leona_LeonaSolarFlare_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/txtp/Play_sfx_Leona_LeonaSolarFlare_hit {r2}.txtp",
+    "media_ids": [
+      88061807,
+      895356404,
+      1021210821,
+      1039384851
+    ],
+    "duration": 2.3571,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2c7fdb7d2388b6c45518058851ab204fbd1bd3310fc2d697bb01f057a5462fb8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_leona_leonasolarflare_hit_r3.wav",
+    "event": "Play_sfx_Leona_LeonaSolarFlare_hit",
+    "event_id": 1912507152,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/event_wav/Play_sfx_Leona_LeonaSolarFlare_hit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/txtp/Play_sfx_Leona_LeonaSolarFlare_hit {r3}.txtp",
+    "media_ids": [
+      88061807,
+      895356404,
+      1021210821,
+      1039384851
+    ],
+    "duration": 2.3184,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f2591eb0ca5ed8e0f6b2f79da6282457ae59c17dac877056c3d2b0bd7b472c77",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_leona_leonasunlight_hit_r1.wav",
+    "event": "Play_sfx_Leona_LeonaSunlight_hit",
+    "event_id": 2146748535,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/event_wav/Play_sfx_Leona_LeonaSunlight_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/txtp/Play_sfx_Leona_LeonaSunlight_hit {r1}.txtp",
+    "media_ids": [
+      134510222,
+      495930967,
+      836514570
+    ],
+    "duration": 0.6892,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0cc4240cc94fb411951ced4c0ae4213377c9f00bffbacb9a8ba3c180f8119e1e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_leona_leonasunlight_hit_r2.wav",
+    "event": "Play_sfx_Leona_LeonaSunlight_hit",
+    "event_id": 2146748535,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/event_wav/Play_sfx_Leona_LeonaSunlight_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/txtp/Play_sfx_Leona_LeonaSunlight_hit {r2}.txtp",
+    "media_ids": [
+      134510222,
+      495930967,
+      836514570
+    ],
+    "duration": 0.6095,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a8e45135a02d3895b1b689909df4db64ecb837909cf30221021d5d88bc6d9825",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_leona_leonasunlight_hit_r3.wav",
+    "event": "Play_sfx_Leona_LeonaSunlight_hit",
+    "event_id": 2146748535,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/event_wav/Play_sfx_Leona_LeonaSunlight_hit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/太阳耀斑/audio/leona/txtp/Play_sfx_Leona_LeonaSunlight_hit {r3}.txtp",
+    "media_ids": [
+      134510222,
+      495930967,
+      836514570
+    ],
+    "duration": 0.6385,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "bb3aeda862d89af3307ad2c755526e1336a5f6570aa6250c025dc2aac3d0a4a8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  }
+]

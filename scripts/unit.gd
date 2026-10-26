@@ -73,6 +73,7 @@ var hp := 100.0
 var max_hp := 100.0
 var attack_passive_multipliers: Array = []
 var death_form := DeathFormState.new()
+var net_pool_shield := false
 var net_explosive_shield := false
 
 var attack_lifesteal_ratios: Array = []
@@ -304,6 +305,17 @@ var _buff_visual_start_tick := -1
 var _buff_visual_duration := 0.0
 var net_lifesteal_visual_state := Vector2.ZERO
 var net_buff_visual_clock := Vector2.ZERO
+var grievous_wounds := false
+var net_grievous_wounds := false
+
+func grievous_wounds_visual() -> bool:
+	return net_grievous_wounds if _in_client_mode() else grievous_wounds
+
+var net_sunlight := 0.0
+
+func sunlight_visual() -> float:
+	return net_sunlight if _in_client_mode() else (0.0 if buffs.suppressed else buffs.remaining(&"sunlight"))
+
 var attack_lifesteal_ratio := 0.0
 var attack_lifesteal_max_health_ratio := 1.0
 
@@ -429,6 +441,7 @@ var net_structure_haste := false
 var net_structure_haste_state := Vector2.ZERO
 var net_empowered_attack_ready := false
 var net_empowered_attack_visual_serial := 0
+var net_active_skill_start_ready := false
 var net_skill_resource_ratio := 0.0
 var net_skill_resource_enabled := false
 var net_active_speed_multiplier := 1.0
@@ -739,6 +752,10 @@ func get_locomotion_visual_state_code() -> int:
 ## 3D 与 2D 表现都直接读取同一个最终渲染位置，不依赖彼此的 _process 执行顺序。
 func has_required_skill_resource(skill: Dictionary) -> bool:
 	return not bool(skill.get("requires_full_resource", false)) or (is_skill_resource_visible() and get_skill_resource_ratio() >= 0.999)
+
+## UI起手提示复用真实判定。副本不读取权威独有的牵引/蓄势状态。
+func active_skill_start_ready_visual(skill: Dictionary) -> bool:
+	return net_active_skill_start_ready if _in_client_mode() else can_start_active_skill(skill)
 
 func can_start_active_skill(skill: Dictionary) -> bool:
 	if auto_pull.active(): return false
@@ -3172,7 +3189,7 @@ func _restore_shield_health() -> void:
 		battle_context.damage_batch().defer_benefit(_restore_shield_health)
 		return
 	# 黄沙庇护是已建立盾层的到期结果，允许穿过凝滞；不开放普通治疗入口。
-	if hp <= 0.0 or death_form.waiting(): return
+	if hp <= 0.0 or death_form.waiting() or grievous_wounds: return
 	var previous_hp := hp
 	hp = maxf(hp, max_hp)
 	_present_heal_gain(previous_hp)
@@ -3247,6 +3264,7 @@ func heal_with_overflow(amount: float, shield_ratio: float, duration: float, sou
 		battle_context.damage_batch().defer_benefit(func(): heal_with_overflow(amount, shield_ratio, duration, source))
 		return
 	if hp <= 0.0 or amount <= 0.0: return
+	if grievous_wounds: return
 	var before := hp
 	heal(amount)
 	var actual := maxf(hp - before, 0.0)
@@ -3264,6 +3282,7 @@ func heal(amount: float, interaction: Dictionary = {}) -> void:
 	_receive_health_gain(amount, max_hp)
 
 func _receive_health_gain(amount: float, cap: float, preserve_overflow: bool = true) -> void:
+	if grievous_wounds: return
 	var previous := hp
 	var next := minf(hp + BattleNumbers.quantity(amount), cap)
 	hp = maxf(hp, next) if preserve_overflow else next
@@ -3281,6 +3300,12 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 		CombatInteraction.record_combat_effect(self, CombatInteraction.effect_context(from, source_team, source_position))
 	if BattleNumbers.quantity(amount) > 0:
 		assist_conversion.record(self, AssistConversionState.source_definition(from))
+	if BattleNumbers.quantity(amount) > 0:
+		var sunlight := buffs.strongest(&"sunlight", &"damage", 0.0)
+		if sunlight > 0.0:
+			buffs.clear_family(&"sunlight")
+			amount += sunlight
+			if battle_context != null: battle_context.present_sunlight_consumed(global_position, 1 - team)
 	var reduction := buffs.strongest(&"damage_reduction", &"reduction", 0.0)
 	if shields.has_source(&"deployment"):
 		reduction = maxf(reduction, deployment_shield_reduction)
@@ -3403,6 +3428,7 @@ func _die(trigger_death_effect: bool = false) -> void:
 	channel_attack.stop(self)
 	if is_queued_for_deletion() or death_form.waiting(): return
 	_resolve_death_outcome()
+	grievous_wounds = false
 	bleeding.clear()
 	target_protection.clear()
 	hp = 0.0
@@ -3745,3 +3771,30 @@ func _on_stealth_changed(hidden: bool) -> void:
 ## 只读表现状态：剩余时间与层数在凝滞中仍保留，属性聚合另行抑制。
 func structure_haste_state_visual() -> Vector2:
 	return net_structure_haste_state if _in_client_mode() else Vector2(buffs.remaining(&"structure_haste"), buffs.stack_count(&"structure_haste"))
+
+func replenish_pool_shield(amount: float, duration: float, interaction: Dictionary = {}) -> void:
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): replenish_pool_shield(amount, duration, interaction))
+		return
+	if hp <= 0.0 or is_building or not CombatInteraction.allows_effect(self, interaction): return
+	shields.replenish(amount, duration, &"pool_of_reflection")
+
+func pool_shield_visual() -> bool:
+	return net_pool_shield if _in_client_mode() else shields.has_source(&"pool_of_reflection")
+
+
+func _draw_grievous_wounds(center: Vector2) -> void:
+	var heart := PackedVector2Array()
+	for i in 32:
+		var angle := TAU * float(i) / 32.0
+		heart.append(center + Vector2(16.0 * pow(sin(angle), 3), -(13.0 * cos(angle) - 5.0 * cos(2.0 * angle) - 2.0 * cos(3.0 * angle) - cos(4.0 * angle))) * 0.42)
+	draw_colored_polygon(heart, Color(0.95, 0.16, 0.32))
+	# 两片圆润的梭形交叉，端部自然收窄，不使用矩形线段。
+	for turn in [-PI / 4.0, PI / 4.0]:
+		var petal := PackedVector2Array()
+		for i in 32:
+			var angle := TAU * float(i) / 32.0
+			petal.append(center + Vector2(6.1 * cos(angle), 1.65 * sin(angle)).rotated(turn))
+		draw_colored_polygon(petal, Color(0.16, 0.18, 0.19))
+		petal.append(petal[0])
+		draw_polyline(petal, Color(0.10, 0.11, 0.12), 0.65, true)

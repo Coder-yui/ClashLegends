@@ -67821,6 +67821,516 @@
         "filters": []
       },
       "duration": 7.295986394557823
+    },
+    {
+      "file": "assets/audio/units/severing_bolt/play_sfx_hwei_hweiqw_oncast_r1.wav",
+      "sha256": "5a9948023e6c5965c2d2701519703d96a532f78d841cda762b36a8a7001b1662",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiQW_OnCast {r1}.txtp",
+          "txtp_sha256": "cd7572a1bc31f50ec935cbe3ecf15131a073f2dee904ad3fcf95c5d7fe6ceb3c",
+          "event_ids": [
+            "793587872"
+          ],
+          "media_ids": [
+            "180135768",
+            "365730371",
+            "779488228"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiQW_OnCast {r1}.wav",
+          "sha256": "5a9948023e6c5965c2d2701519703d96a532f78d841cda762b36a8a7001b1662"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 1.5
+    },
+    {
+      "file": "assets/audio/units/severing_bolt/play_sfx_hwei_hweiqw_oncast_r2.wav",
+      "sha256": "1a4b6cf43996a8fcfce27da104fc972036e90ca176931fccbe5fbd9a73e5265f",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiQW_OnCast {r2}.txtp",
+          "txtp_sha256": "a803a6576f47300b9e4c21c172dd0983a26fc62ad123487cfcb253f9a13c22d7",
+          "event_ids": [
+            "793587872"
+          ],
+          "media_ids": [
+            "180135768",
+            "365730371",
+            "779488228"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiQW_OnCast {r2}.wav",
+          "sha256": "1a4b6cf43996a8fcfce27da104fc972036e90ca176931fccbe5fbd9a73e5265f"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 1.5
+    },
+    {
+      "file": "assets/audio/units/severing_bolt/play_sfx_hwei_hweiqw_oncast_r3.wav",
+      "sha256": "c6369a7bc91022d5406bd889a433423a3a218c3837f107759ab664c742aaa4b8",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiQW_OnCast {r3}.txtp",
+          "txtp_sha256": "893c820094c2827c0d3a500b1ef59663a3677106c9f56406de81acbb24d7da36",
+          "event_ids": [
+            "793587872"
+          ],
+          "media_ids": [
+            "180135768",
+            "365730371",
+            "779488228"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiQW_OnCast {r3}.wav",
+          "sha256": "c6369a7bc91022d5406bd889a433423a3a218c3837f107759ab664c742aaa4b8"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 1.5
+    },
+    {
+      "file": "assets/audio/units/severing_bolt/play_sfx_hwei_hweiqw_aoe_warning_r1.wav",
+      "sha256": "844bdee86d779d8036a16bce60d3d55038e84fddf5e4b3642ef0d7136a203f9e",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiQW_AoE_warning {r1}.txtp",
+          "txtp_sha256": "e1ca2a90082de1251e8017f99e02bdd7c58298d3baeecb97792f6798129c6995",
+          "event_ids": [
+            "2644336354"
+          ],
+          "media_ids": [
+            "220391854",
+            "524415055",
+            "623755826"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiQW_AoE_warning {r1}.wav",
+          "sha256": "844bdee86d779d8036a16bce60d3d55038e84fddf5e4b3642ef0d7136a203f9e"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 1.3
+    },
+    {
+      "file": "assets/audio/units/severing_bolt/play_sfx_hwei_hweiqw_aoe_warning_r2.wav",
+      "sha256": "be672e707e95cf837c04c8b98296c8a04b38722d8f0329f6b2397c3dc2589cbd",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiQW_AoE_warning {r2}.txtp",
+          "txtp_sha256": "60cee806e5d7763628f13dceea8a3ab963f77442900adfe8d44514a673520ab2",
+          "event_ids": [
+            "2644336354"
+          ],
+          "media_ids": [
+            "220391854",
+            "524415055",
+            "623755826"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiQW_AoE_warning {r2}.wav",
+          "sha256": "be672e707e95cf837c04c8b98296c8a04b38722d8f0329f6b2397c3dc2589cbd"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 1.2
+    },
+    {
+      "file": "assets/audio/units/severing_bolt/play_sfx_hwei_hweiqw_aoe_warning_r3.wav",
+      "sha256": "7a83d0f4ea0152395d63fd5dc67a178d1ff16bc8e9156bc78d0a18143d81e6ca",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiQW_AoE_warning {r3}.txtp",
+          "txtp_sha256": "cac38a2befddf995d71ebd83d94724e7ef80629f48189644a65bb70c2c1fee5c",
+          "event_ids": [
+            "2644336354"
+          ],
+          "media_ids": [
+            "220391854",
+            "524415055",
+            "623755826"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiQW_AoE_warning {r3}.wav",
+          "sha256": "7a83d0f4ea0152395d63fd5dc67a178d1ff16bc8e9156bc78d0a18143d81e6ca"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 1.2667
+    },
+    {
+      "file": "assets/audio/units/severing_bolt/play_sfx_hwei_hweiqw_aoe_explode_r1.wav",
+      "sha256": "7c5080f48dd6e71b3ef061f1dff1cce12d02b91deb67c23390d97266ec9f553f",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiQW_AoE_explode {r1}.txtp",
+          "txtp_sha256": "194d5e069858ed09040cc4b50b16cd6649274a1a0b124bc2e37765091c835f55",
+          "event_ids": [
+            "762848629"
+          ],
+          "media_ids": [
+            "59360961",
+            "133629197",
+            "405884972"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiQW_AoE_explode {r1}.wav",
+          "sha256": "7c5080f48dd6e71b3ef061f1dff1cce12d02b91deb67c23390d97266ec9f553f"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 3.6667
+    },
+    {
+      "file": "assets/audio/units/severing_bolt/play_sfx_hwei_hweiqw_aoe_explode_r2.wav",
+      "sha256": "8537a46e34500a6be5396b55d9c92925ac129a3b43d70f8be7933efb94c0e4fe",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiQW_AoE_explode {r2}.txtp",
+          "txtp_sha256": "642668d4c419ab927ef537a198e33daa4daae41b2d7559888d18b2e236de64ed",
+          "event_ids": [
+            "762848629"
+          ],
+          "media_ids": [
+            "59360961",
+            "133629197",
+            "405884972"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiQW_AoE_explode {r2}.wav",
+          "sha256": "8537a46e34500a6be5396b55d9c92925ac129a3b43d70f8be7933efb94c0e4fe"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 3.4
+    },
+    {
+      "file": "assets/audio/units/severing_bolt/play_sfx_hwei_hweiqw_aoe_explode_r3.wav",
+      "sha256": "1a5c89abf2df11f434c010484fbcdc33343d4e1599cef9c91ebcf0f7555f1b67",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiQW_AoE_explode {r3}.txtp",
+          "txtp_sha256": "cfee9bea93ce02de5297b2e42efedeb8e9ace86a6e6c2e1ed2f88af478445183",
+          "event_ids": [
+            "762848629"
+          ],
+          "media_ids": [
+            "59360961",
+            "133629197",
+            "405884972"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiQW_AoE_explode {r3}.wav",
+          "sha256": "1a5c89abf2df11f434c010484fbcdc33343d4e1599cef9c91ebcf0f7555f1b67"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 3.0
+    },
+    {
+      "file": "assets/audio/units/mega_inferno_bomb/play_sfx_ziggs_ziggsr_onmissilelaunch_r1.wav",
+      "sha256": "1d8694b1f1f1091f63a44390b94aceca6c88f351d2ea230b190787199f95d3bb",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/txtp/Play_sfx_Ziggs_ZiggsR_OnMissileLaunch {r1}.txtp",
+          "txtp_sha256": "f0624b7846859e4778f7c2038288b412bd5744740590c9f7acb6909093fa7cbc",
+          "event_ids": [
+            "4119113830"
+          ],
+          "media_ids": [
+            "161276618",
+            "199107897",
+            "396846892"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/event_wav/Play_sfx_Ziggs_ZiggsR_OnMissileLaunch {r1}.wav",
+          "sha256": "1d8694b1f1f1091f63a44390b94aceca6c88f351d2ea230b190787199f95d3bb"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 1.057
+    },
+    {
+      "file": "assets/audio/units/mega_inferno_bomb/play_sfx_ziggs_ziggsr_onmissilelaunch_r2.wav",
+      "sha256": "42ad9fad05dc8ed6c72a2a2c80d0def1a7814bbedbb8ba93d05c49c1e0f11392",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/txtp/Play_sfx_Ziggs_ZiggsR_OnMissileLaunch {r2}.txtp",
+          "txtp_sha256": "855c29f0be32d5fd7fae776d60be854a99c64fa29abaae995de76c2e91f7addd",
+          "event_ids": [
+            "4119113830"
+          ],
+          "media_ids": [
+            "161276618",
+            "199107897",
+            "396846892"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/event_wav/Play_sfx_Ziggs_ZiggsR_OnMissileLaunch {r2}.wav",
+          "sha256": "42ad9fad05dc8ed6c72a2a2c80d0def1a7814bbedbb8ba93d05c49c1e0f11392"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 1.0639
+    },
+    {
+      "file": "assets/audio/units/mega_inferno_bomb/play_sfx_ziggs_ziggsr_onmissilelaunch_r3.wav",
+      "sha256": "eead67618f2824c51d43cc0bd537dbe6ba3ed684602641682817975c57bd7d6e",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/txtp/Play_sfx_Ziggs_ZiggsR_OnMissileLaunch {r3}.txtp",
+          "txtp_sha256": "a11bded609c31eacf8fab97686af0e7c84fa8fe97f193ae6ead4ff2e2ae98662",
+          "event_ids": [
+            "4119113830"
+          ],
+          "media_ids": [
+            "161276618",
+            "199107897",
+            "396846892"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/event_wav/Play_sfx_Ziggs_ZiggsR_OnMissileLaunch {r3}.wav",
+          "sha256": "eead67618f2824c51d43cc0bd537dbe6ba3ed684602641682817975c57bd7d6e"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 1.1701
+    },
+    {
+      "file": "assets/audio/units/mega_inferno_bomb/play_sfx_ziggs_ziggsr_hit_r1.wav",
+      "sha256": "f344428ef1eb9390342730672a3c0e02a5e1616a2046066e687a34e0acfd51ed",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/txtp/Play_sfx_Ziggs_ZiggsR_hit {r1}.txtp",
+          "txtp_sha256": "941bc99c7ef7d1fe5e7c292eacdb13abd971893538d15e453dc745785531a4cb",
+          "event_ids": [
+            "2675017397"
+          ],
+          "media_ids": [
+            "232586953",
+            "246534154",
+            "843236481"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/event_wav/Play_sfx_Ziggs_ZiggsR_hit {r1}.wav",
+          "sha256": "f344428ef1eb9390342730672a3c0e02a5e1616a2046066e687a34e0acfd51ed"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 3.3752
+    },
+    {
+      "file": "assets/audio/units/mega_inferno_bomb/play_sfx_ziggs_ziggsr_hit_r2.wav",
+      "sha256": "274b1c9d887e7c77664c686e4215b28eb3aea6efbd41cc825879134f7b60b856",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/txtp/Play_sfx_Ziggs_ZiggsR_hit {r2}.txtp",
+          "txtp_sha256": "8a86579f33b1512258100e47c14813dcf9bf0d8686711adb4facf0e80eec5df4",
+          "event_ids": [
+            "2675017397"
+          ],
+          "media_ids": [
+            "232586953",
+            "246534154",
+            "843236481"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/event_wav/Play_sfx_Ziggs_ZiggsR_hit {r2}.wav",
+          "sha256": "274b1c9d887e7c77664c686e4215b28eb3aea6efbd41cc825879134f7b60b856"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 2.787
+    },
+    {
+      "file": "assets/audio/units/mega_inferno_bomb/play_sfx_ziggs_ziggsr_hit_r3.wav",
+      "sha256": "c7349eebeaad4b4351a379566b46fcbb3fc9db79b93ec87e6cb1d8234bce8867",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/txtp/Play_sfx_Ziggs_ZiggsR_hit {r3}.txtp",
+          "txtp_sha256": "42223c6bd11c11d260543520839700256e0367bdbf81bbcf2e54b3bc946396b4",
+          "event_ids": [
+            "2675017397"
+          ],
+          "media_ids": [
+            "232586953",
+            "246534154",
+            "843236481"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/event_wav/Play_sfx_Ziggs_ZiggsR_hit {r3}.wav",
+          "sha256": "c7349eebeaad4b4351a379566b46fcbb3fc9db79b93ec87e6cb1d8234bce8867"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 3.6181
+    },
+    {
+      "file": "assets/audio/units/mega_inferno_bomb/play_sfx_ziggs_ziggsr_missilelaunch.wav",
+      "sha256": "a7e9e6e65beee221556f444e18202ad875e9b6a2a85fc6b5d8d6cb9701a6c2df",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/txtp/Play_sfx_Ziggs_ZiggsR_missilelaunch.txtp",
+          "txtp_sha256": "8a3be7e094e419e12279d48fc82145a40a09ec64a96d402c293ed86f9a3ea598",
+          "event_ids": [
+            "3878049135"
+          ],
+          "media_ids": [
+            "445153616"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/event_wav/Play_sfx_Ziggs_ZiggsR_missilelaunch.wav",
+          "sha256": "a7e9e6e65beee221556f444e18202ad875e9b6a2a85fc6b5d8d6cb9701a6c2df"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 3.1044
     }
   ]
 }

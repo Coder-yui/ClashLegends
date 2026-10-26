@@ -151,6 +151,27 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			elif float(stats.get("duration", 0.0)) <= 0.0:
 				errors.append("%s.duration: 法术持续时间必须 > 0" % card_id)
 			match spell_kind:
+				&"mega_inferno_bomb":
+					for field in ["radius", "inner_radius", "damage", "inner_damage", "flight_speed", "flight_min_duration"]:
+						if not is_finite(float(stats.get(field, 0))) or float(stats.get(field, 0)) <= 0: errors.append(card_id + "." + field + ": 必须为有限正数")
+					if float(stats.get("inner_radius", 0)) >= float(stats.get("radius", 0)): errors.append(card_id + ": 中心须小于外圈")
+					if float(stats.get("inner_damage", 0)) <= float(stats.get("damage", 0)): errors.append(card_id + ": 中心伤害须高于外围")
+					var multiplier := float(stats.get("tower_damage_multiplier", -1))
+					if not is_finite(multiplier) or multiplier < 0 or multiplier > 1: errors.append(card_id + ": 塔伤害倍率须在0至1之间")
+				&"pool_of_reflection":
+					for field in ["shield_per_second", "shield_duration", "radius"]:
+						if not is_finite(float(stats.get(field, 0))) or float(stats.get(field, 0)) <= 0: errors.append(card_id + "." + field + ": 必须为有限正数")
+				&"solar_flare":
+					_require_fields(card_id, stats, [&"spell_windup", &"inner_radius", &"slow_multiplier"], errors)
+					for field in ["spell_windup", "inner_radius", "radius", "duration"]:
+						if not is_finite(float(stats.get(field, 0))) or float(stats.get(field, 0)) <= 0: errors.append(card_id + "." + field + ": 必须为有限正数")
+					if float(stats.get("inner_radius", 0)) >= float(stats.get("radius", 0)): errors.append(card_id + ": 中心须小于外圈")
+					if not is_finite(float(stats.get("slow_multiplier", 0))) or float(stats.get("slow_multiplier", 0)) <= 0 or float(stats.get("slow_multiplier", 1)) >= 1: errors.append(card_id + ": 减速倍率须在0与1之间")
+				&"severing_bolt":
+					_require_fields(card_id, stats, [&"spell_windup", &"damage", &"isolated_damage_multiplier", &"controlled_damage_multiplier", &"tower_damage_multiplier"], errors)
+					for field in ["spell_windup", "damage", "isolated_damage_multiplier", "controlled_damage_multiplier"]:
+						if not is_finite(float(stats.get(field, 0))) or float(stats.get(field, 0)) <= 0: errors.append(card_id + "." + field + ": 必须为有限正数")
+					if float(stats.get("tower_damage_multiplier", -1)) < 0 or float(stats.get("tower_damage_multiplier", -1)) > 1: errors.append(card_id + ": 防御塔伤害倍率必须为0到1")
 				&"event_horizon":
 					_require_fields(card_id, stats, [&"spell_windup", &"stun_duration"], errors)
 					for field in ["spell_windup", "stun_duration", "radius"]:
@@ -1312,6 +1333,22 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				_require_fields(label, skill, [&"strike_count", &"strike_damage_multiplier"], errors)
 				if int(skill.get("strike_count", 0)) < 1 or float(skill.get("strike_damage_multiplier", 0)) < 1:
 					errors.append("%s: 电击次数必须为正，逐次倍率必须>=1" % label)
+			&"spell_pool_of_reflection":
+				if String(stats.get("spell_kind", "")) != "pool_of_reflection": errors.append(label + ": 渲浓只用于庇护清泉")
+				if not is_finite(float(skill.get("shield", 0))) or float(skill.get("shield", 0)) <= 0: errors.append(label + ": 初始护盾须为有限正数")
+			&"spell_mega_inferno_bomb":
+				if String(stats.get("spell_kind", "")) != "mega_inferno_bomb": errors.append(label + ": 地狱火炮只用于终极爆弹")
+				if skill.has("duration"): errors.append(label + ": 地狱火炮重伤无持续时间，不得配置duration")
+			&"spell_solar_flare":
+				if String(stats.get("spell_kind", "")) != "solar_flare": errors.append(label + ": 日光只用于太阳耀斑")
+				for field in ["duration", "damage"]:
+					if not is_finite(float(skill.get(field, 0))) or float(skill.get(field, 0)) <= 0: errors.append(label + "." + field + ": 必须为有限正数")
+				var tower_multiplier := float(skill.get("tower_damage_multiplier", -1))
+				if not is_finite(tower_multiplier) or tower_multiplier < 0 or tower_multiplier > 1: errors.append(label + ": 日光塔伤害倍率须在0至1之间")
+			&"spell_severing_bolt":
+				if String(stats.get("spell_kind", "")) != "severing_bolt": errors.append(label + ": 攢聚惊雷只用于攢聚雷")
+				for field in ["isolated_damage_multiplier", "controlled_damage_multiplier"]:
+					if not is_finite(float(skill.get(field, 0))) or float(skill.get(field, 0)) <= float(stats.get(field, 0)): errors.append(label + "." + field + ": 强化倍率须高于普通版")
 			&"spell_event_horizon":
 				if String(stats.get("spell_kind", "")) != "event_horizon": errors.append(label + ": 黑暗物质只用于扭曲空间")
 				_require_fields(label, skill, [&"damage", &"radius", &"dark_matter_delay", &"tower_damage_multiplier"], errors)

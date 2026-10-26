@@ -17,7 +17,8 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 	if cue == "hit": return String(stats.get("type", "")) in ["unit", "building"]
 	if cue in ["counter_strike:explode", "counter_strike:hit", "counter_strike:dodge"]: return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "counter_strike")
 	if cue == "aftershock:explode": return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "aftershock")
-	if cue in ["stasis_target:sustain", "spell:flight"]: return String(stats.get("spell_kind", "")) == "stasis"
+	if cue == "stasis_target:sustain": return String(stats.get("spell_kind", "")) == "stasis"
+	if cue == "spell:flight": return String(stats.get("spell_kind", "")) in ["stasis", "mega_inferno_bomb"]
 	if cue in ["stealth:enter", "stealth:exit"]: return float(stats.get("stealth_delay", 0.0)) > 0.0
 	if cue in ["attack_wave:launch", "attack_wave:hit"]: return float(stats.get("attack_wave_damage", 0.0)) > 0.0
 	if cue in ["terrain:enter", "terrain:sustain", "terrain:exit"]: return bool(stats.get("terrain_traversal", false))
@@ -42,10 +43,13 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "terrain_charge")
 	var spell := String(stats.get("type", "")) == "spell"
 	if spell:
+		if String(stats.get("spell_kind", "")) == "pool_of_reflection" and cue in ["spell:zone_sustain", "spell:zone_end", "pool_shield:sustain", "spell:shield_end"]: return true
 		if String(stats.get("spell_kind", "")) == "medium_lightning" and cue in ["spell:strike", "spell:tower_disable", "spell:cast", "spell:warning", "spell:warning_enemy", "spell:hit", "spell:zone_sustain"]: return true
+		if String(stats.get("spell_kind", "")) == "solar_flare" and cue in ["spell:impact", "spell:sunlight"]: return true
+		if String(stats.get("spell_kind", "")) == "severing_bolt" and cue in ["spell:launch", "spell:warning", "spell:impact"]: return true
 		if String(stats.get("spell_kind", "")) == "event_horizon" and cue in ["spell:hit", "spell:meteor", "spell:impact"]: return true
 		if String(stats.get("spell_kind", "")) == "tidal_wave" and cue in ["spell:launch", "spell:hit"]: return true
-		return (cue == "spell:zone_sustain" and String(stats.get("spell_kind", "")) in ["corrosion", "void_summoning", "event_horizon"]) or cue == "spell:cast" or (cue == "spell:strike" and String(stats.get("spell_kind", "")) in ["zap", "lightning", "stasis", "explosive_cask"])
+		return (cue == "spell:zone_sustain" and String(stats.get("spell_kind", "")) in ["corrosion", "void_summoning", "event_horizon"]) or cue == "spell:cast" or (cue == "spell:strike" and String(stats.get("spell_kind", "")) in ["zap", "lightning", "stasis", "explosive_cask", "mega_inferno_bomb"])
 	if cue in ["sanctuary:sustain", "sanctuary:end"]:
 		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "sanctuary")
 	if cue in ["persistent_area:sustain", "persistent_area:end"]:

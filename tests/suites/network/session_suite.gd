@@ -73,16 +73,22 @@ func run(harness: Object) -> void:
 	main.free()
 	harness._expect(MatchSession.content_fingerprint() == MatchSession.content_fingerprint() and MatchSession.content_fingerprint().length() == 64, "内容指纹稳定且完整")
 	var legacy_fingerprint := var_to_bytes([118, CardDB.all(), MatchRules.REGULATION_TIME, MatchRules.OVERTIME_TIME, FixedStepClock.STEP]).hex_encode().sha256_text()
-	harness._expect(MatchSession.PROTOCOL_VERSION == 119 and NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION == MatchSession.PROTOCOL_VERSION and MatchSession.content_fingerprint() != legacy_fingerprint, "协议119同时拥有握手/快照版本，并与118相同卡牌规则的旧指纹隔离")
+	harness._expect(MatchSession.PROTOCOL_VERSION == 125 and NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION == MatchSession.PROTOCOL_VERSION and MatchSession.content_fingerprint() != legacy_fingerprint, "协议125同时拥有握手/快照版本，并与118相同卡牌规则的旧指纹隔离")
 
 	_check_private_hand_and_adaptation(harness)
 	_check_buffer_clock_and_playback(harness)
 	_check_default_local_deck(harness)
 	_check_client_team_presentation(harness)
-	_check_skill_input_ownership(harness)
-	_check_skill_payment_without_ui(harness)
-	_check_skill_transfer_and_free_recast(harness)
+	await run_skill_input(harness)
 	_check_growth_refresh_changes(harness)
+
+## 可单独运行既有技能提交/付款/转交检查，避免UI专项扩至完整会话场景。
+func run_skill_input(harness: Object) -> void:
+	_check_skill_input_ownership(harness)
+	await harness.process_frame
+	_check_skill_payment_without_ui(harness)
+	await harness.process_frame
+	_check_skill_transfer_and_free_recast(harness)
 
 func _has_startup_failure(main: Node2D, message: String) -> bool:
 	var overlay := main.get_node_or_null("StartupFailure")
@@ -296,13 +302,9 @@ func _check_default_local_deck(harness: Object) -> void:
 	local.runtime.account(0 if local.runtime.mode == "server" else local.runtime.local_team).elixir = 10.0
 	var visible: Array = local._hand._hand.duplicate()
 	harness._expect(local.runtime._deck.size() == 8 and visible == local.get_authoritative_hand(0) and local.get_authoritative_hand(1).size() == 4, "直接单机启动的默认卡组、显示手牌与本地权威循环一致，AI独立随机四张")
-	# 本断言检查单位部署；默认卡组也可能抽到法术，不能要求法术生成Unit。
+	# 起手可能全是法术，真实出牌/扣费/轮换仍须成立；只对实体卡断言生成。
 	var unit_cards := visible.filter(func(id): return String(CardDB.get_card(id).get("type", "unit")) != "spell")
-	harness._expect(not unit_cards.is_empty(), "默认起手包含可验证部署的单位或建筑")
-	if unit_cards.is_empty():
-		local.free()
-		return
-	var card: String = unit_cards[0]
+	var card: String = unit_cards[0] if not unit_cards.is_empty() else String(visible[0])
 	var cost: float = local.runtime.card_cost_for_team(0, card)
 	var accepted: bool = local.play_card(0, card, Vector2(300, 900), {"elixir": local.runtime.account(0 if local.runtime.mode == "server" else local.runtime.local_team)})
 	harness._expect(accepted and is_equal_approx(local.runtime.account(0 if local.runtime.mode == "server" else local.runtime.local_team).elixir, 10.0 - cost) and local._hand._hand != visible, "直接单机启动可以真实扣费出牌并轮换")
@@ -312,7 +314,8 @@ func _check_default_local_deck(harness: Object) -> void:
 	var spawned := false
 	for unit in harness.get_nodes_in_group("combatants"):
 		if unit is Unit and unit.card_id == card and unit.team == 0: spawned = true
-	harness._expect(spawned, "默认卡组命令实际生成单位而非只更新界面")
+	if String(CardDB.get_card(card).get("type", "unit")) != "spell":
+		harness._expect(spawned, "默认卡组命令实际生成单位而非只更新界面")
 	local.free()
 
 func _check_client_team_presentation(harness: Object) -> void:

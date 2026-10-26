@@ -51,6 +51,8 @@
 | `aurelionsol` · [龙王](../units/aurelionsol.md) | 持续吐息免致盲；星辰创建即独立 | [动作](../units/animations/aurelionsol.md) · [声音](../units/audio/aurelionsol.md) |
 | `belveth` · [虚空女皇](../units/belveth.md) | 空军攻城；空中突进受控取消、死亡8鱼 | [动作](../units/animations/belveth.md) · [声音](../units/audio/belveth.md) |
 | `corki` · [库奇](../units/corki.md) | 三枚导弹首碰爆炸、第三枚1.8倍；空地溅射不重复直接命中 | [动作](../units/animations/corki.md) · [声音](../units/audio/corki.md) |
+| `solar_flare` · [太阳耀斑](../units/solar_flare.md) | 2费，100像素外圈，40像素中心，1.75秒控制 | [动画](../units/animations/solar_flare.md) · [声音](../units/audio/solar_flare.md) · [特效](../units/effects/solar_flare.md) |
+| `mega_inferno_bomb` · [终极爆弹](../units/mega_inferno_bomb.md) | 6费，160像素外圈、80像素中心，强化破盾与永久重伤 | [动画](../units/animations/mega_inferno_bomb.md) · [声音](../units/audio/mega_inferno_bomb.md) · [特效](../units/effects/mega_inferno_bomb.md) |
 | `tidal_wave` · [浪潮法术](../units/tidal_wave.md) | 2费地面浪潮、120伤害、4格宽10格长；强化友军2秒30%加速 | [动画](../units/animations/tidal_wave.md) · [声音](../units/audio/tidal_wave.md) · [特效](../units/effects/tidal_wave.md) |
 | `explosive_cask` · [爆破酒桶](../units/explosive_cask.md) | 3费径向爆炸、180伤害、击退40；强化270 | [动画](../units/animations/explosive_cask.md) · [声音](../units/audio/explosive_cask.md) · [特效](../units/effects/explosive_cask.md) |
 | `corrosion` · [腐蚀法术](../units/corrosion.md) | 5秒10次伤害；塔/水晶30%、强化减速20% | [无模型/特效](../units/effects/corrosion.md) · [声音](../units/audio/corrosion.md) |
@@ -149,3 +151,6 @@
 | `malphite` · [熔岩巨兽](../units/malphite.md) | 部署护盾与减伤、圆形双减速 | [动画](../units/animations/malphite.md) · [音频](../units/audio/malphite.md) · [特效](../units/effects/malphite.md) |
 
 | `event_horizon` · [扭曲空间](../units/event_horizon.md) | 2费，半径2.5格，边界眩晕1.5秒；强化落点伤害220 | [动画](../units/animations/event_horizon.md) · [声音](../units/audio/event_horizon.md) · [特效](../units/effects/event_horizon.md) |
+| `severing_bolt` · [攢聚雷](../units/severing_bolt.md) | 3费，65像素范围，单体/硬控取高倍率 | [动画](../units/animations/severing_bolt.md) · [声音](../units/audio/severing_bolt.md) · [特效](../units/effects/severing_bolt.md) |
+
+| `pool_of_reflection` · [庇护清泉](../units/pool_of_reflection.md) | 3费，110像素范围，3秒持续补盾 | [动画](../units/animations/pool_of_reflection.md) · [声音](../units/audio/pool_of_reflection.md) · [特效](../units/effects/pool_of_reflection.md) |

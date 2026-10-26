@@ -15,6 +15,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_no_audio_substitution(harness, main)
 	await _check_stasis_audio(harness, main)
 	await _check_stasis_flight_audio(harness, main)
+	await _check_bomb_flight_audio(harness, main)
 	_check_deploy_audio_node(harness, main)
 	_check_mix_bus_protection(harness)
 	_check_selected_deploy_audio(harness, main)
@@ -1433,3 +1434,29 @@ func _check_audio_variant_cap(harness: Object) -> void:
 	excessive.append(passive[0])
 	CardDB.VALIDATOR._validate_audio_path_pool("variant_limit_probe", excessive, errors, false)
 	harness._expect(errors.size() == 1 and "最多3个变体" in errors[0], "四个不同声音的池被validator明确拒绝")
+
+func _check_bomb_flight_audio(harness: Object, main: Node2D) -> void:
+	var audio: GameAudioManager = main._audio_manager
+	var previous_event_id: int = main._last_card_event_id
+	var event_id: int = previous_event_id + 100
+	main._show_spell_flight(event_id, 71001, "mega_inferno_bomb", Vector2(360,1160), Vector2(360,500), 160, 0, 20, 0)
+	var player: AudioStreamPlayer2D = audio._spell_flight_players.get(71001)
+	main._show_spell_flight(event_id, 71001, "mega_inferno_bomb", Vector2.ZERO, Vector2.ZERO, 160, 0, 20, 0)
+	harness._expect(is_instance_valid(player) and audio._spell_flight_players.get(71001) == player, "终极爆弹可靠发射去重")
+	var randomizer: AudioStreamRandomizer = player.stream
+	var wav: AudioStreamWAV = randomizer.get_stream(0)
+	harness._expect(wav.loop_mode == AudioStreamWAV.LOOP_FORWARD, "Bomb持续事件覆盖完整在途时间")
+	await main.get_tree().process_frame
+	audio.update_spell_flight_audio(main._spell_system.stasis_effects + main._spell_system.bomb_effects)
+	harness._expect(audio._spell_flight_players.has(71001), "终极爆弹加入持续声更新集合")
+	audio.set_battle_paused(true)
+	harness._expect(player.stream_paused, "终极爆弹持续声暂停")
+	audio.set_battle_paused(false)
+	harness._expect(not player.stream_paused, "终极爆弹持续声恢复")
+	main._show_spell_arrival(event_id + 1, 71001, "mega_inferno_bomb", Vector2(360,500), 0)
+	harness._expect(not audio._spell_flight_players.has(71001) and not player.playing, "爆炸停止持续声")
+	audio.start_spell_flight_audio(71002, "mega_inferno_bomb", 0, Vector2.ZERO)
+	audio.clear_spell_flight_audio()
+	harness._expect(audio._spell_flight_players.is_empty(), "清场停止终极爆弹持续声")
+	main._spell_system.bomb_effects.clear()
+	main._last_card_event_id = previous_event_id

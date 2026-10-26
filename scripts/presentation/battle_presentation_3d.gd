@@ -34,8 +34,12 @@ var spells: RefCounted
 var _freeze_ground: Node3D
 var _summoning_ground: Node3D
 var _corrosion_ground: Node3D
+var _bomb_effect: Node3D
 var _cask_effect: Node3D
 var _horizon_effect: Node3D
+var _solar_effect: Node3D
+var _pool_effect: Node3D
+var _bolt_effect: Node3D
 var _tidal_effect: Node3D
 var _stasis_effect: Node3D
 var _medium_lightning_effect: Node3D
@@ -101,10 +105,18 @@ func _process(delta: float) -> void:
 		_summoning_ground.sync_effects(spells, _camera)
 	if _corrosion_ground != null and spells != null:
 		_corrosion_ground.sync_effects(spells, _camera)
+	if _solar_effect != null and spells != null:
+		_solar_effect.sync_effects(spells, _camera, viewer_team)
+	if _pool_effect != null and spells != null:
+		_pool_effect.sync_effects(spells, _camera, viewer_team)
+	if _bolt_effect != null and spells != null:
+		_bolt_effect.sync_effects(spells, _camera, viewer_team)
 	if _horizon_effect != null and spells != null:
 		_horizon_effect.sync_effects(spells, _camera, viewer_team)
 	if _tidal_effect != null and spells != null:
 		_tidal_effect.sync_effects(spells, _camera)
+	if _bomb_effect != null and spells != null:
+		_bomb_effect.sync_effects(spells, _camera, viewer_team)
 	if _cask_effect != null and spells != null:
 		_cask_effect.sync_effects(spells, _camera)
 	if pending_deployments.is_valid():
@@ -216,8 +228,16 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_corrosion_ground)
 	_horizon_effect = preload("res://scripts/presentation/event_horizon_3d.gd").new()
 	_world_root.add_child(_horizon_effect)
+	_solar_effect = preload("res://scripts/presentation/solar_flare_3d.gd").new()
+	_world_root.add_child(_solar_effect)
+	_pool_effect = preload("res://scripts/presentation/pool_of_reflection_3d.gd").new()
+	_world_root.add_child(_pool_effect)
+	_bolt_effect = preload("res://scripts/presentation/severing_bolt_3d.gd").new()
+	_world_root.add_child(_bolt_effect)
 	_tidal_effect = preload("res://scripts/presentation/tidal_wave_3d.gd").new()
 	_world_root.add_child(_tidal_effect)
+	_bomb_effect = preload("res://scripts/presentation/mega_inferno_bomb_3d.gd").new()
+	_world_root.add_child(_bomb_effect)
 	_cask_effect = preload("res://scripts/presentation/explosive_cask_3d.gd").new()
 	_world_root.add_child(_cask_effect)
 	_stasis_effect = preload("res://scripts/presentation/stasis_spell_effect_3d.gd").new()

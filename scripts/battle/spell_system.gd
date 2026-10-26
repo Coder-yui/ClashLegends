@@ -17,7 +17,15 @@ var heal_effects: Array[Dictionary] = []
 
 var cask_hits: Array[Dictionary] = []
 var cask_effects: Array[Dictionary] = []
+var bomb_effects: Array[Dictionary] = []
 var spell_flights: Array[Dictionary] = []
+var solar_casts: Array[Dictionary] = []
+var solar_effects: Array[Dictionary] = []
+var pool_visual_time := 0.0
+var pool_zones: Array[Dictionary] = []
+var pool_effects: Array[Dictionary] = []
+var bolt_casts: Array[Dictionary] = []
+var bolt_effects: Array[Dictionary] = []
 var horizon_zones: Array[Dictionary] = []
 var dark_matters: Array[Dictionary] = []
 var horizon_effects: Array[Dictionary] = []
@@ -50,6 +58,18 @@ func cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool 
 
 func _resolve_cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool, active_skill_index: int) -> bool:
 	match StringName(stats.get("spell_kind", "")):
+		&"mega_inferno_bomb":
+			_apply_mega_inferno_bomb(team, stats, position, active_enabled, active_skill_index)
+			return true
+		&"pool_of_reflection":
+			_start_pool(team, stats, position, active_enabled, active_skill_index)
+			return true
+		&"solar_flare":
+			_start_solar_flare(team, stats, position, active_enabled, active_skill_index)
+			return true
+		&"severing_bolt":
+			_start_severing_bolt(team, stats, position, active_enabled, active_skill_index)
+			return true
 		&"event_horizon":
 			_start_event_horizon(team, stats, position, active_enabled, active_skill_index)
 			return true
@@ -177,6 +197,9 @@ func tick(dt: float) -> void:
 	_tick_summoning()
 	_tick_corrosion()
 	_tick_flights()
+	_tick_pool()
+	_tick_solar_flare()
+	_tick_severing_bolt()
 	_tick_event_horizon()
 	_tick_tidal_waves()
 	_tick_lightning()
@@ -215,6 +238,13 @@ func _apply_slow_zone(zone: Dictionary, dt: float) -> void:
 
 func tick_visuals(delta: float) -> void:
 	var visual_tick: float = float(_controller.get_presentation_tick()) + (0.0 if _controller.is_net_client() else _controller.get_sim_interpolation_alpha())
+	pool_visual_time = visual_tick * FixedStepClock.STEP
+	for effect in pool_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
+	pool_effects.assign(pool_effects.filter(func(effect): return visual_tick < float(effect.end_tick) + 40.0))
+	for effect in solar_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
+	solar_effects.assign(solar_effects.filter(func(effect): return visual_tick < float(effect.end_tick) + 100.0))
+	for effect in bolt_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
+	bolt_effects.assign(bolt_effects.filter(func(effect): return visual_tick < float(effect.end_tick) + 100.0))
 	for effect in horizon_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
 	horizon_effects.assign(horizon_effects.filter(func(effect): return visual_tick < float(effect.end_tick) + (100.0 if effect.kind == "dark_matter" else 40.0)))
 	for effect in tidal_effects:
@@ -229,13 +259,14 @@ func tick_visuals(delta: float) -> void:
 	for effect in corrosion_effects:
 		effect.timer = maxf(0.0, float(effect.timer) - delta)
 	corrosion_effects.assign(corrosion_effects.filter(func(effect): return float(effect.timer) > 0.0))
-	for effect in stasis_effects + cask_effects:
+	for effect in stasis_effects + cask_effects + bomb_effects:
 		if bool(effect.impacted):
 			effect.timer = maxf(0.0, float(effect.timer) - delta)
 		else:
 			var tick: int = int(_controller.get_presentation_tick())
 			var fraction: float = 0.0 if _controller.is_net_client() else _controller.get_sim_interpolation_alpha()
 			effect.progress = clampf((float(tick - int(effect.start_tick)) + fraction) / maxi(1, int(effect.impact_tick) - int(effect.start_tick)), 0.0, 1.0)
+	bomb_effects.assign(bomb_effects.filter(func(effect): return not bool(effect.impacted) or float(effect.timer) > 0.0))
 	cask_effects.assign(cask_effects.filter(func(effect): return not bool(effect.impacted) or float(effect.timer) > 0.0))
 	stasis_effects.assign(stasis_effects.filter(func(effect): return not bool(effect.impacted) or float(effect.timer) > 0.0))
 	for area in lightning_areas:
@@ -263,6 +294,8 @@ func tick_visuals(delta: float) -> void:
 
 
 func clear() -> void:
+	pool_zones.clear()
+	pool_effects.clear()
 	summon_zones.clear()
 	summon_effects.clear()
 	corrosion_zones.clear()
@@ -270,11 +303,16 @@ func clear() -> void:
 	spell_flights.clear()
 	horizon_zones.clear()
 	dark_matters.clear()
+	solar_casts.clear()
+	solar_effects.clear()
+	bolt_casts.clear()
+	bolt_effects.clear()
 	horizon_effects.clear()
 	tidal_waves.clear()
 	tidal_effects.clear()
 	stasis_effects.clear()
 	cask_effects.clear()
+	bomb_effects.clear()
 	cask_hits.clear()
 	lightning_casts.clear()
 	medium_lightning_casts.clear()
@@ -456,6 +494,15 @@ func _apply_stasis(team: int, stats: Dictionary, position: Vector2, enhanced: bo
 
 func show_flight(id: int, kind: String, origin: Vector2, position: Vector2, radius: float, start_tick: int, impact_tick: int, team: int = 0) -> void:
 	if not _controller.has_presentation(): return
+	if kind == "pool_of_reflection":
+		pool_effects.append({"id": id, "kind": kind, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
+		return
+	if kind in ["solar_flare", "sunlight_consume"]:
+		solar_effects.append({"id": id, "kind": kind, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
+		return
+	if kind in ["severing_bolt", "severing_bolt_hit"]:
+		bolt_effects.append({"id": id, "kind": kind, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
+		return
 	if kind in ["event_horizon", "dark_matter"]:
 		horizon_effects.append({"id": id, "kind": kind, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
 		return
@@ -463,6 +510,10 @@ func show_flight(id: int, kind: String, origin: Vector2, position: Vector2, radi
 		tidal_effects.append({"id": id, "origin": origin, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "progress": 0.0, "tail": 0.0})
 		return
 	# 首个皮肤为凝滞；其他法术复用调度并沿用自身抵达表现。
+	if kind == "mega_inferno_bomb":
+		bomb_effects.append({"id": id, "origin": origin, "pos": position, "radius": radius, "team": team,
+			"start_tick": start_tick, "impact_tick": impact_tick, "progress": 0.0, "impacted": false, "duration": 5.0, "timer": 5.0})
+		return
 	if kind not in ["stasis", "explosive_cask"]: return
 	var effects := cask_effects if kind == "explosive_cask" else stasis_effects
 	effects.append({"id": id, "origin": origin, "pos": position, "radius": radius,
@@ -470,7 +521,7 @@ func show_flight(id: int, kind: String, origin: Vector2, position: Vector2, radi
 
 func show_arrival(id: int) -> void:
 	if not _controller.has_presentation(): return
-	for effect in stasis_effects + cask_effects:
+	for effect in stasis_effects + cask_effects + bomb_effects:
 		if int(effect.id) == id:
 			effect.impacted = true
 			effect.timer = float(effect.duration)
@@ -785,3 +836,155 @@ func _start_dark_matter(zone: Dictionary, pos: Vector2, tick: int) -> void:
 	dark_matters.append({"pos": pos, "team": zone.team, "skill": zone.skill, "impact_tick": impact, "delivery": CombatInteraction.Delivery.new()})
 	_controller.present_spell_flight(_effect_serial, "dark_matter", pos, pos, float(zone.skill.radius), tick, impact, int(zone.team))
 	_controller.runtime.card_event("event_horizon", "spell:meteor", pos, int(zone.team))
+
+
+func _start_severing_bolt(team: int, stats: Dictionary, pos: Vector2, enhanced: bool, skill_index: int) -> void:
+	_effect_serial += 1
+	var tick: int = _controller.get_authoritative_server_tick()
+	var warning := tick + ceili(float(stats.spell_windup) / FixedStepClock.STEP)
+	var impact := warning + ceili(float(stats.duration) / FixedStepClock.STEP)
+	bolt_casts.append({"team": team, "pos": pos, "stats": stats, "warning_tick": warning,
+		"impact_tick": impact, "warned": false, "skill": _active_heal_skill(stats, skill_index) if enhanced else {},
+		"delivery": CombatInteraction.Delivery.new()})
+	_controller.present_spell_flight(_effect_serial, "severing_bolt", pos, pos, float(stats.radius), tick, impact, team)
+
+static func bolt_hard_controlled(target: Node) -> bool:
+	if target is Tower:
+		return target.control.frozen_timer > 0.0 or target.control.stun_timer > 0.0
+	if not target is Unit: return false
+	return target.control.frozen_timer > 0.0 or target.control.stun_timer > 0.0 or target.control.hard.remaining(&"root") > 0.0 or target.knockback.remaining > 0.0
+
+func _tick_severing_bolt() -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	for bolt in bolt_casts:
+		if tick >= int(bolt.warning_tick) and not bolt.warned:
+			bolt.warned = true
+			# Original OnCast sounds at cast completion, alongside the target warning.
+			_controller.runtime.card_event("severing_bolt", "spell:launch", bolt.pos, int(bolt.team))
+			_controller.runtime.card_event("severing_bolt", "spell:warning", bolt.pos, int(bolt.team))
+		if tick < int(bolt.impact_tick): continue
+		var interaction := _spell_context(int(bolt.team))
+		var targets: Array = []
+		# 先固定命中集合与倍率，不能因同批死亡或盾消费顺序改变单体资格。
+		for target in _controller.get_tree().get_nodes_in_group("combatants"):
+			if not is_instance_valid(target) or target.is_queued_for_deletion() or target.hp <= 0 or target.team == int(bolt.team): continue
+			if not CombatInteraction.allows_effect(target, interaction): continue
+			if target.global_position.distance_to(bolt.pos) <= float(bolt.stats.radius) + target.body_radius: targets.append(target)
+		var previous := CombatInteraction.current_delivery
+		CombatInteraction.current_delivery = bolt.delivery
+		for target in targets:
+			var multiplier := float(bolt.skill.get("isolated_damage_multiplier", bolt.stats.isolated_damage_multiplier)) if targets.size() == 1 else 1.0
+			if bolt_hard_controlled(target): multiplier = maxf(multiplier, float(bolt.skill.get("controlled_damage_multiplier", bolt.stats.controlled_damage_multiplier)))
+			var amount := float(bolt.stats.damage) * multiplier * (float(bolt.stats.tower_damage_multiplier) if target is Tower else 1.0)
+			var receipt := BattleNumbers.hit(target, amount, interaction.get("source"), int(bolt.team), interaction.get("position", Vector2.INF))
+			var hit_pos: Vector2 = target.global_position
+			var present_hit := func():
+				if not receipt.landed: return
+				_effect_serial += 1
+				_controller.present_spell_flight(_effect_serial, "severing_bolt_hit", hit_pos, hit_pos, float(bolt.stats.radius), tick, tick, int(bolt.team))
+			if _controller.combat_service().collecting: _controller.combat_service().defer_effect(present_hit)
+			else: present_hit.call()
+		CombatInteraction.current_delivery = previous
+		_controller.runtime.card_event("severing_bolt", "spell:impact", bolt.pos, int(bolt.team))
+	bolt_casts.assign(bolt_casts.filter(func(bolt): return tick < int(bolt.impact_tick)))
+
+
+func _start_solar_flare(team: int, stats: Dictionary, pos: Vector2, enhanced: bool, skill_index: int) -> void:
+	_effect_serial += 1
+	var tick: int = _controller.get_authoritative_server_tick()
+	var impact := tick + ceili(float(stats.spell_windup) / FixedStepClock.STEP)
+	solar_casts.append({"team": team, "pos": pos, "stats": stats, "impact_tick": impact,
+		"skill": _active_heal_skill(stats, skill_index) if enhanced else {}, "delivery": CombatInteraction.Delivery.new()})
+	_controller.present_spell_flight(_effect_serial, "solar_flare", pos, pos, float(stats.radius), tick, impact, team)
+
+func _tick_solar_flare() -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	for cast in solar_casts:
+		if tick < int(cast.impact_tick): continue
+		var interaction := _spell_context(int(cast.team))
+		interaction["delivery"] = cast.delivery
+		for target in _controller.get_tree().get_nodes_in_group("combatants"):
+			if not is_instance_valid(target) or target.is_queued_for_deletion() or not (target is Unit or target is Tower): continue
+			if target.hp <= 0 or target.team == int(cast.team): continue
+			var distance: float = target.global_position.distance_to(cast.pos)
+			if distance > float(cast.stats.radius) + target.body_radius: continue
+			if not CombatInteraction.allows_effect(target, interaction) or CombatInteraction.blocks_effect(target, interaction): continue
+			if distance <= float(cast.stats.inner_radius) + target.body_radius:
+				target.stun(float(cast.stats.duration), &"solar_flare", interaction)
+			elif target is Unit and not target.is_building:
+				target.apply_slow(float(cast.stats.duration), float(cast.stats.slow_multiplier), &"solar_flare", interaction)
+			if not cast.skill.is_empty():
+				var apply := func():
+					if is_instance_valid(target) and target.hp > 0 and CombatInteraction.allows_effect(target, interaction):
+						var marks: StatusInstances = target.sunlight_marks if target is Tower else target.buffs
+						var damage := float(cast.skill.damage) * (float(cast.skill.tower_damage_multiplier) if target is Tower else 1.0)
+						marks.apply(&"sunlight", &"solar_flare", float(cast.skill.duration), {"damage": damage})
+				if _controller.combat_service().collecting: _controller.combat_service().defer_effect(apply)
+				else: apply.call()
+		_controller.runtime.card_event("solar_flare", "spell:impact", cast.pos, int(cast.team))
+	solar_casts.assign(solar_casts.filter(func(cast): return tick < int(cast.impact_tick)))
+
+func present_sunlight_consumed(pos: Vector2, team: int) -> void:
+	_effect_serial += 1
+	var tick: int = _controller.get_authoritative_server_tick()
+	_controller.present_spell_flight(_effect_serial, "sunlight_consume", pos, pos, 25.0, tick, tick, team)
+	_controller.runtime.card_event("solar_flare", "spell:sunlight", pos, team)
+
+func _start_pool(team: int, stats: Dictionary, pos: Vector2, enhanced: bool, skill_index: int) -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	var skill := _active_heal_skill(stats, skill_index) if enhanced else {}
+	var zone := {"team": team, "pos": pos, "stats": stats, "start_tick": tick,
+		"end_tick": tick + ceili(float(stats.duration) / FixedStepClock.STEP), "last_tick": tick}
+	pool_zones.append(zone)
+	_effect_serial += 1
+	_controller.present_spell_flight(_effect_serial, "pool_of_reflection", pos, pos, float(stats.radius), tick, int(zone.end_tick), team)
+	_controller.present_pool_zone_audio(pos, float(stats.duration), team)
+	if enhanced:
+		for target in _controller.get_tree().get_nodes_in_group("combatants"):
+			if _pool_target(target, zone): target.replenish_pool_shield(float(skill.shield), float(stats.shield_duration), _spell_context(team))
+
+func _pool_target(target: Node, zone: Dictionary) -> bool:
+	return is_instance_valid(target) and not target.is_queued_for_deletion() and target is Unit and not target.is_building and target.hp > 0.0 and target.team == int(zone.team) and target.global_position.distance_to(zone.pos) <= float(zone.stats.radius) + target.body_radius
+
+func _tick_pool() -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	# 相同Tick每单位只补充一次，重叠不叠加补盾速率。
+	var recipients := {}
+	for zone in pool_zones:
+		if tick <= int(zone.last_tick) or tick > int(zone.end_tick): continue
+		zone.last_tick = tick
+		for target in _controller.get_tree().get_nodes_in_group("combatants"):
+			if not _pool_target(target, zone): continue
+			if not recipients.has(target): recipients[target] = zone
+	for target in recipients:
+		var zone: Dictionary = recipients[target]
+		target.replenish_pool_shield(float(zone.stats.shield_per_second) * FixedStepClock.STEP, float(zone.stats.shield_duration), _spell_context(int(zone.team)))
+	pool_zones.assign(pool_zones.filter(func(zone): return tick < int(zone.end_tick)))
+
+
+func _apply_mega_inferno_bomb(team: int, stats: Dictionary, pos: Vector2, enhanced: bool, skill_index: int) -> void:
+	var interaction := _spell_context(team)
+	var delivery := CombatInteraction.Delivery.new()
+	interaction["delivery"] = delivery
+	var previous := CombatInteraction.current_delivery
+	CombatInteraction.current_delivery = delivery
+	var resolver: CombatResolver = _controller.combat_service()
+	for target in _controller.get_tree().get_nodes_in_group("combatants"):
+		if not is_instance_valid(target) or target.is_queued_for_deletion() or target.hp <= 0 or target.team == team: continue
+		var distance: float = target.global_position.distance_to(pos)
+		if distance > float(stats.radius) + target.body_radius: continue
+		if not CombatInteraction.allows_effect(target, interaction) or CombatInteraction.blocks_effect(target, interaction): continue
+		var amount := float(stats.inner_damage if distance <= float(stats.inner_radius) + target.body_radius else stats.damage)
+		if target is Tower: amount *= float(stats.tower_damage_multiplier)
+		if enhanced and not resolver.collecting: target.clear_shields()
+		var receipt := BattleNumbers.hit(target, amount, interaction.get("source"), team, interaction.get("position", Vector2.INF))
+		# 收集阶段只标记；提交阶段在本批扣血前清盾，不计作耗盾伤害或吸血收益。
+		if enhanced and resolver.collecting: receipt["break_shields"] = true
+		if enhanced and target is Unit and not target.is_building:
+			var apply := func():
+				if receipt.landed and is_instance_valid(target) and target.hp > 0:
+					target.grievous_wounds = true
+					target.queue_redraw()
+			if resolver.collecting: resolver.defer_effect(apply)
+			else: apply.call()
+	CombatInteraction.current_delivery = previous

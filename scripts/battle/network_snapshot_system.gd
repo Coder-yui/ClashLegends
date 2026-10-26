@@ -100,7 +100,11 @@ const U_BLIND := 62
 const U_TELEPORT_SERIAL := 63
 const U_DEPLOYMENT_SHIELD := 64
 const U_CHARGED := 65
-const UNIT_PAYLOAD_SIZE := 66
+const U_SUNLIGHT := 66
+const U_POOL_SHIELD := 67
+const U_GRIEVOUS_WOUNDS := 68
+const U_ACTIVE_SKILL_START_READY := 69
+const UNIT_PAYLOAD_SIZE := 70
 
 const P_ID := 0
 const P_X := 1
@@ -127,7 +131,8 @@ const T_SHIELD_RATIO := 3
 const T_SHIELD_CAPACITY_RATIO := 4
 const T_FROZEN := 5
 const T_STASIS := 6
-const TOWER_PAYLOAD_SIZE := 7
+const T_SUNLIGHT := 7
+const TOWER_PAYLOAD_SIZE := 8
 
 var terminal_applied := false
 var lifecycle := NetworkEntityLifecycle.new()
@@ -234,11 +239,11 @@ func decode_validated(snapshot_bytes: PackedByteArray) -> DecodedSnapshot:
 	if not _payloads_have_size(towers_data, TOWER_PAYLOAD_SIZE):
 		return null
 	for payload: Array in towers_data:
-		for field in [T_HP, T_SHIELD_RATIO, T_SHIELD_CAPACITY_RATIO]:
+		for field in [T_HP, T_SHIELD_RATIO, T_SHIELD_CAPACITY_RATIO, T_SUNLIGHT]:
 			if not _finite_number(payload[field]): return null
 		for field in [T_ACTIVATED, T_STUNNED, T_FROZEN]:
 			if not payload[field] is int or payload[field] not in [0, 1]: return null
-		if not payload[T_STASIS] is bool: return null
+		if not payload[T_STASIS] is bool or float(payload[T_SUNLIGHT]) < 0.0: return null
 		if float(payload[T_HP]) < 0.0 or float(payload[T_SHIELD_RATIO]) < 0.0 or float(payload[T_SHIELD_RATIO]) > 1.0 or float(payload[T_SHIELD_CAPACITY_RATIO]) < 0.0: return null
 	var projectile_ids := {}
 	for payload: Array in projectiles_data:
@@ -306,6 +311,10 @@ func decode_validated(snapshot_bytes: PackedByteArray) -> DecodedSnapshot:
 		if not payload[U_EXPLOSIVE_SHIELD] is bool: return null
 		if not DeathFormState.valid_snapshot(payload[U_DEATH_FORM]): return null
 		if not TargetProtectionState.valid_snapshot(payload[U_TARGET_PROTECTION]): return null
+		if not payload[U_POOL_SHIELD] is bool: return null
+		if not payload[U_GRIEVOUS_WOUNDS] is bool: return null
+		if not payload[U_ACTIVE_SKILL_START_READY] is bool: return null
+		if not _finite_number(payload[U_SUNLIGHT]) or float(payload[U_SUNLIGHT]) < 0.0: return null
 		if not payload[U_FREE_RECAST] is bool or not payload[U_BLEED_STACKS] is int or int(payload[U_BLEED_STACKS]) < 0 or not (payload[U_BLOOD_RAGE] is float or payload[U_BLOOD_RAGE] is int) or not is_finite(float(payload[U_BLOOD_RAGE])) or float(payload[U_BLOOD_RAGE]) < 0.0: return null
 		if not payload[U_CONTINUOUS_TARGET_AIR_ID] is int or int(payload[U_CONTINUOUS_TARGET_AIR_ID]) < -1: return null
 		if not payload[U_ACTION_PERMISSIONS] is int or int(payload[U_ACTION_PERMISSIONS]) < 0 or (int(payload[U_ACTION_PERMISSIONS]) & ~ControlState.ALL_PERMISSIONS) != 0:
@@ -466,6 +475,7 @@ func _apply_units(units_data: Array) -> bool:
 		u.net_locomotion_state = int(d[U_LOCOMOTION])
 		u.net_empowered_attack_ready = int(d[U_EMPOWERED_READY]) == 1
 		u.net_empowered_attack_visual_serial = int(d[U_EMPOWERED_ATTACK_SERIAL])
+		u.net_active_skill_start_ready = d[U_ACTIVE_SKILL_START_READY]
 		u.net_skill_resource_ratio = clampf(float(d[U_SKILL_RESOURCE_RATIO]), 0.0, 1.0)
 		u.net_skill_resource_enabled = int(d[U_SKILL_RESOURCE_ENABLED]) == 1
 		u.net_active_speed_multiplier = maxf(float(d[U_ACTIVE_SPEED_MULTIPLIER]), 1.0)
@@ -480,6 +490,9 @@ func _apply_units(units_data: Array) -> bool:
 		u.net_blood_rage = float(d[U_BLOOD_RAGE])
 		u.net_death_spawn_state = d[U_DEATH_SPAWN_STATE]
 		u.net_lifesteal_visual_state = d[U_LIFESTEAL_VISUAL_STATE]
+		u.net_pool_shield = d[U_POOL_SHIELD]
+		u.net_grievous_wounds = d[U_GRIEVOUS_WOUNDS]
+		u.net_sunlight = float(d[U_SUNLIGHT])
 		u.net_buff_visual_clock = d[U_BUFF_VISUAL_CLOCK]
 		u.net_hit_haste_full = d[U_HIT_HASTE_FULL]
 		u.net_structure_haste = d[U_STRUCTURE_HASTE]
@@ -542,7 +555,7 @@ func _apply_towers(towers_data: Array) -> void:
 		towers[i].apply_network_state(
 			float(tower_data[T_HP]), int(tower_data[T_ACTIVATED]) == 1,
 			int(tower_data[T_STUNNED]) == 1, float(tower_data[T_SHIELD_RATIO]),
-			float(tower_data[T_SHIELD_CAPACITY_RATIO]), int(tower_data[T_FROZEN]) == 1, bool(tower_data[T_STASIS]))
+			float(tower_data[T_SHIELD_CAPACITY_RATIO]), int(tower_data[T_FROZEN]) == 1, bool(tower_data[T_STASIS]), float(tower_data[T_SUNLIGHT]))
 
 
 func send() -> void:
@@ -640,6 +653,7 @@ func _tower_snapshot_payload(tower: Tower) -> Array:
 		tower.get_shield_capacity_ratio(),
 		1 if tower.frozen_timer > 0.0 else 0,
 		CombatInteraction.in_stasis(tower),
+		tower.sunlight_visual(),
 	]
 
 
@@ -715,5 +729,11 @@ func _unit_snapshot_payload(id: int, u: Unit, birth: Dictionary, has_continuous_
 		u.death_spawn_state_visual(),
 		u.lifesteal_state_visual(), u.active_buff_clock_visual(),
 		u.restoration_shield_state_visual(),
-		u.blind_visual(), u.teleport_serial, u.deployment_shield_active_visual(), int(u.is_charged_visual()),
+		u.blind_visual(), u.teleport_serial, u.deployment_shield_active_visual(), int(u.is_charged_visual()), u.sunlight_visual(), u.pool_shield_visual(), u.grievous_wounds_visual(),
+		_active_skill_start_ready(u),
 	]
+
+## 起手结果仅用于UI锁；不包含付款、冷却或次数，不赋予客户端结算能力。
+func _active_skill_start_ready(unit: Unit) -> bool:
+	var entry: Dictionary = _controller.runtime._active_skills.entry(unit.active_ability_id)
+	return not entry.is_empty() and unit.can_start_active_skill(entry.skill)

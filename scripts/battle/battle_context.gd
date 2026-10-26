@@ -19,6 +19,9 @@ func has_carried_skill_visual(unit: Unit) -> bool:
 		return not bool(unit.get_meta("workbench_no_skill", false))
 	return unit.active_ability_id >= 0 and unit.active_ability_slot in [0, 1]
 
+func present_sunlight_consumed(position: Vector2, team: int) -> void:
+	_controller._spell_system.present_sunlight_consumed(position, team)
+
 func present_summon_portal(position: Vector2, team: int) -> void:
 	_controller._skill_presentation.present_fixed_area(position, 28.0, 28.0, 3.0, team, &"voidling_portal")
 

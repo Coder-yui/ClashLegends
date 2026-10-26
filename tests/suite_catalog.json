@@ -712,5 +712,33 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "SeveringBoltSuite",
+    "script": "res://tests/suites/cards/severing_bolt_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
+    "id": "SolarFlareSuite",
+    "script": "res://tests/suites/cards/solar_flare_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
+    "id": "PoolOfReflectionSuite",
+    "script": "res://tests/suites/cards/pool_of_reflection_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
+    "id": "MegaInfernoBombSuite",
+    "script": "res://tests/suites/cards/mega_inferno_bomb_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

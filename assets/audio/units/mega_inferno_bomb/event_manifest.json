@@ -1,0 +1,112 @@
+[
+  {
+    "file": "play_sfx_ziggs_ziggsr_onmissilelaunch_r1.wav",
+    "event": "Play_sfx_Ziggs_ZiggsR_OnMissileLaunch",
+    "event_id": 4119113830,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/event_wav/Play_sfx_Ziggs_ZiggsR_OnMissileLaunch {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/txtp/Play_sfx_Ziggs_ZiggsR_OnMissileLaunch {r1}.txtp",
+    "media_ids": [
+      161276618,
+      199107897,
+      396846892
+    ],
+    "duration": 1.057,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1d8694b1f1f1091f63a44390b94aceca6c88f351d2ea230b190787199f95d3bb",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ziggs_ziggsr_onmissilelaunch_r2.wav",
+    "event": "Play_sfx_Ziggs_ZiggsR_OnMissileLaunch",
+    "event_id": 4119113830,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/event_wav/Play_sfx_Ziggs_ZiggsR_OnMissileLaunch {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/txtp/Play_sfx_Ziggs_ZiggsR_OnMissileLaunch {r2}.txtp",
+    "media_ids": [
+      161276618,
+      199107897,
+      396846892
+    ],
+    "duration": 1.0639,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "42ad9fad05dc8ed6c72a2a2c80d0def1a7814bbedbb8ba93d05c49c1e0f11392",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ziggs_ziggsr_onmissilelaunch_r3.wav",
+    "event": "Play_sfx_Ziggs_ZiggsR_OnMissileLaunch",
+    "event_id": 4119113830,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/event_wav/Play_sfx_Ziggs_ZiggsR_OnMissileLaunch {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/txtp/Play_sfx_Ziggs_ZiggsR_OnMissileLaunch {r3}.txtp",
+    "media_ids": [
+      161276618,
+      199107897,
+      396846892
+    ],
+    "duration": 1.1701,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "eead67618f2824c51d43cc0bd537dbe6ba3ed684602641682817975c57bd7d6e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ziggs_ziggsr_hit_r1.wav",
+    "event": "Play_sfx_Ziggs_ZiggsR_hit",
+    "event_id": 2675017397,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/event_wav/Play_sfx_Ziggs_ZiggsR_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/txtp/Play_sfx_Ziggs_ZiggsR_hit {r1}.txtp",
+    "media_ids": [
+      232586953,
+      246534154,
+      843236481
+    ],
+    "duration": 3.3752,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f344428ef1eb9390342730672a3c0e02a5e1616a2046066e687a34e0acfd51ed",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ziggs_ziggsr_hit_r2.wav",
+    "event": "Play_sfx_Ziggs_ZiggsR_hit",
+    "event_id": 2675017397,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/event_wav/Play_sfx_Ziggs_ZiggsR_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/txtp/Play_sfx_Ziggs_ZiggsR_hit {r2}.txtp",
+    "media_ids": [
+      232586953,
+      246534154,
+      843236481
+    ],
+    "duration": 2.787,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "274b1c9d887e7c77664c686e4215b28eb3aea6efbd41cc825879134f7b60b856",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ziggs_ziggsr_hit_r3.wav",
+    "event": "Play_sfx_Ziggs_ZiggsR_hit",
+    "event_id": 2675017397,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/event_wav/Play_sfx_Ziggs_ZiggsR_hit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/txtp/Play_sfx_Ziggs_ZiggsR_hit {r3}.txtp",
+    "media_ids": [
+      232586953,
+      246534154,
+      843236481
+    ],
+    "duration": 3.6181,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c7349eebeaad4b4351a379566b46fcbb3fc9db79b93ec87e6cb1d8234bce8867",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ziggs_ziggsr_missilelaunch.wav",
+    "event": "Play_sfx_Ziggs_ZiggsR_missilelaunch",
+    "event_id": 3878049135,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/event_wav/Play_sfx_Ziggs_ZiggsR_missilelaunch.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/终极爆弹/audio-source/ziggs/txtp/Play_sfx_Ziggs_ZiggsR_missilelaunch.txtp",
+    "media_ids": [
+      445153616
+    ],
+    "duration": 3.1044,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a7e9e6e65beee221556f444e18202ad875e9b6a2a85fc6b5d8d6cb9701a6c2df",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  }
+]

@@ -4,10 +4,10 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->119 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->125 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
-| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->66 |
-| 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
+| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->70 |
+| 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->8 |
 | 弹体载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd PROJECTILE_PAYLOAD_SIZE -->15 |
 
 双方先核对版本、内容指纹和完整合法卡组，再准备本局资源并确认就绪；加载期间不推进模拟。版本不匹配在握手拒绝，不提供旧载荷兼容槽位。内容指纹包含统一协议版本与四域编译内容。规则算法或消息结构变化均须提升版本。
@@ -18,7 +18,7 @@
 
 RPC 端点留在 Main，服务器与两个客户端保持相同节点路径。服务器绑定两名玩家席位，以连接反查阵营；两名玩家分别维护单调请求序号，拒绝旧会话及非参与者。服务器没有本地玩家，公共战场事件发给两端，私有状态按接收阵营生成。表现系统只产生通知，客户端播放图像与声音。
 
-生产快照通过 `decode_validated` 解压/静态校验一次，递归只读结果直接进入播放队列；`apply_decoded` 在出队时重新检查会话、终态、Tick/生命周期序号和权威时钟。坏包在到达估时及任何实体/成长/金币写入之前拒绝。单包解压上限1MiB；队列最多4096项，快照额外受16MiB累计原始序列化字节预算限制（不是实际堆上限），溢出显式断开。发送方对当前接收者共用一次只读公共世界采集，金币及成长逐端投影；终局在清场前共用一次采集。预算依据为20Hz、最大200ms播放、测试120ms迟到与50ms边界共不超过8个1MiB最大包，再留8包突发余量；不保证任意长主循环停顿或WAN突发。当前协议119的弹体载荷为15项，单位载荷66项，塔和顶层长度不变；塔集合必须完整包含6行。旧定向技能RPC已删除，统一使用_rpc_skill_fx；出生/死亡RPC必须显式携带当前会话和生命周期参数。
+生产快照通过 `decode_validated` 解压/静态校验一次，递归只读结果直接进入播放队列；`apply_decoded` 在出队时重新检查会话、终态、Tick/生命周期序号和权威时钟。坏包在到达估时及任何实体/成长/金币写入之前拒绝。单包解压上限1MiB；队列最多4096项，快照额外受16MiB累计原始序列化字节预算限制（不是实际堆上限），溢出显式断开。发送方对当前接收者共用一次只读公共世界采集，金币及成长逐端投影；终局在清场前共用一次采集。预算依据为20Hz、最大200ms播放、测试120ms迟到与50ms边界共不超过8个1MiB最大包，再留8包突发余量；不保证任意长主循环停顿或WAN突发。当前协议125的弹体载荷为15项，单位载荷70项，塔载荷8项，顶层长度不变；塔集合必须完整包含6行。旧定向技能RPC已删除，统一使用_rpc_skill_fx；出生/死亡RPC必须显式携带当前会话和生命周期参数。
 
 ### 协议119：冲刺移动状态
 
@@ -229,3 +229,18 @@ NetworkPlayback默认100ms，根据时钟RTT/抖动与事件/快照到达时差�
 杰斯表现复用既有首击标记、强化待发布尔和 buff visual clock：换形首击在起手发布；待发位也表示周期形态首击尚未消费；独立电场用领域开始Tick/持续时间恢复表现，换形不清除。form_kinds在权威释放时选择，未增加Snapshot字段或以客户端动画推进技能。
 
 杰斯近战W每次真实命中通过现有可靠 `_rpc_skill_fx` 发布 `jayce_field_hit`。事件含目标 `target_net_id`（单位）或 `target_tower_position`（塔）、命中位置与寿命；本地 `target_instance_id` 只供权威端表现解析，客户端不使用跨进程实例ID。客户端跟随目标躯干，不重算命中、范围或伤害；目标消失时使用事件位置。
+
+### 协议120：日光标记
+
+单位载荷新增 U_SUNLIGHT（索引66，有限非负剩余秒数）。客户端只读显示日光，凝滞中隐藏；非法数值在解码入口拒绝。消费由权威受伤入口完成，沿用可靠法术表现事件播放触发特效与声音。
+
+### 协议121：建筑日光标记
+
+塔载荷追加索引7 `T_SUNLIGHT`，有限非负的剩余秒数；防御塔与水晶均同步标记表现，副本不创建权威伤害状态。旧7项载荷被拒绝。
+
+庇护清泉使用既有spell_flight可靠事件承载区域起止Tick；单位载荷末尾U_POOL_SHIELD（67）为布尔值，仅指示清泉盾存在。客户端不模拟补盾；协议122拒绝旧长度。
+
+终极爆弹沿用spell_flight和spell_arrival可靠事件，由权威抵达触发爆炸。协议124追加U_GRIEVOUS_WOUNDS（68），单位载荷69项；为重伤状态布尔值（无倒计时），副本仅绘制血条图标，不建立权威Buff或自行限制回血。
+
+
+协议125追加 `U_ACTIVE_SKILL_START_READY`（69），单位载荷70项。主机对当前资格持有者调用原有 `can_start_active_skill(skill)`，只同步布尔结果，客户端的按钮锁提示不读取本地牵引、蓄势等权威内部状态。它不包含费用、次数、冷却或待执行状态，不参与提交资格或客户端结算；这些仍沿用现有资格、钱包、冷却快照及命令通知。解码要求该字段为bool，整包通过后才写入副本；资格转交/替换仍使用当前出生描述中的身份。

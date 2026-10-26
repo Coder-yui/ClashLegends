@@ -97,8 +97,8 @@ const SIZE_RADII := {
 }
 const PROJECTILE_VISUALS := [&"jayce_bullet", &"samira_bullet", &"malzahar_missile", &"voidfish_missile", &"tristana_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
-const SPELL_KINDS := [&"medium_lightning", &"event_horizon", &"tidal_wave", &"void_summoning", &"explosive_cask", &"corrosion", &"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
-const ACTIVE_SKILL_KINDS := [&"spell_medium_lightning", &"spell_event_horizon", &"detonate", &"spell_tidal_wave", &"attack_burst", &"rewind_nova", &"movement_strike", &"counter_strike", &"spell_void_summoning", &"self_sacrifice", &"blink_nova", &"channeled_attack", &"death_spawn", &"sacrifice_empower", &"spell_explosive_cask", &"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
+const SPELL_KINDS := [&"mega_inferno_bomb", &"pool_of_reflection", &"solar_flare", &"severing_bolt", &"medium_lightning", &"event_horizon", &"tidal_wave", &"void_summoning", &"explosive_cask", &"corrosion", &"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
+const ACTIVE_SKILL_KINDS := [&"spell_mega_inferno_bomb", &"spell_pool_of_reflection", &"spell_solar_flare", &"spell_severing_bolt", &"spell_medium_lightning", &"spell_event_horizon", &"detonate", &"spell_tidal_wave", &"attack_burst", &"rewind_nova", &"movement_strike", &"counter_strike", &"spell_void_summoning", &"self_sacrifice", &"blink_nova", &"channeled_attack", &"death_spawn", &"sacrifice_empower", &"spell_explosive_cask", &"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -108,7 +108,7 @@ const TRANSITION_BLEND_FIELDS := [&"default", &"locomotion", &"action_in", &"act
 
 ## Validator 会检测未知或未登记字段。新增字段必须同时实现运行时读取逻辑、
 ## validator 登记和对应机制测试，防止只把配置写进 CardDB、却忘记接入权威模拟或表现层。
-const CARD_FIELDS := [
+const CARD_FIELDS := [&"inner_damage", &"shield_per_second", &"shield_duration", &"inner_radius", &"slow_multiplier", &"isolated_damage_multiplier", &"controlled_damage_multiplier",
 	&"spell_windup", &"wave_width", &"deploy_half_only",
 	&"form_cycle_interval", &"form_first_attack_damage", &"form_first_attack_health_ratio", &"form_first_attack_tower_damage",
 	&"repeat_hit_count", &"repeat_hit_multiplier", &"repeat_hit_haste_duration", &"repeat_hit_speed_multiplier", &"position_history_duration",
@@ -177,7 +177,7 @@ const VISUAL_ANIMATION_FIELDS := [
 	&"death_followup_immediate", &"death_followup_scene_path", &"death_followup_animation", &"death_followup_duration", &"visual_actions",
 	&"visual_action_durations", &"transitions", &"transition_blends", &"clip_blends",
 ]
-const ACTIVE_SKILL_FIELDS := [&"form_icon_paths", &"form_kinds", &"persistent_area", &"execute_health_ratio", &"attack_count",
+const ACTIVE_SKILL_FIELDS := [&"isolated_damage_multiplier", &"controlled_damage_multiplier", &"form_icon_paths", &"form_kinds", &"persistent_area", &"execute_health_ratio", &"attack_count",
 	&"rewind_seconds",
 	&"requires_full_resource",
 	&"charge_attack_range", &"charge_dash_speed", &"charge_landing_side", &"charge_impact_radius", &"charge_visual_duration", &"ignore_blind",

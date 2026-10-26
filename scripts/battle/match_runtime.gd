@@ -326,7 +326,7 @@ func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: boo
 		return true
 	var cast: bool = _spell_system.cast(p_team, CardDB.get_card(card_id), pos, active_enabled, active_skill_index)
 	if cast and active_enabled and announce: cast_notice(p_team, card_id, active_skill_index)
-	if cast and card_id not in ["stasis", "explosive_cask"]:
+	if cast and card_id not in ["stasis", "explosive_cask", "mega_inferno_bomb"]:
 		card_event(card_id, "spell:cast", pos, p_team)
 	return cast
 

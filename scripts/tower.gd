@@ -27,6 +27,8 @@ var battle_context: BattleContext
 var max_hp := 2000.0
 var hp := 2000.0
 var bleeding := BleedState.new()
+var sunlight_marks := StatusInstances.new()
+var net_sunlight := 0.0
 var shields := ShieldState.new()
 var _net_shield_hp := 0.0
 var _net_shield_capacity := 0.0
@@ -85,6 +87,8 @@ func setup(p_team: int, stats: Dictionary, p_is_king: bool) -> void:
 	max_hp = BattleNumbers.quantity(stats.hp)
 	hp = max_hp
 	bleeding.clear()
+	sunlight_marks.clear_family(&"sunlight")
+	net_sunlight = 0.0
 	shields.clear()
 	_shield_is_replica = false
 	_net_shield_hp = 0.0
@@ -149,7 +153,7 @@ func freeze(duration: float, source: StringName = &"legacy", interaction: Dictio
 	queue_redraw()
 
 func stun(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}, show_indicator: bool = true) -> void:
-	if CombatInteraction.in_stasis(self): return
+	if is_king or CombatInteraction.in_stasis(self): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): stun(duration, source, interaction, show_indicator))
@@ -179,7 +183,12 @@ func set_stun_head_world_position(world_point: Vector2) -> void:
 	_stun_head_local = to_local(world_point)
 	_has_stun_head = true
 
+func sunlight_visual() -> float:
+	if hp <= 0.0 or CombatInteraction.in_stasis(self): return 0.0
+	return net_sunlight if battle_context != null and battle_context.is_net_client() else sunlight_marks.remaining(&"sunlight")
+
 func prepare_statuses(dt: float) -> void:
+	sunlight_marks.advance(dt)
 	_tick_shield(dt)
 	control.tick_hard_controls(dt)
 
@@ -268,6 +277,12 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 	if BattleNumbers.quantity(amount) > 0:
 		assist_conversion.record(self, AssistConversionState.source_definition(_from))
 	var was_alive := hp > 0.0
+	if BattleNumbers.quantity(amount) > 0:
+		var sunlight := sunlight_marks.strongest(&"sunlight", &"damage", 0.0)
+		if sunlight > 0:
+			sunlight_marks.clear_family(&"sunlight")
+			amount += sunlight
+			if battle_context != null: battle_context.present_sunlight_consumed(global_position, 1-team)
 	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0))
 	remaining_damage = shields.absorb(remaining_damage)
 	hp = maxf(hp - remaining_damage, 0.0)
@@ -282,6 +297,8 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 			battle_context.notify_tower_hit(self)
 	if was_alive and hp <= 0.0:
 		bleeding.clear()
+		sunlight_marks.clear_family(&"sunlight")
+		net_sunlight = 0.0
 		assist_conversion.consume(self)
 		defeated.emit()
 		if battle_context != null and battle_context.damage_batch().committing:
@@ -336,16 +353,20 @@ func get_shield_health_ratio() -> float:
 	return get_shield_ratio() * get_shield_capacity_ratio()
 
 ## 网络只传递解码后的值；塔拥有副本更新、死亡表现与导航释放的完整转换。
-func apply_network_state(health: float, active: bool, stunned: bool, shield_ratio: float, capacity_ratio: float, frozen: bool = false, stasis: bool = false) -> void:
+func apply_network_state(health: float, active: bool, stunned: bool, shield_ratio: float, capacity_ratio: float, frozen: bool = false, stasis: bool = false, sunlight: float = 0.0) -> void:
 	var was_alive := hp > 0.0
 	hp = BattleNumbers.quantity(health)
+	sunlight_marks.clear_family(&"sunlight")
+	net_sunlight = sunlight if hp > 0 else 0.0
 	activated = active
-	control.apply_replica_flags(frozen, stunned)
+	control.apply_replica_flags(frozen and not is_king, stunned and not is_king)
 	control.hard.clear_family(&"stasis")
 	if stasis and not is_king and hp > 0.0: control.hard.apply(&"stasis", &"replica", 1.0, {})
 	apply_shield_snapshot(shield_ratio, capacity_ratio)
 	if was_alive and hp <= 0.0:
 		bleeding.clear()
+		sunlight_marks.clear_family(&"sunlight")
+		net_sunlight = 0.0
 		notify_visual_destroyed()
 	if hp <= 0.0 and not nav_cells.is_empty() and battle_context != null:
 		battle_context.release_structure_footprint(self)

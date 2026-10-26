@@ -4,6 +4,10 @@ extends "res://scripts/data/card_schema.gd"
 const DEFINITION_COMPILER = preload("res://scripts/data/card_definition_compiler.gd")
 const VALIDATOR = preload("res://scripts/data/card_validator.gd")
 const DEFINITIONS = [
+	preload("res://scripts/data/cards/severing_bolt.gd"),
+	preload("res://scripts/data/cards/pool_of_reflection.gd"),
+	preload("res://scripts/data/cards/solar_flare.gd"),
+	preload("res://scripts/data/cards/mega_inferno_bomb.gd"),
 	preload("res://scripts/data/cards/event_horizon.gd"),
 	preload("res://scripts/data/cards/powder_keg.gd"),
 	preload("res://scripts/data/cards/tidal_wave.gd"),

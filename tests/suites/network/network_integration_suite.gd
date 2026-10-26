@@ -43,6 +43,10 @@ func run(harness: SceneTree) -> void:
 	if main._audio_manager != null:
 		main._audio_manager.cue_played.connect(func(card, cue, _pos):
 			if card == "match" and cue in [&"victory", &"defeat"]: result_cues.append(cue))
+	var bomb_case = preload("res://tests/fixtures/mega_inferno_bomb_network_case.gd").new() if OS.get_environment("CLASH_TEST_MEGA_INFERNO_BOMB") == "1" else null
+	var solar_case = preload("res://tests/fixtures/solar_flare_network_case.gd").new() if OS.get_environment("CLASH_TEST_SOLAR_FLARE") == "1" else null
+	var pool_case = preload("res://tests/fixtures/pool_of_reflection_network_case.gd").new() if OS.get_environment("CLASH_TEST_POOL_OF_REFLECTION") == "1" else null
+	var bolt_case = preload("res://tests/fixtures/severing_bolt_network_case.gd").new() if OS.get_environment("CLASH_TEST_SEVERING_BOLT") == "1" else null
 	var horizon_case = preload("res://tests/fixtures/event_horizon_network_case.gd").new() if OS.get_environment("CLASH_TEST_EVENT_HORIZON") == "1" else null
 	var medium_case = preload("res://tests/fixtures/medium_lightning_network_case.gd").new() if OS.get_environment("CLASH_TEST_MEDIUM_LIGHTNING") == "1" else null
 	var start := Time.get_ticks_msec()
@@ -70,6 +74,10 @@ func run(harness: SceneTree) -> void:
 	var mist_observation: Dictionary = {}
 	while Time.get_ticks_msec() - start < 20000:
 		await harness.process_frame
+		if bomb_case != null: bomb_case.poll(main)
+		if solar_case != null: solar_case.poll(main)
+		if pool_case != null: pool_case.poll(main)
+		if bolt_case != null: bolt_case.poll(main)
 		if horizon_case != null: horizon_case.poll(main)
 		if medium_case != null: medium_case.tick(main)
 		if main.runtime.mode == "server" and main.runtime._match_started and not shields_added:
@@ -257,6 +265,18 @@ func run(harness: SceneTree) -> void:
 		session_guards = session_guards and (result.remote_elixir == expected_team1_coins if main.runtime.mode == "server" or main.runtime.local_team == 1 else result.remote_elixir >= 0.0)
 		if main.runtime.mode == "server":
 			session_guards = session_guards and main.fixture_refunds.size() == 1 and main.fixture_refunds[0].passed
+		if bomb_case != null:
+			result["mega_inferno_bomb"] = bomb_case.result()
+			result["passed"] = result.passed and result.mega_inferno_bomb.passed
+		if solar_case != null:
+			result["solar_flare"] = solar_case.result()
+			result["passed"] = result.passed and result.solar_flare.passed
+		if pool_case != null:
+			result["pool_of_reflection"] = pool_case.result()
+			result["passed"] = result.passed and result.pool_of_reflection.passed
+		if bolt_case != null:
+			result["severing_bolt"] = bolt_case.result()
+			result["passed"] = result.passed and result.severing_bolt.passed
 		if horizon_case != null:
 			result["event_horizon"] = horizon_case.result()
 			result["passed"] = result.passed and result.event_horizon.passed

@@ -110,3 +110,16 @@ func restoration_visual_state() -> Vector2:
 			latest = int(layer.id)
 			state = Vector2(layer.left, layer.duration)
 	return state
+
+## 累加同一来源的护盾并刷新寿命，不设置补充上限。
+func replenish(amount: float, duration: float, source: StringName) -> void:
+	if not is_finite(amount) or not is_finite(duration) or duration <= 0.0: return
+	amount = maxf(BattleNumbers.quantity(amount), 0.0)
+	for layer in _layers:
+		if layer.source != source: continue
+		layer.hp = float(layer.hp) + amount
+		layer.capacity = maxf(float(layer.capacity), float(layer.hp))
+		layer.left = duration
+		layer.duration = duration
+		return
+	add(amount, duration, false, false, source)

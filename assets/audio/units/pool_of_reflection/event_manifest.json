@@ -1,0 +1,211 @@
+[
+  {
+    "file": "play_sfx_hwei_hweiww_oncast_r1.wav",
+    "event": "Play_sfx_Hwei_HweiWW_OnCast",
+    "event_id": 1805963782,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiWW_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiWW_OnCast {r1}.txtp",
+    "media_ids": [
+      373472203,
+      401414887,
+      418862165
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "34898cbd210650e489de0bd2cc1ee9aab6b8fa73c9ef4a28ce594aa215971efa",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hwei_hweiww_oncast_r2.wav",
+    "event": "Play_sfx_Hwei_HweiWW_OnCast",
+    "event_id": 1805963782,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiWW_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiWW_OnCast {r2}.txtp",
+    "media_ids": [
+      373472203,
+      401414887,
+      418862165
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7819f1ffaa98ae84b8c96ce832dc2aaea4fbf85a9fbd816cf4c140b9dc916509",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hwei_hweiww_oncast_r3.wav",
+    "event": "Play_sfx_Hwei_HweiWW_OnCast",
+    "event_id": 1805963782,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiWW_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiWW_OnCast {r3}.txtp",
+    "media_ids": [
+      373472203,
+      401414887,
+      418862165
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "79ce1bf61d8b9cfac5e94c87eea6a4447d97b684357b2bea660e9d6625315d4e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hwei_hweiww_aoe_buffactivate_r_m.wav",
+    "event": "Play_sfx_Hwei_HweiWW_AoE_buffactivate",
+    "event_id": 4272880368,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiWW_AoE_buffactivate {r} {m}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiWW_AoE_buffactivate {r} {m}.txtp",
+    "media_ids": [
+      82312596,
+      484442950,
+      959023424,
+      1069930793
+    ],
+    "duration": 5.1123,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "08fc3a6e6bcfe93baa02856cadb523fdb2af0293c7920dbf522a6da1aa7677e5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "stop_sfx_hwei_hweiww_aoe_buffactivate_r1_d.wav",
+    "event": "Stop_sfx_Hwei_HweiWW_AoE_buffactivate",
+    "event_id": 1623740654,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Stop_sfx_Hwei_HweiWW_AoE_buffactivate {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Stop_sfx_Hwei_HweiWW_AoE_buffactivate {r1} {d}.txtp",
+    "media_ids": [
+      295475204,
+      613960608,
+      943573375
+    ],
+    "duration": 2.0,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "44c9f1ca6bfe49bf38ca1518eacba57f1fd483f1bc2e1b310220bd2dacbea9b3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "stop_sfx_hwei_hweiww_aoe_buffactivate_r2_d.wav",
+    "event": "Stop_sfx_Hwei_HweiWW_AoE_buffactivate",
+    "event_id": 1623740654,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Stop_sfx_Hwei_HweiWW_AoE_buffactivate {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Stop_sfx_Hwei_HweiWW_AoE_buffactivate {r2} {d}.txtp",
+    "media_ids": [
+      295475204,
+      613960608,
+      943573375
+    ],
+    "duration": 2.1,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b371460c914357dbf431d6f7099cda56280861b36fd3aaf048a0a6d44ba1817a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "stop_sfx_hwei_hweiww_aoe_buffactivate_r3_d.wav",
+    "event": "Stop_sfx_Hwei_HweiWW_AoE_buffactivate",
+    "event_id": 1623740654,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Stop_sfx_Hwei_HweiWW_AoE_buffactivate {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Stop_sfx_Hwei_HweiWW_AoE_buffactivate {r3} {d}.txtp",
+    "media_ids": [
+      295475204,
+      613960608,
+      943573375
+    ],
+    "duration": 1.9,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e3fb3249a3ae1d875d292511feb07d27b224d6d9e6cfe7d5e2f0fce3138ed3cc",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hwei_hweiwwshield_onbuffactivate_r1.wav",
+    "event": "Play_sfx_Hwei_HweiWWShield_OnBuffActivate",
+    "event_id": 1356550042,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiWWShield_OnBuffActivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiWWShield_OnBuffActivate {r1}.txtp",
+    "media_ids": [
+      11883371,
+      847111021,
+      917985218
+    ],
+    "duration": 4.0,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "184c97325fd512543ba27db5d6b9923585089cebbe4bc58a0c120dd858907359",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hwei_hweiwwshield_onbuffactivate_r2.wav",
+    "event": "Play_sfx_Hwei_HweiWWShield_OnBuffActivate",
+    "event_id": 1356550042,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiWWShield_OnBuffActivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiWWShield_OnBuffActivate {r2}.txtp",
+    "media_ids": [
+      11883371,
+      847111021,
+      917985218
+    ],
+    "duration": 4.2,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5c97217f1381aa85decc1b6344005491bca68f23f72d3e9a2d8eb2d12bdcfc73",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hwei_hweiwwshield_onbuffactivate_r3.wav",
+    "event": "Play_sfx_Hwei_HweiWWShield_OnBuffActivate",
+    "event_id": 1356550042,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiWWShield_OnBuffActivate {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiWWShield_OnBuffActivate {r3}.txtp",
+    "media_ids": [
+      11883371,
+      847111021,
+      917985218
+    ],
+    "duration": 4.5,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f01288c0a98787bf4c404d3a48207df68b0878fc68b3b625a31de6fcfd7fc22e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hwei_hweiwwshield_onbuffdeactivate_r1.wav",
+    "event": "Play_sfx_Hwei_HweiWWShield_OnBuffDeactivate",
+    "event_id": 1766098859,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiWWShield_OnBuffDeactivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiWWShield_OnBuffDeactivate {r1}.txtp",
+    "media_ids": [
+      295475204,
+      613960608,
+      943573375
+    ],
+    "duration": 2.0,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6b3f6bf77c673586d2167bac3503a6e35522699acce534ccbccaeaf121ed235b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hwei_hweiwwshield_onbuffdeactivate_r2.wav",
+    "event": "Play_sfx_Hwei_HweiWWShield_OnBuffDeactivate",
+    "event_id": 1766098859,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiWWShield_OnBuffDeactivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiWWShield_OnBuffDeactivate {r2}.txtp",
+    "media_ids": [
+      295475204,
+      613960608,
+      943573375
+    ],
+    "duration": 1.9,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0e99571153c9c7e9c85bf9bcd85342b9d25bf65ca3b248ededcefd005c3d9fae",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hwei_hweiwwshield_onbuffdeactivate_r3.wav",
+    "event": "Play_sfx_Hwei_HweiWWShield_OnBuffDeactivate",
+    "event_id": 1766098859,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/event_wav/Play_sfx_Hwei_HweiWWShield_OnBuffDeactivate {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/攢聚雷/源件与过程记录/audio-source/hwei/txtp/Play_sfx_Hwei_HweiWWShield_OnBuffDeactivate {r3}.txtp",
+    "media_ids": [
+      295475204,
+      613960608,
+      943573375
+    ],
+    "duration": 2.1,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5c0eae8617dc12ab2c96a0cae284de252b86031326c4d3194c90163247adea5f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  }
+]
