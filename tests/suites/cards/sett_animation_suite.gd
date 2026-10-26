@@ -10,6 +10,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_skill_exits(harness, main)
 	_check_w_timing(harness, main)
 	_check_deploy(harness, main)
+	_check_frozen_passive_run(harness, main)
 	_check_schema(harness)
 
 func _spawn(main: Node2D, dummy: bool = false) -> Unit:
@@ -267,3 +268,38 @@ func _check_schema(harness: Object) -> void:
 	stats.visual_animations.death_clip_end = 999.0
 	var contract_errors := SuiteUtils.visual_contract_errors("bad_clip", stats)
 	harness._expect(invalid_values and contract_errors.size() >= 3, "动画配置拒绝非法混合边、参考间隔、缺失片段、越界转场起点与死亡裁剪")
+
+func _check_frozen_passive_run(harness: Object, main: Node2D) -> void:
+	var unit := _spawn(main)
+	var dummy := _spawn(main, true)
+	var view := _view(main, unit)
+	for tick in 30:
+		unit.sim_tick(0.05)
+		view._process(0.05)
+		if unit._attack_hit_index == 1: break
+	dummy.free()
+	for tick in 30:
+		unit.sim_tick(0.05)
+		view._process(0.05)
+		view._animation_player.advance(0.05)
+	harness._expect(view._animation_player.current_animation == &"Run_Passive", "腕豪真实首拳后失去目标转入被动行走")
+	unit.freeze(0.5)
+	view._process(0.0)
+	harness._expect(view._animation_player.speed_scale == 0.0, "冰冻暂停当前被动行走姿势")
+	for tick in 12:
+		unit.sim_tick(0.05)
+		view._process(0.05)
+	harness._expect(view._animation_player.current_animation == &"Run_Passive" and view._animation_player.speed_scale > 0.0, "解冻后恢复首拳对应的被动行走，不退回普通行走")
+	dummy = _spawn(main, true)
+	for tick in 60:
+		unit.sim_tick(0.05)
+		view._process(0.05)
+		if unit._attack_hit_index == 2: break
+	dummy.free()
+	for tick in 40:
+		unit.sim_tick(0.05)
+		view._process(0.05)
+		view._animation_player.advance(0.05)
+	harness._expect(unit._attack_hit_index == 2 and view._animation_player.current_animation == &"Run_Base", "解冻后完成右拳仍正常转回普通行走，不黏住被动姿态")
+	view.free()
+	unit.free()

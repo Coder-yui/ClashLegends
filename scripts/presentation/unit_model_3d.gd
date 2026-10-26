@@ -1003,9 +1003,12 @@ func _move_animation_for_route(from_action: StringName) -> StringName:
 		var empowered_move := _first_valid_animation("empowered_move")
 		if empowered_move != &"":
 			return empowered_move
-	if from_action == &"attack" and not _active_attack_empowered:
+	if not _active_attack_empowered:
 		var routed_move := _indexed_animation("attack_move", _active_attack_index)
-		if routed_move != &"":
+		# 拳间行走是已选定的持续姿态；冻结后的基础状态重选仍保留它。
+		# 真正进入Idle会清除override，技能出口则按自己的动作路由选择。
+		var continuing_move := from_action in [&"idle", &"move", &"locomotion"] and _move_override_animation == routed_move
+		if routed_move != &"" and (from_action == &"attack" or continuing_move):
 			return routed_move
 	return &""
 
