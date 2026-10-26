@@ -1,257 +1,123 @@
 class_name ActiveSkillBar
 extends CanvasLayer
-## 主动技能按钮只负责发出请求；技能是否可用及实际效果始终由主机权威校验。
-
+## 资格与计时来自现有权威/副本；只发请求，不自行扣费、扣次数或推进CD。
 signal skill_pressed(ability_id: int)
-
 const LAYOUT := preload("res://scripts/ui/battle_layout.gd")
+const BUTTON := preload("res://scripts/ui/active_skill_button.gd")
 const BUTTON_SIZE := Vector2.ONE * LAYOUT.SKILL_SIZE
-const ICON_SIZE := BUTTON_SIZE - Vector2(8.0, 8.0)
-## 图标利用最后排两侧不可部署角区；文字在手牌上方的一格布景带。
+const ICON_SIZE := Vector2(50, 50)
 const DESIGN_WIDTH := 720.0
-const LEFT_SLOT_POSITION := Vector2(23.0, 0.0)
-const RIGHT_SLOT_POSITION := Vector2(DESIGN_WIDTH - LEFT_SLOT_POSITION.x - BUTTON_SIZE.x, LEFT_SLOT_POSITION.y)
+const LEFT_SLOT_POSITION := Vector2(23, 0)
+const RIGHT_SLOT_POSITION := Vector2(DESIGN_WIDTH - LEFT_SLOT_POSITION.x - BUTTON_SIZE.x, 0)
 const SLOT_POSITIONS := [LEFT_SLOT_POSITION, RIGHT_SLOT_POSITION]
-
-## 按钮只读取 Main 的统一提交资格，不自行维护战斗或经济门禁。
 var can_submit: Callable
-
-var _buttons: Array[Button] = []
+var _buttons: Array = []
 var _icons: Array[TextureRect] = []
 var _pending_labels: Array[Label] = []
-var _skill_names: Array[String] = ["", ""]
 var _ability_ids: Array[int] = [-1, -1]
-var _base_labels: Array[String] = ["", ""]
-var _deployment_ready: Array[bool] = [false, false]
-var _pending: Array[bool] = [false, false]
-var _skill_costs: Array[float] = [0.0, 0.0]
-var _max_uses: Array[int] = [1, 1]
-var _uses_remaining: Array[int] = [0, 0]
-var _cooldowns: Array[float] = [0.0, 0.0]
-var _free_recast: Array[bool] = [false, false]
+var _states: Array[Dictionary] = [{}, {}]
 var _elixir := 0.0
-var _rule_labels: Array[Label] = []
-
 
 func _ready() -> void:
 	layer = 12
 	var root := Control.new()
-	root.size = Vector2(DESIGN_WIDTH, 85.0)
-	apply_layout(get_viewport().get_visible_rect().size)
+	root.size = Vector2(DESIGN_WIDTH, 85)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
-	for slot_index in range(2):
-		var button := Button.new()
-		button.position = SLOT_POSITIONS[slot_index]
-		button.size = BUTTON_SIZE
-		button.custom_minimum_size = BUTTON_SIZE
-		button.clip_contents = true
-		button.focus_mode = Control.FOCUS_NONE
-		button.add_theme_font_override("font", CardArt.ui_font())
-		button.add_theme_font_size_override("font_size", 24)
-		button.add_theme_color_override("font_color", Color.WHITE)
-		button.add_theme_color_override("font_hover_color", Color.WHITE)
-		button.add_theme_color_override("font_pressed_color", Color.WHITE)
-		button.add_theme_color_override("font_outline_color", Color(0.01, 0.03, 0.07))
-		button.add_theme_constant_override("outline_size", 5)
-		button.pressed.connect(_on_slot_pressed.bind(slot_index))
+	apply_layout(get_viewport().get_visible_rect().size)
+	for slot in 2:
+		var button := BUTTON.new()
+		button.position = SLOT_POSITIONS[slot]
 		button.visible = false
 		root.add_child(button)
+		button.pressed.connect(_on_slot_pressed.bind(slot))
 		_buttons.append(button)
-		var icon := TextureRect.new()
-		icon.position = Vector2(4.0, 4.0)
-		icon.size = ICON_SIZE
-		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		var material := ShaderMaterial.new()
-		material.shader = preload("res://scripts/ui/skill_icon_circle.gdshader")
-		icon.material = material
-		button.add_child(icon)
-		_icons.append(icon)
-		var pending_label := Label.new()
-		pending_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		pending_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		pending_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		pending_label.add_theme_font_override("font", CardArt.ui_font())
-		pending_label.add_theme_font_size_override("font_size", 24)
-		pending_label.add_theme_color_override("font_outline_color", Color.BLACK)
-		pending_label.add_theme_constant_override("outline_size", 5)
-		pending_label.text = "…"
-		pending_label.visible = false
-		pending_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		button.add_child(pending_label)
-		_pending_labels.append(pending_label)
-		var rule_label := Label.new()
-		rule_label.position = Vector2(SLOT_POSITIONS[slot_index].x + BUTTON_SIZE.x + 8.0 if slot_index == 0 else SLOT_POSITIONS[slot_index].x - 128.0, 32.0)
-		rule_label.size = Vector2(120.0, 20.0)
-		rule_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		rule_label.add_theme_font_override("font", CardArt.ui_font())
-		rule_label.add_theme_font_size_override("font_size", 12)
-		rule_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.42))
-		rule_label.add_theme_color_override("font_outline_color", Color(0.01, 0.03, 0.07))
-		rule_label.add_theme_constant_override("outline_size", 4)
-		rule_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		rule_label.visible = false
-		root.add_child(rule_label)
-		_rule_labels.append(rule_label)
-
+		_icons.append(button.skill_icon)
+		_pending_labels.append(button.pending_label)
 
 func apply_layout(view_size: Vector2) -> void:
 	scale = Vector2.ONE * LAYOUT.ui_scale(view_size)
 	offset = LAYOUT.skill_origin(view_size)
 
-
-func show_skill(slot_index: int, ability_id: int, skill_name: String, accent: Color, skill_cost: float = 0.0, max_uses: int = 1, uses_remaining: int = 1, cooldown: float = 0.0, deployment_ready: bool = true, icon: Texture2D = null) -> void:
-	if slot_index < 0 or slot_index >= _buttons.size():
-		return
-	var button := _buttons[slot_index]
-	_ability_ids[slot_index] = ability_id
-	_skill_names[slot_index] = skill_name
-	_icons[slot_index].texture = icon
-	_icons[slot_index].visible = icon != null
-	_base_labels[slot_index] = skill_name.left(1) if icon == null else ""
-	_deployment_ready[slot_index] = deployment_ready
-	_pending[slot_index] = false
-	_free_recast[slot_index] = false
-	_skill_costs[slot_index] = maxf(skill_cost, 0.0)
-	_max_uses[slot_index] = maxi(max_uses, 0)
-	_uses_remaining[slot_index] = maxi(uses_remaining, 0)
-	_cooldowns[slot_index] = maxf(cooldown, 0.0)
-	button.text = _base_labels[slot_index]
-	button.tooltip_text = ""
-	button.add_theme_stylebox_override("normal", _circle_style(Color(accent.r * 0.34, accent.g * 0.34, accent.b * 0.34, 0.96), Color.WHITE, 3))
-	button.add_theme_stylebox_override("hover", _circle_style(Color(accent.r * 0.55, accent.g * 0.55, accent.b * 0.55, 1.0), Color(0.62, 0.90, 1.0), 4))
-	button.add_theme_stylebox_override("pressed", _circle_style(Color(accent.r * 0.24, accent.g * 0.24, accent.b * 0.24, 1.0), Color(1.0, 0.84, 0.28), 4))
-	button.add_theme_stylebox_override("disabled", _circle_style(Color(0.08, 0.12, 0.18, 0.88), Color(0.42, 0.52, 0.62), 3))
-	button.visible = true
-	_refresh_slot(slot_index)
-
+func show_skill(slot: int, ability_id: int, skill_name: String, _accent: Color, skill_cost: float = 0, max_uses: int = 1, uses_remaining: int = 1, cooldown: float = 0, deployment_ready: bool = true, icon: Texture2D = null, description: String = "") -> void:
+	if slot < 0 or slot >= _buttons.size(): return
+	_ability_ids[slot] = ability_id
+	_states[slot] = {"name": skill_name, "description": description, "cost": skill_cost, "uses": uses_remaining,
+		"unlimited": max_uses == 0, "cooldown_total": cooldown, "cooldown_left": 0.0, "free_recast": false,
+		"deployment_ready": deployment_ready, "pending": false, "resource": {}, "locked": not deployment_ready, "reason": ""}
+	_icons[slot].texture = icon
+	_buttons[slot]._fallback = skill_name.left(1) if icon == null else ""
+	_refresh_slot(slot)
 
 func is_pending(ability_id: int) -> bool:
 	var slot := _ability_ids.find(ability_id)
-	return slot >= 0 and _pending[slot]
-
+	return slot >= 0 and bool(_states[slot].get("pending", false))
 
 func set_pending(ability_id: int, pending: bool) -> void:
-	var slot_index := _ability_ids.find(ability_id)
-	if slot_index < 0:
-		return
-	_pending[slot_index] = pending
-	_pending_labels[slot_index].text = "…"
-	_refresh_slot(slot_index)
+	var slot := _ability_ids.find(ability_id)
+	if slot < 0: return
+	_states[slot].pending = pending
+	_pending_labels[slot].text = "…"
+	_refresh_slot(slot)
 
 func set_pending_seconds(ability_id: int, seconds: float) -> void:
 	var slot := _ability_ids.find(ability_id)
-	if slot < 0 or not _pending[slot]: return
-	_pending_labels[slot].text = "%.1f" % seconds if seconds > 0.0 else "…"
-
+	if slot < 0 or not is_pending(ability_id): return
+	_pending_labels[slot].text = BUTTON.countdown_text(seconds) if seconds > 0 else "…"
 
 func remove_skill(ability_id: int) -> void:
-	var slot_index := _ability_ids.find(ability_id)
-	if slot_index < 0:
-		return
-	_ability_ids[slot_index] = -1
-	_base_labels[slot_index] = ""
-	_skill_names[slot_index] = ""
-	_icons[slot_index].texture = null
-	_icons[slot_index].visible = false
-	_pending_labels[slot_index].visible = false
-	_deployment_ready[slot_index] = false
-	_pending[slot_index] = false
-	_free_recast[slot_index] = false
-	_skill_costs[slot_index] = 0.0
-	_max_uses[slot_index] = 1
-	_uses_remaining[slot_index] = 0
-	_cooldowns[slot_index] = 0.0
-	_buttons[slot_index].visible = false
-	_buttons[slot_index].disabled = false
-	_buttons[slot_index].text = ""
-	if slot_index < _rule_labels.size():
-		_rule_labels[slot_index].visible = false
+	var slot := _ability_ids.find(ability_id)
+	if slot < 0: return
+	_ability_ids[slot] = -1
+	_states[slot] = {}
+	_icons[slot].texture = null
+	_pending_labels[slot].visible = false
+	_buttons[slot].visible = false
+	_buttons[slot].disabled = true
 
-
-func current_ability_id(slot_index: int) -> int:
-	return _ability_ids[slot_index] if slot_index >= 0 and slot_index < _ability_ids.size() else -1
-
+func current_ability_id(slot: int) -> int:
+	return _ability_ids[slot] if slot >= 0 and slot < _ability_ids.size() else -1
 
 func set_elixir(value: float) -> void:
-	_elixir = maxf(value, 0.0)
-	for slot_index in _buttons.size():
-		_refresh_slot(slot_index)
+	_elixir = maxf(value, 0)
+	for slot in _buttons.size(): _refresh_slot(slot)
 
+func update_skill_state(ability_id: int, uses_remaining: int, cooldown: float, deployment_ready: bool, skill_cost: float, max_uses: int, free_recast: bool = false, presentation: Dictionary = {}) -> void:
+	var slot := _ability_ids.find(ability_id)
+	if slot < 0: return
+	var state := _states[slot]
+	state.uses = maxi(uses_remaining, 0)
+	state.cooldown_left = maxf(cooldown, 0)
+	state.deployment_ready = deployment_ready
+	state.cost = maxf(skill_cost, 0)
+	state.unlimited = max_uses == 0
+	state.free_recast = free_recast
+	state.resource = presentation.get("resource", {})
+	state.locked = presentation.get("locked", not deployment_ready)
+	state.reason = presentation.get("reason", "" if deployment_ready else "部署中")
+	_refresh_slot(slot)
 
-func update_skill_state(ability_id: int, uses_remaining: int, cooldown: float, deployment_ready: bool, skill_cost: float, max_uses: int, free_recast: bool = false) -> void:
-	var slot_index := _ability_ids.find(ability_id)
-	if slot_index < 0:
-		return
-	if _free_recast[slot_index] == free_recast and _uses_remaining[slot_index] == maxi(uses_remaining, 0) and _max_uses[slot_index] == maxi(max_uses, 0) and is_equal_approx(_cooldowns[slot_index], maxf(cooldown, 0.0)) and is_equal_approx(_skill_costs[slot_index], maxf(skill_cost, 0.0)) and _deployment_ready[slot_index] == deployment_ready:
-		return
-	_free_recast[slot_index] = free_recast
-	_uses_remaining[slot_index] = maxi(uses_remaining, 0)
-	_max_uses[slot_index] = maxi(max_uses, 0)
-	_cooldowns[slot_index] = maxf(cooldown, 0.0)
-	_skill_costs[slot_index] = maxf(skill_cost, 0.0)
-	_deployment_ready[slot_index] = deployment_ready
-	_refresh_slot(slot_index)
+func is_slot_visible(slot: int) -> bool:
+	return slot >= 0 and slot < _buttons.size() and _buttons[slot].visible
 
+func _on_slot_pressed(slot: int) -> void:
+	var id := current_ability_id(slot)
+	if id < 0 or is_pending(id) or not can_submit.is_valid() or not can_submit.call(id): return
+	skill_pressed.emit(id)
 
-func is_slot_visible(slot_index: int) -> bool:
-	return slot_index >= 0 and slot_index < _buttons.size() and _buttons[slot_index].visible
-
-
-func _on_slot_pressed(slot_index: int) -> void:
-	var ability_id := current_ability_id(slot_index)
-	if ability_id < 0:
-		return
-	skill_pressed.emit(ability_id)
-
-
-func _refresh_slot(slot_index: int) -> void:
-	if slot_index < 0 or slot_index >= _buttons.size():
-		return
-	var button := _buttons[slot_index]
-	var cooldown := _cooldowns[slot_index]
-	var uses_remaining := _uses_remaining[slot_index]
-	var skill_cost := _skill_costs[slot_index]
-	button.disabled = not can_submit.is_valid() or not can_submit.call(_ability_ids[slot_index])
-	button.text = "" if _pending[slot_index] else _base_labels[slot_index]
-	_pending_labels[slot_index].visible = _pending[slot_index]
-	_icons[slot_index].modulate = Color(0.42, 0.42, 0.42) if button.disabled or _pending[slot_index] else Color.WHITE
-	if slot_index < _rule_labels.size():
-		var rule_label := _rule_labels[slot_index]
-		rule_label.visible = button.visible
-		rule_label.text = "金币 %s · 次数 %d/%d" % [_format_number(skill_cost), uses_remaining, _max_uses[slot_index]]
-		if _max_uses[slot_index] == 0: rule_label.text = "金币 %s · 次数不限" % _format_number(skill_cost)
-		if _free_recast[slot_index]: rule_label.text = "免费追斩 · 付费余%d" % uses_remaining
-	var state := "可用"
-	if _pending[slot_index]:
-		state = "等待权威执行"
-	elif not _deployment_ready[slot_index]:
-		state = "部署中"
-	elif _free_recast[slot_index]:
-		state = "免费追斩可用（付费冷却独立计时）"
-	elif uses_remaining <= 0 and _max_uses[slot_index] > 0:
-		state = "次数已用尽"
-	elif cooldown > 0.001:
-		state = "冷却 %s秒" % BattleNumbers.format_value(cooldown)
-	elif _elixir < skill_cost:
-		state = "金币不足"
-	button.tooltip_text = "%s · 主动槽 %d\n消耗 %s 金币 · 剩余 %d/%d 次 · 冷却 %s 秒\n%s" % [_skill_names[slot_index], slot_index + 1, BattleNumbers.format_value(skill_cost), uses_remaining, _max_uses[slot_index], BattleNumbers.format_value(cooldown), state]
-
-	if _max_uses[slot_index] == 0:
-		button.tooltip_text = "%s · 消耗 %s 金币 · 次数不限\n%s" % [_skill_names[slot_index], _format_number(skill_cost), state]
-
-
-func _format_number(value: float) -> String:
-	return BattleNumbers.format_value(value)
-
-
-func _circle_style(fill: Color, border: Color, border_width: int) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = fill
-	style.border_color = border
-	style.set_border_width_all(border_width)
-	style.set_corner_radius_all(99)
-	style.anti_aliasing = true
-	return style
+func _refresh_slot(slot: int) -> void:
+	if slot < 0 or slot >= _buttons.size() or _states[slot].is_empty(): return
+	var state := _states[slot]
+	state.can_submit = not bool(state.pending) and can_submit.is_valid() and can_submit.call(_ability_ids[slot])
+	# 免费重施本身仍是一份真实资格，即使付费次数已用尽也保留入口。
+	state.has_uses = bool(state.unlimited) or int(state.uses) > 0 or bool(state.free_recast)
+	state.poor = _elixir < float(state.cost)
+	var reasons: Array[String] = []
+	if bool(state.pending): reasons.append("等待权威执行；执行前复核，取消按原规则退款")
+	if not String(state.reason).is_empty(): reasons.append(state.reason)
+	if float(state.cooldown_left) > 0.0: reasons.append("%s冷却 %s 秒" % ["付费技能" if bool(state.free_recast) else "", BUTTON.countdown_text(state.cooldown_left)])
+	if bool(state.poor): reasons.append("金币不足")
+	if bool(state.free_recast): reasons.append("免费追斩可用（付费剩余 %d 次）" % int(state.uses))
+	if reasons.is_empty(): reasons.append("可用" if bool(state.can_submit) else "当前不能提交技能指令")
+	state.tooltip = "%s\n%s\n消耗 %s 金币 · 剩余 %s 次\n%s" % [state.name, state.description, BattleNumbers.format_value(state.cost), "∞" if bool(state.unlimited) else str(1 if bool(state.free_recast) else state.uses), "\n".join(reasons)]
+	_buttons[slot].present(state)

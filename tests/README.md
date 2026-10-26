@@ -221,3 +221,20 @@ ProjectileSuite 内的 view 子检查覆盖内容代次、同帧前后读取、�
 `EkkoSuite`覆盖每目标独立第三击、交替目标保留计数、单目标仅触发一次、拒绝命中不消耗、不同来源独立计数、加速及三套Attack_P映射、4秒有界历史、历史不足、不可选中、合法落点满血及一次技能资格。
 
 中型雷电专项：`--suite MediumLightningSuite`覆盖伤害目标、权威半径边界、仅塔失效、水晶/凝滞免疫、主动费用、护盾/减速到期、可靠事件去重与清场。`CLASH_TEST_MEDIUM_LIGHTNING=1 CLASH_TEST_TERMINAL_TICK=120 python3 tools/dev.py verify --suite MediumLightningSuite --network`追加三进程权威落雷与客户端状态投影检查；开关只由测试夹具读取。
+
+攢聚雷专项：`--suite SeveringBoltSuite`覆盖延迟、倍率、免疫、塔伤害和清场；`CLASH_TEST_SEVERING_BOLT=1 CLASH_TEST_TERMINAL_TICK=120 python3 tools/dev.py verify --suite SeveringBoltSuite --network`检查服务器/两客户端落雷与状态一致性。
+
+`PoolOfReflectionSuite`覆盖持续补盾、被消耗后再生、无上限累加、重叠、其他来源护盾、离圈/结束和凝滞边界。
+
+庇护清泉三进程专项：`CLASH_TEST_POOL_OF_REFLECTION=1 CLASH_TEST_TERMINAL_TICK=110 python3 tools/dev.py verify --suite PoolOfReflectionSuite --network`。终局观察延至110Tick，覆盖3秒区域与1秒余盾自然结束；默认85Tick不足以观察此案例到期。
+
+终极爆弹专项：`--suite MegaInfernoBombSuite`覆盖中心/外围、飞行时序、普通盾/效果盾、建筑与水晶、100%重伤所有回复入口及同批治疗、刷新到期、清场和血条位置。`CLASH_TEST_MEGA_INFERNO_BOMB=1 CLASH_TEST_TERMINAL_TICK=160 python3 tools/dev.py verify --changed docs/units/mega_inferno_bomb.md --network`验证主机破盾、双方副本重伤建立/到期及发射/抵达事件；纯文档scope避免重跑已经完成的机制，联网仍显式执行。
+
+
+## 主动技能按钮专项
+
+`ActiveSkillButtonSuite`是`scene=none`的小型检查，复用无表现权威夹具并安装正式技能栏，覆盖0费/动态费用、缺钱与CD组合、次数耗尽固定槽位、等待防重复、取消退款、重部署旧资格、资源分类/层数/颜色、未满可释放、客户端快照起手提示、最后0.1秒及窗口变换。`UnitBarLayoutSuite`核对头顶条直接消费者；`ActiveSkillInputSuite`保留既有指令和身份边界。按需显式选测，不扩大为全量或修改authority-logic白名单。
+
+先运行`python3 tools/dev.py verify --plan --suite ActiveSkillButtonSuite --suite UnitBarLayoutSuite --suite ActiveSkillInputSuite`。Mac有界执行用`python3 tools/demos/active_skill_button_review.py --mode tests --suite ActiveSkillButtonSuite --output <素材库/04-中间产物内的新目录>`；可重复`--suite`选择上述三个套件。`--mode render`保存正式按钮/头顶条对照、CD方向和720×1280、480×720、1280×720布局的五张截图。合成只读状态用于观察组合，不冒充完整对局或三进程联机。
+
+入口复用`safe_probe`的20秒、30FPS、主线程心跳、768MiB绝对RSS及ready后256MiB增长上限；启动normal压力、估算可用至少8GiB/保留6GiB，运行低于4GiB或压力变化即停。允许已有编辑器，拒绝其他游戏进程；只清理自有组，保留watchdog、组件哈希和原日志。实际截图须人工目视，headless不能替代渲染验收。

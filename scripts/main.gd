@@ -1538,8 +1538,21 @@ func _sync_active_skill_deployment_readiness() -> void:
 				deployed,
 				runtime._active_skills.cost(ability_id),
 				0 if bool(entry.skill.get("unlimited_uses", false)) else int(entry.max_uses),
-				bool(entry.free_recast)
+				bool(entry.free_recast),
+				_skill_button_presentation(valid_unit, entry.skill)
 			)
+
+## 使用头顶条已有查询；客户端起手状态只读取主机同步的布尔值。
+func _skill_button_presentation(unit: Unit, skill: Dictionary) -> Dictionary:
+	var reason := ""
+	if not unit.is_deployed(): reason = "部署中"
+	elif not unit.has_required_skill_resource(skill): reason = "技能资源不足，需要攒满"
+	elif not unit.active_skill_start_ready_visual(skill): reason = "单位当前无法起手（控制、施法或特殊状态）；指令在执行时复核"
+	return {"locked": not reason.is_empty(), "reason": reason,
+		"resource": {"visible": unit.is_skill_resource_visible(), "ratio": unit.get_skill_resource_ratio(),
+			"segments": unit.get_skill_resource_segment_count(), "stacks": unit.get_skill_resource_stacks(),
+			"color": unit.get_skill_resource_fill_color()}}
+
 
 func _on_active_skill_pressed(ability_id: int) -> void:
 	use_active_skill(ability_id, runtime.local_team, 0, runtime.mode == "client")
@@ -2587,7 +2600,7 @@ func _show_registered_skill(id: int) -> void:
 	if entry.is_empty() or not _is_local_player_team(int(entry.team)) or _active_skill_bar == null: return
 	var skill: Dictionary = entry.skill
 	var unit: Unit = entry.unit
-	_active_skill_bar.show_skill(int(entry.slot), id, String(skill.name), CardDB.get_card(String(entry.card_id)).get("color", CardArt.DEFAULT_ACCENT), float(skill.get("cost", 0.0)), 0 if bool(skill.get("unlimited_uses", false)) else int(entry.max_uses), int(entry.max_uses), float(skill.get("cooldown", 0.0)), unit.is_deployed(), CardArt.skill_icon(skill))
+	_active_skill_bar.show_skill(int(entry.slot), id, String(skill.name), CardDB.get_card(String(entry.card_id)).get("color", CardArt.DEFAULT_ACCENT), float(skill.get("cost", 0.0)), 0 if bool(skill.get("unlimited_uses", false)) else int(entry.max_uses), int(entry.max_uses), float(skill.get("cooldown", 0.0)), unit.is_deployed(), CardArt.skill_icon(skill), CardDetails.active_skill_description(skill))
 
 func spawn_summoned(p_team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, visual_transition: String = "", death_replacement_charges_override: int = -1, summon_visual_origin: Vector2 = Vector2.INF, limit_center: Vector2 = Vector2.INF, limit_radius: float = 0.0) -> Unit:
 	return runtime.spawn_summoned(p_team, card_id, pos, deploy_time_override, visual_transition, death_replacement_charges_override, summon_visual_origin, limit_center, limit_radius)

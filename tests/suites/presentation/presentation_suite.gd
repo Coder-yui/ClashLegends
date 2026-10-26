@@ -1305,13 +1305,11 @@ func _check_display_layout() -> void:
 			var hand_top: float = _main._hand.offset.y
 			_expect(field.position.x >= 0.0 and field.end.x <= size.x and field.position.y >= 0.0 and field.end.y <= hand_top, "手机比例完整战场不被手牌遮挡：%s/%s" % [size,flipped])
 			_expect(is_equal_approx(hand_top + layout.HAND_HEIGHT * ui_scale, size.y), "手牌保留160基准高度并贴底")
-			var controls: Array = _main._active_skill_bar._buttons + _main._active_skill_bar._rule_labels
+			var controls: Array = _main._active_skill_bar._buttons
 			for control in controls:
 				var control_rect := Rect2(_main._active_skill_bar.transform * control.position, control.size * ui_scale)
 				_expect(control_rect.position.y >= hand_top - layout.SKILL_OVERLAY_HEIGHT * ui_scale and control_rect.end.y <= hand_top, "技能控件悬浮在地图底部80像素内，不进入手牌区：%s/%s" % [size,flipped])
 			_expect(_main._hand.offset.y + _main._hand._growth_notice.position.y * ui_scale >= field.end.y, "成长提示完整落在两格布景带")
-			for label in _main._active_skill_bar._rule_labels:
-				_expect(label.position.y >= 0.0 and label.position.y + label.size.y <= layout.SKILL_SIZE, "技能规则文字与图标横排，完整位于两格布景带")
 			var top: Vector2 = transform.affine_inverse() * Vector2(size.x * 0.5, 0)
 			var bottom: Vector2 = transform.affine_inverse() * Vector2(size.x * 0.5, hand_top)
 			var low := minf(top.y, bottom.y)

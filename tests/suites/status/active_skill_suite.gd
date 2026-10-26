@@ -230,9 +230,8 @@ func _check_active_skill_cost_uses_and_refresh() -> void:
 	var ability_id := garen.active_ability_id
 	var initial_elixir: float = _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir
 	var combat_rules_visible: bool = (
-		_main._active_skill_bar._rule_labels[0].visible
-		and _main._active_skill_bar._rule_labels[0].text.contains("金币 1")
-		and _main._active_skill_bar._rule_labels[0].text.contains("次数 2/2")
+		_main._active_skill_bar._buttons[0].cost_label.text.contains("1")
+		and _main._active_skill_bar._buttons[0].uses_label.text == "2"
 	)
 	var queued_first: bool = _main.runtime._queue_active_skill(ability_id, 0, 0)
 	var paid_on_queue: bool = is_equal_approx(_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir, initial_elixir - 1.0)
@@ -962,7 +961,7 @@ func _check_skill_icon_reuse() -> void:
 	_expect(bar._pending_labels[0].visible and bar._icons[0].texture != null, "待释放覆盖提示并保留技能图标")
 	bar.remove_skill(901)
 	bar.show_skill(0, 902, "仙灵汲取", Color.GREEN)
-	_expect(bar._icons[0].texture == null and bar._buttons[0].text == "仙" and not bar._pending_labels[0].visible, "复用槽位时清除旧图标与待释放状态，恢复文字占位")
+	_expect(bar._icons[0].texture == null and bar._buttons[0].get_node("Fallback").text == "仙" and not bar._pending_labels[0].visible, "复用槽位时清除旧图标与待释放状态，恢复文字占位")
 	bar.free()
 
 func _check_freeze_crystal_immunity() -> void:

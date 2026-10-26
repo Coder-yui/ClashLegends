@@ -747,5 +747,19 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "ActiveSkillButtonSuite",
+    "script": "res://tests/suites/ui/active_skill_button_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "ui"
+  },
+  {
+    "id": "ActiveSkillInputSuite",
+    "script": "res://tests/suites/network/session_suite.gd",
+    "method": "run_skill_input",
+    "scene": "none",
+    "group": "network"
   }
 ]
