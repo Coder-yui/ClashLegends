@@ -735,6 +735,13 @@
     "group": "cards"
   },
   {
+    "id": "UnitBarLayoutSuite",
+    "script": "res://tests/suites/presentation/unit_bar_layout_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "presentation"
+  },
+  {
     "id": "MegaInfernoBombSuite",
     "script": "res://tests/suites/cards/mega_inferno_bomb_suite.gd",
     "method": "run",

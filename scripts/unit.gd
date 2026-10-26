@@ -3631,36 +3631,29 @@ func _draw() -> void:
 	var ui_rotation := -get_global_transform_with_canvas().get_rotation()
 	var ui_scale := Vector2(1.0, 1.0 / BattleGroundProjection.Q)
 	draw_set_transform(_vis_offset + _health_bar_center - (_health_bar_center * ui_scale).rotated(ui_rotation), ui_rotation, ui_scale)
-	var raw_hp_ratio := presentation_state().health_ratio
-	var hp_ratio := minf(raw_hp_ratio, 1.0)
-	var overheal_ratio := maxf(raw_hp_ratio - 1.0, 0.0)
-	var shield_health_ratio := get_shield_health_ratio()
-	if death_form.waiting() or not is_equal_approx(raw_hp_ratio, 1.0) or shield_health_ratio > 0.0 or team_attack_boost_multiplier > 1.0:
-		var bar_w := visual_radius * 2.0
-		var bar_rect := Rect2(
-			_health_bar_center.x - bar_w * 0.5,
-			_health_bar_center.y - HEALTH_BAR_HEIGHT * 0.5,
-			bar_w,
-			HEALTH_BAR_HEIGHT
-		)
-		# 固定每点生命的像素比例；护盾不能压缩生命段，否则破盾时会看似回血。
-		draw_rect(Rect2(bar_rect.position, Vector2(bar_w * maxf(1.0, raw_hp_ratio + shield_health_ratio), HEALTH_BAR_HEIGHT)), Color(0.15, 0.15, 0.15))
-		var hp_width := bar_w * hp_ratio
-		var shield_width := bar_w * shield_health_ratio
-		if hp_width > 0.0:
-			draw_rect(Rect2(bar_rect.position, Vector2(hp_width, HEALTH_BAR_HEIGHT)), get_health_bar_fill_color())
-		if shield_width > 0.0:
-			draw_rect(Rect2(Vector2(bar_rect.position.x + bar_w * raw_hp_ratio, bar_rect.position.y), Vector2(shield_width, HEALTH_BAR_HEIGHT)), Color.WHITE)
-		# 溢出生命画在基础血条右侧，长度直接表示超过基础上限的比例；皮克斯最多延伸 50%。
-		if overheal_ratio > 0.0:
-			draw_rect(
-				Rect2(Vector2(bar_rect.end.x, bar_rect.position.y), Vector2(bar_w * overheal_ratio, HEALTH_BAR_HEIGHT)),
-				Color(0.82, 0.35, 1.0),
-			)
+	var view := presentation_state()
+	var bar_w := view.base_health_bar_width
+	var bar_left := _health_bar_center.x - bar_w * 0.5
+	if view.health_bar_visible:
+		var layout := view.health_bar_layout
+		var bar_position := Vector2(bar_left, _health_bar_center.y - HEALTH_BAR_HEIGHT * 0.5)
+		draw_rect(Rect2(bar_position, Vector2(layout.background_width, HEALTH_BAR_HEIGHT)), Color(0.15, 0.15, 0.15))
+		if layout.normal_width > 0.0:
+			draw_rect(Rect2(bar_position, Vector2(layout.normal_width, HEALTH_BAR_HEIGHT)), get_health_bar_fill_color())
+		if layout.overflow_width > 0.0:
+			draw_rect(Rect2(bar_position + Vector2(layout.full_health_x, 0.0), Vector2(layout.overflow_width, HEALTH_BAR_HEIGHT)), Color(0.82, 0.35, 1.0))
+		if layout.shield_width > 0.0:
+			draw_rect(Rect2(bar_position + Vector2(layout.shield_start, 0.0), Vector2(layout.shield_width, HEALTH_BAR_HEIGHT)), Color.WHITE)
+		# 当前正常满血边界；深色描边让浅色短刻线在白盾上仍可辨认。
+		var marker := bar_position + Vector2(layout.full_health_x, 0.0)
+		draw_line(marker - Vector2(0.0, 1.0), marker + Vector2(0.0, HEALTH_BAR_HEIGHT + 1.0), Color(0.08, 0.08, 0.10), 3.0)
+		draw_line(marker - Vector2(0.0, 1.0), marker + Vector2(0.0, HEALTH_BAR_HEIGHT + 1.0), Color(0.96, 0.96, 1.0), 1.0)
+		if grievous_wounds_visual():
+			_draw_grievous_wounds(Vector2(bar_left + maxf(bar_w, float(layout.background_width)) + 10.0, _health_bar_center.y))
 		if team_attack_boost_multiplier > 1.0:
-			_draw_team_attack_boost_hammer(Vector2(bar_rect.position.x - 11.0, bar_rect.position.y + HEALTH_BAR_HEIGHT * 0.5))
+			_draw_team_attack_boost_hammer(Vector2(bar_left - 11.0, bar_position.y + HEALTH_BAR_HEIGHT * 0.5))
 	if is_skill_resource_visible():
-		var resource_w := visual_radius * 2.0
+		var resource_w := bar_w
 		var resource_y := _health_bar_center.y + HEALTH_BAR_HEIGHT * 0.5 + SKILL_RESOURCE_BAR_GAP
 		var segment_count := get_skill_resource_segment_count()
 		if segment_count > 0:
@@ -3669,13 +3662,13 @@ func _draw() -> void:
 			var filled_segments := mini(get_skill_resource_stacks(), segment_count)
 			var resource_fill_color := get_skill_resource_fill_color()
 			for segment_index in range(segment_count):
-				var segment_x := -resource_w * 0.5 + float(segment_index) * (segment_w + segment_gap)
+				var segment_x := bar_left + float(segment_index) * (segment_w + segment_gap)
 				var segment_rect := Rect2(Vector2(segment_x, resource_y), Vector2(segment_w, SKILL_RESOURCE_BAR_HEIGHT))
 				draw_rect(segment_rect, Color(0.10, 0.10, 0.12, 0.9))
 				if segment_index < filled_segments:
 					draw_rect(segment_rect, resource_fill_color)
 		else:
-			var resource_rect := Rect2(Vector2(-resource_w * 0.5, resource_y), Vector2(resource_w, SKILL_RESOURCE_BAR_HEIGHT))
+			var resource_rect := Rect2(Vector2(bar_left, resource_y), Vector2(resource_w, SKILL_RESOURCE_BAR_HEIGHT))
 			draw_rect(resource_rect, Color(0.10, 0.10, 0.12, 0.9))
 			draw_rect(Rect2(resource_rect.position, Vector2(resource_w * get_skill_resource_ratio(), SKILL_RESOURCE_BAR_HEIGHT)), get_skill_resource_fill_color())
 	for stack in bleeding.total_stacks():

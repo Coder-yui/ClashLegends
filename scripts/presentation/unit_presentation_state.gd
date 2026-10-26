@@ -43,7 +43,27 @@ var health_ratio: float:
 		if not is_instance_valid(_unit): return 0.0
 		if _unit.death_form.waiting():
 			return _authoritative_recovery_ratio() if _observed_wait_ticks < 0 else _recovery_ratio
-		return maxf(_unit.hp / maxf(_unit.max_hp, 0.001), 0.0)
+		assert(is_finite(_unit.max_hp) and _unit.max_hp > 0.0, "血条最大生命必须为有限正数")
+		return maxf(_unit.hp / _unit.max_hp, 0.0)
+
+## 从当前原生形态定义取宽；成长和首次快照的实时体型都不是基准。
+var base_health_bar_width: float:
+	get:
+		var stats := PresentationConfig.for_form(_unit._base_form_stats, _unit.get_form_index())
+		return float(stats.get("visual_radius", stats.get("radius"))) * 2.0
+
+var health_bar_visible: bool:
+	get:
+		return PresentationConfig.status_indicators_visible(_unit) and (
+			_unit.death_form.waiting() or not is_equal_approx(health_ratio, 1.0)
+			or _unit.grievous_wounds_visual() or _unit.get_shield_health_ratio() > 0.0 or _unit.team_attack_boost_multiplier > 1.0
+			or _unit.is_skill_resource_visible())
+
+var health_bar_layout: Dictionary:
+	get:
+		# 复生等待是进度条，保持原填充，不将真实零生命或盾套入普通生命布局。
+		return preload("res://scripts/presentation/unit_bar_layout.gd").calculate(
+			base_health_bar_width, health_ratio, 0.0 if _unit.death_form.waiting() else _unit.get_shield_health_ratio())
 
 func _authoritative_recovery_ratio() -> float:
 	var duration := maxf(float(_unit._base_form_stats.get("death_form_delay", 0.0)), 0.05)
