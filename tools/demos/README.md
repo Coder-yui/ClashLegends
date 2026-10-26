@@ -106,3 +106,20 @@ python3 tools/demos/pantheon_review_media.py --input /本次输出/pantheon-revi
 - `event_horizon_review.gd`：正式工作台双方空间边界、黑暗物质、卡面信息和混音录制，输出到开发素材库的独立批次。
 
 `medium_lightning_review.gd`：工作台正式出牌入口的双方落雷、塔失效恢复、卡面与音频录制，产物进入开发素材库。
+
+`severing_bolt_review.gd`：攢聚雷双方正式出牌、预警/落雷/尾迹、卡面和实战音轨录制。
+
+- `solar_flare_review.gd`：太阳耀斑双方工作台落光、日光消费、卡面截图与混音录音。
+
+`pool_of_reflection_review.gd`：庇护清泉正式工作台双方施放、护盾持续与结束、卡面和录音检查。
+
+- `unit_bar_review.py --mode render --output <开发素材库/04-中间产物内的新目录>`：20秒/30FPS、心跳、RSS/系统压力保护的单位标条渲染检查。仅九组展示输入与四个正式模型，输出蓝方、红方倒转、破盾/凝滞恢复三张截图及输入/锚点JSON；不预热全牌库。`--mode tests` 选择 `UnitBarLayoutSuite`。使用现有导入缓存、保留已打开编辑器；`unit_bar_review.gd` 裸启动拒绝，保护边界见[测试手册](../../tests/README.md#单位血条布局专项)。
+
+`mega_inferno_bomb_review.gd`：正式工作台通过play_card施放双方终极爆弹，保存飞行/爆炸、地面/空中重伤及溢出护盾血条、卡面详情截图和实机WAV；输出至开发素材库中间产物。
+
+
+## 主动技能按钮
+
+`python3 tools/demos/active_skill_button_review.py --mode tests --output <素材库/04-中间产物内的新目录>`默认仅运行`ActiveSkillButtonSuite`，可显式`--suite UnitBarLayoutSuite`或`--suite ActiveSkillInputSuite`选择直接消费者；先按[测试手册](../../tests/README.md#主动技能按钮专项)查看验证计划。`--mode render`只加载正式按钮、配置图标和Unit头顶条，输出状态对照、冷却方向及三个窗口布局共五张截图和`render-inputs.json`。无完整比赛、模型预热或音频，合成状态不代表自动完成玩法/联机验收。
+
+执行复用现有监督器：20秒、30FPS、768MiB RSS、ready后256MiB增长、主线程心跳；保留6GiB系统预算和8GiB启动余量、4GiB运行停止线，允许编辑器共存，拒绝其他游戏，只回收自有进程组。原日志、watchdog及组件身份均写到新输出目录。
