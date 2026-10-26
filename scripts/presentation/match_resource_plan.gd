@@ -104,7 +104,7 @@ func _filter(base: Dictionary, id: String, team: int, active_enabled: bool = tru
 	var original: Array = CardDB.get_card(id).get("active_skills", [])
 	for index in original.size():
 		if active_enabled and allows(id, index, team): capabilities.active_skills.append(original[index])
-	if not capabilities.get("active_skills", []).any(func(skill): return bool(skill.get("uses_skill_resource", false))):
+	if not bool(capabilities.get("skill_resource_passive", false)) and not capabilities.get("active_skills", []).any(func(skill): return bool(skill.get("uses_skill_resource", false))):
 		capabilities.skill_resource_max = 0.0
 	if base.has("audio"):
 		result.audio = _audio(base.audio, capabilities)

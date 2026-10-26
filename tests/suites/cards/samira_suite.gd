@@ -24,6 +24,11 @@ func run(harness: Object) -> void:
 	var bad_movement: Dictionary = CardDB.get_card("samira").duplicate(true)
 	bad_movement.active_skills[0]["cast_move_forward"] = "yes"
 	_expect(not CardDB.VALIDATOR.validate_all({"samira": bad_movement}, false).is_empty(), "固定方向移动拒绝非布尔配置")
+	var plan = preload("res://scripts/presentation/match_resource_plan.gd").for_match([["masteryi", "ashe", "samira"], ["masteryi", "ashe", "samira"]], [{}, {}])
+	for team in [0, 1]:
+		var passive_definition: Dictionary = plan.definition("samira", team)
+		_expect(passive_definition.has("visual_active_buff_scene") and passive_definition.active_skills.is_empty(), "普通槽莎弥拉保留被动特效场景，不解锁R")
+		_expect(passive_definition.audio.events.has("resource_full"), "普通槽莎弥拉保留满层被动音效")
 	var skill: Dictionary = CardDB.active_skills_for("samira")[0]
 	_expect(skill.radius == 180.0 and is_equal_approx(preload("res://assets/effects/samira/player.gd").NATIVE_SCALE * 600.0 * ArenaRules.TILE_SIZE, skill.radius), "R指定180像素半径与原生600单位的特效缩放一致")
 	var unit := _spawn_ready_unit("samira", 0, Vector2(300, 950))

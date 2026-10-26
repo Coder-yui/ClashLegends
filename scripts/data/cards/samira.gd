@@ -56,7 +56,7 @@ static func definition() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 				"visual_actions": {"inferno": {"animation": ["Spell4_Start", "Spell4"], "durations": [0.5, 1.5], "kind": "skill", "blend_in": 0.0, "sequence_blend": 0.0}},
 			},
-			"active_skills": [{"visual_action": "inferno", "icon_path": "res://assets/skills/samira_r.png", "resource_dependencies": {"fields": ["visual_active_buff_scene"], "effects": [{"provider": "res://assets/effects/samira/player.gd", "variant": "cas"}]}}],
+			"active_skills": [{"visual_action": "inferno", "icon_path": "res://assets/skills/samira_r.png", "resource_dependencies": {"effects": [{"provider": "res://assets/effects/samira/player.gd", "variant": "cas"}]}}],
 		},
 		# BEGIN IMPORTED AUDIO samira
 		"audio": {
