@@ -83,7 +83,7 @@ python3 tools/dev.py effect --provider=res://assets/effects/kassadin/player.gd -
 
 直接使用项目粒子播放器，默认查看虚空行走。支持暂停/播放、重播、0.25/0.5/1倍速、拖动时间轴、1/120秒逐帧、粒子层开关、旋转/缩放、项目54度/俯视/侧视、实体地面开关及临时抬高。拖动时间轴会暂停；这些操作不保存到游戏。
 
-可复用范围：提供 `load_kind(kind)`、`setup_native(scale)`、`seek(age)` 和采样数据 `_data`、粒子池 `_pools`、帧缓存 `_frame` 的项目播放器；不是任意特效格式的通用导入器。默认使用源坐标的0.01缩放和单位投影，正式战场范围适配仍需工作台复核。输出诊断截图可传 `--capture-dir=<素材库内绝对路径>`。用 `--capture-time=1.0` 指定截图采样秒数，`--layers=Lightning_AoE_Telegraph` 仅显示指定发射器（多个名字逗号分隔），可单独核对主提示圈。
+可复用范围：提供 `load_kind(kind)`、`setup_native(scale)`、`seek(age)` 和采样数据 `_data`、粒子池 `_pools`、帧缓存 `_frame` 的项目播放器；不是任意特效格式的通用导入器。默认使用源坐标的0.01缩放和单位投影，正式战场范围适配仍需工作台复核。输出诊断截图可传 `--capture-dir=<素材库内绝对路径>`，自动保存有地面、无地面、抬高诊断、俯视和10°侧视五张同刻截图。用 `--capture-time=1.0` 指定截图采样秒数，`--layers=Lightning_AoE_Telegraph` 仅显示指定发射器（多个名字逗号分隔），可单独核对主提示圈。
 
 此工具沿用虚空先知HTML预览的时间轴/分层交互，使用Godot实际着色器复核项目遮挡。旧HTML原生模拟预览仍保留在素材库，不替换其源素材研究用途。
 

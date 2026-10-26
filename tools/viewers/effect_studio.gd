@@ -228,9 +228,9 @@ func _seek() -> void:
 	timeline.set_value_no_signal(time);clock_label.text="%.3f / %.3f 秒" % [time,duration]
 func _captures() -> void:
 	DirAccess.make_dir_recursive_absolute(capture_dir)
-	for label in ["ground","no-ground","raised","top"]:
+	for label in ["ground","no-ground","raised","top","side"]:
 		floor_mesh.visible=label!="no-ground";player.position.y=1.2 if label=="raised" else 0.0
-		elevation=89.9 if label=="top" else 54.0;_camera();_jump(capture_time)
+		elevation=89.9 if label=="top" else (10.0 if label=="side" else 54.0);_camera();_jump(capture_time)
 		for frame in 8: await process_frame
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png(capture_dir.path_join(label+".png"))
