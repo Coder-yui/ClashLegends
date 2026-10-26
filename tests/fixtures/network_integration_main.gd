@@ -55,6 +55,7 @@ func _ready() -> void:
 	server_auto_restart = false
 	# 场景需要盖伦携带一费技能，不能依赖新增卡牌后的数据库注册顺序。
 	runtime._deck = ["garen", "gnar", "xin", "teemo", "ashe", "heal", "freeze", "tombstone"]
+	if OS.get_environment("CLASH_TEST_MEDIUM_LIGHTNING") == "1": runtime._deck[5] = "medium_lightning"
 	runtime._active_skill_choices = {"garen": 0}
 	super._ready()
 	_queue_trace_output = OS.get_environment("CLASH_QUEUE_TRACE_DIR")

@@ -635,7 +635,7 @@ func _tower_snapshot_payload(tower: Tower) -> Array:
 	return [
 		tower.hp,
 		1 if tower.activated else 0,
-		1 if tower.control.stun_timer > 0.0 else 0,
+		1 if tower.has_visible_stun() else 0,
 		tower.get_shield_ratio(),
 		tower.get_shield_capacity_ratio(),
 		1 if tower.frozen_timer > 0.0 else 0,

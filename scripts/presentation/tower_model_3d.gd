@@ -537,3 +537,11 @@ func prepare_target_states(states: Dictionary) -> void:
 		_apply_target_states(state == "stasis", state == "freeze")
 		if DisplayServer.get_name() != "headless": RenderingServer.force_draw(false)
 	_apply_target_states(_stasis_visible, _frozen_visible)
+
+## 原生附着特效复用每个表面的显隐/地面裁切材质，不接触权威塔状态。
+func presentation_surface_materials() -> Array[ShaderMaterial]:
+	var result: Array[ShaderMaterial] = []
+	for materials in _surface_materials_by_name.values():
+		for material in materials:
+			if material is ShaderMaterial: result.append(material)
+	return result

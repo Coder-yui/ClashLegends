@@ -102,3 +102,7 @@ python3 tools/demos/pantheon_review_media.py --input /本次输出/pantheon-revi
 - `powder_keg_review.gd`：双阵营火药桶/木桩尺寸、Timer受击、主动与普通爆炸、金币及实际混音截图录音。
 
 杰斯 `jayce_review.gd -- --anchors-review`：在现有工作台固定双形态位置，依次拍摄首击待发、换形、远程W与出手；仅演示夹具，不改变对战规则。
+
+- `event_horizon_review.gd`：正式工作台双方空间边界、黑暗物质、卡面信息和混音录制，输出到开发素材库的独立批次。
+
+`medium_lightning_review.gd`：工作台正式出牌入口的双方落雷、塔失效恢复、卡面与音频录制，产物进入开发素材库。

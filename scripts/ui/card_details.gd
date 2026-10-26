@@ -36,6 +36,12 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 			return result
 		result.append({"name": "目标", "value": target})
 		result.append({"name": "作用范围", "value": "%s（%.2f格）" % [format_number(float(stats.get("radius", 0.0))), float(stats.get("radius", 0.0)) / TILE_SIZE]})
+		if String(stats.get("spell_kind", "")) == "medium_lightning":
+			result.append({"name": "单次伤害", "value": format_number(float(stats.damage))})
+			result.append({"name": "塔 / 水晶伤害", "value": format_number(float(stats.damage) * float(stats.tower_damage_multiplier))})
+			result.append({"name": "防御塔失效", "value": "%s秒（水晶免疫）" % format_number(float(stats.stun_duration))})
+			result.append({"name": "结算", "value": "%s秒后落雷" % format_number(float(stats.spell_windup))})
+			return result
 		if String(stats.get("spell_kind", "")) in ["zap", "lightning"]:
 			result.append({"name": "单次伤害", "value": format_number(float(stats.damage))})
 			result.append({"name": "电击次数", "value": str(stats.strike_count)})
@@ -53,6 +59,9 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 			result.append({"name": "首次召唤", "value": "%s秒" % format_number(float(stats.spawn_initial_delay))})
 			result.append({"name": "召唤间隔", "value": "%s秒" % format_number(float(stats.interval))})
 			result.append({"name": "出生等待", "value": "%s秒" % format_number(float(stats.spawn_deploy_time))})
+		if String(stats.get("spell_kind", "")) == "event_horizon":
+			result.append({"name": "成形延迟", "value": "%s秒" % format_number(float(stats.spell_windup))})
+			result.append({"name": "边界眩晕", "value": "%s秒 / 每目标一次" % format_number(float(stats.stun_duration))})
 		if String(stats.get("spell_kind", "")) == "corrosion":
 			result.append({"name": "每次伤害", "value": format_number(float(stats.damage))})
 			result.append({"name": "伤害间隔", "value": "%s秒" % format_number(float(stats.interval))})

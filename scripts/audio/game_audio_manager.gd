@@ -218,12 +218,16 @@ func _process(delta: float) -> void:
 
 ## 固定落地区域拥有自己的声音，施法者死亡/受控不终止已经生成的区域。
 ## 带 ID 的可靠通知只创建一次；生命周期与表现区域一样按秒推进。
-func start_zone_audio(event_id: int, card_id: String, form: int, action: String, position: Vector2, duration: float, team: int = 0) -> void:
+func start_zone_audio(event_id: int, card_id: String, form: int, action: String, position: Vector2, duration: float, team: int = 0, owner: Node2D = null) -> void:
 	if _battle_ended or _battle_paused:
 		return
 	if event_id <= _last_zone_event_id:
 		return
 	_last_zone_event_id = event_id
+	if owner != null:
+		for previous in _zone_players.keys():
+			var previous_owner = _zone_players[previous].get("owner")
+			if previous_owner != null and previous_owner.get_ref() == owner and _zone_players[previous].card_id == card_id and _zone_players[previous].action == action: _stop_zone_audio(previous, false)
 	var events: Dictionary = _card_audio(card_id, team, form).get("events", {})
 	var cue := StringName(action + ":zone_sustain")
 	var event: Dictionary = events.get(String(cue), {})
@@ -242,7 +246,7 @@ func start_zone_audio(event_id: int, card_id: String, form: int, action: String,
 	# 区域规则到期后允许原始单段音轨自然收尾；仅延长声音生命周期。
 	var natural_tail := bool(event.get("natural_tail", false))
 	var audio_duration := maxf(duration, player.stream.get_length()) if natural_tail and player.stream != null else duration
-	_zone_players[event_id] = {"player": player, "time_left": audio_duration, "card_id": card_id, "action": action, "ending": ending, "position": position}
+	_zone_players[event_id] = {"player": player, "time_left": audio_duration, "card_id": card_id, "action": action, "ending": ending, "position": position, "owner": weakref(owner) if owner != null else null, "fade_out": float(event.get("fade_out", 0.0)), "fade_curve": String(event.get("fade_out_curve", "linear")), "fading": false}
 	if player.stream != null:
 		player.finished.connect(func():
 			if _zone_players.has(event_id):
@@ -255,6 +259,21 @@ func start_zone_audio(event_id: int, card_id: String, form: int, action: String,
 
 func _tick_zone_audio(delta: float) -> void:
 	for id in _zone_players.keys():
+		var source = _zone_players[id].get("owner")
+		if source != null:
+			var owner = source.get_ref()
+			if not is_instance_valid(owner) or owner.is_queued_for_deletion() or float(owner.hp) <= 0:
+				_stop_zone_audio(id, true)
+				continue
+		if bool(_zone_players[id].fading):
+			var fade: Dictionary = _zone_players[id]
+			fade.fade_elapsed = minf(float(fade.fade_out), float(fade.fade_elapsed) + maxf(delta, 0.0))
+			var progress := float(fade.fade_elapsed) / float(fade.fade_out)
+			# Wwise Exp1: interpolation factor (t + 1) * t / 2 (wwiser AkInterpolation).
+			var curve := (progress + 1.0) * progress * 0.5 if fade.fade_curve == "exp1" else progress
+			fade.player.volume_linear = float(fade.fade_initial) * (1.0 - curve)
+			if progress >= 1.0: _stop_zone_audio(id, true)
+			continue
 		_zone_players[id].time_left -= maxf(delta, 0.0)
 		if float(_zone_players[id].time_left) <= 0.0001:
 			_stop_zone_audio(id, true)
@@ -262,6 +281,12 @@ func _tick_zone_audio(delta: float) -> void:
 func _stop_zone_audio(event_id: int, natural_end: bool) -> void:
 	var entry: Dictionary = _zone_players.get(event_id, {})
 	if entry.is_empty():
+		return
+	if natural_end and float(entry.fade_out) > 0 and not bool(entry.fading):
+		entry.fading = true
+		entry.owner = null
+		entry.fade_elapsed = 0.0
+		entry.fade_initial = entry.player.volume_linear
 		return
 	_zone_players.erase(event_id)
 	var player: AudioStreamPlayer2D = entry.player

@@ -698,5 +698,19 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "EventHorizonSuite",
+    "script": "res://tests/suites/cards/event_horizon_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
+    "id": "MediumLightningSuite",
+    "script": "res://tests/suites/cards/medium_lightning_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

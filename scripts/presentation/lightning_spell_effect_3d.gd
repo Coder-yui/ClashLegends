@@ -8,6 +8,7 @@ var _serial := 0
 func sync_effects(spells: RefCounted, camera: Camera3D) -> void:
 	var present := {}
 	for effect in spells.lightning_effects:
+		if String(effect.kind) not in ["zap", "lightning"]: continue
 		if not effect.has("lightning_view_id"):
 			_serial += 1
 			effect.lightning_view_id = _serial

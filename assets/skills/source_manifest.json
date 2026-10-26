@@ -861,5 +861,23 @@
     "source_path": "assets/characters/gnar/hud/icons2d/gnar_w.dds",
     "source_sha256": "2cbcf259d8cd04621124d9f80094515c58b9b430b9c58cfdc376e82519c72e7d",
     "sha256": "04fc905f2def4fb604ac28e675c2830c648b76303907910fc3e43aad98b6babc"
+  },
+  {
+    "card": "event_horizon",
+    "skill_index": 0,
+    "path": "res://assets/skills/veigar_w.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Veigar.wad.client",
+    "source_path": "assets/characters/veigar/hud/icons2d/veigardarkmatter.dds",
+    "source_sha256": "20bc88fc17021e093fba811ab26b5933a8d5576e669b9d2d03ad6338aab1e564",
+    "sha256": "66147574aafadfaadb668480b52d6efb5c2e09ccbda2ddf8e373841f2dac26a3"
+  },
+  {
+    "card": "medium_lightning",
+    "skill_index": 0,
+    "path": "res://assets/skills/medium_lightning_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Volibear.wad.client",
+    "source_path": "assets/characters/volibear/hud/icons2d/volibear_icon_e.dds",
+    "source_sha256": "e515c0ac259fbdc5e3829a1c5a35413edd47d033d881b2440bfc76d70edc5c15",
+    "sha256": "9fb7ab19ce87ea112eb1903636c9d60a5c6869a2b6c350446705c3987552014b"
   }
 ]

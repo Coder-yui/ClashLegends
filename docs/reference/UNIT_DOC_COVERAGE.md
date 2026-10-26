@@ -68,6 +68,7 @@
 | `kayn` · [凯隐](../units/kayn.md) | 共享成长只影响后续部署；穿地形出口与Q分段 | [动作](../units/animations/kayn.md) · [声音](../units/audio/kayn.md) |
 | `kayn_assassin` · [影流刺客](../units/kayn_assassin.md) | 远程命中成长；入地形120回复/加速、Q1费 | [动作](../units/animations/kayn.md) · [声音](../units/audio/kayn.md) |
 | `kayn_slayer` · [拉亚斯特](../units/kayn_slayer.md) | 近战命中成长；生命比例附伤/回血、Q2费 | [动作](../units/animations/kayn.md) · [声音](../units/audio/kayn.md) |
+| `medium_lightning` · [中型雷电法术](../units/medium_lightning.md) | 4费240伤害、塔失效2秒；强化180护盾与30%减速 | [动画](../units/animations/medium_lightning.md) · [声音](../units/audio/medium_lightning.md) · [特效](../units/effects/medium_lightning.md) |
 | `lightning` · [大型电击法术](../units/lightning.md) | 最高当前生命逐段重选、3次不重复、递增强化 | [动作](../units/animations/lightning.md) · [声音](../units/audio/lightning.md) |
 | `lulu` · [璐璐](../units/lulu.md) | 受控召唤待发；已发紫光独立、永久成长 | [动作](../units/animations/lulu.md) · [声音](../units/audio/lulu.md) |
 | `masteryi` · [剑圣](../units/masteryi.md) | 第三招追加刀；高原血统与减速抑制 | [动作](../units/animations/masteryi.md) · [声音](../units/audio/masteryi.md) |
@@ -146,3 +147,5 @@
 | `jax` · [武器大师](../units/jax.md) | 范围普攻、8层攻速、反击风暴普攻免疫与到期眩晕 | [动画](../units/animations/jax.md) · [音频](../units/audio/jax.md) · [特效](../units/effects/jax.md) |
 
 | `malphite` · [熔岩巨兽](../units/malphite.md) | 部署护盾与减伤、圆形双减速 | [动画](../units/animations/malphite.md) · [音频](../units/audio/malphite.md) · [特效](../units/effects/malphite.md) |
+
+| `event_horizon` · [扭曲空间](../units/event_horizon.md) | 2费，半径2.5格，边界眩晕1.5秒；强化落点伤害220 | [动画](../units/animations/event_horizon.md) · [声音](../units/audio/event_horizon.md) · [特效](../units/effects/event_horizon.md) |

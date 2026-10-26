@@ -97,8 +97,8 @@ const SIZE_RADII := {
 }
 const PROJECTILE_VISUALS := [&"jayce_bullet", &"samira_bullet", &"malzahar_missile", &"voidfish_missile", &"tristana_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
-const SPELL_KINDS := [&"tidal_wave", &"void_summoning", &"explosive_cask", &"corrosion", &"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
-const ACTIVE_SKILL_KINDS := [&"detonate", &"spell_tidal_wave", &"attack_burst", &"rewind_nova", &"movement_strike", &"counter_strike", &"spell_void_summoning", &"self_sacrifice", &"blink_nova", &"channeled_attack", &"death_spawn", &"sacrifice_empower", &"spell_explosive_cask", &"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
+const SPELL_KINDS := [&"medium_lightning", &"event_horizon", &"tidal_wave", &"void_summoning", &"explosive_cask", &"corrosion", &"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
+const ACTIVE_SKILL_KINDS := [&"spell_medium_lightning", &"spell_event_horizon", &"detonate", &"spell_tidal_wave", &"attack_burst", &"rewind_nova", &"movement_strike", &"counter_strike", &"spell_void_summoning", &"self_sacrifice", &"blink_nova", &"channeled_attack", &"death_spawn", &"sacrifice_empower", &"spell_explosive_cask", &"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -189,7 +189,7 @@ const ACTIVE_SKILL_FIELDS := [&"form_icon_paths", &"form_kinds", &"persistent_ar
 	&"unlimited_uses", &"cost_by_use", &"damage_by_use", &"projectile_impact_visuals_by_use", &"projectile_visuals_by_use", &"visual_actions_by_use", &"projectile_explosion_radius", &"projectile_impact_visual",
 	&"damage_reduction",
 	&"projectile_speed_multiplier", &"range_bonus", &"piercing_attacks", &"piercing_distance",
-	&"strike_count", &"strike_damage_multiplier",
+	&"dark_matter_delay", &"tower_damage_multiplier", &"strike_count", &"strike_damage_multiplier",
 	&"air_only", &"dash_spin", &"dash_duration", &"dash_reference_speed", &"spin_delay", &"fixed_speed", &"charge_prepare_time", &"charge_recovery_time", &"charge_miss_recovery_time", &"trail_damage", &"hit_heal", &"on_hit_max_health_ratio", &"on_hit_tower_damage",
 	&"execute_damage_per_stack",
 	&"heal_amount",
@@ -230,3 +230,6 @@ const SKILL_VISUAL_FIELDS := ["form_icon_paths", "visual_scale_multiplier", "imp
 # audio.events["deploy:voice"].clip_volume_db：可选的资源路径 → 固定播放分贝补偿，未列出的池成员为 0 dB；由 CardValidator 校验。
 
 # audio.events["deploy:voice"].scope：unit（默认）或 deployment_group；同一批次仅首个成功播放的成员发声，新局清空。
+
+# audio.events["*:zone_sustain"] 支持 fade_out 秒数及 fade_out_curve（linear / exp1）；
+# 到期只开始尾音淡出，不延长权威状态；清场始终立即停止。由 CardValidator 校验。

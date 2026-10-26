@@ -64,10 +64,10 @@ func strongest(family: StringName, field: StringName, baseline: float, minimum: 
 			result = minf(result, value) if minimum else maxf(result, value)
 	return result
 
-func any_flag(family: StringName, field: StringName) -> bool:
+func any_flag(family: StringName, field: StringName, default_value: bool = false) -> bool:
 	if suppressed: return false
 	for effect in _instances:
-		if effect.family == family and bool(effect.potency.get(field, false)):
+		if effect.family == family and bool(effect.potency.get(field, default_value)):
 			return true
 	return false
 

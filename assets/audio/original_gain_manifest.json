@@ -67394,6 +67394,433 @@
         "original_ogg": false,
         "notes": "vgmstream-cli -i; source event gain retained"
       }
+    },
+    {
+      "file": "assets/audio/units/event_horizon/play_sfx_veigar_veigareventhorizon_oncast_r1.wav",
+      "sha256": "06eb64f22975c35103c08afeecc5ebc53aaa2795750a416ecdbcd2be3445df81",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarEventHorizon_OnCast {r1}.txtp",
+          "txtp_sha256": "366bc34bba378e15a0985e5fe4d01022324c19da714f2d6f59e794d467bf23a8",
+          "event_ids": [
+            "1786091997"
+          ],
+          "media_ids": [
+            421912231,
+            482149243,
+            741506068
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/event_wav/Play_sfx_Veigar_VeigarEventHorizon_OnCast {r1}.wav",
+          "sha256": "06eb64f22975c35103c08afeecc5ebc53aaa2795750a416ecdbcd2be3445df81"
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "method": "wwiser -gv=0dB; fresh vgmstream event decode; no normalization"
+      },
+      "duration": 2.234
+    },
+    {
+      "file": "assets/audio/units/event_horizon/play_sfx_veigar_veigareventhorizon_oncast_r2.wav",
+      "sha256": "94108cbef8e82c5e023b3f68a11812ed536d9a49cc5110530259c53a486ebbb1",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarEventHorizon_OnCast {r2}.txtp",
+          "txtp_sha256": "ce18b46b02a6dd949990d591bfbd9b3d66b4aa900ae3c8d664efd1c375a7a20d",
+          "event_ids": [
+            "1786091997"
+          ],
+          "media_ids": [
+            421912231,
+            482149243,
+            741506068
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/event_wav/Play_sfx_Veigar_VeigarEventHorizon_OnCast {r2}.wav",
+          "sha256": "94108cbef8e82c5e023b3f68a11812ed536d9a49cc5110530259c53a486ebbb1"
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "method": "wwiser -gv=0dB; fresh vgmstream event decode; no normalization"
+      },
+      "duration": 2.0559
+    },
+    {
+      "file": "assets/audio/units/event_horizon/play_sfx_veigar_veigareventhorizon_oncast_r3.wav",
+      "sha256": "ec5bae7fbeeee585b621ce65faf4cd7ed11ceb337243393b16022b07b70f4eaf",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarEventHorizon_OnCast {r3}.txtp",
+          "txtp_sha256": "d667dafaf40c87bd423dde9f506f485fe7c02e1b9415ae7f6b8bdc9f05a2a59d",
+          "event_ids": [
+            "1786091997"
+          ],
+          "media_ids": [
+            421912231,
+            482149243,
+            741506068
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/event_wav/Play_sfx_Veigar_VeigarEventHorizon_OnCast {r3}.wav",
+          "sha256": "ec5bae7fbeeee585b621ce65faf4cd7ed11ceb337243393b16022b07b70f4eaf"
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "method": "wwiser -gv=0dB; fresh vgmstream event decode; no normalization"
+      },
+      "duration": 2.4425
+    },
+    {
+      "file": "assets/audio/units/event_horizon/play_sfx_veigar_veigareventhorizon_buffactivate.wav",
+      "sha256": "94b2a8036e26f5b11b124053da4ed02eea50ed2db1a49883f6cc9559c7ece239",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarEventHorizon_buffactivate.txtp",
+          "txtp_sha256": "b890d1ca10533cf8ad94c506feff4e29be964f2e455d1797d7c48e5abb870497",
+          "event_ids": [
+            "216769159"
+          ],
+          "media_ids": [
+            504841607
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/event_wav/Play_sfx_Veigar_VeigarEventHorizon_buffactivate.wav",
+          "sha256": "94b2a8036e26f5b11b124053da4ed02eea50ed2db1a49883f6cc9559c7ece239"
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "method": "wwiser -gv=0dB; fresh vgmstream event decode; no normalization"
+      },
+      "duration": 3.7877
+    },
+    {
+      "file": "assets/audio/units/event_horizon/play_sfx_veigar_veigardarkmatter_oncast.wav",
+      "sha256": "e5246cf8cf849d3faeb301aa772b59a4340cec37a02fee2c6cf5d61156f2d642",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarDarkMatter_OnCast.txtp",
+          "txtp_sha256": "bd264d3cadef01a68c32dfd86b4c104e5198a4c14b0114df04d8749c77715043",
+          "event_ids": [
+            "3109578343"
+          ],
+          "media_ids": [
+            912236945
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/event_wav/Play_sfx_Veigar_VeigarDarkMatter_OnCast.wav",
+          "sha256": "e5246cf8cf849d3faeb301aa772b59a4340cec37a02fee2c6cf5d61156f2d642"
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "method": "wwiser -gv=0dB; fresh vgmstream event decode; no normalization"
+      },
+      "duration": 1.6819
+    },
+    {
+      "file": "assets/audio/units/event_horizon/play_sfx_veigar_veigardarkmatter_hit.wav",
+      "sha256": "8af1f5b8e5db7e2b16329e6d4464e5f91f730fa072217309fc840059a5557ca2",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarDarkMatter_hit.txtp",
+          "txtp_sha256": "d5e53ed56306e6414679e915fe3e41bca8cb0ec19e7c4dcc1d558044a2ed9e77",
+          "event_ids": [
+            "2982068956"
+          ],
+          "media_ids": [
+            594660187
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/event_wav/Play_sfx_Veigar_VeigarDarkMatter_hit.wav",
+          "sha256": "8af1f5b8e5db7e2b16329e6d4464e5f91f730fa072217309fc840059a5557ca2"
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "method": "wwiser -gv=0dB; fresh vgmstream event decode; no normalization"
+      },
+      "duration": 2.2474
+    },
+    {
+      "file": "assets/audio/units/event_horizon/play_sfx_veigar_veigareventhorizon_loop_r1.wav",
+      "sha256": "66a463fbd241651a6d56748fa60165e717e2543a6e8b7e314ca7055430fad81b",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarEventHorizon_loop {r1}.txtp",
+          "txtp_sha256": "52e25fba60b66319c9e321744706c4117a933af91531af189bf4f45270cb44f2",
+          "event_ids": [
+            "2497035409"
+          ],
+          "media_ids": [
+            553416574,
+            793797834
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "method": "wwiser -gv=0dB; fresh vgmstream event decode; no normalization"
+      },
+      "duration": 4.740272108843538
+    },
+    {
+      "file": "assets/audio/units/event_horizon/play_sfx_veigar_veigareventhorizon_loop_r2.wav",
+      "sha256": "e9ddca15fc45d11af4a648fbc2102194b97402432f561a597385ceef40f674fa",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarEventHorizon_loop {r2}.txtp",
+          "txtp_sha256": "61cb3f614fb7823f9ca2c8e776be704972019020b29cdb6fc47ef2b4bc631600",
+          "event_ids": [
+            "2497035409"
+          ],
+          "media_ids": [
+            553416574,
+            793797834
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "method": "wwiser -gv=0dB; fresh vgmstream event decode; no normalization"
+      },
+      "duration": 4.729750566893424
+    },
+    {
+      "file": "assets/audio/spells/medium_lightning/strike.wav",
+      "sha256": "f75f89e71c01192100f43c5935dbcbb08f013d34b5000a047dbbb36d790aa839",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio/volibear/txtp/Play_sfx_Volibear_VolibearE_explo.txtp",
+          "txtp_sha256": "47753ea06374cea78fa1bae17cb7cbb3bbb2b5d1fd7533f68c67d4c65a12a31a",
+          "event_ids": [
+            "1540933469"
+          ],
+          "media_ids": [
+            "614206710"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio-final/strike.wav",
+          "sha256": "f75f89e71c01192100f43c5935dbcbb08f013d34b5000a047dbbb36d790aa839"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 1.9921995464852609
+    },
+    {
+      "file": "assets/audio/spells/medium_lightning/tower_disable.wav",
+      "sha256": "b027a645aafec78918cb796da8319d2ab6950b4eb4f18a03a3e118a79e961ef4",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio/volibear/txtp/Play_sfx_Volibear_VolibearRTowerDisable_hit.txtp",
+          "txtp_sha256": "ce4430f13502fd237ef60023b3dfb5a7b95a113907cfde24a43ddca9ea9a0541",
+          "event_ids": [
+            "762226294"
+          ],
+          "media_ids": [
+            "332180640",
+            "335575231"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio-final/tower_disable.wav",
+          "sha256": "b027a645aafec78918cb796da8319d2ab6950b4eb4f18a03a3e118a79e961ef4"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": -12.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 2.3658956916099774
+    },
+    {
+      "file": "assets/audio/spells/medium_lightning/cast.wav",
+      "sha256": "2b047552580996aa21bc95aa40898f55642fd8cd1634191053ba4932c93510ae",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio/volibear/txtp/Play_sfx_Volibear_VolibearE_OnCast.txtp",
+          "txtp_sha256": "2bf3f381ab0f9ebce68c90836dbbe031450016da75f9d1e775ed60e8d2812799",
+          "event_ids": [
+            "1116061191"
+          ],
+          "media_ids": [
+            "397417325"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio-revision/cast.wav",
+          "sha256": "2b047552580996aa21bc95aa40898f55642fd8cd1634191053ba4932c93510ae"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 1.6884807256235828
+    },
+    {
+      "file": "assets/audio/spells/medium_lightning/warning.wav",
+      "sha256": "0f480081eac2470d88181015536522f1484210863b41f0772d94c8e7047e6053",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio/volibear/txtp/Play_sfx_Volibear_VolibearE_buffactivate {r}.txtp",
+          "txtp_sha256": "d538674e4b6efb57a4059662fa04c0e82ea16494118da0223b0c70bf5a83dbc9",
+          "event_ids": [
+            "623437029"
+          ],
+          "media_ids": [
+            "864806883",
+            "161351697",
+            "621849706"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio-revision/warning.wav",
+          "sha256": "0f480081eac2470d88181015536522f1484210863b41f0772d94c8e7047e6053"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 3.987687074829932
+    },
+    {
+      "file": "assets/audio/spells/medium_lightning/warning_enemy.wav",
+      "sha256": "7a0505d77304220a82c9c76bb298595653cb6bb9cfe7cd55630d80a8b7b64449",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio/volibear/txtp/Play_sfx_Volibear_VolibearE_enemy_buffactivate {r}.txtp",
+          "txtp_sha256": "967d36fd2d5d6381a211c0fe953d431895c76e278c60553bb08cec6b97acc801",
+          "event_ids": [
+            "1238057398"
+          ],
+          "media_ids": [
+            "374485034",
+            "388947283",
+            "621849706"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio-revision/warning_enemy.wav",
+          "sha256": "7a0505d77304220a82c9c76bb298595653cb6bb9cfe7cd55630d80a8b7b64449"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 2.987687074829932
+    },
+    {
+      "file": "assets/audio/spells/medium_lightning/hit.wav",
+      "sha256": "efcce7e38fc1a09c46c599ea0c9b67c637d3884633d28698267b0f11c2500a87",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio/volibear/txtp/Play_sfx_Volibear_VolibearE_hit.txtp",
+          "txtp_sha256": "ff528f7ecab6948461e4316dd96d627a636c638ff8b2aae978ba53c8c8ed1392",
+          "event_ids": [
+            "234918652"
+          ],
+          "media_ids": [
+            "601998191"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio-revision/hit.wav",
+          "sha256": "efcce7e38fc1a09c46c599ea0c9b67c637d3884633d28698267b0f11c2500a87"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 1.931111111111111
+    },
+    {
+      "file": "assets/audio/spells/medium_lightning/tower_sustain.wav",
+      "sha256": "11dbb05a29bc774d9f4f3e47a8b9ceae08c340c526a84f33aab8d5af6fa6c4e2",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio/volibear/txtp/Play_sfx_Volibear_VolibearRTowerDisable_buffactive.txtp",
+          "txtp_sha256": "db71b1af26eea3c3215a4adadaa0826fecb5a42683fccde050706f617c5c4857",
+          "event_ids": [
+            "555033778"
+          ],
+          "media_ids": [
+            "394081712"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio-revision/tower_sustain.wav",
+          "sha256": "11dbb05a29bc774d9f4f3e47a8b9ceae08c340c526a84f33aab8d5af6fa6c4e2"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": -12.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 7.295986394557823
     }
   ]
 }

@@ -26,7 +26,7 @@ CardDB 提供卡牌查询、可选卡列表、单位数据和技能候选；新�
 | --- | --- |
 | 单位 | 通用 Unit；目标、攻击、速度、半径与状态由数据决定 |
 | 建筑卡 | 不自主移动；占地格用于部署，身体半径用于碰撞；可有寿命和召唤 |
-| 法术 | 必须有已实现的法术类型；冰冻、治疗、凝滞、电击、大型电击、腐蚀、爆破酒桶、浪潮与虚空召唤由SpellSystem执行；镜像先由出牌入口解析为被复制卡 |
+| 法术 | 必须有已实现的法术类型；冰冻、治疗、凝滞、电击、中型雷电、大型电击、腐蚀、爆破酒桶、浪潮、扭曲空间与虚空召唤由SpellSystem执行；镜像先由出牌入口解析为被复制卡 |
 
 `radius` 是唯一权威身体半径，模型缩放与 `visual_radius` 只影响画面。标准体型按档位校验；明确使用非标准半径时声明 `custom_radius`，仍要求合法正数。
 
@@ -378,3 +378,7 @@ nova可配置`attack_slow_multiplier`，要求正数slow_duration及[0.1,1)倍�
 限时建筑可声明正数death_burst_radius、death_burst_damage、death_burst_reward。Unit仅在权威真死亡中触发一次，由ActiveSkillEffectSystem建立独立伤害批次；上一批死亡列表先分离并清空，避免连锁爆炸污染旧批次。detonate为瞬时自毁主动，execute_health_ratio在伤害提交后检查单位生命比例，效果阶段斩杀，收益阶段按真实死亡至多发一次奖励。沿用可靠固定区域、Hit、死亡和金币表现，无新快照字段；规则见[火药桶](units/powder_keg.md)。
 
 双形态主动可配置 `form_kinds: ["attack_burst", "continuous_area"]`，在 prepare_cast 中复制技能并按释放时形态固化 kind，不改共享定义。`persistent_area` 仅用于持续领域，允许瞬时开启，并让已建立的领域独立于施法/换形/冻结取消序号，仍在来源死亡后结束。领域时钟复用已有 buff visual clock；连射次数与其独立。两分支均经现有技能校验。
+
+## 空间边界
+
+`event_horizon`按`spell_windup`等待成形，`duration`限定有效窗口，`radius`为圆周半径，`stun_duration`控制单次眩晕。每次施法独立去重；身体圆与相邻权威Tick线段扫掠接触边界，纯圈内不触发。`spell_event_horizon`强化在首个成功眩晕位置建立独立结果，`dark_matter_delay`后按`radius`、`damage`与`tower_damage_multiplier`结算；同Tick按出生身份稳定排序。详情见[扭曲空间](units/event_horizon.md)。

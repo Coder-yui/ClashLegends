@@ -18,10 +18,14 @@ var heal_effects: Array[Dictionary] = []
 var cask_hits: Array[Dictionary] = []
 var cask_effects: Array[Dictionary] = []
 var spell_flights: Array[Dictionary] = []
+var horizon_zones: Array[Dictionary] = []
+var dark_matters: Array[Dictionary] = []
+var horizon_effects: Array[Dictionary] = []
 var tidal_waves: Array[Dictionary] = []
 var tidal_effects: Array[Dictionary] = []
 var stasis_effects: Array[Dictionary] = []
 
+var medium_lightning_casts: Array[Dictionary] = []
 var lightning_casts: Array[Dictionary] = []
 var lightning_effects: Array[Dictionary] = []
 var lightning_areas: Array[Dictionary] = []
@@ -46,6 +50,12 @@ func cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool 
 
 func _resolve_cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool, active_skill_index: int) -> bool:
 	match StringName(stats.get("spell_kind", "")):
+		&"event_horizon":
+			_start_event_horizon(team, stats, position, active_enabled, active_skill_index)
+			return true
+		&"medium_lightning":
+			_start_medium_lightning(team, stats, position, active_enabled, active_skill_index)
+			return true
 		&"tidal_wave":
 			_start_tidal_wave(team, stats, position, active_enabled, active_skill_index)
 			return true
@@ -167,8 +177,10 @@ func tick(dt: float) -> void:
 	_tick_summoning()
 	_tick_corrosion()
 	_tick_flights()
+	_tick_event_horizon()
 	_tick_tidal_waves()
 	_tick_lightning()
+	_tick_medium_lightning()
 	var alive: Array[Dictionary] = []
 	for zone in slow_zones:
 		if _controller.simulation_step_active() and int(zone.get("created_tick", -1)) == _controller.get_authoritative_server_tick():
@@ -202,6 +214,9 @@ func _apply_slow_zone(zone: Dictionary, dt: float) -> void:
 
 
 func tick_visuals(delta: float) -> void:
+	var visual_tick: float = float(_controller.get_presentation_tick()) + (0.0 if _controller.is_net_client() else _controller.get_sim_interpolation_alpha())
+	for effect in horizon_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
+	horizon_effects.assign(horizon_effects.filter(func(effect): return visual_tick < float(effect.end_tick) + (100.0 if effect.kind == "dark_matter" else 40.0)))
 	for effect in tidal_effects:
 		var tick: float = float(_controller.get_presentation_tick()) + (0.0 if _controller.is_net_client() else _controller.get_sim_interpolation_alpha())
 		effect.progress = clampf((tick - float(effect.start_tick)) / float(effect.end_tick - effect.start_tick), 0.0, 1.0)
@@ -253,12 +268,16 @@ func clear() -> void:
 	corrosion_zones.clear()
 	corrosion_effects.clear()
 	spell_flights.clear()
+	horizon_zones.clear()
+	dark_matters.clear()
+	horizon_effects.clear()
 	tidal_waves.clear()
 	tidal_effects.clear()
 	stasis_effects.clear()
 	cask_effects.clear()
 	cask_hits.clear()
 	lightning_casts.clear()
+	medium_lightning_casts.clear()
 	lightning_effects.clear()
 	lightning_areas.clear()
 	freeze_effects.clear()
@@ -335,10 +354,63 @@ func _strike_lightning_delivery(cast_data: Dictionary) -> void:
 	_controller.present_lightning_spell(kind, strike_pos, float(stats.radius), team)
 
 
+## E: 2秒蓄雷；敌方仅最后1秒看到专用预警。结算只由整数Tick驱动。
+func _start_medium_lightning(team: int, stats: Dictionary, position: Vector2, enhanced: bool, skill_index: int) -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	var impact := tick + roundi(float(stats.spell_windup) / FixedStepClock.STEP)
+	medium_lightning_casts.append({"team": team, "stats": stats, "pos": position, "enhanced": enhanced, "skill_index": skill_index, "impact_tick": impact, "warned": false})
+	_controller.present_lightning_spell("medium_lightning_warning", position, float(stats.radius), team)
+
+func _tick_medium_lightning(at_tick: int = -1) -> void:
+	var tick: int = _controller.get_authoritative_server_tick() if at_tick < 0 else at_tick
+	var waiting: Array[Dictionary] = []
+	for cast_data in medium_lightning_casts:
+		if not cast_data.warned and tick >= int(cast_data.impact_tick) - 20:
+			cast_data.warned = true
+			_controller.present_lightning_spell("medium_lightning_warning_enemy", cast_data.pos, float(cast_data.stats.radius), int(cast_data.team))
+		if tick >= int(cast_data.impact_tick):
+			_apply_medium_lightning(int(cast_data.team), cast_data.stats, cast_data.pos, bool(cast_data.enhanced), int(cast_data.skill_index))
+		else: waiting.append(cast_data)
+	medium_lightning_casts.assign(waiting)
+
+## 单次落雷：伤害统一收集，命中后只对存活防御塔施加失效。
+func _apply_medium_lightning(team: int, stats: Dictionary, position: Vector2, enhanced: bool, skill_index: int) -> void:
+	_effect_serial += 1
+	var source := StringName("medium_lightning:%d:%d" % [team, _effect_serial])
+	var interaction := _spell_context(team)
+	interaction["delivery"] = CombatInteraction.Delivery.new()
+	var skill := _active_heal_skill(stats, skill_index) if enhanced else {}
+	_controller.present_lightning_spell("medium_lightning", position, float(stats.radius), team)
+	for target in _controller.get_tree().get_nodes_in_group("combatants"):
+		if not is_instance_valid(target) or target.is_queued_for_deletion() or target.hp <= 0: continue
+		if target.global_position.distance_to(position) > float(stats.radius) + target.body_radius: continue
+		if target.team == team:
+			if enhanced and target is Unit and not target.is_building:
+				target.add_shield(float(skill.get("shield", 0)), float(skill.get("shield_duration", 0)), false, source, interaction)
+			continue
+		if not CombatInteraction.allows_effect(target, interaction): continue
+		var amount := float(stats.damage) * (float(stats.tower_damage_multiplier) if target is Tower else 1.0)
+		var result := BattleNumbers.hit(target, amount, interaction.get("source"), team, interaction.get("position", Vector2(INF, INF)))
+		var apply_status := func():
+			if not bool(result.landed) or not is_instance_valid(target): return
+			_controller.present_lightning_spell("medium_lightning_hit", target.global_position, target.body_radius, team)
+			if target.hp <= 0: return
+			if target is Tower and not target.is_king:
+				target.stun(float(stats.stun_duration), source, interaction, false)
+				_controller.present_lightning_spell("medium_lightning_disabled", target.global_position, target.body_radius, team)
+			elif enhanced and target is Unit and not target.is_building:
+				target.apply_slow(float(skill.get("slow_duration", 0)), float(skill.get("slow_multiplier", 1)), source, interaction)
+		if _controller.combat_service().collecting: _controller.combat_service().defer_effect(apply_status)
+		else: apply_status.call()
+
 func show_lightning(kind: String, position: Vector2, radius: float) -> void:
 	if not _controller.has_presentation(): return
+	if kind == "medium_lightning_disabled":
+		lightning_effects.assign(lightning_effects.filter(func(effect): return String(effect.kind) != kind or effect.pos.distance_to(position) > 1.0))
 	# 风暴狂涌地面焦痕约2秒，电刑烟影约1秒；仅影响表现数组寿命。
-	var duration := 2.1 if kind == "zap" else 1.1
+	var duration := 2.3 if kind == "medium_lightning_disabled" else (2.1 if kind in ["zap", "medium_lightning"] else 1.1)
+	if kind == "medium_lightning_warning": duration = 4.0
+	if kind == "medium_lightning_warning_enemy": duration = 1.5
 	lightning_effects.append({"kind": kind, "pos": position, "radius": radius, "duration": duration, "timer": duration})
 
 
@@ -382,8 +454,11 @@ func _apply_stasis(team: int, stats: Dictionary, position: Vector2, enhanced: bo
 		if target.global_position.distance_to(position) > float(stats.radius) + target.body_radius: continue
 		target.apply_stasis(float(skill.get("duration", stats.duration)) if target.team == team else float(stats.duration), source, interaction)
 
-func show_flight(id: int, kind: String, origin: Vector2, position: Vector2, radius: float, start_tick: int, impact_tick: int) -> void:
+func show_flight(id: int, kind: String, origin: Vector2, position: Vector2, radius: float, start_tick: int, impact_tick: int, team: int = 0) -> void:
 	if not _controller.has_presentation(): return
+	if kind in ["event_horizon", "dark_matter"]:
+		horizon_effects.append({"id": id, "kind": kind, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
+		return
 	if kind == "tidal_wave":
 		tidal_effects.append({"id": id, "origin": origin, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "progress": 0.0, "tail": 0.0})
 		return
@@ -634,3 +709,79 @@ func _contact_tidal_wave(wave: Dictionary, from_distance: float, to_distance: fl
 				resolver.submit_knockback(target, push_origin, float(wave.stats.knockback), 0.2, 1.4, order, result, interaction)
 			elif bool(result.landed) and is_instance_valid(target) and target.hp > 0:
 				target.apply_knockback(push_origin, float(wave.stats.knockback), 0.2, 1.4, order, interaction)
+
+
+## 空间边界按身体圆与运动线段扫掠；每次施法独立去重，纯圈内不触发。
+func _start_event_horizon(team: int, stats: Dictionary, pos: Vector2, enhanced: bool, skill_index: int) -> void:
+	_effect_serial += 1
+	var tick: int = _controller.get_authoritative_server_tick()
+	var start := tick + ceili(float(stats.spell_windup) / FixedStepClock.STEP)
+	var finish := start + ceili(float(stats.duration) / FixedStepClock.STEP)
+	horizon_zones.append({"id": _effect_serial, "team": team, "pos": pos, "stats": stats,
+		"skill": _active_heal_skill(stats, skill_index) if enhanced else {}, "triggered": false,
+		"start_tick": start, "end_tick": finish, "last_tick": start - 1,
+		"contacts": {}, "previous": {}, "delivery": CombatInteraction.Delivery.new(),
+		"source": StringName("horizon:%d:%d" % [team, _effect_serial])})
+	_controller.present_spell_flight(_effect_serial, "event_horizon", pos, pos, float(stats.radius), tick, finish, team)
+
+static func touches_boundary(from: Vector2, to: Vector2, center: Vector2, radius: float, body: float) -> bool:
+	var nearest := Geometry2D.get_closest_point_to_segment(center, from, to)
+	var minimum := nearest.distance_to(center)
+	var maximum := maxf(from.distance_to(center), to.distance_to(center))
+	return minimum <= radius + body and maximum >= maxf(0.0, radius - body)
+
+func _tick_event_horizon() -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	for zone in horizon_zones:
+		if tick < int(zone.start_tick) or tick >= int(zone.end_tick) or tick <= int(zone.last_tick): continue
+		if int(zone.last_tick) < int(zone.start_tick):
+			_controller.present_horizon_zone_audio(zone.pos, float(int(zone.end_tick) - tick) * FixedStepClock.STEP, int(zone.team))
+		zone.last_tick = tick
+		var targets: Array = _controller.get_tree().get_nodes_in_group("combatants")
+		targets.sort_custom(func(a, b): return a.combat_source_id < b.combat_source_id)
+		for target in targets:
+			if not is_instance_valid(target) or target.is_queued_for_deletion() or not target is Unit: continue
+			if target.hp <= 0 or target.team == int(zone.team) or target.is_building: continue
+			var id: int = target.get_instance_id()
+			var pos: Vector2 = target.global_position
+			var previous: Vector2 = zone.previous.get(id, pos)
+			zone.previous[id] = pos
+			if zone.contacts.has(id) or not touches_boundary(previous, pos, zone.pos, float(zone.stats.radius), float(target.body_radius)): continue
+			var interaction := _spell_context(int(zone.team))
+			interaction["delivery"] = zone.delivery
+			if not CombatInteraction.allows_effect(target, interaction) or target.structure_rush.control_immune(): continue
+			zone.contacts[id] = true
+			if CombatInteraction.blocks_effect(target, interaction): continue
+			# 同一批次完成伤害与死亡后再施加；只有仍存活且准入的目标触发黑暗物质。
+			var apply := func():
+				if not is_instance_valid(target) or target.hp <= 0: return
+				if not CombatInteraction.allows_effect(target, interaction) or target.structure_rush.control_immune(): return
+				target.stun(float(zone.stats.stun_duration), zone.source, interaction)
+				_controller.runtime.card_event("event_horizon", "spell:hit", pos, int(zone.team))
+				if not zone.triggered and not zone.skill.is_empty():
+					zone.triggered = true
+					_start_dark_matter(zone, pos, tick)
+			if _controller.combat_service().collecting: _controller.combat_service().defer_effect(apply)
+			else: apply.call()
+	horizon_zones.assign(horizon_zones.filter(func(zone): return tick < int(zone.end_tick)))
+	for matter in dark_matters:
+		if tick < int(matter.impact_tick): continue
+		var interaction := _spell_context(int(matter.team))
+		var previous := CombatInteraction.current_delivery
+		CombatInteraction.current_delivery = matter.delivery
+		for target in _controller.get_tree().get_nodes_in_group("combatants"):
+			if not is_instance_valid(target) or target.is_queued_for_deletion() or target.hp <= 0 or target.team == int(matter.team): continue
+			if not CombatInteraction.allows_effect(target, interaction): continue
+			if target.global_position.distance_to(matter.pos) > float(matter.skill.radius) + target.body_radius: continue
+			var amount := float(matter.skill.damage) * (float(matter.skill.tower_damage_multiplier) if target is Tower else 1.0)
+			BattleNumbers.hit(target, amount, interaction.get("source"), int(matter.team), interaction.get("position", Vector2.INF))
+		CombatInteraction.current_delivery = previous
+		_controller.runtime.card_event("event_horizon", "spell:impact", matter.pos, int(matter.team))
+	dark_matters.assign(dark_matters.filter(func(matter): return tick < int(matter.impact_tick)))
+
+func _start_dark_matter(zone: Dictionary, pos: Vector2, tick: int) -> void:
+	_effect_serial += 1
+	var impact := tick + ceili(float(zone.skill.dark_matter_delay) / FixedStepClock.STEP)
+	dark_matters.append({"pos": pos, "team": zone.team, "skill": zone.skill, "impact_tick": impact, "delivery": CombatInteraction.Delivery.new()})
+	_controller.present_spell_flight(_effect_serial, "dark_matter", pos, pos, float(zone.skill.radius), tick, impact, int(zone.team))
+	_controller.runtime.card_event("event_horizon", "spell:meteor", pos, int(zone.team))

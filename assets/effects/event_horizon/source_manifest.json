@@ -1,0 +1,644 @@
+{
+  "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Veigar.wad.client",
+  "source_directory": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录",
+  "sampling": "120Hz, 5s; recursively resolved skin effectKey child systems; real-time age; native XYZ; E120/390 W65/225",
+  "files": [
+    {
+      "path": "assets/effects/event_horizon/add.gdshader",
+      "sha256": "59f217f1e50bf784be776823bc23534498e7d658d40568b4e5b91c2364b4c15e"
+    },
+    {
+      "path": "assets/effects/event_horizon/add_no_depth.gdshader",
+      "sha256": "3c5951cb611b10ea5505c2364d4ac02e494e2ff49db73cda6033f9e7a8a2b4fa"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/common_color-smoke32_07.png",
+      "sha256": "1fdca6f16ca1a4fac6abacf59b5c5af3dd7c8ad0d7507d0610b69da8e7611e34"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/ivern_base_e_rockshards.png",
+      "sha256": "b98fd333482c833a77fdb26bf7db8124a9232e279d1833fcc6a952a9b50168a3"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/lux_skin07_ba_flash.png",
+      "sha256": "d051bafcf16206ae6859899a33830165e552c242932ee15efee4741c2cfb942e"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/lux_skin07_w_distort_rgba_2.png",
+      "sha256": "ef6c8a8ddface79656006efb753bef81452e181515913eb720829e72c523906d"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/reksai_base_e_ground_hole.png",
+      "sha256": "a072740eeba822b06f20b72a6e33c84064212240fe5897f40ed66488fac69658"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_ba_enhanced_pulsewave.png",
+      "sha256": "5a25f2fbf1b3802fc0a08429ea1265fa3535f4d8ea5bbecac9f1aa395c6bf6e9"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_ba_flash_bw.png",
+      "sha256": "375f879120f0d48917c35e04d0815594eb21c05b041d044cc4c0ddbbe5b78323"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_cylinder.mesh.json",
+      "sha256": "9ae85c6a450bf0299cd7ccf7a2ae4fae1179a504245536574349e464bb0bd1ba"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_e_groundlight_2.png",
+      "sha256": "e6ece27d5a1b8a130bd22c11888ab146c36c9b3db6f5220a722a5e8b14418683"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_e_pillar.png",
+      "sha256": "a941128b585c3ba2d4dce5bf235a273959600fe9b8e3b2ceb416875a6252dc65"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_e_pillar_lightbeam.png",
+      "sha256": "5880d3118e514e169732943308d60dee353389998ac8ef642df6054d3db4bae4"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_e_ring.mesh.json",
+      "sha256": "cbd999fa03f6734e1409d4350cce790d90fd2cd8fdffb2009cc777f86eacf41f"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_e_wallenergy.png",
+      "sha256": "ca8bb273b04b67d3551c466cfb6b454997f6913397d927089d2cb5e2b44669f1"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_e_wallenergy_mask.png",
+      "sha256": "eb61b4f65146ea64cf0e148949050def2cd96140a13263448e3043bd44bb991b"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_e_warning_trail.png",
+      "sha256": "7dddabc5032558c81249cdae8ec6241f45bafbd47bf849b55dfa9886583e2c01"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_mis_mult.png",
+      "sha256": "66a7c8006c04a47f2fc295efe0caf6e691eab0714691846aac1eef9f250dd112"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_r_arcs.png",
+      "sha256": "e75a78b9a8fa891cf1d9d300b6f11012ab8af225229ca9ba5d2a774d3c4a0b5d"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_trap_pillar.mesh.json",
+      "sha256": "814c1d314a7d52fc493f1807478bb0953a528c0c154b36a4083e67979a95f1e0"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_trap_pillarbeam.mesh.json",
+      "sha256": "1ed426b989ed5fad03e25863dc88e429327358f053f32e48a1c89fe57fec42ed"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_trap_pillarlights.mesh.json",
+      "sha256": "1b0b34c6ad41ef8da95109cf90fdfc92be934391d5a8697b902886d576c5dab3"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_w_circle_normal.png",
+      "sha256": "36954c0e793e62fdf1389587d53883686c9a67eae14e7d4f8de8acdbea69b9be"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_w_skyrays.png",
+      "sha256": "02cb85ade76cddd0c057c89572a44dd059444ee4fd454bbef988a7515bf7a3bf"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_w_white.png",
+      "sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_z_alphaslice_1.png",
+      "sha256": "05e99a63b506f55031546a85e94b2c2ce3519571b0662728a8256b31611d2ad2"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/assets/characters/veigar/skins/base/particles/veigar_base_z_small_mote.png",
+      "sha256": "cf5bf6cb2e45a0b8e5610686bb93adce50c28e6e4f11661fc71f1a0c2206f873"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage/sampled.json",
+      "sha256": "481da9b946322e9952b130b2883c4688e712caf015b05459d9137146ff9e4f6c"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/common_color-smoke32_07.png",
+      "sha256": "1fdca6f16ca1a4fac6abacf59b5c5af3dd7c8ad0d7507d0610b69da8e7611e34"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/ivern_base_e_rockshards.png",
+      "sha256": "b98fd333482c833a77fdb26bf7db8124a9232e279d1833fcc6a952a9b50168a3"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/lux_skin07_ba_flash.png",
+      "sha256": "d051bafcf16206ae6859899a33830165e552c242932ee15efee4741c2cfb942e"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/lux_skin07_w_distort_rgba_2.png",
+      "sha256": "ef6c8a8ddface79656006efb753bef81452e181515913eb720829e72c523906d"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/reksai_base_e_ground_hole.png",
+      "sha256": "a072740eeba822b06f20b72a6e33c84064212240fe5897f40ed66488fac69658"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_ba_enhanced_pulsewave.png",
+      "sha256": "5a25f2fbf1b3802fc0a08429ea1265fa3535f4d8ea5bbecac9f1aa395c6bf6e9"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_ba_flash_bw.png",
+      "sha256": "375f879120f0d48917c35e04d0815594eb21c05b041d044cc4c0ddbbe5b78323"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_cylinder.mesh.json",
+      "sha256": "9ae85c6a450bf0299cd7ccf7a2ae4fae1179a504245536574349e464bb0bd1ba"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_e_groundlight_2.png",
+      "sha256": "e6ece27d5a1b8a130bd22c11888ab146c36c9b3db6f5220a722a5e8b14418683"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_e_pillar.png",
+      "sha256": "a941128b585c3ba2d4dce5bf235a273959600fe9b8e3b2ceb416875a6252dc65"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_e_pillar_lightbeam.png",
+      "sha256": "5880d3118e514e169732943308d60dee353389998ac8ef642df6054d3db4bae4"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_e_ring.mesh.json",
+      "sha256": "cbd999fa03f6734e1409d4350cce790d90fd2cd8fdffb2009cc777f86eacf41f"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_e_wallenergy.png",
+      "sha256": "ca8bb273b04b67d3551c466cfb6b454997f6913397d927089d2cb5e2b44669f1"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_e_wallenergy_mask.png",
+      "sha256": "eb61b4f65146ea64cf0e148949050def2cd96140a13263448e3043bd44bb991b"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_e_warning_trail.png",
+      "sha256": "7dddabc5032558c81249cdae8ec6241f45bafbd47bf849b55dfa9886583e2c01"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_mis_mult.png",
+      "sha256": "66a7c8006c04a47f2fc295efe0caf6e691eab0714691846aac1eef9f250dd112"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_r_arcs.png",
+      "sha256": "e75a78b9a8fa891cf1d9d300b6f11012ab8af225229ca9ba5d2a774d3c4a0b5d"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_trap_pillar.mesh.json",
+      "sha256": "814c1d314a7d52fc493f1807478bb0953a528c0c154b36a4083e67979a95f1e0"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_trap_pillarbeam.mesh.json",
+      "sha256": "1ed426b989ed5fad03e25863dc88e429327358f053f32e48a1c89fe57fec42ed"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_trap_pillarlights.mesh.json",
+      "sha256": "1b0b34c6ad41ef8da95109cf90fdfc92be934391d5a8697b902886d576c5dab3"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_w_circle_normal.png",
+      "sha256": "36954c0e793e62fdf1389587d53883686c9a67eae14e7d4f8de8acdbea69b9be"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_w_skyrays.png",
+      "sha256": "02cb85ade76cddd0c057c89572a44dd059444ee4fd454bbef988a7515bf7a3bf"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_w_white.png",
+      "sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_z_alphaslice_1.png",
+      "sha256": "05e99a63b506f55031546a85e94b2c2ce3519571b0662728a8256b31611d2ad2"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/assets/characters/veigar/skins/base/particles/veigar_base_z_small_mote.png",
+      "sha256": "cf5bf6cb2e45a0b8e5610686bb93adce50c28e6e4f11661fc71f1a0c2206f873"
+    },
+    {
+      "path": "assets/effects/event_horizon/cage_red/sampled.json",
+      "sha256": "f2f5845e67ca729200dd198429a3f595cfeabdce594e91b64717bed384e364c7"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/alphaslice_mesh.png",
+      "sha256": "13466cad43afbdb1e2a70b9bf6b0a699c9a78d2e4c3881cb4f91155f5dcddc47"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/caitlyn_skin11_recall_glow.png",
+      "sha256": "c03f1aeccb95352596233269000d6b04480d941251d252e506a239c873f9bf22"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/color-rampdown.png",
+      "sha256": "9e89131a3255bff92c4488d6c42d9461d416efadf75ca9909b549ed05bdefb50"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/common_blasthole_03.png",
+      "sha256": "abdfa9cacb7db88d5b008719cf3c737b4c2f417ae0fd1323219730ef20453604"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/common_rainbowflash.png",
+      "sha256": "2f07faf8d5287e38ff910db7b85e34612ff9f3dd55137cb65fe4f4a7979fe658"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/ivern_base_e_rockshards.png",
+      "sha256": "b98fd333482c833a77fdb26bf7db8124a9232e279d1833fcc6a952a9b50168a3"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/lux_skin07_ba_flash.png",
+      "sha256": "d051bafcf16206ae6859899a33830165e552c242932ee15efee4741c2cfb942e"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/lux_skin07_q_tar_storm_ring.png",
+      "sha256": "63903af639fd9e67b565da1f1afc9aa5ab693e64c2780dc55afee812101d8113"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/lux_skin07_w_circle_normal.png",
+      "sha256": "36954c0e793e62fdf1389587d53883686c9a67eae14e7d4f8de8acdbea69b9be"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/lux_skin07_w_distort.png",
+      "sha256": "9d1c0afae3a4040376460a1809143487b39bafa5e0d59448ca4c22bcde7dadd9"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/lux_skin07_w_distort_rgba.png",
+      "sha256": "3f8a9bfb7f3640be12ebd6ac8a3f8acc639f0bbc7fb3b9afcde15a6bd4ffe037"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/lux_skin07_w_distort_rgba_2.png",
+      "sha256": "ef6c8a8ddface79656006efb753bef81452e181515913eb720829e72c523906d"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/sion_skin05_sl_dust_01.png",
+      "sha256": "e5c660fd76b8002344b0217dab2e7c5a8e2fe2a7dd9266f5a4be5e79e2224b60"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/veigar_ba_enhanced_pulsewave.png",
+      "sha256": "5a25f2fbf1b3802fc0a08429ea1265fa3535f4d8ea5bbecac9f1aa395c6bf6e9"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/veigar_base_ba_flash_bw.png",
+      "sha256": "375f879120f0d48917c35e04d0815594eb21c05b041d044cc4c0ddbbe5b78323"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/veigar_base_glow_01.png",
+      "sha256": "32f3ea681210e0137a474171fcd4b46005f3b18bf5f0bfde8a30a968f4bb2ae0"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/veigar_base_r_arcs.png",
+      "sha256": "e75a78b9a8fa891cf1d9d300b6f11012ab8af225229ca9ba5d2a774d3c4a0b5d"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/veigar_base_revive_ground_crack.png",
+      "sha256": "473a3fd17b8abfcd27ec8c0408f6f22420178efb835cc91be3e5dc074e4e5a2b"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/veigar_base_w_circle_normal.png",
+      "sha256": "36954c0e793e62fdf1389587d53883686c9a67eae14e7d4f8de8acdbea69b9be"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/veigar_base_w_storm_w_dome.png",
+      "sha256": "b48e5e566273a2ca40b77711edd72b1c73e5e53bfa584dd3e94fdb3eda025c06"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/veigar_base_w_white.png",
+      "sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/veigar_base_z_idle_arcs.png",
+      "sha256": "21f0cb62e07a1feb41779e463370367a8a8cb649770ce7c7117a073776949ef5"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/veigar_base_z_small_mote.png",
+      "sha256": "cf5bf6cb2e45a0b8e5610686bb93adce50c28e6e4f11661fc71f1a0c2206f873"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/veigar_w_cracks_erosion.png",
+      "sha256": "b47c59d5ec87ce99e52f6ea2c59ff6009d9888f2a96ecef4385f4f86b1c89f14"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/assets/characters/veigar/skins/base/particles/veigar_w_cracks_light.png",
+      "sha256": "fcbc1d316a756d54cd2b374237b29a6e9a25b9f11857121c19dd572e84d94b06"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact/sampled.json",
+      "sha256": "c29c26b3a3eecb05db9caf5c11fa20f079213d271a794dfd6d7e8ffa09e26f0c"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/alphaslice_mesh.png",
+      "sha256": "13466cad43afbdb1e2a70b9bf6b0a699c9a78d2e4c3881cb4f91155f5dcddc47"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/caitlyn_skin11_recall_glow.png",
+      "sha256": "c03f1aeccb95352596233269000d6b04480d941251d252e506a239c873f9bf22"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/color-rampdown.png",
+      "sha256": "9e89131a3255bff92c4488d6c42d9461d416efadf75ca9909b549ed05bdefb50"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/common_blasthole_03.png",
+      "sha256": "abdfa9cacb7db88d5b008719cf3c737b4c2f417ae0fd1323219730ef20453604"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/common_rainbowflash.png",
+      "sha256": "2f07faf8d5287e38ff910db7b85e34612ff9f3dd55137cb65fe4f4a7979fe658"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/ivern_base_e_rockshards.png",
+      "sha256": "b98fd333482c833a77fdb26bf7db8124a9232e279d1833fcc6a952a9b50168a3"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/lux_skin07_ba_flash.png",
+      "sha256": "d051bafcf16206ae6859899a33830165e552c242932ee15efee4741c2cfb942e"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/lux_skin07_q_tar_storm_ring.png",
+      "sha256": "63903af639fd9e67b565da1f1afc9aa5ab693e64c2780dc55afee812101d8113"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/lux_skin07_w_circle_normal.png",
+      "sha256": "36954c0e793e62fdf1389587d53883686c9a67eae14e7d4f8de8acdbea69b9be"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/lux_skin07_w_distort.png",
+      "sha256": "9d1c0afae3a4040376460a1809143487b39bafa5e0d59448ca4c22bcde7dadd9"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/lux_skin07_w_distort_rgba.png",
+      "sha256": "3f8a9bfb7f3640be12ebd6ac8a3f8acc639f0bbc7fb3b9afcde15a6bd4ffe037"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/lux_skin07_w_distort_rgba_2.png",
+      "sha256": "ef6c8a8ddface79656006efb753bef81452e181515913eb720829e72c523906d"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/sion_skin05_sl_dust_01.png",
+      "sha256": "e5c660fd76b8002344b0217dab2e7c5a8e2fe2a7dd9266f5a4be5e79e2224b60"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/veigar_ba_enhanced_pulsewave.png",
+      "sha256": "5a25f2fbf1b3802fc0a08429ea1265fa3535f4d8ea5bbecac9f1aa395c6bf6e9"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/veigar_base_ba_flash_bw.png",
+      "sha256": "375f879120f0d48917c35e04d0815594eb21c05b041d044cc4c0ddbbe5b78323"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/veigar_base_glow_01.png",
+      "sha256": "32f3ea681210e0137a474171fcd4b46005f3b18bf5f0bfde8a30a968f4bb2ae0"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/veigar_base_r_arcs.png",
+      "sha256": "e75a78b9a8fa891cf1d9d300b6f11012ab8af225229ca9ba5d2a774d3c4a0b5d"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/veigar_base_revive_ground_crack.png",
+      "sha256": "473a3fd17b8abfcd27ec8c0408f6f22420178efb835cc91be3e5dc074e4e5a2b"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/veigar_base_w_circle_normal.png",
+      "sha256": "36954c0e793e62fdf1389587d53883686c9a67eae14e7d4f8de8acdbea69b9be"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/veigar_base_w_storm_w_dome.png",
+      "sha256": "b48e5e566273a2ca40b77711edd72b1c73e5e53bfa584dd3e94fdb3eda025c06"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/veigar_base_w_white.png",
+      "sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/veigar_base_z_idle_arcs.png",
+      "sha256": "21f0cb62e07a1feb41779e463370367a8a8cb649770ce7c7117a073776949ef5"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/veigar_base_z_small_mote.png",
+      "sha256": "cf5bf6cb2e45a0b8e5610686bb93adce50c28e6e4f11661fc71f1a0c2206f873"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/veigar_w_cracks_erosion.png",
+      "sha256": "b47c59d5ec87ce99e52f6ea2c59ff6009d9888f2a96ecef4385f4f86b1c89f14"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/assets/characters/veigar/skins/base/particles/veigar_w_cracks_light.png",
+      "sha256": "fcbc1d316a756d54cd2b374237b29a6e9a25b9f11857121c19dd572e84d94b06"
+    },
+    {
+      "path": "assets/effects/event_horizon/impact_red/sampled.json",
+      "sha256": "0b2640bde2b0cf5900732f02b3ed1edb05879eb42d24f20a8d5700277478bdec"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor/assets/characters/veigar/skins/base/particles/color-rampdown.png",
+      "sha256": "9e89131a3255bff92c4488d6c42d9461d416efadf75ca9909b549ed05bdefb50"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor/assets/characters/veigar/skins/base/particles/common_trail_blur_01_purple.png",
+      "sha256": "a3bd85854e679ee75519e32fb78ff19cd48af74023c9fd33591d8f7d85d2110a"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor/assets/characters/veigar/skins/base/particles/lux_skin07_e_flash.png",
+      "sha256": "a3289d3eeefdf02d01277251303557f17b28dbab54c4d4e4f3f6cc6ffd01d41a"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor/assets/characters/veigar/skins/base/particles/sion_skin05_e_flares.mesh.json",
+      "sha256": "5991d8bf847048c2f397d603f6b3a44d255ef4dae5f4b13a2ecbaa5bf7b784d0"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor/assets/characters/veigar/skins/base/particles/sion_skin05_e_flares_01.png",
+      "sha256": "7a3ec666ea88adaddb4717367584906d6b48c8cc5f90c0ada980e814918fb981"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor/assets/characters/veigar/skins/base/particles/veigar_ba_enhanced_pulsewave.png",
+      "sha256": "5a25f2fbf1b3802fc0a08429ea1265fa3535f4d8ea5bbecac9f1aa395c6bf6e9"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor/assets/characters/veigar/skins/base/particles/veigar_base_glow_01.png",
+      "sha256": "32f3ea681210e0137a474171fcd4b46005f3b18bf5f0bfde8a30a968f4bb2ae0"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor/assets/characters/veigar/skins/base/particles/veigar_base_q_mis_animeshapes.png",
+      "sha256": "6d22fb9353a6e4ba4aa4ac70fbf09d881992fbce7d34ca385193230e3609a0a6"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor/assets/characters/veigar/skins/base/particles/veigar_base_w_flickercolor.png",
+      "sha256": "9d53dad3389d360008903100d237a81404d7bfd8c23f5e61937931d784daea89"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor/assets/characters/veigar/skins/base/particles/veigar_base_w_skyrays.png",
+      "sha256": "02cb85ade76cddd0c057c89572a44dd059444ee4fd454bbef988a7515bf7a3bf"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor/assets/characters/veigar/skins/base/particles/veigar_base_w_softcircle.png",
+      "sha256": "aaadb16e327fea3ac424c350eca5fd75113637a2b06fe3c4777f9cc0d6a7b43a"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor/assets/characters/veigar/skins/base/particles/veigar_base_z_sharpcicle.png",
+      "sha256": "5c33800491670bc829fb419a77253b9180515f95a8dcc5cb808531d1327fcc05"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor/assets/characters/veigar/skins/base/particles/veigar_base_z_small_mote.png",
+      "sha256": "cf5bf6cb2e45a0b8e5610686bb93adce50c28e6e4f11661fc71f1a0c2206f873"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor/sampled.json",
+      "sha256": "a76cf5356cf4dc0645c6ccd2874088faa0aa4980ff005357290b752205798dd4"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor_red/assets/characters/veigar/skins/base/particles/color-rampdown.png",
+      "sha256": "9e89131a3255bff92c4488d6c42d9461d416efadf75ca9909b549ed05bdefb50"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor_red/assets/characters/veigar/skins/base/particles/common_trail_blur_01_purple.png",
+      "sha256": "a3bd85854e679ee75519e32fb78ff19cd48af74023c9fd33591d8f7d85d2110a"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor_red/assets/characters/veigar/skins/base/particles/lux_skin07_e_flash.png",
+      "sha256": "a3289d3eeefdf02d01277251303557f17b28dbab54c4d4e4f3f6cc6ffd01d41a"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor_red/assets/characters/veigar/skins/base/particles/sion_skin05_e_flares.mesh.json",
+      "sha256": "5991d8bf847048c2f397d603f6b3a44d255ef4dae5f4b13a2ecbaa5bf7b784d0"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor_red/assets/characters/veigar/skins/base/particles/sion_skin05_e_flares_01.png",
+      "sha256": "7a3ec666ea88adaddb4717367584906d6b48c8cc5f90c0ada980e814918fb981"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor_red/assets/characters/veigar/skins/base/particles/veigar_ba_enhanced_pulsewave.png",
+      "sha256": "5a25f2fbf1b3802fc0a08429ea1265fa3535f4d8ea5bbecac9f1aa395c6bf6e9"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor_red/assets/characters/veigar/skins/base/particles/veigar_base_glow_01.png",
+      "sha256": "32f3ea681210e0137a474171fcd4b46005f3b18bf5f0bfde8a30a968f4bb2ae0"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor_red/assets/characters/veigar/skins/base/particles/veigar_base_q_mis_animeshapes.png",
+      "sha256": "6d22fb9353a6e4ba4aa4ac70fbf09d881992fbce7d34ca385193230e3609a0a6"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor_red/assets/characters/veigar/skins/base/particles/veigar_base_w_flickercolor.png",
+      "sha256": "9d53dad3389d360008903100d237a81404d7bfd8c23f5e61937931d784daea89"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor_red/assets/characters/veigar/skins/base/particles/veigar_base_w_skyrays.png",
+      "sha256": "02cb85ade76cddd0c057c89572a44dd059444ee4fd454bbef988a7515bf7a3bf"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor_red/assets/characters/veigar/skins/base/particles/veigar_base_w_softcircle.png",
+      "sha256": "aaadb16e327fea3ac424c350eca5fd75113637a2b06fe3c4777f9cc0d6a7b43a"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor_red/assets/characters/veigar/skins/base/particles/veigar_base_z_sharpcicle.png",
+      "sha256": "5c33800491670bc829fb419a77253b9180515f95a8dcc5cb808531d1327fcc05"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor_red/assets/characters/veigar/skins/base/particles/veigar_base_z_small_mote.png",
+      "sha256": "cf5bf6cb2e45a0b8e5610686bb93adce50c28e6e4f11661fc71f1a0c2206f873"
+    },
+    {
+      "path": "assets/effects/event_horizon/meteor_red/sampled.json",
+      "sha256": "e22eef3c575c977fa4a0b4a2d706ffb981ae5da8db50df6be35fcf03f93c3fa2"
+    },
+    {
+      "path": "assets/effects/event_horizon/mix.gdshader",
+      "sha256": "5559254b27438bf06ad8a3a05141ffe7fdb9ff9e62099766713679d5827d1f99"
+    },
+    {
+      "path": "assets/effects/event_horizon/mix_no_depth.gdshader",
+      "sha256": "9c70a3a645d142666aa61ed4361d3f20d0a07d742523db7bd68eb8a6833e7548"
+    },
+    {
+      "path": "assets/effects/event_horizon/particle.gdshaderinc",
+      "sha256": "64840000fc0506322330ced801c6fa40fdb1ac78b165519869a8c9a95de60aab"
+    },
+    {
+      "path": "assets/effects/event_horizon/player.gd",
+      "sha256": "ecce820d61b9a1fda3f839405a543f3b93c6c0579c074a04477ab2ef1894102a"
+    },
+    {
+      "path": "assets/effects/event_horizon/pure_add.gdshader",
+      "sha256": "872d9d8308cce3743013dbad2cefd52f4c4e5ca2a4853279ca3926b76c4a39ed"
+    },
+    {
+      "path": "assets/effects/event_horizon/pure_add_no_depth.gdshader",
+      "sha256": "6f1ceb86a951a6c34b30d769804fc3a623d2fc48dbef3b4ca3269eae1d39ecc1"
+    },
+    {
+      "path": "assets/effects/event_horizon/subtract.gdshader",
+      "sha256": "389ceecdaca8657a5c73843e2297056603df26480120e4eab6ef93d203c6661c"
+    },
+    {
+      "path": "assets/effects/event_horizon/subtract_no_depth.gdshader",
+      "sha256": "d385b14eb865b6c87231a3a0528636fa4ef37dfc9b67fee738442e8429f75ef4"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning/assets/characters/veigar/skins/base/particles/common_color-hold.png",
+      "sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning/assets/characters/veigar/skins/base/particles/common_color-smoke32_07.png",
+      "sha256": "1fdca6f16ca1a4fac6abacf59b5c5af3dd7c8ad0d7507d0610b69da8e7611e34"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning/assets/characters/veigar/skins/base/particles/common_disc32.png",
+      "sha256": "700441950d044cd5a4b58f46ceabeb3f0dc04e162a221f75fefe0cd50b1a34b8"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning/assets/characters/veigar/skins/base/particles/veigar_base_e_groundglowalpha.png",
+      "sha256": "f9c9d127e002886a6b46288f802a56a1debd2274f7d9d6b7d94ccbf0a0eaeb1b"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning/assets/characters/veigar/skins/base/particles/veigar_base_e_ring.mesh.json",
+      "sha256": "cbd999fa03f6734e1409d4350cce790d90fd2cd8fdffb2009cc777f86eacf41f"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning/assets/characters/veigar/skins/base/particles/veigar_base_e_warning_trail.png",
+      "sha256": "7dddabc5032558c81249cdae8ec6241f45bafbd47bf849b55dfa9886583e2c01"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning/assets/characters/veigar/skins/base/particles/veigar_base_z_small_mote.png",
+      "sha256": "cf5bf6cb2e45a0b8e5610686bb93adce50c28e6e4f11661fc71f1a0c2206f873"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning/sampled.json",
+      "sha256": "63b8a9d7f7f3d98bc62f861e3a0f0942b1a774e0ef131016bbdb4716654a3bf6"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning_red/assets/characters/veigar/skins/base/particles/common_color-hold.png",
+      "sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning_red/assets/characters/veigar/skins/base/particles/common_color-smoke32_07.png",
+      "sha256": "1fdca6f16ca1a4fac6abacf59b5c5af3dd7c8ad0d7507d0610b69da8e7611e34"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning_red/assets/characters/veigar/skins/base/particles/veigar_base_e_groundglowalpha.png",
+      "sha256": "f9c9d127e002886a6b46288f802a56a1debd2274f7d9d6b7d94ccbf0a0eaeb1b"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning_red/assets/characters/veigar/skins/base/particles/veigar_base_e_ring.mesh.json",
+      "sha256": "cbd999fa03f6734e1409d4350cce790d90fd2cd8fdffb2009cc777f86eacf41f"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning_red/assets/characters/veigar/skins/base/particles/veigar_base_e_warning_trail_enemy.png",
+      "sha256": "78199a22589260b1035a2722d0bdf1369ed81f64bd211ecf285048016b215114"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning_red/assets/characters/veigar/skins/base/particles/veigar_base_z_small_mote.png",
+      "sha256": "cf5bf6cb2e45a0b8e5610686bb93adce50c28e6e4f11661fc71f1a0c2206f873"
+    },
+    {
+      "path": "assets/effects/event_horizon/warning_red/sampled.json",
+      "sha256": "fe213c1ac3b5e3c9eba3bb4fb7f600a355b9834b530b09958cc5245bc9fca3b8"
+    },
+    {
+      "path": "assets/effects/event_horizon/warp.gdshader",
+      "sha256": "2cd3ad939660baffe39e8c6ac0fcfe1a1963c9dca22fc4878dfcbe764f609d8c"
+    },
+    {
+      "path": "assets/effects/event_horizon/warp_no_depth.gdshader",
+      "sha256": "e252cea1186f9fb6a29f0213e2fa973d9696c8e74b88a280b0e1f90c71246aae"
+    }
+  ],
+  "resolved_source_directory": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/扭曲空间原版时序复核"
+}

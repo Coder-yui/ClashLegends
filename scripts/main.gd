@@ -2373,13 +2373,28 @@ func present_lightning_spell(card_id: String, pos: Vector2, radius: float, team:
 func _show_lightning_spell(event_id: int, card_id: String, pos: Vector2, radius: float, team: int) -> void:
 	if not has_presentation(): return
 	if event_id <= _last_card_event_id: return
+	if card_id.begins_with("medium_lightning"):
+		_last_card_event_id = event_id
+		var friendly := team == runtime.local_team
+		if card_id == "medium_lightning_warning_enemy" and friendly: return
+		if card_id == "medium_lightning_warning" and not friendly: return
+		var cues := {"medium_lightning": "spell:strike", "medium_lightning_warning": "spell:warning", "medium_lightning_warning_enemy": "spell:warning_enemy", "medium_lightning_disabled": "spell:tower_disable", "medium_lightning_hit": "spell:hit"}
+		if card_id != "medium_lightning_hit": _spell_system.show_lightning(card_id, pos, radius)
+		if _audio_manager != null:
+			_audio_manager.play_card_event("medium_lightning", cues[card_id], pos, 0, team)
+			if card_id == "medium_lightning_warning": _audio_manager.play_card_event("medium_lightning", "spell:cast", pos, 0, team)
+			if card_id == "medium_lightning_disabled":
+				for tower in world.towers_snapshot():
+					if not tower.is_king and tower.global_position.distance_to(pos) < 1.0:
+						_audio_manager.start_zone_audio(event_id, "medium_lightning", 0, "spell", pos, float(CardDB.get_card("medium_lightning").stun_duration), team, tower)
+		return
 	_spell_system.show_lightning(card_id, pos, radius)
 	_play_card_event(event_id, card_id, "spell:strike", pos, 0, team)
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_lightning_fx(epoch: String, event_id: int, card_id: String, pos: Vector2, radius: float, team: int) -> void:
 	if not runtime.session.accepts(1, epoch, MatchSession.Phase.RUNNING) or runtime.game_over or runtime.mode != "client": return
-	if card_id not in ["zap", "lightning"]: return
+	if card_id not in ["zap", "lightning", "medium_lightning", "medium_lightning_disabled", "medium_lightning_warning", "medium_lightning_warning_enemy", "medium_lightning_hit"]: return
 	_show_lightning_spell(event_id, card_id, pos, radius, team)
 
 func present_lightning_area(card_id: String, pos: Vector2, radius: float, duration: float, team: int) -> void:
@@ -2416,7 +2431,7 @@ func present_spell_flight(flight_id: int, kind: String, origin: Vector2, pos: Ve
 func _show_spell_flight(event_id: int, flight_id: int, kind: String, origin: Vector2, pos: Vector2, radius: float, start_tick: int, impact_tick: int, team: int) -> void:
 	if not has_presentation(): return
 	if event_id <= _last_card_event_id: return
-	_spell_system.show_flight(flight_id, kind, origin, pos, radius, start_tick, impact_tick)
+	_spell_system.show_flight(flight_id, kind, origin, pos, radius, start_tick, impact_tick, team)
 	if kind in ["stasis", "explosive_cask"]:
 		_play_card_event(event_id, kind, "spell:cast", origin, 0, team)
 		_audio_manager.start_spell_flight_audio(flight_id, kind, team, origin)
@@ -2445,6 +2460,13 @@ func _show_spell_arrival(event_id: int, flight_id: int, kind: String, pos: Vecto
 func _rpc_spell_arrival(epoch: String, event_id: int, flight_id: int, kind: String, pos: Vector2, team: int) -> void:
 	if not runtime.session.accepts(1, epoch, MatchSession.Phase.RUNNING) or runtime.game_over or runtime.mode != "client": return
 	_show_spell_arrival(event_id, flight_id, kind, pos, team)
+
+func present_horizon_zone_audio(pos: Vector2, duration: float, team: int) -> void:
+	_presentation_event_id += 1
+	if _audio_manager:
+		_audio_manager.start_zone_audio(_presentation_event_id, "event_horizon", 0, "spell", pos, duration, team)
+	if runtime.mode == "server":
+		_broadcast(_rpc_zone_audio, [network_session_id(), _presentation_event_id, "event_horizon", 0, "spell", pos, duration, team])
 
 func present_corrosion_spell(pos: Vector2, radius: float, duration: float, p_team: int) -> void:
 	_presentation_event_id += 1

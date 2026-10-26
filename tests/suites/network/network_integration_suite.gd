@@ -43,6 +43,8 @@ func run(harness: SceneTree) -> void:
 	if main._audio_manager != null:
 		main._audio_manager.cue_played.connect(func(card, cue, _pos):
 			if card == "match" and cue in [&"victory", &"defeat"]: result_cues.append(cue))
+	var horizon_case = preload("res://tests/fixtures/event_horizon_network_case.gd").new() if OS.get_environment("CLASH_TEST_EVENT_HORIZON") == "1" else null
+	var medium_case = preload("res://tests/fixtures/medium_lightning_network_case.gd").new() if OS.get_environment("CLASH_TEST_MEDIUM_LIGHTNING") == "1" else null
 	var start := Time.get_ticks_msec()
 	var boundary_unit: Unit
 	var expired_id := -1
@@ -68,6 +70,8 @@ func run(harness: SceneTree) -> void:
 	var mist_observation: Dictionary = {}
 	while Time.get_ticks_msec() - start < 20000:
 		await harness.process_frame
+		if horizon_case != null: horizon_case.poll(main)
+		if medium_case != null: medium_case.tick(main)
 		if main.runtime.mode == "server" and main.runtime._match_started and not shields_added:
 			main.world.towers_snapshot()[0].add_shield(300, 2, true)
 			main.world.towers_snapshot()[0].add_shield(300, 8)
@@ -192,6 +196,10 @@ func run(harness: SceneTree) -> void:
 		outsider.close()
 	var has_terminal: bool = main.runtime.game_over and not main._terminal_result.is_empty()
 	var result := {"schema": 1, "role": "server" if main.runtime.mode == "server" else "client%d" % main.runtime.local_team, "passed": has_terminal}
+	if medium_case != null:
+		result["medium_lightning"] = medium_case.result(main.runtime.mode == "server")
+		result.passed = result.passed and result.medium_lightning.passed
+		print("[MEDIUM_LIGHTNING_NETWORK] ", result.medium_lightning)
 	result["terminal_not_before"] = terminal_not_before
 	result["skill_progress"] = {"sent": sent_skill, "interrupted": interrupted_skill, "accepted": main.accepted_fixture_skills, "completed": main.completed_fixture_skills, "refunds": main.fixture_refunds}
 	result["mist_observation"] = mist_observation
@@ -249,6 +257,9 @@ func run(harness: SceneTree) -> void:
 		session_guards = session_guards and (result.remote_elixir == expected_team1_coins if main.runtime.mode == "server" or main.runtime.local_team == 1 else result.remote_elixir >= 0.0)
 		if main.runtime.mode == "server":
 			session_guards = session_guards and main.fixture_refunds.size() == 1 and main.fixture_refunds[0].passed
+		if horizon_case != null:
+			result["event_horizon"] = horizon_case.result()
+			result["passed"] = result.passed and result.event_horizon.passed
 		result["session_guards"] = session_guards
 		if main.runtime.mode == "server":
 			result["status_rules"] = status_checked and status_passed
@@ -285,6 +296,7 @@ func run(harness: SceneTree) -> void:
 	if main.runtime.mode == "server":
 		result["audio_sequence"] = main._audio_manager == null and main._battle_presentation == null and main._hand == null and main._effects_view == null and main._resources.resources.is_empty() and main._projectile_system.get_child_count() == 0 and main.runtime.local_team == -1
 		result["passed"] = result.passed and result.audio_sequence
+	if medium_case != null: result.passed = result.passed and result.medium_lightning.passed
 	print("[NETWORK_RESULT] " + JSON.stringify(result))
 	# 留出可靠结果送达和音频线程释放的窗口，然后关闭自己的 ENet peer。
 	await harness.create_timer(0.5).timeout

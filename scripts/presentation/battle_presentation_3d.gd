@@ -35,8 +35,10 @@ var _freeze_ground: Node3D
 var _summoning_ground: Node3D
 var _corrosion_ground: Node3D
 var _cask_effect: Node3D
+var _horizon_effect: Node3D
 var _tidal_effect: Node3D
 var _stasis_effect: Node3D
+var _medium_lightning_effect: Node3D
 var _lightning_effect: Node3D
 
 var _viewport: SubViewport
@@ -92,12 +94,15 @@ func _process(delta: float) -> void:
 		_stasis_effect.sync_effects(spells, _camera)
 	if _lightning_effect != null and spells != null:
 		_lightning_effect.sync_effects(spells, _camera)
+	if _medium_lightning_effect != null and spells != null: _medium_lightning_effect.sync_effects(spells, _camera)
 	if _freeze_ground != null and spells != null:
 		_freeze_ground.sync_effects(spells, _camera)
 	if _summoning_ground != null and spells != null:
 		_summoning_ground.sync_effects(spells, _camera)
 	if _corrosion_ground != null and spells != null:
 		_corrosion_ground.sync_effects(spells, _camera)
+	if _horizon_effect != null and spells != null:
+		_horizon_effect.sync_effects(spells, _camera, viewer_team)
 	if _tidal_effect != null and spells != null:
 		_tidal_effect.sync_effects(spells, _camera)
 	if _cask_effect != null and spells != null:
@@ -209,12 +214,16 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_summoning_ground)
 	_corrosion_ground = preload("res://scripts/presentation/corrosion_ground_3d.gd").new()
 	_world_root.add_child(_corrosion_ground)
+	_horizon_effect = preload("res://scripts/presentation/event_horizon_3d.gd").new()
+	_world_root.add_child(_horizon_effect)
 	_tidal_effect = preload("res://scripts/presentation/tidal_wave_3d.gd").new()
 	_world_root.add_child(_tidal_effect)
 	_cask_effect = preload("res://scripts/presentation/explosive_cask_3d.gd").new()
 	_world_root.add_child(_cask_effect)
 	_stasis_effect = preload("res://scripts/presentation/stasis_spell_effect_3d.gd").new()
 	_world_root.add_child(_stasis_effect)
+	_medium_lightning_effect = preload("res://scripts/presentation/medium_lightning_3d.gd").new()
+	_world_root.add_child(_medium_lightning_effect)
 	_lightning_effect = preload("res://scripts/presentation/lightning_spell_effect_3d.gd").new()
 	_world_root.add_child(_lightning_effect)
 
@@ -312,6 +321,7 @@ func attach_tower(tower: Tower, config: Dictionary) -> bool:
 	if not view.setup(tower, packed, _camera, config):
 		view.queue_free()
 		return false
+	_medium_lightning_effect.track(tower, view)
 	tower.has_model_art = true
 	tower.queue_redraw()
 	return true

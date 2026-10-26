@@ -1,0 +1,70 @@
+[
+  {
+    "path": "res://assets/audio/spells/medium_lightning/strike.wav",
+    "source_event": "Play_sfx_Volibear_VolibearE_explo.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio/volibear/txtp/Play_sfx_Volibear_VolibearE_explo.txtp",
+    "txtp_sha256": "47753ea06374cea78fa1bae17cb7cbb3bbb2b5d1fd7533f68c67d4c65a12a31a",
+    "sha256": "f75f89e71c01192100f43c5935dbcbb08f013d34b5000a047dbbb36d790aa839",
+    "processing": "Fresh vgmstream decode; wwiser -gv=0dB; event gain retained; no normalization, trim or gain change."
+  },
+  {
+    "path": "res://assets/audio/spells/medium_lightning/tower_disable.wav",
+    "source_event": "Play_sfx_Volibear_VolibearRTowerDisable_hit.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio/volibear/txtp/Play_sfx_Volibear_VolibearRTowerDisable_hit.txtp",
+    "txtp_sha256": "ce4430f13502fd237ef60023b3dfb5a7b95a113907cfde24a43ddca9ea9a0541",
+    "sha256": "b027a645aafec78918cb796da8319d2ab6950b4eb4f18a03a3e118a79e961ef4",
+    "processing": "Original event gains retained in WAV; no normalization or postgain. User-requested runtime attenuation: -12 dB.",
+    "runtime_gain_db": -12.0
+  },
+  {
+    "path": "res://assets/audio/spells/medium_lightning/cast.wav",
+    "source_event": "Play_sfx_Volibear_VolibearE_OnCast.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio/volibear/txtp/Play_sfx_Volibear_VolibearE_OnCast.txtp",
+    "txtp_sha256": "2bf3f381ab0f9ebce68c90836dbbe031450016da75f9d1e775ed60e8d2812799",
+    "sha256": "2b047552580996aa21bc95aa40898f55642fd8cd1634191053ba4932c93510ae",
+    "processing": "Fresh vgmstream decode, wwiser -gv=0dB, event gains and delays retained; no normalization/postgain/runtime compensation."
+  },
+  {
+    "path": "res://assets/audio/spells/medium_lightning/warning.wav",
+    "source_event": "Play_sfx_Volibear_VolibearE_buffactivate {r}.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio/volibear/txtp/Play_sfx_Volibear_VolibearE_buffactivate {r}.txtp",
+    "txtp_sha256": "d538674e4b6efb57a4059662fa04c0e82ea16494118da0223b0c70bf5a83dbc9",
+    "sha256": "0f480081eac2470d88181015536522f1484210863b41f0772d94c8e7047e6053",
+    "processing": "Fresh vgmstream decode, wwiser -gv=0dB, event gains and delays retained; no normalization/postgain/runtime compensation."
+  },
+  {
+    "path": "res://assets/audio/spells/medium_lightning/warning_enemy.wav",
+    "source_event": "Play_sfx_Volibear_VolibearE_enemy_buffactivate {r}.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio/volibear/txtp/Play_sfx_Volibear_VolibearE_enemy_buffactivate {r}.txtp",
+    "txtp_sha256": "967d36fd2d5d6381a211c0fe953d431895c76e278c60553bb08cec6b97acc801",
+    "sha256": "7a0505d77304220a82c9c76bb298595653cb6bb9cfe7cd55630d80a8b7b64449",
+    "processing": "Fresh vgmstream decode, wwiser -gv=0dB, event gains and delays retained; no normalization/postgain/runtime compensation."
+  },
+  {
+    "path": "res://assets/audio/spells/medium_lightning/hit.wav",
+    "source_event": "Play_sfx_Volibear_VolibearE_hit.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio/volibear/txtp/Play_sfx_Volibear_VolibearE_hit.txtp",
+    "txtp_sha256": "ff528f7ecab6948461e4316dd96d627a636c638ff8b2aae978ba53c8c8ed1392",
+    "sha256": "efcce7e38fc1a09c46c599ea0c9b67c637d3884633d28698267b0f11c2500a87",
+    "processing": "Fresh vgmstream decode, wwiser -gv=0dB, event gains and delays retained; no normalization/postgain/runtime compensation."
+  },
+  {
+    "path": "res://assets/audio/spells/medium_lightning/tower_sustain.wav",
+    "source_event": "Play_sfx_Volibear_VolibearRTowerDisable_buffactive.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/中型雷电法术/audio/volibear/txtp/Play_sfx_Volibear_VolibearRTowerDisable_buffactive.txtp",
+    "txtp_sha256": "db71b1af26eea3c3215a4adadaa0826fecb5a42683fccde050706f617c5c4857",
+    "sha256": "11dbb05a29bc774d9f4f3e47a8b9ceae08c340c526a84f33aab8d5af6fa6c4e2",
+    "processing": "Original event gains retained in WAV; no normalization or postgain. User-requested runtime attenuation: -12 dB.",
+    "stop_event": {
+      "name": "Stop_sfx_Volibear_VolibearRTowerDisable_buffactive",
+      "event_id": 2377787124,
+      "action_id": 705798628,
+      "transition_ms": 1000,
+      "fade_curve": 6,
+      "fade_curve_name": "Exp1",
+      "runtime_gain_envelope": "1 - (t + 1) * t / 2, t in [0,1]",
+      "source_evidence": "Volibear base SFX event bank; wwiser bnode_rtpc.py AkInterpolation Exp1"
+    },
+    "runtime_gain_db": -12.0
+  }
+]

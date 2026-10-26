@@ -19,7 +19,7 @@ static func build_deck() -> Array:
 			"unit": units.append(card_id)
 			"building": buildings.append(card_id)
 			"spell":
-				if stats.get("spell_kind", "") in ["zap", "lightning", "freeze"]:
+				if stats.get("spell_kind", "") in ["zap", "lightning", "medium_lightning", "freeze"]:
 					spells.append(card_id)
 	units.shuffle()
 	buildings.shuffle()
@@ -162,7 +162,7 @@ func _spell_position(card_id: String, stats: Dictionary) -> Vector2:
 				# 优先打单位群，伤害法术也可用于削塔；控制不空冻水晶。
 				if target is Unit:
 					score += 1.0
-				elif stats.get("spell_kind", "") in ["zap", "lightning"]:
+				elif stats.get("spell_kind", "") in ["zap", "lightning", "medium_lightning"]:
 					score += 0.25
 		if score > best_score:
 			best_score = score

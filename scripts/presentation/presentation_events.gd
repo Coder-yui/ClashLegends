@@ -42,8 +42,10 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "terrain_charge")
 	var spell := String(stats.get("type", "")) == "spell"
 	if spell:
+		if String(stats.get("spell_kind", "")) == "medium_lightning" and cue in ["spell:strike", "spell:tower_disable", "spell:cast", "spell:warning", "spell:warning_enemy", "spell:hit", "spell:zone_sustain"]: return true
+		if String(stats.get("spell_kind", "")) == "event_horizon" and cue in ["spell:hit", "spell:meteor", "spell:impact"]: return true
 		if String(stats.get("spell_kind", "")) == "tidal_wave" and cue in ["spell:launch", "spell:hit"]: return true
-		return (cue == "spell:zone_sustain" and String(stats.get("spell_kind", "")) in ["corrosion", "void_summoning"]) or cue == "spell:cast" or (cue == "spell:strike" and String(stats.get("spell_kind", "")) in ["zap", "lightning", "stasis", "explosive_cask"])
+		return (cue == "spell:zone_sustain" and String(stats.get("spell_kind", "")) in ["corrosion", "void_summoning", "event_horizon"]) or cue == "spell:cast" or (cue == "spell:strike" and String(stats.get("spell_kind", "")) in ["zap", "lightning", "stasis", "explosive_cask"])
 	if cue in ["sanctuary:sustain", "sanctuary:end"]:
 		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "sanctuary")
 	if cue in ["persistent_area:sustain", "persistent_area:end"]:

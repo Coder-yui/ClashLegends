@@ -151,6 +151,17 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			elif float(stats.get("duration", 0.0)) <= 0.0:
 				errors.append("%s.duration: 法术持续时间必须 > 0" % card_id)
 			match spell_kind:
+				&"event_horizon":
+					_require_fields(card_id, stats, [&"spell_windup", &"stun_duration"], errors)
+					for field in ["spell_windup", "stun_duration", "radius"]:
+						if float(stats.get(field, 0)) <= 0: errors.append(card_id + "." + field + ": 必须为正")
+				&"medium_lightning":
+					if float(stats.get("spell_windup", 0)) < 1.0: errors.append(card_id + ": 落雷前摇必须至少1秒，覆盖敌方预警窗口")
+					_require_fields(card_id, stats, [&"damage", &"stun_duration", &"tower_damage_multiplier"], errors)
+					if float(stats.get("damage", 0)) <= 0 or float(stats.get("stun_duration", 0)) <= 0:
+						errors.append(card_id + ": 落雷伤害与防御塔失效时长必须为正")
+					if float(stats.get("tower_damage_multiplier", -1)) < 0 or float(stats.get("tower_damage_multiplier", -1)) > 1:
+						errors.append(card_id + ": 防御塔伤害倍率必须为0到1")
 				&"tidal_wave":
 					_require_fields(card_id, stats, [&"spell_windup", &"wave_width", &"range", &"speed", &"damage", &"knockback", &"tower_damage_multiplier"], errors)
 					for field in ["spell_windup", "wave_width", "range", "speed", "damage", "knockback"]:
@@ -285,11 +296,13 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			if not event is Dictionary:
 				errors.append("%s.audio.events.%s: 必须是 Dictionary" % [label, cue])
 				continue
-			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"scope", &"clip_volume_db", &"volume_db", &"bus", &"action_time", &"owner", &"fade_in", &"fade_out", &"natural_tail"], errors)
+			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"scope", &"clip_volume_db", &"volume_db", &"bus", &"action_time", &"owner", &"fade_in", &"fade_out", &"fade_out_curve", &"natural_tail"], errors)
 			if event.has("natural_tail") and (typeof(event.natural_tail) != TYPE_BOOL or not String(cue).ends_with(":zone_sustain")):
 				errors.append("%s.audio.events.%s.natural_tail: 仅区域持续音允许布尔值" % [label, cue])
+			if event.has("fade_out_curve") and (event.fade_out_curve not in ["linear", "exp1"] or not String(cue).ends_with(":zone_sustain")):
+				errors.append("%s.audio.events.%s.fade_out_curve: 仅区域持续声支持linear/exp1" % [label, cue])
 			for fade in ["fade_in", "fade_out"]:
-				if event.has(fade) and (typeof(event[fade]) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(event[fade])) or float(event[fade]) < 0.0 or not String(cue).ends_with(":sustain")):
+				if event.has(fade) and (typeof(event[fade]) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(event[fade])) or float(event[fade]) < 0.0 or not (String(cue).ends_with(":sustain") or (fade == "fade_out" and String(cue).ends_with(":zone_sustain")))):
 					errors.append("%s.audio.events.%s.%s: 仅持续音支持有限非负渐变秒数" % [label, cue, fade])
 			if event.has("owner"):
 				var independent := false
@@ -1286,12 +1299,25 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append("%s.heal_ratio: 必须 > 0" % label)
 				if float(skill.get("max_health_ratio", 0.0)) < 1.0:
 					errors.append("%s.max_health_ratio: 必须 >= 1" % label)
+			&"spell_medium_lightning":
+				if String(stats.get("spell_kind", "")) != "medium_lightning":
+					errors.append(label + ": 霹天雳地只用于中型雷电法术")
+				for field in ["shield", "shield_duration", "slow_duration"]:
+					if float(skill.get(field, 0)) <= 0: errors.append(label + "." + field + ": 必须为正")
+				if float(skill.get("slow_multiplier", 1)) < 0.1 or float(skill.get("slow_multiplier", 1)) >= 1:
+					errors.append(label + ": 减速倍率须在[0.1, 1)之间")
 			&"spell_lightning":
 				if String(stats.get("type", "")) != "spell" or String(stats.get("spell_kind", "")) not in ["zap", "lightning"]:
 					errors.append("%s.kind: spell_lightning 只能用于电击法术" % label)
 				_require_fields(label, skill, [&"strike_count", &"strike_damage_multiplier"], errors)
 				if int(skill.get("strike_count", 0)) < 1 or float(skill.get("strike_damage_multiplier", 0)) < 1:
 					errors.append("%s: 电击次数必须为正，逐次倍率必须>=1" % label)
+			&"spell_event_horizon":
+				if String(stats.get("spell_kind", "")) != "event_horizon": errors.append(label + ": 黑暗物质只用于扭曲空间")
+				_require_fields(label, skill, [&"damage", &"radius", &"dark_matter_delay", &"tower_damage_multiplier"], errors)
+				for field in ["damage", "radius", "dark_matter_delay"]:
+					if float(skill.get(field, 0)) <= 0: errors.append(label + "." + field + ": 必须为正")
+				if float(skill.get("tower_damage_multiplier", -1)) < 0 or float(skill.get("tower_damage_multiplier", -1)) > 1: errors.append(label + ": 防御塔伤害倍率必须为0到1")
 			&"spell_tidal_wave":
 				if String(stats.get("spell_kind", "")) != "tidal_wave" or float(skill.get("duration", 0)) <= 0 or float(skill.get("speed_multiplier", 0)) <= 1:
 					errors.append(card_id + ": 踏浪而行需要浪潮法术、正持续时间与大于1的移速倍率")

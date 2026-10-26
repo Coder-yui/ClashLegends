@@ -1,0 +1,118 @@
+[
+  {
+    "file": "play_sfx_veigar_veigareventhorizon_oncast_r1.wav",
+    "event": "Play_sfx_Veigar_VeigarEventHorizon_OnCast",
+    "event_id": 1786091997,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/event_wav/Play_sfx_Veigar_VeigarEventHorizon_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarEventHorizon_OnCast {r1}.txtp",
+    "media_ids": [
+      421912231,
+      482149243,
+      741506068
+    ],
+    "duration": 2.234,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "06eb64f22975c35103c08afeecc5ebc53aaa2795750a416ecdbcd2be3445df81",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_veigar_veigareventhorizon_oncast_r2.wav",
+    "event": "Play_sfx_Veigar_VeigarEventHorizon_OnCast",
+    "event_id": 1786091997,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/event_wav/Play_sfx_Veigar_VeigarEventHorizon_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarEventHorizon_OnCast {r2}.txtp",
+    "media_ids": [
+      421912231,
+      482149243,
+      741506068
+    ],
+    "duration": 2.0559,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "94108cbef8e82c5e023b3f68a11812ed536d9a49cc5110530259c53a486ebbb1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_veigar_veigareventhorizon_oncast_r3.wav",
+    "event": "Play_sfx_Veigar_VeigarEventHorizon_OnCast",
+    "event_id": 1786091997,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/event_wav/Play_sfx_Veigar_VeigarEventHorizon_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarEventHorizon_OnCast {r3}.txtp",
+    "media_ids": [
+      421912231,
+      482149243,
+      741506068
+    ],
+    "duration": 2.4425,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ec5bae7fbeeee585b621ce65faf4cd7ed11ceb337243393b16022b07b70f4eaf",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_veigar_veigareventhorizon_buffactivate.wav",
+    "event": "Play_sfx_Veigar_VeigarEventHorizon_buffactivate",
+    "event_id": 216769159,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/event_wav/Play_sfx_Veigar_VeigarEventHorizon_buffactivate.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarEventHorizon_buffactivate.txtp",
+    "media_ids": [
+      504841607
+    ],
+    "duration": 3.7877,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "94b2a8036e26f5b11b124053da4ed02eea50ed2db1a49883f6cc9559c7ece239",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_veigar_veigardarkmatter_oncast.wav",
+    "event": "Play_sfx_Veigar_VeigarDarkMatter_OnCast",
+    "event_id": 3109578343,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/event_wav/Play_sfx_Veigar_VeigarDarkMatter_OnCast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarDarkMatter_OnCast.txtp",
+    "media_ids": [
+      912236945
+    ],
+    "duration": 1.6819,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e5246cf8cf849d3faeb301aa772b59a4340cec37a02fee2c6cf5d61156f2d642",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_veigar_veigardarkmatter_hit.wav",
+    "event": "Play_sfx_Veigar_VeigarDarkMatter_hit",
+    "event_id": 2982068956,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/event_wav/Play_sfx_Veigar_VeigarDarkMatter_hit.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarDarkMatter_hit.txtp",
+    "media_ids": [
+      594660187
+    ],
+    "duration": 2.2474,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8af1f5b8e5db7e2b16329e6d4464e5f91f730fa072217309fc840059a5557ca2",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_veigar_veigareventhorizon_loop_r1.wav",
+    "event": "Play_sfx_Veigar_VeigarEventHorizon_loop",
+    "event_id": 2497035409,
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarEventHorizon_loop {r1}.txtp",
+    "media_ids": [
+      553416574,
+      793797834
+    ],
+    "duration": 4.740272108843538,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "66a463fbd241651a6d56748fa60165e717e2543a6e8b7e314ca7055430fad81b"
+  },
+  {
+    "file": "play_sfx_veigar_veigareventhorizon_loop_r2.wav",
+    "event": "Play_sfx_Veigar_VeigarEventHorizon_loop",
+    "event_id": 2497035409,
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/audio/veigar/txtp/Play_sfx_Veigar_VeigarEventHorizon_loop {r2}.txtp",
+    "media_ids": [
+      553416574,
+      793797834
+    ],
+    "duration": 4.729750566893424,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e9ddca15fc45d11af4a648fbc2102194b97402432f561a597385ceef40f674fa"
+  }
+]

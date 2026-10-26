@@ -148,14 +148,14 @@ func freeze(duration: float, source: StringName = &"legacy", interaction: Dictio
 		_cooldown = 0.0
 	queue_redraw()
 
-func stun(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
+func stun(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}, show_indicator: bool = true) -> void:
 	if CombatInteraction.in_stasis(self): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func(): stun(duration, source, interaction))
+		battle_context.damage_batch().defer_effect(func(): stun(duration, source, interaction, show_indicator))
 		return
 	CombatInteraction.record_combat_effect(self, interaction)
-	if control.refresh_stun(duration, source):
+	if control.hard.apply(&"stun", source, duration, {"show_indicator": show_indicator}):
 		_target = null
 		_lock_windup = 0.0
 		_cooldown = 0.0
@@ -171,6 +171,9 @@ func _process(delta: float) -> void:
 	if control.stun_timer > 0.0 or _stun_was_visible:
 		queue_redraw()
 	_stun_was_visible = control.stun_timer > 0.0 and hp > 0.0
+
+func has_visible_stun() -> bool:
+	return control.hard.any_flag(&"stun", &"show_indicator", true)
 
 func set_stun_head_world_position(world_point: Vector2) -> void:
 	_stun_head_local = to_local(world_point)
@@ -378,7 +381,7 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, visual_radius + 3.0, outline)
 		draw_circle(Vector2.ZERO, visual_radius, Color(1.0, 0.67, 0.12) if CombatInteraction.in_stasis(self) else Color(0.55, 0.50, 0.45))
 	if not PresentationConfig.status_indicators_visible(self): return
-	if control.stun_timer > 0.0:
+	if has_visible_stun():
 		var rotation := -get_global_transform_with_canvas().get_rotation()
 		var head := _stun_head_local if _has_stun_head else Vector2(0, -visual_radius).rotated(rotation)
 		preload("res://scripts/presentation/stun_effect.gd").draw_effect(self, head + Vector2(0, -17).rotated(rotation), _stun_visual_phase)

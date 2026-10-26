@@ -211,3 +211,5 @@ ProjectileSuite 内的 view 子检查覆盖内容代次、同帧前后读取、�
 `SamiraSuite`复用无表现权威夹具，覆盖枪刀切换、旧弹体固定评分、满分门槛、施法资源消费与阻断、十次对地对空范围脉冲、冰冻取消及配置拒绝；不以逻辑检查替代实际渲染和试听。
 
 `EkkoSuite`覆盖每目标独立第三击、交替目标保留计数、单目标仅触发一次、拒绝命中不消耗、不同来源独立计数、加速及三套Attack_P映射、4秒有界历史、历史不足、不可选中、合法落点满血及一次技能资格。
+
+中型雷电专项：`--suite MediumLightningSuite`覆盖伤害目标、权威半径边界、仅塔失效、水晶/凝滞免疫、主动费用、护盾/减速到期、可靠事件去重与清场。`CLASH_TEST_MEDIUM_LIGHTNING=1 CLASH_TEST_TERMINAL_TICK=120 python3 tools/dev.py verify --suite MediumLightningSuite --network`追加三进程权威落雷与客户端状态投影检查；开关只由测试夹具读取。
