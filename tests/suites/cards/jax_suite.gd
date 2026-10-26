@@ -16,12 +16,16 @@ func run(harness: Object, main: Node2D) -> void:
 	deployed.free()
 	var resolver: CombatResolver = main.combat_service()
 	_expect(main.preview_active_skill(source, skill), "反击风暴正式生命周期开始")
+	var dodge_cues: Array = []
+	source.presentation_cue.connect(func(cue):
+		if cue == &"counter_strike:dodge": dodge_cues.append(cue))
 	source.add_shield(100.0, 4.0)
 	for hit in 8:
 		SuiteUtils.begin_attack_visual(enemy, source)
 		var result := resolver.resolve_attack_hit(1, enemy.position, source, 60.0, 0.0, 0.0, enemy, enemy.position)
 		_expect(not result.landed, "免疫普攻不形成有效命中")
 	_expect(enemy.buffs.stack_count(&"hit_haste") == 0, "被免疫攻击不发攻击者命中收益")
+	_expect(dodge_cues.size() == 8, "每次真实免疫均发布提示，超过五层仍提示")
 	var snap: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(main._snapshot_system, 4444, source)
 	_expect(snap[NetworkSnapshotSystem.U_ACTIVE_BUFF_ACTIVE], "快照同步反击风暴活动状态")
 	_expect(source.active_buff_clock_visual().y == 2.0, "快照表现时钟使用2秒窗口")
@@ -32,6 +36,7 @@ func run(harness: Object, main: Node2D) -> void:
 	SuiteUtils.begin_attack_visual(enemy, source)
 	resolver.resolve_attack_hit(1, enemy.position, source, 20.0, 0.0, 0.0, enemy, enemy.position, -1, {"strike_type": "skill"})
 	_expect(source.hp == 1060.0, "技能型强化攻击不被普攻免疫")
+	_expect(dodge_cues.size() == 8, "技能伤害及技能型攻击不发布免疫提示")
 	var before := enemy.hp
 	for tick in 39:
 		source._tick_active_statuses(0.05)
@@ -46,6 +51,7 @@ func run(harness: Object, main: Node2D) -> void:
 	SuiteUtils.begin_attack_visual(enemy, source)
 	resolver.resolve_attack_hit(1, enemy.position, source, 20.0, 0.0, 0.0, enemy, enemy.position)
 	_expect(source.hp == 1040.0, "窗口结束正常承受普攻")
+	_expect(dodge_cues.size() == 8, "免疫结束后的普通攻击不发布提示")
 	for i in 10:
 		source.on_attack_landed(-1, 0.0, i + 10)
 	_expect(source.buffs.stack_count(&"hit_haste") == 5 and is_equal_approx(source.active_attack_speed_multiplier, 1.5), "被动五层50%攻速封顶")

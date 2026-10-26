@@ -15,7 +15,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 	if cue in ["effect_shield:start", "effect_shield:block", "effect_shield:end"]: return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "effect_shield")
 	if cue == "structure_haste:start": return float(stats.get("structure_assist_window", 0.0)) > 0.0
 	if cue == "hit": return String(stats.get("type", "")) in ["unit", "building"]
-	if cue in ["counter_strike:explode", "counter_strike:hit"]: return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "counter_strike")
+	if cue in ["counter_strike:explode", "counter_strike:hit", "counter_strike:dodge"]: return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "counter_strike")
 	if cue == "aftershock:explode": return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "aftershock")
 	if cue in ["stasis_target:sustain", "spell:flight"]: return String(stats.get("spell_kind", "")) == "stasis"
 	if cue in ["stealth:enter", "stealth:exit"]: return float(stats.get("stealth_delay", 0.0)) > 0.0

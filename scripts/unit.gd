@@ -661,6 +661,10 @@ func _sync_structure_group() -> void:
 		remove_from_group("combat_structures")
 
 func _ready() -> void:
+	if PresentationEvents.supports(_base_form_stats, "counter_strike:dodge") and (battle_context == null or battle_context.has_presentation()):
+		var notice := preload("res://scripts/presentation/basic_attack_immunity_notice.gd").new()
+		notice.name = "BasicAttackImmunityNotice"
+		add_child(notice)
 	if team_attack_boost_interval > 0.0 and (battle_context == null or battle_context.has_presentation()):
 		_forge_work_effect = preload("res://scripts/presentation/forge_work_effect.gd").new()
 		presentation_cue.connect(_forge_work_effect.on_cue)
@@ -754,6 +758,7 @@ func begin_counter_strike(skill: Dictionary) -> void:
 func try_dodge_basic_attack() -> bool:
 	if _in_client_mode() or hp <= 0.0 or not buffs.any_flag(&"counter_strike", &"enabled"): return false
 	buffs.increment_capped(&"counter_strike", &"dodges", &"max_dodges")
+	if battle_context != null: battle_context.notify_unit_audio_event(self, &"counter_strike:dodge", global_position)
 	return true
 
 func apply_damage_reduction(duration: float, reduction: float, expiry_skill: Dictionary, source: StringName) -> void:
