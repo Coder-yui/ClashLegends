@@ -88,7 +88,7 @@ func tick(unit: Unit, dt: float) -> bool:
 		unit.play_visual_action(&"rush_prepare", remaining)
 		return true
 	if phase == Phase.PREPARING:
-		if not _valid_target(unit):
+		if not _valid_target(unit, true):
 			phase = Phase.READY
 			awaiting_reprepare = false
 			unit.play_visual_action(&"", 0.0)
@@ -102,7 +102,7 @@ func tick(unit: Unit, dt: float) -> bool:
 		unit.play_visual_action(&"rush_dash", maxf(Unit.SIM_DT, unit.global_position.distance_to(endpoint) / float(config.rush_speed)))
 		_audio(unit, &"rush:start")
 	if phase == Phase.DASHING:
-		if not _valid_target(unit):
+		if not _valid_target(unit, true):
 			_finish(unit, false)
 			return true
 		var distance := unit.global_position.distance_to(endpoint)
@@ -158,8 +158,9 @@ func _first_structure_contact(unit: Unit, distance: float) -> Dictionary:
 func _structure_gap(structure: Node2D, point: Vector2, radius: float) -> float:
 	return structure.surface_gap_to_circle(point, radius)
 
-func _valid_target(unit: Unit) -> bool:
-	return is_instance_valid(target) and target.hp > 0.0 and not target.is_queued_for_deletion() and target.team != unit.team and unit._is_struct(target) and CombatInteraction.allows(target, unit)
+## 已锁定的冲撞保留凝滞目标；死亡/释放仍使目标失效，起手不选凝滞目标。
+func _valid_target(unit: Unit, committed: bool = false) -> bool:
+	return is_instance_valid(target) and target.hp > 0.0 and not target.is_queued_for_deletion() and target.team != unit.team and unit._is_struct(target) and (CombatInteraction.allows(target, unit) or (committed and CombatInteraction.in_stasis(target)))
 
 func _sweep(unit: Unit, next: Vector2) -> void:
 	var side := Vector2(-direction.y, direction.x)
@@ -190,7 +191,7 @@ func _sweep(unit: Unit, next: Vector2) -> void:
 
 func _impact(unit: Unit) -> void:
 	if not is_instance_valid(unit): return
-	if unit.hp <= 0.0 or not _valid_target(unit):
+	if unit.hp <= 0.0 or not _valid_target(unit, true):
 		_finish(unit, false)
 		return
 	var result := BattleNumbers.hit(target, float(config.rush_building_damage), unit, unit.team, unit.global_position)

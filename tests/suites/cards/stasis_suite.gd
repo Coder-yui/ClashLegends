@@ -287,16 +287,7 @@ func _check_towers(main: Node2D) -> void:
 		tower.apply_stasis(2)
 		_expect(tower._target == null and tower._lock_windup == 0 and tower._cooldown == 0, "塔凝滞取消旧目标/前摇/冷却，解除重新起手")
 		_expect(not main._projectile_system.projectiles.values().any(func(p): return p.get("target") == tower), "塔凝滞立即断开已有追踪弹体")
-		var herald := _unit(main, "rift_herald", 1-team, tower.position + Vector2(180,0))
-		herald.structure_rush.target = tower
-		herald.structure_rush.phase = StructureRushState.Phase.PREPARING
-		herald.structure_rush.tick(herald, 0.05)
-		_expect(herald.structure_rush.phase == StructureRushState.Phase.READY, "防御塔凝滞使先锋旧冲撞目标失效，取消准备")
-		herald.structure_rush.target = tower
-		herald.structure_rush.phase = StructureRushState.Phase.DASHING
-		herald.structure_rush.tick(herald, 0.05)
-		_expect(herald.structure_rush.phase == StructureRushState.Phase.RECOVERY, "防御塔凝滞使已开始冲撞结束且不命中")
-		_retire([herald])
+		# 先锋已锁定目标的凝滞边界由StructureRushSuite真实冲撞序列覆盖。
 		var hp := tower.hp
 		_expect(not tower.take_damage(100) and not tower.take_damage(100, null, -1, Vector2.ZERO, true) and tower.hp == hp and tower.shield_hp == 100, "凝滞塔拒绝直接/附着伤害且不消耗旧护盾")
 		_expect(not CombatInteraction.can_acquire(tower, 1-team) and not CombatInteraction.allows(tower, enemy), "凝滞塔不被索敌和效果命中")

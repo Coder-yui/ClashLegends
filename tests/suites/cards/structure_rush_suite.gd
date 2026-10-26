@@ -56,6 +56,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_failed_launch_search()
 	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	_check_preparation_structure_lock()
+	_check_stasis_target_lock()
 	var deployed: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "rift_herald", Vector2(360, 1050), {"deploy_time_override": 3.0}))
 	units.append(deployed)
 	step(deployed, 59)
@@ -527,3 +528,32 @@ func _check_cross_river_body_clearance() -> void:
 	_expect(edge_source.structure_rush.phase == StructureRushState.Phase.PREPARING and edge_source.is_walkable_at(edge_source.position), "先锋先退出出生压岸再从全身合法位置准备冲撞")
 	_main.world.release_structure_footprint(target_dummy)
 	clear_units()
+
+func _check_stasis_target_lock() -> void:
+	for team in [0, 1]:
+		var tower: Tower = _main.world.towers_snapshot()[2 if team == 0 else 0]
+		var outward := Vector2.DOWN if team == 0 else Vector2.UP
+		for insertion_tick in [1, 51]:
+			for thaw_before_hit in [false, true]:
+				var source := spawn("rift_herald", team, tower.position + outward * 240.0)
+				step(source, insertion_tick)
+				var rush := source.structure_rush
+				var endpoint := rush.endpoint
+				var heading := rush.direction
+				var health := source.hp
+				var tower_health := tower.hp
+				tower.apply_stasis(3.0, &"rush_test")
+				step(source)
+				_expect(rush.target == tower and rush.endpoint == endpoint and rush.direction == heading and rush.phase == (StructureRushState.Phase.PREPARING if insertion_tick == 1 else StructureRushState.Phase.DASHING), "锁塔后凝滞不取消准备或冲撞，不改变锁定路线")
+				if thaw_before_hit: tower.control.hard.clear_family(&"stasis")
+				for tick in 80:
+					if rush.phase == StructureRushState.Phase.RECOVERY: break
+					step(source)
+				_expect(rush.phase == StructureRushState.Phase.RECOVERY and source.position.distance_to(endpoint) < 0.02 and source.get_visual_action_name() == &"rush_hit" and is_equal_approx(rush.remaining, 0.65), "到达原终点正常播放撞击并进入完整恢复")
+				var mites := _main.get_tree().get_nodes_in_group("combatants").filter(func(c): return c is Unit and c.card_id == "voidmite")
+				_expect(tower.hp == tower_health - (500.0 if thaw_before_hit else 0.0) and source.hp == health - (roundf(health * 0.3) if thaw_before_hit else 0.0) and mites.size() == (6 if thaw_before_hit else 0), "按实际撞击时凝滞状态决定伤害、自损和六虫，准备时状态不固化")
+				step(source, 13)
+				_expect(rush.phase == StructureRushState.Phase.SPENT, "撞上凝滞塔同样消耗唯一冲撞机会")
+				tower.control.hard.clear_family(&"stasis")
+				tower.hp = tower_health
+				clear_units()
