@@ -3251,7 +3251,7 @@ func heal_with_overflow(amount: float, shield_ratio: float, duration: float, sou
 func heal(amount: float, interaction: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_benefit(func(): heal(amount))
+		battle_context.damage_batch().defer_benefit(func(): heal(amount, interaction))
 		return
 	if hp <= 0.0 or amount <= 0.0:
 		return

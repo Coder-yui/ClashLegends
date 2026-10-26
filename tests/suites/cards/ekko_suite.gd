@@ -79,8 +79,14 @@ func run(harness: Object) -> void:
 	var timed := _spawn_ready_unit("ekko", 0, Vector2(150, 1000))
 	timed.configure_carried_active_skill(skill)
 	timed.hp = 100.0
+	_main._combat.begin_batch(900, "ekko_cast_start")
 	_expect(_main._skill_lifecycle.start(timed, skill), "正式施法生命周期成功开始")
-	_expect(timed.hp == timed.max_hp, "正式生命周期开始即治疗")
+	_main._combat.commit_batch()
+	_expect(timed.hp == timed.max_hp, "实战批次中回溯不可选中不会拒绝自身满血收益")
+	timed.hp -= 10.0
+	timed.heal(10.0)
+	_expect(timed.hp == timed.max_hp - 10.0, "回溯期间仍拒绝普通外部治疗")
+	timed.hp = timed.max_hp
 	timed.freeze(1.0, &"test", CombatInteraction.effect_context(target))
 	_expect(not timed.is_frozen(), "回溯拒绝敌方冰冻")
 	for i in 14:

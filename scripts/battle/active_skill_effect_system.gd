@@ -114,7 +114,8 @@ func prepare_dual_form_cast(source: Unit, skill: Dictionary) -> Dictionary:
 ## Cast Start 的效果必须在施法窗口开始时发生；它不依赖动画，也不等待 EffectExecution。
 func apply_cast_start(source: Unit, skill: Dictionary) -> void:
 	if StringName(skill.get("kind", "")) == &"rewind_nova":
-		source.heal(source.max_hp)
+		# 回溯自身收益不重新选取目标；批次末提交时自身已进入不可选中。
+		source.heal(source.max_hp, CombatInteraction.effect_context(source, source.team, source.global_position, true))
 		source.control.hard.apply(&"untargetable", source.status_source("rewind"), float(skill.impact_delay), {})
 		_presentation.present_fixed_area(source.global_position, float(skill.radius), float(skill.radius), float(skill.impact_delay), source.team, &"rewind_vanish")
 	if StringName(skill.get("kind", "")) == &"counter_strike":
