@@ -206,6 +206,14 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 					bool(target_skill.get("ignore_attack_speed_slow", false)),
 					source.status_source(String(skill.get("name", "buff")))
 				)
+				if bool(target_skill.get("untargetable", false)):
+					var grant_untargetable := func():
+						if is_instance_valid(target) and target.hp > 0.0:
+							target.control.hard.apply(&"untargetable", source.status_source("faith"), float(target_skill.duration), {"pause_lifespan": bool(target_skill.get("pause_lifespan", false))})
+					if target.battle_context != null and target.battle_context.damage_batch().collecting:
+						target.battle_context.damage_batch().defer_effect(grant_untargetable)
+					else:
+						grant_untargetable.call()
 				if float(target_skill.get("heal_ratio", 0.0)) > 0.0:
 					target.apply_timed_lifesteal(float(target_skill.duration), float(target_skill.heal_ratio), source.status_source("timed_lifesteal"))
 				if bool(target_skill.get("ignore_unit_collision", false)):

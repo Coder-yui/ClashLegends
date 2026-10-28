@@ -68331,6 +68331,914 @@
         "filters": []
       },
       "duration": 3.1044
+    },
+    {
+      "file": "assets/audio/units/convergent_pulse/play_sfx_orianadetonatecommand_oncast_r1.wav",
+      "sha256": "bbcf6bee19b2798d09c6043e894c4dfdd279f7c46d886195f90cdd2d71dcf171",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_OrianaDetonateCommand_OnCast {r1}.txtp",
+          "txtp_sha256": "2e7a676a7cf6cb5ba089061106cbd3737333c962f344e123c6a8258eb7e9d2c7",
+          "event_ids": [
+            "3712536696"
+          ],
+          "media_ids": [
+            "74559808",
+            "166607323",
+            "249237419",
+            "382749418"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_OrianaDetonateCommand_OnCast {r1}.wav",
+          "sha256": "bbcf6bee19b2798d09c6043e894c4dfdd279f7c46d886195f90cdd2d71dcf171"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 0.7896
+    },
+    {
+      "file": "assets/audio/units/convergent_pulse/play_sfx_orianadetonatecommand_oncast_r2.wav",
+      "sha256": "8a287ccdb47f497064b143a8c1de0bd22620df1bfb947e9ac583a3acbaab4bd0",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_OrianaDetonateCommand_OnCast {r2}.txtp",
+          "txtp_sha256": "ecbb52ce18879f20b3ff5b56dcecdf0551ab6638cbbc4fb9b8811e18b61c705c",
+          "event_ids": [
+            "3712536696"
+          ],
+          "media_ids": [
+            "74559808",
+            "166607323",
+            "249237419",
+            "382749418"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_OrianaDetonateCommand_OnCast {r2}.wav",
+          "sha256": "8a287ccdb47f497064b143a8c1de0bd22620df1bfb947e9ac583a3acbaab4bd0"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 0.595
+    },
+    {
+      "file": "assets/audio/units/convergent_pulse/play_sfx_orianadetonatecommand_oncast_r3.wav",
+      "sha256": "1a2283a182caa6cc5b050ad2da4523d1f24b258760cda4d3267370fd7f593d00",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_OrianaDetonateCommand_OnCast {r3}.txtp",
+          "txtp_sha256": "1f10e3ed1af267e25684b0cc18dfb75cc926f173254f4af2b15f1c6fdcd7c075",
+          "event_ids": [
+            "3712536696"
+          ],
+          "media_ids": [
+            "74559808",
+            "166607323",
+            "249237419",
+            "382749418"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_OrianaDetonateCommand_OnCast {r3}.wav",
+          "sha256": "1a2283a182caa6cc5b050ad2da4523d1f24b258760cda4d3267370fd7f593d00"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 0.8074
+    },
+    {
+      "file": "assets/audio/units/convergent_pulse/play_sfx_orianna_oriannadetonatecommand_buffactivate_r1.wav",
+      "sha256": "d0c0b314e72d1b18203457427d1dbe7b2e6bce863a0d57e7682cd5a3c0d9f2c5",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_Orianna_OriannaDetonateCommand_buffactivate {r1}.txtp",
+          "txtp_sha256": "ca9261af7311208a3f0e63dc49dcea5cb43746fa8b2f453397f5ddb39c183fe6",
+          "event_ids": [
+            "1823156261"
+          ],
+          "media_ids": [
+            "887782363",
+            "1036935980"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_Orianna_OriannaDetonateCommand_buffactivate {r1}.wav",
+          "sha256": "d0c0b314e72d1b18203457427d1dbe7b2e6bce863a0d57e7682cd5a3c0d9f2c5"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 1.3114
+    },
+    {
+      "file": "assets/audio/units/convergent_pulse/play_sfx_orianna_oriannadetonatecommand_buffactivate_r2.wav",
+      "sha256": "b700bf1063324548df9ee122bd3093ad0394a6350a6439c51579bb1e34af023f",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_Orianna_OriannaDetonateCommand_buffactivate {r2}.txtp",
+          "txtp_sha256": "31002c6d1e6684b119fa44a004ca07076afa3c74437ba18ea341692e0bfe6f87",
+          "event_ids": [
+            "1823156261"
+          ],
+          "media_ids": [
+            "887782363",
+            "1036935980"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_Orianna_OriannaDetonateCommand_buffactivate {r2}.wav",
+          "sha256": "b700bf1063324548df9ee122bd3093ad0394a6350a6439c51579bb1e34af023f"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 1.3234
+    },
+    {
+      "file": "assets/audio/units/convergent_pulse/play_sfx_orianna_oriannadetonatecommand_hit_r1.wav",
+      "sha256": "096fb9719bd964c85d8dd079443ec0c358415c4bfebde82320a40c2bad8fe02e",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_Orianna_OriannaDetonateCommand_hit {r1}.txtp",
+          "txtp_sha256": "f7de08590975a493490643a8a29e782c339fd7c041654af632b0324a521b9460",
+          "event_ids": [
+            "388677692"
+          ],
+          "media_ids": [
+            "467783881",
+            "648642925",
+            "1023409026",
+            "1048097850"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_Orianna_OriannaDetonateCommand_hit {r1}.wav",
+          "sha256": "096fb9719bd964c85d8dd079443ec0c358415c4bfebde82320a40c2bad8fe02e"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 2.202
+    },
+    {
+      "file": "assets/audio/units/convergent_pulse/play_sfx_orianna_oriannadetonatecommand_hit_r2.wav",
+      "sha256": "4bbc1eb82f2c0a6a4a8936d712422df46ae2fb7eebdc63eb0d5a36e6e93bc7fd",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_Orianna_OriannaDetonateCommand_hit {r2}.txtp",
+          "txtp_sha256": "f91d4451821c343db56f833fd41801606ee2c303bfd466f9b2185d3e82606587",
+          "event_ids": [
+            "388677692"
+          ],
+          "media_ids": [
+            "467783881",
+            "648642925",
+            "1023409026",
+            "1048097850"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_Orianna_OriannaDetonateCommand_hit {r2}.wav",
+          "sha256": "4bbc1eb82f2c0a6a4a8936d712422df46ae2fb7eebdc63eb0d5a36e6e93bc7fd"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 2.6
+    },
+    {
+      "file": "assets/audio/units/convergent_pulse/play_sfx_orianna_oriannadetonatecommand_hit_r3.wav",
+      "sha256": "30895bae576d0a5ba024c0779de29e63403279bbff292411ff96f91f73030d18",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_Orianna_OriannaDetonateCommand_hit {r3}.txtp",
+          "txtp_sha256": "c3011b20b01c9f6227b4df8e35d9523a0c7629ffa7299982e57b16501c5bdc3f",
+          "event_ids": [
+            "388677692"
+          ],
+          "media_ids": [
+            "467783881",
+            "648642925",
+            "1023409026",
+            "1048097850"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_Orianna_OriannaDetonateCommand_hit {r3}.wav",
+          "sha256": "30895bae576d0a5ba024c0779de29e63403279bbff292411ff96f91f73030d18"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "filters": []
+      },
+      "duration": 2.3297
+    },
+    {
+      "file": "assets/audio/units/final_spark/cast_1.wav",
+      "sha256": "6b4aebde674a57350f9adad665f10dfd680be64e026e9eb7310d650eb25f5c8c",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/cast_1.txtp",
+          "txtp_sha256": "e607c5f082552a72f38439b0d8070b0a8272d493f4fdb39d6a240458c375b960",
+          "event_ids": [
+            "734109820"
+          ],
+          "media_ids": [
+            "82083908",
+            "103796073"
+          ],
+          "candidate_media_ids": [
+            "82083908",
+            "148291726",
+            "763860472",
+            "747203483",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 1",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/cast_2.wav",
+      "sha256": "5203ae7a28acf1d9335d834de139f583a63e91f2b92c41e475908c215e5504c5",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/cast_2.txtp",
+          "txtp_sha256": "bb23a34de9ded0afcd84da8662e40a4f81cdb6dbe74a4d1999e0b8787d6d4c00",
+          "event_ids": [
+            "734109820"
+          ],
+          "media_ids": [
+            "148291726",
+            "266892436"
+          ],
+          "candidate_media_ids": [
+            "82083908",
+            "148291726",
+            "763860472",
+            "747203483",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 2",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/cast_3.wav",
+      "sha256": "4e48e46140e3c897673d9811081adc715099edc1ba4199222a7e139ac1ad03c6",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/cast_3.txtp",
+          "txtp_sha256": "a43f9d7cecfe6579d806d18210a1da99caf4b57fcee552056aa143ecdfe441d5",
+          "event_ids": [
+            "734109820"
+          ],
+          "media_ids": [
+            "763860472",
+            "3793796"
+          ],
+          "candidate_media_ids": [
+            "82083908",
+            "148291726",
+            "763860472",
+            "747203483",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 3",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/middle_1.wav",
+      "sha256": "f4f9e16bba0fa290c67095763a8254814539dc60347ce2c33acbb3270a50fb2c",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/middle_1.txtp",
+          "txtp_sha256": "2179f00fa074b09bed6cba98317094b2dd66262fe1ede8eaeabda62646df4cbb",
+          "event_ids": [
+            "398611427"
+          ],
+          "media_ids": [
+            "25979506",
+            "103796073"
+          ],
+          "candidate_media_ids": [
+            "25979506",
+            "40380380",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 1",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/middle_2.wav",
+      "sha256": "3ce647000369d968dafa193c229d885f1e6a943d050b828a8cb87d88e9add697",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/middle_2.txtp",
+          "txtp_sha256": "85ff726011be3a9b57bd68d4a83ebce06190659a266c14d26dff94e79795b0d7",
+          "event_ids": [
+            "398611427"
+          ],
+          "media_ids": [
+            "40380380",
+            "266892436"
+          ],
+          "candidate_media_ids": [
+            "25979506",
+            "40380380",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 2",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/middle_3.wav",
+      "sha256": "d20abdf5de6225a2868580caf6e628835c03b7f628db675bc092c5d72c5f4060",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/middle_3.txtp",
+          "txtp_sha256": "7a4f3e5c7e2f87b11c4f53956bbd753ee34f92c05017412913ed8fabc970a2ce",
+          "event_ids": [
+            "398611427"
+          ],
+          "media_ids": [
+            "25979506",
+            "3793796"
+          ],
+          "candidate_media_ids": [
+            "25979506",
+            "40380380",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 3",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/end_1.wav",
+      "sha256": "8e5eade05fd31e9c284f594ea61560d00beaa69a42fefb7f11b70ff3e182fc72",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/end_1.txtp",
+          "txtp_sha256": "4d9a77c3a9fd635667ee9b989885de3e4f8f8e843532ab381239103e3433ff33",
+          "event_ids": [
+            "203817467"
+          ],
+          "media_ids": [
+            "25979506",
+            "103796073"
+          ],
+          "candidate_media_ids": [
+            "25979506",
+            "40380380",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 1",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/end_2.wav",
+      "sha256": "35d0cddfdfd1e909776bafb238577c2f196b3355938dc6e827449f269c6e1e5c",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/end_2.txtp",
+          "txtp_sha256": "5cb6b2c74d8f426bd83a79b3d5dfbf3de501576dcbffaf7e58756d8333896edf",
+          "event_ids": [
+            "203817467"
+          ],
+          "media_ids": [
+            "40380380",
+            "266892436"
+          ],
+          "candidate_media_ids": [
+            "25979506",
+            "40380380",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 2",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/end_3.wav",
+      "sha256": "d70ae593d28897317001f2655005a8ab17b5f027a1316de39796940681359981",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/end_3.txtp",
+          "txtp_sha256": "7dae024a42f782754bdad13e8b6da0d4c89dba3d64dcbbc88a22e43a5bd7cfd8",
+          "event_ids": [
+            "203817467"
+          ],
+          "media_ids": [
+            "25979506",
+            "3793796"
+          ],
+          "candidate_media_ids": [
+            "25979506",
+            "40380380",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 3",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleattack_onbuffcast_r1.wav",
+      "sha256": "d7f7c2f56ea5380a32c705e20027ba703c8080abfa1a12fbf081671cc1da04d4",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleAttack_OnBuffCast {r1}.txtp",
+          "txtp_sha256": "31663bdff519a13bd5f6c1eeb384434cb9c6aff97401d1da0b8dde1f255f19ea",
+          "event_ids": [
+            "2366326931"
+          ],
+          "media_ids": [
+            41629780,
+            182847731,
+            768181674,
+            788864504
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "完整原版触手事件，不作归一化或裁剪"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleattack_onbuffcast_r2.wav",
+      "sha256": "6af27f7e2525cace2371216e8a649569821512f3ca0cbae2963f60bf29c79981",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleAttack_OnBuffCast {r2}.txtp",
+          "txtp_sha256": "c3516fe066f130d9ebcc98f8f3010f5a8c1d7927647aa20ec51c6d408d67c14a",
+          "event_ids": [
+            "2366326931"
+          ],
+          "media_ids": [
+            41629780,
+            182847731,
+            768181674,
+            788864504
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "完整原版触手事件，不作归一化或裁剪"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleattack_onbuffcast_r3.wav",
+      "sha256": "a9a1fad15d041cf241c47cd2122071b4ad3bb36cdba2f03f850f40f50ec75fa2",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleAttack_OnBuffCast {r3}.txtp",
+          "txtp_sha256": "df7374f58e243ad6ad1ca48aafcaf582d14310bdc0b5cc52d652c3340f3d5c87",
+          "event_ids": [
+            "2366326931"
+          ],
+          "media_ids": [
+            41629780,
+            182847731,
+            768181674,
+            788864504
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "完整原版触手事件，不作归一化或裁剪"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleattack_minion_hit.wav",
+      "sha256": "c85b707486fb1bcd07d61a00fb85c39f74efa41778f22611063130a402a693af",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleAttack_minion_hit.txtp",
+          "txtp_sha256": "abae03df9a3b06ef3779d9be25061d8caa4275a4c20dc108cd1d2150962bdd94",
+          "event_ids": [
+            "2848998994"
+          ],
+          "media_ids": [
+            682996676
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "完整原版触手事件，不作归一化或裁剪"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentaclespawn_buffactivate_r1.wav",
+      "sha256": "5fc3ada08df556bf4aea327af2fe0a51ec55f4dfe9b448bd07ac07bc0619bf9c",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleSpawn_buffactivate {r1}.txtp",
+          "txtp_sha256": "9981ad719bf863dfcc5ea938c8c2bdfce52caaa31c23587e28b97c96fa1b7e74",
+          "event_ids": [
+            "753914535"
+          ],
+          "media_ids": [
+            361265305,
+            593544301,
+            880664980
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "完整原版触手事件，不作归一化或裁剪"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentaclespawn_buffactivate_r2.wav",
+      "sha256": "aaba988c0cf61ee92dea87e71bb8f89425a71a85d574d47d5c41db5b993ddcb5",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleSpawn_buffactivate {r2}.txtp",
+          "txtp_sha256": "4ad340e411088a993045f36a33696429ee2df8047fd5bd75db5dd76a304a5a49",
+          "event_ids": [
+            "753914535"
+          ],
+          "media_ids": [
+            361265305,
+            593544301,
+            880664980
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "完整原版触手事件，不作归一化或裁剪"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentaclespawn_buffactivate_r3.wav",
+      "sha256": "ec6de0875ab1b0e5723b3dbb210d7c01f80ddefcacc2f1b334b0320a5e107512",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleSpawn_buffactivate {r3}.txtp",
+          "txtp_sha256": "729cadc2b908f272524b670dfa73409d857c1dcaca7c41425e4e9c68afdf41a4",
+          "event_ids": [
+            "753914535"
+          ],
+          "media_ids": [
+            361265305,
+            593544301,
+            880664980
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "完整原版触手事件，不作归一化或裁剪"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleattack_ground_hit_r1.wav",
+      "sha256": "0c7d3f85cb121bc8f36e728e6d8f92946f6723708ad32e7a6b860b896e223b8e",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleAttack_Ground_Hit {r1}.txtp",
+          "txtp_sha256": "6ec973cda95a91c9f0ea513f462701c87e40bd88165e5ef78f628b9992a064e4",
+          "event_ids": [
+            "3140203913"
+          ],
+          "media_ids": [
+            78750127,
+            185053661,
+            222662609
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "完整原版触手事件，不作归一化或裁剪"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleattack_ground_hit_r2.wav",
+      "sha256": "3607c65e61d978542db714f13d5a21738fb375ab4d56a7626e98bb5919c5520c",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleAttack_Ground_Hit {r2}.txtp",
+          "txtp_sha256": "da0fd403de427321ee766b33b01ec3b0ff2f177ede706d88909156ef58aeade7",
+          "event_ids": [
+            "3140203913"
+          ],
+          "media_ids": [
+            78750127,
+            185053661,
+            222662609
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "完整原版触手事件，不作归一化或裁剪"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleattack_ground_hit_r3.wav",
+      "sha256": "06a3fb06bb080f4333d3db88f57844d5fd62f85025f5c924457f819e3eecdc90",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleAttack_Ground_Hit {r3}.txtp",
+          "txtp_sha256": "18e7c8ef9f7db59aec62b630e853664d5a0ab4db2debedbe087601ad397956d1",
+          "event_ids": [
+            "3140203913"
+          ],
+          "media_ids": [
+            78750127,
+            185053661,
+            222662609
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "完整原版触手事件，不作归一化或裁剪"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleactive_onbuffcast_r1.wav",
+      "sha256": "d55206f977d3a7043ddd4bf1343293428a232e042f4e528ab6bd9528972274fd",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffCast {r1}.txtp",
+          "txtp_sha256": "abca10130365c8bc496d29a101bfc7151c3e44a82687a5d25336dfd0ac98bca8",
+          "event_ids": [
+            "2615188965"
+          ],
+          "media_ids": [
+            78132066,
+            150792119,
+            775420727,
+            821462422,
+            866384394,
+            1044047668
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "完整原版触手事件，不作归一化或裁剪"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleactive_onbuffcast_r2.wav",
+      "sha256": "24e03d6cb005cbc7905f086a2584c2a113c5b9c8cd0b790f020b265b7a62c52b",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffCast {r2}.txtp",
+          "txtp_sha256": "eff5ceffe466afe31bf48aeab36e213a52d6f9a42481426451b9df056f507e01",
+          "event_ids": [
+            "2615188965"
+          ],
+          "media_ids": [
+            78132066,
+            150792119,
+            775420727,
+            821462422,
+            866384394,
+            1044047668
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "完整原版触手事件，不作归一化或裁剪"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleactive_onbuffcast_r3.wav",
+      "sha256": "97ea698c3806d19d135015ea87284cea41161d935c018709bdbb1a5ad8b6106b",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffCast {r3}.txtp",
+          "txtp_sha256": "2b0c54084a9bb8a4c22bcdf66c60d88dabe895a55eaf30f05176b28100816720",
+          "event_ids": [
+            "2615188965"
+          ],
+          "media_ids": [
+            78132066,
+            150792119,
+            775420727,
+            821462422,
+            866384394,
+            1044047668
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "完整原版触手事件，不作归一化或裁剪"
     }
   ]
 }

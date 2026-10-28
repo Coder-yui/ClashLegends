@@ -158,9 +158,9 @@ func _first_structure_contact(unit: Unit, distance: float) -> Dictionary:
 func _structure_gap(structure: Node2D, point: Vector2, radius: float) -> float:
 	return structure.surface_gap_to_circle(point, radius)
 
-## 已锁定的冲撞保留凝滞目标；死亡/释放仍使目标失效，起手不选凝滞目标。
+## 已锁定的冲撞保留凝滞/不可选取建筑；死亡仍使其失效，不能新选这些目标。
 func _valid_target(unit: Unit, committed: bool = false) -> bool:
-	return is_instance_valid(target) and target.hp > 0.0 and not target.is_queued_for_deletion() and target.team != unit.team and unit._is_struct(target) and (CombatInteraction.allows(target, unit) or (committed and CombatInteraction.in_stasis(target)))
+	return is_instance_valid(target) and target.hp > 0.0 and not target.is_queued_for_deletion() and target.team != unit.team and unit._is_struct(target) and (CombatInteraction.allows(target, unit) or (committed and (CombatInteraction.in_stasis(target) or (target is Unit and target.control.hard.remaining(&"untargetable") > 0.0))))
 
 func _sweep(unit: Unit, next: Vector2) -> void:
 	var side := Vector2(-direction.y, direction.x)

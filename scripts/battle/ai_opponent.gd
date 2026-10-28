@@ -19,7 +19,7 @@ static func build_deck() -> Array:
 			"unit": units.append(card_id)
 			"building": buildings.append(card_id)
 			"spell":
-				if stats.get("spell_kind", "") in ["zap", "lightning", "medium_lightning", "freeze"]:
+				if stats.get("spell_kind", "") in ["final_spark", "convergent_pulse", "zap", "lightning", "medium_lightning", "freeze"]:
 					spells.append(card_id)
 	units.shuffle()
 	buildings.shuffle()
@@ -137,6 +137,7 @@ func _nearest_legal_position(card_id: String, desired: Vector2) -> Vector2:
 	return best
 
 func _spell_position(card_id: String, stats: Dictionary) -> Vector2:
+	if String(stats.get("spell_kind", "")) == "final_spark": return _final_spark_position(card_id, stats)
 	var healing: bool = stats.get("spell_kind", "") == "heal"
 	var stasis: bool = stats.get("spell_kind", "") == "stasis"
 	var targets := get_tree().get_nodes_in_group("combatants")
@@ -162,9 +163,28 @@ func _spell_position(card_id: String, stats: Dictionary) -> Vector2:
 				# 优先打单位群，伤害法术也可用于削塔；控制不空冻水晶。
 				if target is Unit:
 					score += 1.0
-				elif stats.get("spell_kind", "") in ["zap", "lightning", "medium_lightning"]:
+				elif stats.get("spell_kind", "") in ["final_spark", "convergent_pulse", "zap", "lightning", "medium_lightning"]:
 					score += 0.25
 		if score > best_score:
 			best_score = score
 			best = pos
+	return best
+
+func _final_spark_position(card_id: String, stats: Dictionary) -> Vector2:
+	var best := Vector2.INF
+	var best_score := 0.0
+	var targets := get_tree().get_nodes_in_group("combatants")
+	for candidate in targets:
+		if candidate.team != 0 or candidate.hp <= 0: continue
+		var origin := _nearest_legal_position(card_id, candidate.global_position - Vector2(0, float(stats.range) * 0.5))
+		if not origin.is_finite(): continue
+		var end := origin + Vector2.DOWN * float(stats.range)
+		var score := 0.0
+		for target in targets:
+			if target.team != 0 or target.hp <= 0 or CombatInteraction.in_stasis(target): continue
+			if SpellSystem.final_spark_intersects(origin, end, float(stats.wave_width), target.global_position, target.body_radius):
+				score += 0.25 if target is Tower else 1.0
+		if score > best_score:
+			best = origin
+			best_score = score
 	return best

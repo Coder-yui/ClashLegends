@@ -2,6 +2,7 @@ class_name PresentationEvents
 extends RefCounted
 ## 当前实际派发能力表；新增 cue 必须同时实现权威派发与消费者。
 static func supports(stats: Dictionary, cue: String) -> bool:
+	if cue == "attack:ground": return float(stats.get("fixed_attack_length", 0.0)) > 0.0
 	if cue in ["burst:start", "burst:end"]: return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "attack_burst")
 	if cue == "transform:start" and float(stats.get("form_cycle_interval", 0.0)) > 0.0: return true
 	if cue == "shrine:leap": return float(stats.get("death_heal_radius", 0.0)) > 0.0 and stats.has("death_transition_delay")
@@ -45,9 +46,11 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 	if spell:
 		if String(stats.get("spell_kind", "")) == "pool_of_reflection" and cue in ["spell:zone_sustain", "spell:zone_end", "pool_shield:sustain", "spell:shield_end"]: return true
 		if String(stats.get("spell_kind", "")) == "medium_lightning" and cue in ["spell:strike", "spell:tower_disable", "spell:cast", "spell:warning", "spell:warning_enemy", "spell:hit", "spell:zone_sustain"]: return true
+		if String(stats.get("spell_kind", "")) == "convergent_pulse" and cue in ["spell:charge", "spell:hit"]: return true
 		if String(stats.get("spell_kind", "")) == "solar_flare" and cue in ["spell:impact", "spell:sunlight"]: return true
 		if String(stats.get("spell_kind", "")) == "severing_bolt" and cue in ["spell:launch", "spell:warning", "spell:impact"]: return true
 		if String(stats.get("spell_kind", "")) == "event_horizon" and cue in ["spell:hit", "spell:meteor", "spell:impact"]: return true
+		if String(stats.get("spell_kind", "")) == "final_spark" and cue in ["spell:middle", "spell:end"]: return true
 		if String(stats.get("spell_kind", "")) == "tidal_wave" and cue in ["spell:launch", "spell:hit"]: return true
 		return (cue == "spell:zone_sustain" and String(stats.get("spell_kind", "")) in ["corrosion", "void_summoning", "event_horizon"]) or cue == "spell:cast" or (cue == "spell:strike" and String(stats.get("spell_kind", "")) in ["zap", "lightning", "stasis", "explosive_cask", "mega_inferno_bomb"])
 	if cue in ["sanctuary:sustain", "sanctuary:end"]:

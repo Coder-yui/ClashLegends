@@ -922,5 +922,32 @@
     ],
     "sha256": "ae87f991f48c8fb2ad9bdb156fd530821f23443c278656bef3cc929bed5d57cc",
     "processing": "FFmpeg DDS decode; same diagonal split algorithm as CardArt.skill_icon; upper-left Serpents Fang, lower-right Morellonomicon"
+  },
+  {
+    "card": "convergent_pulse",
+    "skill_index": 0,
+    "path": "res://assets/skills/orianna_r.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Orianna.wad.client",
+    "source_path": "assets/characters/orianna/hud/icons2d/oriannar.dds",
+    "source_sha256": "6256802345338e62515d07fe51b50b447458b3e098eb31d3ab734b49432dfb07",
+    "sha256": "98fc4de1d7b3b7d8cdfbd16bed43c9bef91526f790f00af1c97d80ac5b429e6f"
+  },
+  {
+    "card": "final_spark",
+    "skill_index": 0,
+    "path": "res://assets/skills/lux_p.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Lux.wad.client",
+    "source_path": "assets/characters/lux/hud/icons2d/luxilluminatingfraulein.dds",
+    "source_sha256": "6432beefb6af601bed89744cca904c78b6daaec6af55554a03f042d3ee4db74e",
+    "sha256": "fd22a06345b6f349fcca08b6c932c03570ce1b4fb96f2e0badfd1697adb60bd0"
+  },
+  {
+    "card": "soul_tentacle",
+    "skill_index": 0,
+    "path": "res://assets/skills/illaoi_r.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Illaoi.wad.client",
+    "source_path": "assets/characters/illaoi/hud/icons2d/illaoi_r.dds",
+    "source_sha256": "e41195c4389be822d61a1fd9eecd5c4b2b85391b9720fa9df4f02ae04c2ce524",
+    "sha256": "401c10436a90a73143ef8857bd83f69636169084763ced927e8a257dd29dfe5a"
   }
 ]

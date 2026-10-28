@@ -44,6 +44,9 @@ func run(harness: SceneTree) -> void:
 		main._audio_manager.cue_played.connect(func(card, cue, _pos):
 			if card == "match" and cue in [&"victory", &"defeat"]: result_cues.append(cue))
 	var bomb_case = preload("res://tests/fixtures/mega_inferno_bomb_network_case.gd").new() if OS.get_environment("CLASH_TEST_MEGA_INFERNO_BOMB") == "1" else null
+	var tentacle_case = preload("res://tests/fixtures/soul_tentacle_network_case.gd").new() if OS.get_environment("CLASH_TEST_SOUL_TENTACLE") == "1" else null
+	var spark_case = preload("res://tests/fixtures/final_spark_network_case.gd").new() if OS.get_environment("CLASH_TEST_FINAL_SPARK") == "1" else null
+	var pulse_case = preload("res://tests/fixtures/convergent_pulse_network_case.gd").new() if OS.get_environment("CLASH_TEST_CONVERGENT_PULSE") == "1" else null
 	var solar_case = preload("res://tests/fixtures/solar_flare_network_case.gd").new() if OS.get_environment("CLASH_TEST_SOLAR_FLARE") == "1" else null
 	var pool_case = preload("res://tests/fixtures/pool_of_reflection_network_case.gd").new() if OS.get_environment("CLASH_TEST_POOL_OF_REFLECTION") == "1" else null
 	var bolt_case = preload("res://tests/fixtures/severing_bolt_network_case.gd").new() if OS.get_environment("CLASH_TEST_SEVERING_BOLT") == "1" else null
@@ -75,6 +78,9 @@ func run(harness: SceneTree) -> void:
 	while Time.get_ticks_msec() - start < 20000:
 		await harness.process_frame
 		if bomb_case != null: bomb_case.poll(main)
+		if tentacle_case != null: tentacle_case.poll(main)
+		if spark_case != null: spark_case.poll(main)
+		if pulse_case != null: pulse_case.poll(main)
 		if solar_case != null: solar_case.poll(main)
 		if pool_case != null: pool_case.poll(main)
 		if bolt_case != null: bolt_case.poll(main)
@@ -268,6 +274,15 @@ func run(harness: SceneTree) -> void:
 		if bomb_case != null:
 			result["mega_inferno_bomb"] = bomb_case.result()
 			result["passed"] = result.passed and result.mega_inferno_bomb.passed
+		if tentacle_case != null:
+			result["soul_tentacle"] = tentacle_case.result()
+			result["passed"] = result.passed and result.soul_tentacle.passed
+		if spark_case != null:
+			result["final_spark"] = spark_case.result()
+			result["passed"] = result.passed and result.final_spark.passed
+		if pulse_case != null:
+			result["convergent_pulse"] = pulse_case.result()
+			result["passed"] = result.passed and result.convergent_pulse.passed
 		if solar_case != null:
 			result["solar_flare"] = solar_case.result()
 			result["passed"] = result.passed and result.solar_flare.passed

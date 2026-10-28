@@ -93,6 +93,8 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 	if stats.has("stealth_delay") and (float(stats.stealth_delay) <= 0.0 or stats.get("type", "") != "unit" or bool(stats.get("is_building", false)) or bool(stats.get("is_continuous_attack", false))):
 		errors.append(card_id + ".stealth_delay: 仅普通单位支持正数脱战隐身时间")
 	for skill in stats.get("active_skills", []):
+		if (skill.has("untargetable") or skill.has("pause_lifespan")) and String(skill.get("kind", "")) != "buff":
+			errors.append(card_id + ".active_skills: 不可选取与暂停寿命只支持buff")
 		if skill.has("ignore_unit_collision") and String(skill.get("kind", "")) != "buff":
 			errors.append(card_id + ".active_skills.ignore_unit_collision: 仅支持buff")
 		if skill.has("range_bonus") or skill.has("piercing_attacks") or skill.has("piercing_distance") or skill.has("projectile_speed_multiplier"):
@@ -161,6 +163,17 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 				&"pool_of_reflection":
 					for field in ["shield_per_second", "shield_duration", "radius"]:
 						if not is_finite(float(stats.get(field, 0))) or float(stats.get(field, 0)) <= 0: errors.append(card_id + "." + field + ": 必须为有限正数")
+				&"final_spark":
+					for field in ["radius", "wave_width", "range", "damage", "spell_windup", "duration"]:
+						if not is_finite(float(stats.get(field, 0))) or float(stats.get(field, 0)) <= 0: errors.append(card_id + "." + field + ": 必须为有限正数")
+					if not is_equal_approx(float(stats.get("wave_width", 0)), float(stats.get("radius", 0)) * 2): errors.append(card_id + ": 直线宽度须为半径的两倍")
+					var multiplier := float(stats.get("tower_damage_multiplier", -1))
+					if not is_finite(multiplier) or multiplier < 0 or multiplier > 1: errors.append(card_id + ": 塔伤害倍率须在0至1之间")
+				&"convergent_pulse":
+					for field in ["radius", "damage", "spell_windup", "duration", "pull_distance"]:
+						if not is_finite(float(stats.get(field, 0))) or float(stats.get(field, 0)) <= 0: errors.append(card_id + "." + field + ": 必须为有限正数")
+					var multiplier := float(stats.get("tower_damage_multiplier", -1))
+					if not is_finite(multiplier) or multiplier < 0 or multiplier > 1: errors.append(card_id + ": 塔伤害倍率须在0至1之间")
 				&"solar_flare":
 					_require_fields(card_id, stats, [&"spell_windup", &"inner_radius", &"slow_multiplier"], errors)
 					for field in ["spell_windup", "inner_radius", "radius", "duration"]:
@@ -532,6 +545,10 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 			errors.append(label + ": 自动牵引需要地面单位且牵引距离大于普攻距离")
 	if stats.has("auto_pull_range") and not (float(stats.get("range", 0)) < float(stats.get("auto_pull_min_range", 0)) and float(stats.get("auto_pull_min_range", 0)) <= float(stats.auto_pull_range) and float(stats.auto_pull_range) <= float(stats.get("auto_pull_break_range", 0)) and float(stats.get("auto_pull_break_range", 0)) <= float(stats.get("sight", 0))):
 		errors.append(label + ": 牵引距离须满足普攻 < 最小距离 <= 起手距离 <= 宽限 <= 视野")
+	if stats.has("fixed_attack_length") or stats.has("fixed_attack_width"):
+		for field in ["fixed_attack_length", "fixed_attack_width"]:
+			if not is_finite(float(stats.get(field, 0.0))) or float(stats.get(field, 0.0)) <= 0.0: errors.append(label + "." + field + ": 必须为正数")
+		if float(stats.get("projectile_speed", 0.0)) > 0.0 or not bool(stats.get("is_building", false)): errors.append(label + ": 固定范围普攻只支持直接攻击建筑")
 	if stats.has("attack_self_radius") and (not is_finite(float(stats.attack_self_radius)) or float(stats.attack_self_radius) <= 0.0 or float(stats.get("projectile_speed", 0.0)) > 0.0 or float(stats.get("splash_radius", 0.0)) > 0.0):
 		errors.append(label + ".attack_self_radius: 只支持正半径直接近战")
 	if float(stats.get("charge_impact_radius", 0.0)) < 0.0: errors.append(label + ".charge_impact_radius: 必须非负")
@@ -1178,6 +1195,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				if float(skill.get("attack_count", 0)) <= 0 or float(skill.get("attack_count", 0)) != int(skill.get("attack_count", 0)) or float(skill.get("attack_speed_multiplier", 0.0)) <= 1.0:
 					errors.append(label + ": 连续攻速强化需要正整数次数与大于1的攻速倍率")
 			&"buff":
+				for field in ["untargetable", "pause_lifespan"]:
+					if skill.has(field) and typeof(skill[field]) != TYPE_BOOL: errors.append(label + "." + field + ": 必须是 bool")
+				if bool(skill.get("pause_lifespan", false)) and (not bool(skill.get("untargetable", false)) or not bool(stats.get("is_building", false))): errors.append(label + ": 暂停寿命需要不可选取建筑")
 				_require_fields(label, skill, [&"duration"], errors)
 				if skill.has("heal_ratio") and (not is_finite(float(skill.heal_ratio)) or float(skill.heal_ratio) <= 0.0 or float(skill.get("duration", 0.0)) <= 0.0):
 					errors.append(label + ": 限时吸血需要正比例和正持续时间")
@@ -1339,6 +1359,12 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			&"spell_mega_inferno_bomb":
 				if String(stats.get("spell_kind", "")) != "mega_inferno_bomb": errors.append(label + ": 地狱火炮只用于终极爆弹")
 				if skill.has("duration"): errors.append(label + ": 地狱火炮重伤无持续时间，不得配置duration")
+			&"spell_final_spark":
+				if String(stats.get("spell_kind", "")) != "final_spark" or int(skill.get("blind_charges", 0)) != 1: errors.append(label + ": 夺目光辉仅用于终极闪光且致盲一次攻击")
+			&"spell_convergent_pulse":
+				if String(stats.get("spell_kind", "")) != "convergent_pulse": errors.append(label + ": 强化脉冲只用于聚合脉冲")
+				for field in ["damage", "radius", "pull_distance", "duration"]:
+					if not is_finite(float(skill.get(field, 0))) or float(skill.get(field, 0)) <= float(stats.get(field, 0)): errors.append(label + "." + field + ": 强化数值须高于基础值")
 			&"spell_solar_flare":
 				if String(stats.get("spell_kind", "")) != "solar_flare": errors.append(label + ": 日光只用于太阳耀斑")
 				for field in ["duration", "damage"]:

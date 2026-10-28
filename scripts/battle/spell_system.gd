@@ -19,6 +19,10 @@ var cask_hits: Array[Dictionary] = []
 var cask_effects: Array[Dictionary] = []
 var bomb_effects: Array[Dictionary] = []
 var spell_flights: Array[Dictionary] = []
+var spark_casts: Array[Dictionary] = []
+var spark_effects: Array[Dictionary] = []
+var pulse_casts: Array[Dictionary] = []
+var pulse_effects: Array[Dictionary] = []
 var solar_casts: Array[Dictionary] = []
 var solar_effects: Array[Dictionary] = []
 var pool_visual_time := 0.0
@@ -63,6 +67,12 @@ func _resolve_cast(team: int, stats: Dictionary, position: Vector2, active_enabl
 			return true
 		&"pool_of_reflection":
 			_start_pool(team, stats, position, active_enabled, active_skill_index)
+			return true
+		&"final_spark":
+			_start_final_spark(team, stats, position, active_enabled, active_skill_index)
+			return true
+		&"convergent_pulse":
+			_start_convergent_pulse(team, stats, position, active_enabled, active_skill_index)
 			return true
 		&"solar_flare":
 			_start_solar_flare(team, stats, position, active_enabled, active_skill_index)
@@ -198,6 +208,8 @@ func tick(dt: float) -> void:
 	_tick_corrosion()
 	_tick_flights()
 	_tick_pool()
+	_tick_final_spark()
+	_tick_convergent_pulse()
 	_tick_solar_flare()
 	_tick_severing_bolt()
 	_tick_event_horizon()
@@ -241,6 +253,10 @@ func tick_visuals(delta: float) -> void:
 	pool_visual_time = visual_tick * FixedStepClock.STEP
 	for effect in pool_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
 	pool_effects.assign(pool_effects.filter(func(effect): return visual_tick < float(effect.end_tick) + 40.0))
+	for effect in spark_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
+	spark_effects.assign(spark_effects.filter(func(effect): return float(effect.age) < 2.5))
+	for effect in pulse_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
+	pulse_effects.assign(pulse_effects.filter(func(effect): return visual_tick < float(effect.start_tick) + 50.0))
 	for effect in solar_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
 	solar_effects.assign(solar_effects.filter(func(effect): return visual_tick < float(effect.end_tick) + 100.0))
 	for effect in bolt_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
@@ -303,6 +319,10 @@ func clear() -> void:
 	spell_flights.clear()
 	horizon_zones.clear()
 	dark_matters.clear()
+	spark_casts.clear()
+	spark_effects.clear()
+	pulse_casts.clear()
+	pulse_effects.clear()
 	solar_casts.clear()
 	solar_effects.clear()
 	bolt_casts.clear()
@@ -496,6 +516,12 @@ func show_flight(id: int, kind: String, origin: Vector2, position: Vector2, radi
 	if not _controller.has_presentation(): return
 	if kind == "pool_of_reflection":
 		pool_effects.append({"id": id, "kind": kind, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
+		return
+	if kind == "final_spark":
+		spark_effects.append({"id": id, "kind": kind, "origin": origin, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
+		return
+	if kind == "convergent_pulse":
+		pulse_effects.append({"id": id, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
 		return
 	if kind in ["solar_flare", "sunlight_consume"]:
 		solar_effects.append({"id": id, "kind": kind, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
@@ -988,3 +1014,104 @@ func _apply_mega_inferno_bomb(team: int, stats: Dictionary, pos: Vector2, enhanc
 			if resolver.collecting: resolver.defer_effect(apply)
 			else: apply.call()
 	CombatInteraction.current_delivery = previous
+
+func _start_convergent_pulse(team: int, stats: Dictionary, pos: Vector2, enhanced: bool, skill_index: int) -> void:
+	_effect_serial += 1
+	var tick: int = _controller.get_authoritative_server_tick()
+	var impact := tick + ceili(float(stats.spell_windup) / FixedStepClock.STEP)
+	var skill := _active_heal_skill(stats, skill_index) if enhanced else {}
+	var radius := float(skill.get("radius", stats.radius))
+	pulse_casts.append({"team": team, "pos": pos, "stats": stats, "radius": radius,
+		"damage": float(skill.get("damage", stats.damage)), "impact_tick": impact,
+		"pull_distance": float(skill.get("pull_distance", stats.pull_distance)),
+		"duration": float(skill.get("duration", stats.duration))})
+	_controller.present_spell_flight(_effect_serial, "convergent_pulse", pos, pos, radius, tick, impact, team)
+	_controller.runtime.card_event("convergent_pulse", "spell:charge", pos, team)
+
+func _tick_convergent_pulse() -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	var resolver: CombatResolver = _controller.combat_service()
+	for cast in pulse_casts:
+		if tick < int(cast.impact_tick): continue
+		var interaction := _spell_context(int(cast.team))
+		var source: Node2D = interaction.get("source")
+		var order := resolver.next_displacement_order(source)
+		var delivery := CombatInteraction.Delivery.new()
+		interaction["delivery"] = delivery
+		for target in _controller.get_tree().get_nodes_in_group("combatants"):
+			if not is_instance_valid(target) or target.is_queued_for_deletion() or target.hp <= 0 or target.team == int(cast.team): continue
+			if not (target is Unit or target is Tower) or not CombatInteraction.allows_effect(target, interaction): continue
+			var distance: float = target.global_position.distance_to(cast.pos)
+			if distance > float(cast.radius) + target.body_radius: continue
+			var amount := float(cast.damage) * (float(cast.stats.tower_damage_multiplier) if target is Tower else 1.0)
+			var previous := CombatInteraction.current_delivery
+			CombatInteraction.current_delivery = delivery
+			var result := BattleNumbers.hit(target, amount, source, int(cast.team), interaction.get("position", Vector2(INF, INF)))
+			CombatInteraction.current_delivery = previous
+			var hit_pos: Vector2 = target.global_position
+			var hit_team := int(cast.team)
+			var show_hit := func():
+				if bool(result.landed): _controller.runtime.card_event("convergent_pulse", "spell:hit", hit_pos, hit_team)
+			if resolver.collecting: resolver.defer_effect(show_hit)
+			else: show_hit.call()
+			if target is Unit and not target.is_building and distance > 0.001:
+				var direction: Vector2 = (Vector2(cast.pos) - target.global_position).normalized()
+				var pull_distance := float(cast.pull_distance)
+				var duration := float(cast.duration)
+				var batched := resolver.collecting
+				# 先等伤害准入结果；法术盾拒绝整次命中时不能提交外力。
+				# 延迟效果在位移队列提交前执行，保留统一位移排序与控制门禁。
+				var pull := func():
+					if not bool(result.landed) or not is_instance_valid(target) or target.hp <= 0: return
+					if batched:
+						resolver.submit_forced_displacement(target, direction, pull_distance, duration, -1.0, order, interaction)
+					else:
+						target.apply_forced_displacement(direction, pull_distance, duration, -1.0, interaction, order)
+				if batched: resolver.defer_effect(pull)
+				else: pull.call()
+	pulse_casts.assign(pulse_casts.filter(func(cast): return tick < int(cast.impact_tick)))
+
+func _start_final_spark(team: int, stats: Dictionary, pos: Vector2, enhanced: bool, skill_index: int) -> void:
+	_effect_serial += 1
+	var tick: int = _controller.get_authoritative_server_tick()
+	var impact := tick + ceili(float(stats.spell_windup) / FixedStepClock.STEP)
+	var end := pos + (Vector2.UP if team == 0 else Vector2.DOWN) * float(stats.range)
+	spark_casts.append({"team": team, "origin": pos, "end": end, "stats": stats, "impact_tick": impact,
+		"blind": int(_active_heal_skill(stats, skill_index).get("blind_charges", 0)) if enhanced else 0})
+	_controller.present_spell_flight(_effect_serial, "final_spark", pos, end, float(stats.radius), tick, impact, team)
+	# 原版三处空间声音都从起手播放，事件内部自带0.9秒爆发层延迟。
+	_controller.runtime.card_event("final_spark", "spell:middle", pos.lerp(end, 0.5), team)
+	_controller.runtime.card_event("final_spark", "spell:end", end, team)
+
+static func final_spark_intersects(origin: Vector2, end: Vector2, width: float, pos: Vector2, body_radius: float) -> bool:
+	var direction := (end - origin).normalized()
+	var relative := pos - origin
+	var local := Vector2(relative.dot(Vector2(-direction.y, direction.x)), relative.dot(direction))
+	var nearest := Vector2(clampf(local.x, -width * 0.5, width * 0.5), clampf(local.y, 0.0, origin.distance_to(end)))
+	return local.distance_squared_to(nearest) <= body_radius * body_radius
+
+func _tick_final_spark() -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	var resolver: CombatResolver = _controller.combat_service()
+	for cast in spark_casts:
+		if tick < int(cast.impact_tick): continue
+		var interaction := _spell_context(int(cast.team))
+		var source: Node2D = interaction.get("source")
+		var delivery := CombatInteraction.Delivery.new()
+		interaction["delivery"] = delivery
+		for target in _controller.get_tree().get_nodes_in_group("combatants"):
+			if not is_instance_valid(target) or target.is_queued_for_deletion() or target.hp <= 0 or target.team == int(cast.team): continue
+			if not (target is Unit or target is Tower) or not CombatInteraction.allows_effect(target, interaction): continue
+			if not final_spark_intersects(cast.origin, cast.end, float(cast.stats.wave_width), target.global_position, float(target.body_radius)): continue
+			var previous := CombatInteraction.current_delivery
+			CombatInteraction.current_delivery = delivery
+			var amount := float(cast.stats.damage) * (float(cast.stats.tower_damage_multiplier) if target is Tower else 1.0)
+			var receipt := BattleNumbers.hit(target, amount, source, int(cast.team), interaction.get("position", Vector2.INF))
+			CombatInteraction.current_delivery = previous
+			var finish := func():
+				if not bool(receipt.landed): return
+				if int(cast.blind) > 0 and is_instance_valid(target) and target is Unit and not target.is_building and target.hp > 0:
+					target.apply_blind(int(cast.blind), interaction)
+			if resolver.collecting: resolver.defer_effect(finish)
+			else: finish.call()
+	spark_casts.assign(spark_casts.filter(func(cast): return tick < int(cast.impact_tick)))

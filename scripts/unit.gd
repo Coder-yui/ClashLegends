@@ -374,6 +374,7 @@ var net_movement_rate := 1.0
 var net_charged := false
 var net_action_permissions := 0
 var _body_facing_direction := Vector2.ZERO
+var fixed_attack_direction := Vector2.ZERO
 var lifecycle_birth_tick := -1
 var _presentation_state: UnitPresentationState
 ## 持续攻击的目标表现标识；原地换目标时推进序号，让两端播放换目标衔接。
@@ -1507,6 +1508,7 @@ func get_visual_facing_direction() -> Vector2:
 	return _body_facing_direction
 
 func _desired_facing_direction() -> Vector2:
+	if _attacking and not fixed_attack_direction.is_zero_approx(): return fixed_attack_direction
 	if structure_rush.locked() and structure_rush.direction.length_squared() > 0.001:
 		return structure_rush.direction
 	if is_active_skill_facing_locked() and active_skill_cast_facing.length_squared() > 0.001:
@@ -1773,6 +1775,9 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		return
 	# 已起手的一击保持前摇；普通射程只用于起手，宽限只在命中节点检查。
 	var committed_attack := _attacking and not continuous_attack and (attack_timeline.windup > 0.0 or not _attack_visual_pending)
+	if committed_attack and float(_base_form_stats.get("fixed_attack_length", 0.0)) > 0.0:
+		_attack_fixed_area(dt)
+		return
 	_update_target(committed_attack)
 	committed_attack = committed_attack and _attacking and _target_is_attackable(_target)
 	if _target != null:
@@ -2039,6 +2044,7 @@ func prepare_natural_lifecycle(dt: float) -> void:
 	_tick_building_lifetime(dt)
 
 func _tick_building_lifetime(dt: float) -> void:
+	if control.hard.any_flag(&"untargetable", &"pause_lifespan"): return
 	if lifespan > 0.0:
 		var lifetime_step := minf(dt, _lifespan_left)
 		_lifespan_left -= lifetime_step
@@ -2457,6 +2463,9 @@ func _recompute_path_to(goal: Vector2) -> void:
 		_path_index = 1
 
 func _attack(dt: float) -> void:
+	if float(_base_form_stats.get("fixed_attack_length", 0.0)) > 0.0:
+		_attack_fixed_area(dt)
+		return
 	if _target == null or not is_instance_valid(_target):
 		_attacking = false
 		return
@@ -2554,6 +2563,31 @@ func _attack(dt: float) -> void:
 		_attack_visual_pending = true
 		cancel_charge()
 
+## 固定矩形在起手锁定，结算不依赖原目标仍然存在。
+func _attack_fixed_area(dt: float) -> void:
+	_try_start_attack_visual(maxf(attack_timeline.windup - dt, attack_timeline.cooldown))
+	attack_timeline.tick_windup(dt)
+	if attack_timeline.windup > 0.0 or attack_timeline.cooldown > 0.0: return
+	var next_gap := _next_attack_gap()
+	attack_timeline.commit_hit(next_gap)
+	basic_attack_sequence += 1
+	_attack_swing_count += 1
+	var length := float(_base_form_stats.fixed_attack_length)
+	var half_width := float(_base_form_stats.fixed_attack_width) * 0.5
+	var side := Vector2(-fixed_attack_direction.y, fixed_attack_direction.x)
+	if not _consume_blind_for_strike({}):
+		for candidate in get_tree().get_nodes_in_group("combatants"):
+			if not is_instance_valid(candidate) or candidate == self or candidate.team == team or candidate.hp <= 0.0: continue
+			if candidate is Unit and candidate.is_air: continue
+			if not CombatInteraction.allows(candidate, self): continue
+			var offset: Vector2 = candidate.global_position - global_position
+			var closest := global_position + fixed_attack_direction * clampf(offset.dot(fixed_attack_direction), 0.0, length) + side * clampf(offset.dot(side), -half_width, half_width)
+			if closest.distance_to(candidate.global_position) <= candidate.body_radius:
+				_deal_attack_damage_to(candidate, damage * active_damage_multiplier, {"attack_id": basic_attack_sequence, "cycle_id": _attack_visual_serial, "ground_only": true})
+	if battle_context != null: battle_context.notify_unit_audio_event(self, &"attack:ground", global_position + fixed_attack_direction * length * 0.5)
+	attack_timeline.begin_recovery(next_gap, first_hit_time, _effective_attack_speed_multiplier())
+	_attack_visual_pending = true
+
 ## 连招间距：attack_pattern 为每次命中后到下一次命中的间隔，按数组顺序循环。
 func _next_attack_gap() -> float:
 	if attack_pattern.is_empty():
@@ -2601,6 +2635,10 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 	if first_strike_damage_multiplier != 1.0 and _target != null and is_instance_valid(_target):
 		_attack_visual_first_strike = not _first_strike_hit_target_ids.has(_target.get_instance_id())
 	_attack_visual_serial += 1
+	if float(_base_form_stats.get("fixed_attack_length", 0.0)) > 0.0 and is_instance_valid(_target):
+		fixed_attack_direction = global_position.direction_to(_target.global_position)
+		if fixed_attack_direction.is_zero_approx(): fixed_attack_direction = Vector2.UP if team == 0 else Vector2.DOWN
+		_body_facing_direction = fixed_attack_direction
 	# 可取消的连招以前用每次尝试的序号选片，取消一拳会令动作与伤害/间隔错位。
 	# 序号仍严格递增（快照/声音去重不变），余数对齐尚未结算的权威拳段。
 	if close_attack_range > 0.0:
@@ -2936,6 +2974,7 @@ func cancel_controlled_action(reason: StringName, recover_position: bool = true)
 	if cancel_displacement: cancel_skill_cast(recover_position)
 
 func cancel_basic_attack(reason: StringName) -> void:
+	fixed_attack_direction = Vector2.ZERO
 	assert(ActionCancellation.valid_reason(reason), "未声明的动作取消原因：%s" % reason)
 	if reason in [ActionCancellation.STUN, ActionCancellation.FREEZE, ActionCancellation.STASIS, ActionCancellation.KNOCKBACK, ActionCancellation.DEATH_FORM, ActionCancellation.SILENCE, ActionCancellation.TAUNT]:
 		channel_attack.stop(self)

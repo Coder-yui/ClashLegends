@@ -297,6 +297,8 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 func _process(delta: float) -> void:
 	if is_instance_valid(_source): visible = _source.visible_to_local_player()
 	_update_growth_mark()
+	if is_instance_valid(_model_root) and _model_root.has_method("sync_combat_visual") and is_instance_valid(_source):
+		_model_root.call("sync_combat_visual", _source.presentation_state(), delta, _dying)
 	if is_instance_valid(_model_root) and _model_root.has_method("advance_ambient_visual"):
 		_model_root.call("advance_ambient_visual", delta)
 	if is_instance_valid(_model_root) and _model_root.has_method("advance_hit_haste_visual"):
@@ -410,7 +412,8 @@ func _sync_transform(force: bool, delta: float) -> void:
 	facing_3d.y = 0.0
 	if facing_3d.length_squared() > 0.0001:
 		var target_yaw := atan2(facing_3d.x, facing_3d.z) + _forward_yaw
-		rotation.y = target_yaw if force or emerging else lerp_angle(rotation.y, target_yaw, minf(delta * 12.0, 1.0))
+		var fixed_area_attack := float(_source._base_form_stats.get("fixed_attack_length", 0.0)) > 0.0 and _state.behavior == 3
+		rotation.y = target_yaw if force or emerging or fixed_area_attack else lerp_angle(rotation.y, target_yaw, minf(delta * 12.0, 1.0))
 		if _model_root != null and _model_root.has_method("sync_visual_facing"):
 			_model_root.call("sync_visual_facing", rotation.y)
 

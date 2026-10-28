@@ -37,6 +37,8 @@ var _corrosion_ground: Node3D
 var _bomb_effect: Node3D
 var _cask_effect: Node3D
 var _horizon_effect: Node3D
+var _spark_effect: Node3D
+var _pulse_effect: Node3D
 var _solar_effect: Node3D
 var _pool_effect: Node3D
 var _bolt_effect: Node3D
@@ -105,6 +107,10 @@ func _process(delta: float) -> void:
 		_summoning_ground.sync_effects(spells, _camera)
 	if _corrosion_ground != null and spells != null:
 		_corrosion_ground.sync_effects(spells, _camera)
+	if _spark_effect != null and spells != null:
+		_spark_effect.sync_effects(spells, _camera)
+	if _pulse_effect != null and spells != null:
+		_pulse_effect.sync_effects(spells, _camera, viewer_team)
 	if _solar_effect != null and spells != null:
 		_solar_effect.sync_effects(spells, _camera, viewer_team)
 	if _pool_effect != null and spells != null:
@@ -228,6 +234,10 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_corrosion_ground)
 	_horizon_effect = preload("res://scripts/presentation/event_horizon_3d.gd").new()
 	_world_root.add_child(_horizon_effect)
+	_spark_effect = preload("res://scripts/presentation/final_spark_3d.gd").new()
+	_world_root.add_child(_spark_effect)
+	_pulse_effect = preload("res://scripts/presentation/convergent_pulse_3d.gd").new()
+	_world_root.add_child(_pulse_effect)
 	_solar_effect = preload("res://scripts/presentation/solar_flare_3d.gd").new()
 	_world_root.add_child(_solar_effect)
 	_pool_effect = preload("res://scripts/presentation/pool_of_reflection_3d.gd").new()

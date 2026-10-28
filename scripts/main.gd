@@ -2200,7 +2200,7 @@ func _draw_deployment_preview(stats: Dictionary) -> void:
 	draw_rect(preview_rect, Color(color.r, color.g, color.b, 0.18), true)
 	draw_rect(preview_rect, color, false, 3.0)
 
-	if type == "spell" and String(stats.get("spell_kind", "")) == "tidal_wave":
+	if type == "spell" and String(stats.get("spell_kind", "")) in ["tidal_wave", "final_spark"]:
 		var direction := Vector2.UP if _deployment_preview_team() == 0 else Vector2.DOWN
 		var end := _deployment_preview_pos + direction * float(stats.range)
 		var rect := Rect2(Vector2(_deployment_preview_pos.x - float(stats.wave_width) * 0.5, minf(_deployment_preview_pos.y, end.y)), Vector2(float(stats.wave_width), float(stats.range)))
@@ -2209,6 +2209,9 @@ func _draw_deployment_preview(stats: Dictionary) -> void:
 		draw_line(_deployment_preview_pos, end, color, 2.0)
 	elif type == "spell":
 		var spell_radius: float = stats.get("radius", ArenaRules.TILE_SIZE * 0.5)
+		if String(stats.get("spell_kind", "")) == "convergent_pulse":
+			var enhanced := _workbench.spell_active if _workbench.enabled else runtime._card_has_active_for_team(_deployment_preview_team(), _selected_card)
+			if enhanced: spell_radius = float(stats.active_skills[0].radius)
 		draw_circle(_deployment_preview_pos, spell_radius, Color(color.r, color.g, color.b, 0.12))
 		draw_arc(_deployment_preview_pos, spell_radius, 0.0, TAU, 48, color, 2.0, true)
 		if String(stats.get("spell_kind", "")) in ["solar_flare", "mega_inferno_bomb"]:

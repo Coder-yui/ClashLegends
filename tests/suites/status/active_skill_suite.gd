@@ -34,7 +34,7 @@ func _check_active_skill_loadout_rule() -> void:
 		var stats: Dictionary = cards[card_id]
 		if stats.get("type", "unit") == "spell":
 			var spell_skills := CardDB.active_skills_for(card_id)
-			var expected_spell_count := int({"pool_of_reflection": 1, "mega_inferno_bomb": 1, "solar_flare": 1, "severing_bolt": 1, "medium_lightning": 1, "event_horizon": 1, "tidal_wave": 1, "void_summoning": 1, "explosive_cask": 1, "corrosion": 1, "heal": 2, "zap": 1, "lightning": 1, "stasis": 1, "freeze": 1}.get(card_id, 0))
+			var expected_spell_count := int({"final_spark": 1, "convergent_pulse": 1, "pool_of_reflection": 1, "mega_inferno_bomb": 1, "solar_flare": 1, "severing_bolt": 1, "medium_lightning": 1, "event_horizon": 1, "tidal_wave": 1, "void_summoning": 1, "explosive_cask": 1, "corrosion": 1, "heal": 2, "zap": 1, "lightning": 1, "stasis": 1, "freeze": 1}.get(card_id, 0))
 			data_ok = data_ok and spell_skills.size() == expected_spell_count
 		else:
 			var available_skills := CardDB.active_skills_for(card_id)

@@ -761,5 +761,26 @@
     "method": "run_skill_input",
     "scene": "none",
     "group": "network"
+  },
+  {
+    "id": "ConvergentPulseSuite",
+    "script": "res://tests/suites/cards/convergent_pulse_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
+    "id": "FinalSparkSuite",
+    "script": "res://tests/suites/cards/final_spark_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
+    "id": "SoulTentacleSuite",
+    "script": "res://tests/suites/cards/soul_tentacle_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

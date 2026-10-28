@@ -4,6 +4,8 @@ extends RefCounted
 var _unit: Unit
 func _init(unit: Unit) -> void:
 	_unit = unit
+var team: int:
+	get: return _unit.team
 var behavior: int:
 	get: return _unit.get_visual_state_code()
 var locomotion: int:
