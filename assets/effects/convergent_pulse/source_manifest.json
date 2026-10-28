@@ -1,0 +1,243 @@
+{
+  "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Orianna.wad.client",
+  "systems": {
+    "pulse": "Characters/Orianna/Skins/Skin0/Particles/Orianna_Base_R_VacuumIndicator",
+    "ball": "Characters/Orianna/Skins/Skin0/Particles/Orianna_Base_R_VacuumIndicatorSelfNoRing"
+  },
+  "native_radius": 378.684694082086,
+  "runtime_radius": [
+    105,
+    130
+  ],
+  "sampling_fps": 120,
+  "source_directory": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录",
+  "files": [
+    {
+      "path": "assets/effects/convergent_pulse/player.gd",
+      "sha256": "8e06d2e9294db9870bb38fcbbdf7ac36230727164beb4be006ed425bfa5eb3ad"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/sampled.json",
+      "sha256": "8198dd235b68e752a4d64707eac17ccc776af7ea55fff4625196607e59ac56b0"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/sampled.dependencies.json",
+      "sha256": "6d1e29e40bef110bd57e153509185d2409f09fb8f17228765beda87cff51e3ea"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/sampled.json",
+      "sha256": "179b8fbce75c3bca4e442d53d9374d692978f1d65cb8e864829f05869a51ecce"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/zeri/skins/base/particles/zeri_base_flicker.png",
+      "sha256": "7f6c84d4dfe9115d6b1e6b99fbc20307ddec6a9aeb97f70bb0fdcaa0f87568cd"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/zeri/skins/base/particles/zeri_base_q_gradient02.png",
+      "sha256": "37c6bc60226bde633896d6cd2b24aa501eef6007f987f9db554f1856521cae63"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/orianna/skins/base/particles/orianna_base_r_swirl2.mesh.json",
+      "sha256": "353ce67ccfc8ab5d4d9b2d42d171415acb9b0c0ba9e203d28f18c732a812e4d0"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/orianna/skins/base/particles/orianna_base_ba_lightning_flipbook.png",
+      "sha256": "085bfecd241c6d4d5ee3f4418e696a28056aeac0a5f78d06c79405aa5638d0dc"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/orianna/skins/base/particles/orianna_base_r_ball_sphere.mesh.json",
+      "sha256": "506d8653e1e8aec9544b8e2cbfe08a4f27e10a1d49ed12934d7caa3677494fe7"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/orianna/skins/base/particles/orianna_base_r_swipe_sharper.png",
+      "sha256": "f748e0c5e0da4a741808fdcac6180bd53f6c96257760652fefdd2b4b18b4dad3"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/orianna/skins/base/particles/orianna_base_r_smoketrail02.png",
+      "sha256": "4c80bd5722e5d1e3706ba155bd2e6a085c4d83313e7139ae76c472ed4c2747b5"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/orianna/skins/base/particles/orianna_base_glow01.png",
+      "sha256": "987ce8b91d5b3476d487570c8af7ac8ceadf4c329d494312fba978618f8221f2"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/orianna/skins/base/particles/orianna_base_glow02.png",
+      "sha256": "9d1c0afae3a4040376460a1809143487b39bafa5e0d59448ca4c22bcde7dadd9"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/orianna/skins/base/particles/orianna_base_r_swipe.png",
+      "sha256": "9a183dcd6cf97d6d29aed58c12ffaaf92358f09c20792b96f0ec1a5f451f5845"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/orianna/skins/base/particles/orianna_base_ba_sparks02.png",
+      "sha256": "bd44e68d9b5f7b316a3931ec462134948fffe7deefdba1473ba99b904ee129cc"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/orianna/skins/base/particles/orianna_base_w_flare.png",
+      "sha256": "bd0cf405f6f45242bcf5d0cb3e3f305122b39eace4cd2e62886b7d5e50c8a90c"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/orianna/skins/base/particles/orianna_base_ba_sparks01.png",
+      "sha256": "2b9e4fe8cc7e120de6dccd83409c58dd5c1e5816e77e801a752b0b33e2b6fc38"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/orianna/skins/base/particles/orianna_base_z_shockwave.png",
+      "sha256": "5d6c349c83829eae0c8a25c71e1b11a54ae1707db964dd04742736bfee962980"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/ball/assets/characters/orianna/skins/skin07/particles/orianna_skin07_z_flat_01.png",
+      "sha256": "0244ccf9e4f4ebb3dec925de04676aa38b57cbdb807c07857d172a2027ecf37c"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/renekton/skins/skin17/particles/renekton_skin17_r_buff_decal_intro_erosion.png",
+      "sha256": "17aa7e81de34471139319adaee54a990627961a81771b36e34104ec832ae67eb"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/amumu/skins/skin23/particles/amumu_skin23_w_dissolve_cloudy_02.png",
+      "sha256": "7114c12263274bfa8bbe7998929942008787999e2f2da3c798ddd96096eb8cab"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/zeri/skins/base/particles/zeri_base_distortion_soundwaves_01.png",
+      "sha256": "eda5fe9e4399b46a986dbaf661e7cbf883bdcfed45501e6106e28b656dd7099e"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/nocturne/skins/skin16/particles/nocturne_skin16_p_wall_erosion.png",
+      "sha256": "c1981361f3e1afea66dc92f74d3e6396adcb823ccec6b5f0fca9b21dfc162322"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_aoe_indicator_ring.mesh.json",
+      "sha256": "4f480b79a511a308e4703aab6e4b4296d6a1c8ff866653008dc327ecd3045db3"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_gradient01.png",
+      "sha256": "5605e4fde7ab5dcf60f52dd9a5017836a1101e6d7b3b1cc68e005414e6434e43"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_swirl2.mesh.json",
+      "sha256": "353ce67ccfc8ab5d4d9b2d42d171415acb9b0c0ba9e203d28f18c732a812e4d0"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_z_color-hold.png",
+      "sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_gradient02.png",
+      "sha256": "ec38748ce715e2c4d29f6d6e9d9bd35886dfe96b088bf85fdce68ca6b7e2243c"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_invertedglow.png",
+      "sha256": "edbaa9a078c99bb0e994bffd7ef38bed545821a1537bf891da5a1aeb74a46ea8"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_decal.png",
+      "sha256": "4a8176b919fb8732f73e57f8256f90c9a409a8746cdf258f0737ebad7434b4af"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_caustic02_mult.png",
+      "sha256": "67c2cb1b53c05e31f82c6b5b9eca2337cfaf622d42f73339878ab8a168d79dc9"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_gradient02_pan.png",
+      "sha256": "5a6c90c4bb7ccafdd2c599a45f5461ec41ed80d80a162661d7340df39a354413"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_noise.png",
+      "sha256": "7114c12263274bfa8bbe7998929942008787999e2f2da3c798ddd96096eb8cab"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_swirl_upwards.mesh.json",
+      "sha256": "371bc0f84bdb15eddd5bf3bf3e89eef75649144bb7a8de3500c2080bedb522c7"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_swipe_sharper.png",
+      "sha256": "f748e0c5e0da4a741808fdcac6180bd53f6c96257760652fefdd2b4b18b4dad3"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_swirl_outerring.mesh.json",
+      "sha256": "e5a5dc405318d1b6a77ad9e159fd7a4e9974f1d155f32bb28468fc9cf3ef6b35"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_smoketrail02.png",
+      "sha256": "4c80bd5722e5d1e3706ba155bd2e6a085c4d83313e7139ae76c472ed4c2747b5"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_donut.mesh.json",
+      "sha256": "2e0a5c78472ffabda3a1d3ef2ac379abb52f148425b2b359fda6e0268453a3bb"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_flicker.png",
+      "sha256": "7f6c84d4dfe9115d6b1e6b99fbc20307ddec6a9aeb97f70bb0fdcaa0f87568cd"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_glow02.png",
+      "sha256": "9d1c0afae3a4040376460a1809143487b39bafa5e0d59448ca4c22bcde7dadd9"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_gradient_linear_vertical01.png",
+      "sha256": "5e2dc2408508fefc12e19c189e399601aca10afa536073e1e5962bbaf0c015b2"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_donut02.mesh.json",
+      "sha256": "7c67d0fe13dbfc967a260c22da5ebb2849f7cc5bcd82407d27589b94af3d29cb"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_cas_distort.png",
+      "sha256": "f8a42484ea522cbab4bc3745b7f00b4404e623e73bf9de5210e07c87d190b369"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_caustic04.png",
+      "sha256": "ba4379c56f4d85bf23904adf55810ae2472fd3986d16cab3a2bb409bf0995164"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_swipe.png",
+      "sha256": "9a183dcd6cf97d6d29aed58c12ffaaf92358f09c20792b96f0ec1a5f451f5845"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_streaks02.png",
+      "sha256": "4420418c927821ef17f362cb44142454206783ce0d2ec2fe0abbe6ea95a63b9b"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_swirl_outerring.png",
+      "sha256": "6a826b24f32280141b6db43ad5cb2969d785282ce3804a76b2694f51720917eb"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_radial_gradient01.png",
+      "sha256": "c42b60cf8ca39f7804203eb1d3aab76eeb6125dc2aa0d2ae996c5568efcaf0e9"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_caustic02.png",
+      "sha256": "f704779afcf1c0d7715763a8502bde0241e0c409565ca49a9d0b995728f54e96"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_r_floor_mesh.mesh.json",
+      "sha256": "ce4df9d2c7e369086c24a2a388cb4e39eb4dda297bcaef96f868fdf6cc8026d6"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_ba_sparks02.png",
+      "sha256": "bd44e68d9b5f7b316a3931ec462134948fffe7deefdba1473ba99b904ee129cc"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_donut03_thin.mesh.json",
+      "sha256": "f30a809905d45921badae56f3a9026a9e468eee2d0233ba066a9304ffd4178c4"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/common_ball32_02.png",
+      "sha256": "a87624882232dee86f157c9d17b2a025c761004cfd4cd986537bba13217a0a6b"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_trail01.png",
+      "sha256": "753d518cb6c08f065f8d5fad841bd3a7af4f6efa873d3e4eb028aee2d4c75f7b"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_streaks.png",
+      "sha256": "c99c86b1dbc75308cfcb975f69b7bd36c36fdd5322c0b62160c974c030460fa6"
+    },
+    {
+      "path": "assets/effects/convergent_pulse/pulse/assets/characters/orianna/skins/base/particles/orianna_base_r_sparks02.png",
+      "sha256": "bd44e68d9b5f7b316a3931ec462134948fffe7deefdba1473ba99b904ee129cc"
+    }
+  ],
+  "native_ground_y": -30,
+  "boundary_reference": "Indicator_OuterRing_Core / Donut03_Thin alpha=255 ridge ×16",
+  "excluded": "per-target hit visual effects"
+}

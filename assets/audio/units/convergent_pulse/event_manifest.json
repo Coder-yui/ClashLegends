@@ -1,0 +1,134 @@
+[
+  {
+    "file": "play_sfx_orianadetonatecommand_oncast_r1.wav",
+    "event": "Play_sfx_OrianaDetonateCommand_OnCast",
+    "event_id": 3712536696,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_OrianaDetonateCommand_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_OrianaDetonateCommand_OnCast {r1}.txtp",
+    "media_ids": [
+      74559808,
+      166607323,
+      249237419,
+      382749418
+    ],
+    "duration": 0.7896,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "bbcf6bee19b2798d09c6043e894c4dfdd279f7c46d886195f90cdd2d71dcf171",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_orianadetonatecommand_oncast_r2.wav",
+    "event": "Play_sfx_OrianaDetonateCommand_OnCast",
+    "event_id": 3712536696,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_OrianaDetonateCommand_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_OrianaDetonateCommand_OnCast {r2}.txtp",
+    "media_ids": [
+      74559808,
+      166607323,
+      249237419,
+      382749418
+    ],
+    "duration": 0.595,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8a287ccdb47f497064b143a8c1de0bd22620df1bfb947e9ac583a3acbaab4bd0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_orianadetonatecommand_oncast_r3.wav",
+    "event": "Play_sfx_OrianaDetonateCommand_OnCast",
+    "event_id": 3712536696,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_OrianaDetonateCommand_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_OrianaDetonateCommand_OnCast {r3}.txtp",
+    "media_ids": [
+      74559808,
+      166607323,
+      249237419,
+      382749418
+    ],
+    "duration": 0.8074,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1a2283a182caa6cc5b050ad2da4523d1f24b258760cda4d3267370fd7f593d00",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_orianna_oriannadetonatecommand_buffactivate_r1.wav",
+    "event": "Play_sfx_Orianna_OriannaDetonateCommand_buffactivate",
+    "event_id": 1823156261,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_Orianna_OriannaDetonateCommand_buffactivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_Orianna_OriannaDetonateCommand_buffactivate {r1}.txtp",
+    "media_ids": [
+      887782363,
+      1036935980
+    ],
+    "duration": 1.3114,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d0c0b314e72d1b18203457427d1dbe7b2e6bce863a0d57e7682cd5a3c0d9f2c5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_orianna_oriannadetonatecommand_buffactivate_r2.wav",
+    "event": "Play_sfx_Orianna_OriannaDetonateCommand_buffactivate",
+    "event_id": 1823156261,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_Orianna_OriannaDetonateCommand_buffactivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_Orianna_OriannaDetonateCommand_buffactivate {r2}.txtp",
+    "media_ids": [
+      887782363,
+      1036935980
+    ],
+    "duration": 1.3234,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b700bf1063324548df9ee122bd3093ad0394a6350a6439c51579bb1e34af023f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_orianna_oriannadetonatecommand_hit_r1.wav",
+    "event": "Play_sfx_Orianna_OriannaDetonateCommand_hit",
+    "event_id": 388677692,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_Orianna_OriannaDetonateCommand_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_Orianna_OriannaDetonateCommand_hit {r1}.txtp",
+    "media_ids": [
+      467783881,
+      648642925,
+      1023409026,
+      1048097850
+    ],
+    "duration": 2.202,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "096fb9719bd964c85d8dd079443ec0c358415c4bfebde82320a40c2bad8fe02e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_orianna_oriannadetonatecommand_hit_r2.wav",
+    "event": "Play_sfx_Orianna_OriannaDetonateCommand_hit",
+    "event_id": 388677692,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_Orianna_OriannaDetonateCommand_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_Orianna_OriannaDetonateCommand_hit {r2}.txtp",
+    "media_ids": [
+      467783881,
+      648642925,
+      1023409026,
+      1048097850
+    ],
+    "duration": 2.6,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4bbc1eb82f2c0a6a4a8936d712422df46ae2fb7eebdc63eb0d5a36e6e93bc7fd",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_orianna_oriannadetonatecommand_hit_r3.wav",
+    "event": "Play_sfx_Orianna_OriannaDetonateCommand_hit",
+    "event_id": 388677692,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/event_wav/Play_sfx_Orianna_OriannaDetonateCommand_hit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/聚合脉冲/源件与过程记录/audio/Orianna/txtp/Play_sfx_Orianna_OriannaDetonateCommand_hit {r3}.txtp",
+    "media_ids": [
+      467783881,
+      648642925,
+      1023409026,
+      1048097850
+    ],
+    "duration": 2.3297,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "30895bae576d0a5ba024c0779de29e63403279bbff292411ff96f91f73030d18",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  }
+]
