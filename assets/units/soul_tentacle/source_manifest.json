@@ -1,0 +1,26 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Illaoi.wad.client",
+  "source_directory": "assets/characters/illaoiminion/skins/base/",
+  "source_manifest": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/model_source/source_manifest.json",
+  "runtime_model": "res://assets/units/soul_tentacle/tentacle.glb",
+  "runtime_sha256": "7a5cf79fc3f114e7115a72874dac74cdea35625a0c5fe7e3ae9371616c441495",
+  "uniform_scale": 0.01,
+  "animation_selection": [
+    "illaoiminion_spawn",
+    "illaoiminion_idleangry",
+    "illaoiminion_attack1",
+    "illaoiminion_death"
+  ],
+  "hit_frame": 22,
+  "source_fps": 30,
+  "card_art_source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/card-native2.png",
+  "card_art_sha256": "d584fd91b2c3e7de64e9177c518ed0cc6f51f7def9e28c30665bb6f3c3f38d35",
+  "material_note": "原版附着网格层与白色反射参数；MatOverride黑贴图用透明基础层替代。",
+  "scale_basis": {
+    "source": "data/characters/illaoi/illaoi.bin: IllaoiPassive.PassiveTentacleWidth",
+    "native_width": 200,
+    "target_width_tiles": 2,
+    "formula": "2 / 200 = 0.01",
+    "authority_length_tiles": 9
+  }
+}

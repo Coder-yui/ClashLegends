@@ -1,0 +1,220 @@
+[
+  {
+    "file": "play_sfx_illaoi_illaoitentacleattack_onbuffcast_r1.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleAttack_OnBuffCast",
+    "event_id": 2366326931,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/event_wav/Play_sfx_Illaoi_IllaoiTentacleAttack_OnBuffCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleAttack_OnBuffCast {r1}.txtp",
+    "media_ids": [
+      41629780,
+      182847731,
+      768181674,
+      788864504
+    ],
+    "duration": 2.59,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d7f7c2f56ea5380a32c705e20027ba703c8080abfa1a12fbf081671cc1da04d4",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentacleattack_onbuffcast_r2.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleAttack_OnBuffCast",
+    "event_id": 2366326931,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/event_wav/Play_sfx_Illaoi_IllaoiTentacleAttack_OnBuffCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleAttack_OnBuffCast {r2}.txtp",
+    "media_ids": [
+      41629780,
+      182847731,
+      768181674,
+      788864504
+    ],
+    "duration": 2.509,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6af27f7e2525cace2371216e8a649569821512f3ca0cbae2963f60bf29c79981",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentacleattack_onbuffcast_r3.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleAttack_OnBuffCast",
+    "event_id": 2366326931,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/event_wav/Play_sfx_Illaoi_IllaoiTentacleAttack_OnBuffCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleAttack_OnBuffCast {r3}.txtp",
+    "media_ids": [
+      41629780,
+      182847731,
+      768181674,
+      788864504
+    ],
+    "duration": 3.3515,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a9a1fad15d041cf241c47cd2122071b4ad3bb36cdba2f03f850f40f50ec75fa2",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentacleattack_minion_hit.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleAttack_minion_hit",
+    "event_id": 2848998994,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/event_wav/Play_sfx_Illaoi_IllaoiTentacleAttack_minion_hit.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleAttack_minion_hit.txtp",
+    "media_ids": [
+      682996676
+    ],
+    "duration": 0.597,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c85b707486fb1bcd07d61a00fb85c39f74efa41778f22611063130a402a693af",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentaclespawn_buffactivate_r1.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleSpawn_buffactivate",
+    "event_id": 753914535,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/event_wav/Play_sfx_Illaoi_IllaoiTentacleSpawn_buffactivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleSpawn_buffactivate {r1}.txtp",
+    "media_ids": [
+      361265305,
+      593544301,
+      880664980
+    ],
+    "duration": 2.0632,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5fc3ada08df556bf4aea327af2fe0a51ec55f4dfe9b448bd07ac07bc0619bf9c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentaclespawn_buffactivate_r2.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleSpawn_buffactivate",
+    "event_id": 753914535,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/event_wav/Play_sfx_Illaoi_IllaoiTentacleSpawn_buffactivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleSpawn_buffactivate {r2}.txtp",
+    "media_ids": [
+      361265305,
+      593544301,
+      880664980
+    ],
+    "duration": 1.8783,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "aaba988c0cf61ee92dea87e71bb8f89425a71a85d574d47d5c41db5b993ddcb5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentaclespawn_buffactivate_r3.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleSpawn_buffactivate",
+    "event_id": 753914535,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/event_wav/Play_sfx_Illaoi_IllaoiTentacleSpawn_buffactivate {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleSpawn_buffactivate {r3}.txtp",
+    "media_ids": [
+      361265305,
+      593544301,
+      880664980
+    ],
+    "duration": 2.3184,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ec6de0875ab1b0e5723b3dbb210d7c01f80ddefcacc2f1b334b0320a5e107512",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentacleattack_ground_hit_r1.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleAttack_Ground_Hit",
+    "event_id": 3140203913,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/event_wav/Play_sfx_Illaoi_IllaoiTentacleAttack_Ground_Hit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleAttack_Ground_Hit {r1}.txtp",
+    "media_ids": [
+      78750127,
+      185053661,
+      222662609
+    ],
+    "duration": 2.0169,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0c7d3f85cb121bc8f36e728e6d8f92946f6723708ad32e7a6b860b896e223b8e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentacleattack_ground_hit_r2.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleAttack_Ground_Hit",
+    "event_id": 3140203913,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/event_wav/Play_sfx_Illaoi_IllaoiTentacleAttack_Ground_Hit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleAttack_Ground_Hit {r2}.txtp",
+    "media_ids": [
+      78750127,
+      185053661,
+      222662609
+    ],
+    "duration": 2.0249,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3607c65e61d978542db714f13d5a21738fb375ab4d56a7626e98bb5919c5520c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentacleattack_ground_hit_r3.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleAttack_Ground_Hit",
+    "event_id": 3140203913,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/event_wav/Play_sfx_Illaoi_IllaoiTentacleAttack_Ground_Hit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleAttack_Ground_Hit {r3}.txtp",
+    "media_ids": [
+      78750127,
+      185053661,
+      222662609
+    ],
+    "duration": 2.2104,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "06a3fb06bb080f4333d3db88f57844d5fd62f85025f5c924457f819e3eecdc90",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentacleactive_onbuffcast_r1.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffCast",
+    "event_id": 2615188965,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/event_wav/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffCast {r1}.txtp",
+    "media_ids": [
+      78132066,
+      150792119,
+      775420727,
+      821462422,
+      866384394,
+      1044047668
+    ],
+    "duration": 2.3633,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d55206f977d3a7043ddd4bf1343293428a232e042f4e528ab6bd9528972274fd",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentacleactive_onbuffcast_r2.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffCast",
+    "event_id": 2615188965,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/event_wav/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffCast {r2}.txtp",
+    "media_ids": [
+      78132066,
+      150792119,
+      775420727,
+      821462422,
+      866384394,
+      1044047668
+    ],
+    "duration": 2.4998,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "24e03d6cb005cbc7905f086a2584c2a113c5b9c8cd0b790f020b265b7a62c52b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentacleactive_onbuffcast_r3.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffCast",
+    "event_id": 2615188965,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/event_wav/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio_source/illaoi/txtp/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffCast {r3}.txtp",
+    "media_ids": [
+      78132066,
+      150792119,
+      775420727,
+      821462422,
+      866384394,
+      1044047668
+    ],
+    "duration": 2.3205,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "97ea698c3806d19d135015ea87284cea41161d935c018709bdbb1a5ad8b6106b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  }
+]

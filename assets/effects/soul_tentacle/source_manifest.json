@@ -1,0 +1,42 @@
+{
+  "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Illaoi.wad.client",
+  "source_directory": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手",
+  "indicators": [
+    {
+      "variant": "indicator_blue",
+      "source_system": "Characters/Illaoi/Skins/Skin0/Particles/Illaoi_Base_P_IndicatorBLU",
+      "raw_sha256": "719094dc8bfd2cb1153bb0fe7719ee22c74000e6c7e2d42e3420cc1f35f340cc",
+      "sampled_sha256": "1fa80cd5fa41da4538d77857d9709f96d3805c840d504508f728407274d7b364",
+      "source_ground_half_width": 120,
+      "source_ground_half_length": 506,
+      "source_ground_center_z": 459.99993896484375,
+      "target_tiles": [
+        2,
+        9
+      ],
+      "source_emitters": [
+        "GroundLines",
+        "Side1",
+        "Side2"
+      ]
+    },
+    {
+      "variant": "indicator_red",
+      "source_system": "Characters/Illaoi/Skins/Skin0/Particles/Illaoi_Base_P_IndicatorRed",
+      "raw_sha256": "d83551142a3bde3e434f21d135d24735345537853ac1ba5f15297d7feb39afc5",
+      "sampled_sha256": "667232f3a90ac94eabd379dda42781298a124ef3a55436fd4372114f10672e4a",
+      "source_ground_half_width": 140,
+      "source_ground_half_length": 540.5,
+      "source_ground_center_z": 460,
+      "target_tiles": [
+        2,
+        9
+      ],
+      "source_emitters": [
+        "GroundLines",
+        "Side1",
+        "Side2"
+      ]
+    }
+  ]
+}
