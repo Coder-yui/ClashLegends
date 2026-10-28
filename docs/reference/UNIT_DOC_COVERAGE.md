@@ -51,6 +51,9 @@
 | `aurelionsol` · [龙王](../units/aurelionsol.md) | 持续吐息免致盲；星辰创建即独立 | [动作](../units/animations/aurelionsol.md) · [声音](../units/audio/aurelionsol.md) |
 | `belveth` · [虚空女皇](../units/belveth.md) | 空军攻城；空中突进受控取消、死亡8鱼 | [动作](../units/animations/belveth.md) · [声音](../units/audio/belveth.md) |
 | `corki` · [库奇](../units/corki.md) | 三枚导弹首碰爆炸、第三枚1.8倍；空地溅射不重复直接命中 | [动作](../units/animations/corki.md) · [声音](../units/audio/corki.md) |
+| `convergent_pulse` · [聚合脉冲](../units/convergent_pulse.md) | 3费，180伤害，105像素半径，向心拉拢 | [动画](../units/animations/convergent_pulse.md) · [声音](../units/audio/convergent_pulse.md) · [特效](../units/effects/convergent_pulse.md) |
+| `final_spark` · [终极闪光](../units/final_spark.md) | 1秒预警直线结算、一次攻击致盲、己方半区部署 | [时序](../units/animations/final_spark.md) · [声音](../units/audio/final_spark.md) · [特效](../units/effects/final_spark.md) |
+| `soul_tentacle` · [灵魂触手](../units/soul_tentacle.md) | 固定矩形拍击、暂停寿命、先锋不可选取目标边界 | [动画](../units/animations/soul_tentacle.md) · [声音](../units/audio/soul_tentacle.md) · [特效](../units/effects/soul_tentacle.md) |
 | `solar_flare` · [太阳耀斑](../units/solar_flare.md) | 2费，100像素外圈，40像素中心，1.75秒控制 | [动画](../units/animations/solar_flare.md) · [声音](../units/audio/solar_flare.md) · [特效](../units/effects/solar_flare.md) |
 | `mega_inferno_bomb` · [终极爆弹](../units/mega_inferno_bomb.md) | 6费，160像素外圈、80像素中心，强化破盾与永久重伤 | [动画](../units/animations/mega_inferno_bomb.md) · [声音](../units/audio/mega_inferno_bomb.md) · [特效](../units/effects/mega_inferno_bomb.md) |
 | `tidal_wave` · [浪潮法术](../units/tidal_wave.md) | 2费地面浪潮、120伤害、4格宽10格长；强化友军2秒30%加速 | [动画](../units/animations/tidal_wave.md) · [声音](../units/audio/tidal_wave.md) · [特效](../units/effects/tidal_wave.md) |
