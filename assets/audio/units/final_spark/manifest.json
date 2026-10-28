@@ -1,0 +1,345 @@
+{
+  "source": "Lux base R",
+  "wwiser": "-gv=0dB",
+  "entries": [
+    {
+      "file": "assets/audio/units/final_spark/cast_1.wav",
+      "sha256": "6b4aebde674a57350f9adad665f10dfd680be64e026e9eb7310d650eb25f5c8c",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/cast_1.txtp",
+          "txtp_sha256": "e607c5f082552a72f38439b0d8070b0a8272d493f4fdb39d6a240458c375b960",
+          "event_ids": [
+            "734109820"
+          ],
+          "media_ids": [
+            "82083908",
+            "103796073"
+          ],
+          "candidate_media_ids": [
+            "82083908",
+            "148291726",
+            "763860472",
+            "747203483",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 1",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/cast_2.wav",
+      "sha256": "5203ae7a28acf1d9335d834de139f583a63e91f2b92c41e475908c215e5504c5",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/cast_2.txtp",
+          "txtp_sha256": "bb23a34de9ded0afcd84da8662e40a4f81cdb6dbe74a4d1999e0b8787d6d4c00",
+          "event_ids": [
+            "734109820"
+          ],
+          "media_ids": [
+            "148291726",
+            "266892436"
+          ],
+          "candidate_media_ids": [
+            "82083908",
+            "148291726",
+            "763860472",
+            "747203483",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 2",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/cast_3.wav",
+      "sha256": "4e48e46140e3c897673d9811081adc715099edc1ba4199222a7e139ac1ad03c6",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/cast_3.txtp",
+          "txtp_sha256": "a43f9d7cecfe6579d806d18210a1da99caf4b57fcee552056aa143ecdfe441d5",
+          "event_ids": [
+            "734109820"
+          ],
+          "media_ids": [
+            "763860472",
+            "3793796"
+          ],
+          "candidate_media_ids": [
+            "82083908",
+            "148291726",
+            "763860472",
+            "747203483",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 3",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/middle_1.wav",
+      "sha256": "f4f9e16bba0fa290c67095763a8254814539dc60347ce2c33acbb3270a50fb2c",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/middle_1.txtp",
+          "txtp_sha256": "2179f00fa074b09bed6cba98317094b2dd66262fe1ede8eaeabda62646df4cbb",
+          "event_ids": [
+            "398611427"
+          ],
+          "media_ids": [
+            "25979506",
+            "103796073"
+          ],
+          "candidate_media_ids": [
+            "25979506",
+            "40380380",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 1",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/middle_2.wav",
+      "sha256": "3ce647000369d968dafa193c229d885f1e6a943d050b828a8cb87d88e9add697",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/middle_2.txtp",
+          "txtp_sha256": "85ff726011be3a9b57bd68d4a83ebce06190659a266c14d26dff94e79795b0d7",
+          "event_ids": [
+            "398611427"
+          ],
+          "media_ids": [
+            "40380380",
+            "266892436"
+          ],
+          "candidate_media_ids": [
+            "25979506",
+            "40380380",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 2",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/middle_3.wav",
+      "sha256": "d20abdf5de6225a2868580caf6e628835c03b7f628db675bc092c5d72c5f4060",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/middle_3.txtp",
+          "txtp_sha256": "7a4f3e5c7e2f87b11c4f53956bbd753ee34f92c05017412913ed8fabc970a2ce",
+          "event_ids": [
+            "398611427"
+          ],
+          "media_ids": [
+            "25979506",
+            "3793796"
+          ],
+          "candidate_media_ids": [
+            "25979506",
+            "40380380",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 3",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/end_1.wav",
+      "sha256": "8e5eade05fd31e9c284f594ea61560d00beaa69a42fefb7f11b70ff3e182fc72",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/end_1.txtp",
+          "txtp_sha256": "4d9a77c3a9fd635667ee9b989885de3e4f8f8e843532ab381239103e3433ff33",
+          "event_ids": [
+            "203817467"
+          ],
+          "media_ids": [
+            "25979506",
+            "103796073"
+          ],
+          "candidate_media_ids": [
+            "25979506",
+            "40380380",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 1",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/end_2.wav",
+      "sha256": "35d0cddfdfd1e909776bafb238577c2f196b3355938dc6e827449f269c6e1e5c",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/end_2.txtp",
+          "txtp_sha256": "5cb6b2c74d8f426bd83a79b3d5dfbf3de501576dcbffaf7e58756d8333896edf",
+          "event_ids": [
+            "203817467"
+          ],
+          "media_ids": [
+            "40380380",
+            "266892436"
+          ],
+          "candidate_media_ids": [
+            "25979506",
+            "40380380",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 2",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    },
+    {
+      "file": "assets/audio/units/final_spark/end_3.wav",
+      "sha256": "d70ae593d28897317001f2655005a8ab17b5f027a1316de39796940681359981",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/txtp/end_3.txtp",
+          "txtp_sha256": "7dae024a42f782754bdad13e8b6da0d4c89dba3d64dcbbc88a22e43a5bd7cfd8",
+          "event_ids": [
+            "203817467"
+          ],
+          "media_ids": [
+            "25979506",
+            "3793796"
+          ],
+          "candidate_media_ids": [
+            "25979506",
+            "40380380",
+            "103796073",
+            "266892436",
+            "3793796",
+            "361719824"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/终极闪光/源件与过程记录/audio-source/lux/assets/sounds/wwise2016/sfx/characters/lux/skins/base/lux_base_sfx_audio.bnk",
+              "sha256": "4b4be98aab1626f51a4ad03d6181269842c95f47ed20893041ee466c9fed02e3"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Complete layered event with original 0.9s delay; deterministic random branch 3",
+      "validation": "Fresh float peak below 1.0 and fresh PCM byte equality; audio-validation.json"
+    }
+  ]
+}

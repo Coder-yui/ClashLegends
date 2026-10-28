@@ -1,0 +1,88 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Lux.wad.client",
+  "systems": {
+    "cast": {
+      "entry": "0x6fa5ec4f",
+      "raw_sha256": "bdea805391ef85e2dbc2ff48474b75bacffd1c897799608aa0ddc330c9b795dd",
+      "sampled_sha256": "76e2339f788d5646f48d182ba769dd751edfd0ca699ef5cb3ceb69881a18e39c",
+      "emitters": [
+        "rays",
+        "END_Beam_ROTATING",
+        "Flame_Shockwave",
+        "Runes",
+        "Runes1",
+        "END_Ground_Core",
+        "ring",
+        "ring1",
+        "ring2"
+      ]
+    },
+    "beam": {
+      "entry": "0x1b94e899",
+      "raw_sha256": "00aa91eb61f5e616fd97d695047219d443008e86b228facb0e10b3eb57dfb297",
+      "sampled_sha256": "e191efb80a5ae3cf524fea27dd67c90ceb99270b0310714ffc32b92a9cdb105a",
+      "emitters": [
+        "Beam_Core1",
+        "Beam_Core2",
+        "Burnt",
+        "RainbowGlow",
+        "Streaks_Linger",
+        "WOOSH",
+        "warning_beam_1",
+        "warning_beam_2",
+        "warning_beam_glow",
+        "Beam_Core_FLASH",
+        "Beam_Core_Glow",
+        "Beam_Core_Glow1",
+        "Bokeh",
+        "CHARGE_BEAM_PRETTINESS",
+        "Far_Refraction_L",
+        "Far_Refraction_R",
+        "Far_Refraction_L1",
+        "Far_Refraction_R1",
+        "CHARGE_BEAM_PRETTINESS1",
+        "CHARGE_BEAM_PRETTINESS2",
+        "Beam_Post_Prettiness",
+        "Beam_Post_Prettiness1",
+        "CLOSE_Refraction_L",
+        "CLOSE_Refraction_R",
+        "Beam_Post_Prettiness2",
+        "Beam_DARK_FLASH1",
+        "warning_beam_3",
+        "Burnt1",
+        "END_Ground_1",
+        "END_Ground_2",
+        "END_Beam_1",
+        "END_Beam_Core",
+        "END_Ground_3",
+        "END_Ground_Core",
+        "END_Beam_ROTATING",
+        "warning_beam_4",
+        "CHARGE_GROUND_LIGHT1",
+        "WIDTH_Refraction_L1",
+        "WIDTH_Refraction_R1"
+      ]
+    }
+  },
+  "sampling": {
+    "fps": 120,
+    "seed": 79
+  },
+  "native_length": 3410,
+  "native_hand_height": 160,
+  "beam_support": "mode=0, quadType=6, endpoint shares, offsets, transposed UV; nonpositive tiling spans one",
+  "limitations": [
+    "No hero skeleton or source gameplay script execution",
+    "No original-client frame comparison",
+    "Realtime source audio filters/spatial processing not reproduced"
+  ],
+  "native_targeter_width": 165,
+  "project_hit_rectangle": [
+    800,
+    40
+  ],
+  "scale_policy": "Uniform XYZ: world distance for 800px / 3410; native targeter width maps to about 38.71px. Effect artwork need not coincide with authority rectangle.",
+  "omitted_systems": [
+    "Lux_Base_R_tar (user requested no hit VFX)"
+  ]
+}
