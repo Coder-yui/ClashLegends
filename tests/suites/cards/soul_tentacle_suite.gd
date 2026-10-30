@@ -70,7 +70,7 @@ func run(harness: Object, main: Node2D) -> void:
 
 	var player: Node3D = load("res://assets/effects/soul_tentacle/player.gd").new()
 	_main.add_child(player)
-	player.load_kind("dormant")
+	player.load_kind("avatar")
 	player.setup_native(0.01)
 	player.make_overlay(StandardMaterial3D.new())
 	player.seek_attached_loop(2.999)
@@ -95,3 +95,62 @@ func run(harness: Object, main: Node2D) -> void:
 		_expect(absf((ground[3] - ground[4]) * indicator.scale.z + indicator.position.z) < 0.00001, kind + "范围起点与触手中心对齐")
 		_expect(is_equal_approx(indicator.scale.y, 0.01), kind + "保持原生高度比例")
 		indicator.free()
+
+	_check_native_presentation()
+	_check_standalone_preview()
+
+func _check_native_presentation() -> void:
+	var stats := CardDB.get_card("soul_tentacle")
+	var source := Unit.new()
+	source.setup(0, stats, stats.name)
+	_main.add_child(source)
+	_main._battle_presentation.attach_unit(source, stats)
+	var view := _view_for(source)
+	_expect(view != null, "触手正式模型挂载")
+	if view != null:
+		var player := view._animation_player
+		view._sync_visual(true, 0.0)
+		_expect(is_equal_approx(player.get_playing_speed(), 76.0 / 30.0), "出生动作压缩为1秒部署")
+		player.advance(1.0)
+		source._deploy_timer = 0.0
+		view._sync_visual(false, 0.0)
+		_expect(player.current_animation == "illaoiminion_idleangry", "完整出生后接原生IdleAngry")
+		for kind in [&"locomotion", &"attack", &"action_out", &"death"]:
+			_expect(view._transition_blend(kind) == 0.0, "源图零混合:" + String(kind))
+		var model: Node3D = view._model_root
+		model.sync_combat_visual(source.presentation_state(), 4.05, false)
+		_expect(model._players.base_active.visible and model._players.avatar._attached.size() == 3, "正常待机常驻底座与完整三层激活材质")
+		_expect(is_equal_approx(model.get_node("Model").scale.x, 0.009), "拍击宽倍率0.01乘源skinScale0.9")
+		_expect(not model._players.has("spawn") and not model._players.has("dormant"), "不接出生前蓄生或休眠外观")
+		model._players.base_active.seek(180.0)
+		_expect(model._players.base_active.has_live_particles(), "常驻特效支持反复强化后长时间存活")
+		model._players.activation.seek(0.3)
+		_expect(model._players.activation.has_live_particles(), "开启技能显示原AvatarActive橙红生成闪光")
+		_expect(model._players.activation._data.emitters.size() == 1 and model._players.activation._data.emitters[0].name == "fireLine", "开启效果只有生成闪光，不含砸地烟尘")
+		model._players.activation.seek(0.7)
+		_expect(not model._players.activation.has_live_particles(), "生成闪光按原生时长消失，不循环8秒")
+		model._players.base_active.seek(19.9)
+		model._players.base_active.stop_emitting()
+		model._players.base_active.seek(20.1)
+		_expect(model._players.base_active.has_live_particles(), "循环边界保留死亡前已出生粒子")
+		model._players.base_active.seek(23.1)
+		_expect(not model._players.base_active.has_live_particles(), "停发后下一周期不复活旧粒子")
+		model._players.base_active.restart_emitting()
+		model._players.base_active.seek(180.0)
+		model.begin_visual_death(0.8)
+		model._process(0.8)
+		_expect(not model._players.base_active.has_live_particles(), "死亡0.8秒内清空底座尾迹")
+		model.finish_visual_death()
+		_expect(not model.get_node("Model").visible, "死亡结束移除底座模型")
+	source.free()
+
+func _check_standalone_preview() -> void:
+	var preview := WorkbenchModelPreview.new()
+	_main.add_child(preview)
+	preview.show_definition(CardDB.get_card("soul_tentacle"), 0)
+	_expect(preview.model != null and preview._fit_size > 0.1 and preview._fit_size < 30.0, "工作台按模型拟合，不计粒子巨大包围盒")
+	for layer in preview.model._players.avatar._attached:
+		_expect(layer.material.get_shader_parameter("attached_enabled"), "独立预览无需Unit即可启用附着材质")
+	preview.model._process(180.0)
+	_expect(preview.model._players.base_active.has_live_particles(), "独立预览长时间仍显示底座")
+	preview.free()

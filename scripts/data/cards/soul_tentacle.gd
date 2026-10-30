@@ -19,11 +19,17 @@ static func definition() -> Dictionary:
 		},
 		"visual": {
 			"active_skills": [{"icon_path": "res://assets/skills/illaoi_r.png"}],
-			"resource_dependencies": {"effects": [{"provider": "res://assets/effects/soul_tentacle/player.gd", "variant": "warning"}, {"provider": "res://assets/effects/soul_tentacle/player.gd", "variant": "active"}, {"provider": "res://assets/effects/soul_tentacle/player.gd", "variant": "spawn"}, {"provider": "res://assets/effects/soul_tentacle/player.gd", "variant": "burst"}, {"provider": "res://assets/effects/soul_tentacle/player.gd", "variant": "avatar"}, {"provider": "res://assets/effects/soul_tentacle/player.gd", "variant": "dormant"}, {"provider": "res://assets/effects/soul_tentacle/player.gd", "variant": "indicator_blue"}, {"provider": "res://assets/effects/soul_tentacle/player.gd", "variant": "indicator_red"}]},
+			"resource_dependencies": {"effects": [{"provider": "res://assets/effects/soul_tentacle/player.gd", "variant": "slam"}, {"provider": "res://assets/effects/soul_tentacle/player.gd", "variant": "base_active"}, {"provider": "res://assets/effects/soul_tentacle/player.gd", "variant": "activation"}, {"provider": "res://assets/effects/soul_tentacle/player.gd", "variant": "avatar"}, {"provider": "res://assets/effects/soul_tentacle/player.gd", "variant": "indicator_blue"}, {"provider": "res://assets/effects/soul_tentacle/player.gd", "variant": "indicator_red"}]},
 			"visual_scene_path": "res://assets/units/soul_tentacle/soul_tentacle_view.tscn",
 			"visual_radius": 30.0, "visual_forward_yaw": 0.0,
 			"color": Color(0.2, 0.65, 0.55), "show_team_ring": false,
-			"visual_animations": {"deploy": "illaoiminion_spawn", "idle": "illaoiminion_idleangry", "attack": "illaoiminion_attack1", "death": "illaoiminion_death", "death_duration": 0.8},
+			"visual_animations": {
+				"deploy": "illaoiminion_spawn",
+				"idle": "illaoiminion_idleangry", "attack": "illaoiminion_attack1", "death": "illaoiminion_death",
+				"death_duration": 0.8,
+				# 源动画图 mCascadeBlendValue 和显式 TimeBlendData 均为0。
+				"transition_blends": {"locomotion": 0.0, "action_in": 0.0, "action_out": 0.0, "attack": 0.0, "sequence": 0.0, "death": 0.0, "model_swap": 0.0},
+			},
 		},
 		# BEGIN IMPORTED AUDIO soul_tentacle
 		"audio": {

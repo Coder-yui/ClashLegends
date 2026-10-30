@@ -22,5 +22,18 @@
     "target_width_tiles": 2,
     "formula": "2 / 200 = 0.01",
     "authority_length_tiles": 9
+  },
+  "skin_scale": 0.9,
+  "effective_mesh_scale": 0.009,
+  "animation_graph": {
+    "source": "data/characters/illaoiminion/animations/skin0.bin",
+    "cascade_blend": 0,
+    "explicit_time_blends": [
+      0,
+      0,
+      0
+    ],
+    "deploy": "source 76/30s compressed to authority 1s; no continuation",
+    "death": "source 49/30s compressed to project 0.8s"
   }
 }

@@ -11,6 +11,7 @@ var _stopped := false
 var _survivors: Dictionary = {}
 var _age := 0.0
 var _frame := -1
+var _loop_cycle := 0
 var _last_basis := Basis.IDENTITY
 var projection_basis := Basis.IDENTITY
 # 原生三维比例，不做地面拉伸或高度压平。
@@ -46,8 +47,15 @@ func advance(delta: float) -> void:
 
 func seek(age: float) -> void:
 	_age = maxf(age, 0.0)
-	var frame := mini(int(_age * float(_data.fps)), _data.frames.size() - 1)
-	if frame == _frame and projection_basis == _last_basis: return
+	var sample_age := _age
+	var cycle := 0
+	var loop_duration := float(_data.get("loop_duration", 0.0))
+	if loop_duration > 0.0 and _age >= float(_data.loop_start):
+		cycle = int(floor((_age - float(_data.loop_start)) / loop_duration))
+		sample_age = float(_data.loop_start) + fposmod(_age - float(_data.loop_start), loop_duration)
+	var frame := mini(int(sample_age * float(_data.fps)), _data.frames.size() - 1)
+	if frame == _frame and cycle == _loop_cycle and projection_basis == _last_basis and _age <= float(_data.duration): return
+	_loop_cycle = cycle
 	_frame = frame
 	_last_basis = projection_basis
 	var values: Array = _data.frames[frame]
@@ -69,8 +77,8 @@ func seek(age: float) -> void:
 			pool.append(item)
 		for j in pool.size():
 			var item: MeshInstance3D = pool[j]
-			item.visible = j < particles.size() and _age <= float(_data.duration)
-			if item.visible and _stopped: item.visible = _survivors.has(str(emitter_index) + ":" + str(particles[j][0]))
+			item.visible = j < particles.size() and (loop_duration > 0.0 or _age <= float(_data.duration))
+			if item.visible and _stopped: item.visible = _survivors.has(_particle_key(emitter_index, particles[j][0]))
 			if item.visible:
 				item.material_override.set_shader_parameter("projection_basis", projection_basis)
 				item.material_override.set_shader_parameter("shape_basis", Basis.IDENTITY)
@@ -89,7 +97,10 @@ func stop_emitting() -> void:
 	_survivors.clear()
 	for i in _data.frames[maxi(_frame, 0)].size():
 		for particle in _data.frames[maxi(_frame, 0)][i]:
-			_survivors[str(i) + ":" + str(particle[0])] = true
+			_survivors[_particle_key(i, particle[0])] = true
+
+func _particle_key(emitter: int, serial: float) -> String:
+	return str(emitter) + ":" + str(int(serial) + _loop_cycle * int(_data.get("loop_serial_stride", 0)))
 
 func restart_emitting() -> void:
 	_stopped = false
@@ -113,10 +124,11 @@ func make_overlay(original: Material) -> Material:
 		_attached.append({"index": index, "material": material})
 	return chain
 
-## 两种Avatar的附着层在1秒后尺寸/颜色恒定，仅乘色UV以源常量滚动。
+## Avatar从出生帧开始；1秒后尺寸/颜色恒定，仅乘色UV以源常量滚动。
 ## 从稳定采样延续UV，不能把1~4秒片段硬循环（每次会跳回0.3个纹理周期）。
 func seek_attached_loop(age: float) -> void:
-	seek(1.0)
+	seek(minf(age, 1.0))
+	var scroll_age := maxf(age - 1.0, 0.0)
 	for entry in _attached:
 		var values: Array = _data.frames[_frame][entry.index]
 		if values.is_empty(): continue
@@ -126,8 +138,8 @@ func seek_attached_loop(age: float) -> void:
 			var uv: Variant = emitter.get(layer[0])
 			if uv == null: continue
 			var rate: Array = uv.birthScrollRate.constant
-			particle[int(layer[1]) + 3] += float(rate[0]) * age
-			particle[int(layer[1]) + 4] += float(rate[1]) * age
+			particle[int(layer[1]) + 3] += float(rate[0]) * scroll_age
+			particle[int(layer[1]) + 4] += float(rate[1]) * scroll_age
 		entry["loop_particle"] = particle
 
 func update_attached(shown: bool) -> void:
@@ -200,7 +212,7 @@ static func _material(e: Dictionary) -> ShaderMaterial:
 
 ## 对外资源契约：定义读取不会创建粒子或加载纹理。
 static func resource_manifest(variant: String) -> Dictionary:
-	if variant not in ["warning", "active", "spawn", "burst", "avatar", "dormant", "indicator_blue", "indicator_red"]: return {}
+	if variant not in ["slam", "base_active", "activation", "avatar", "indicator_blue", "indicator_red"]: return {}
 	return {"json": [ROOT + variant + "/sampled.json"], "sample": {"player": "res://assets/effects/soul_tentacle/player.gd", "kind": variant, "setup": "native"}}
 
 static func resource_shader_path(e: Dictionary) -> String:

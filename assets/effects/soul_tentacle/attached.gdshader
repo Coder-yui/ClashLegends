@@ -1,6 +1,7 @@
 shader_type spatial;
 render_mode unshaded, blend_add, cull_disabled, depth_draw_never, shadows_disabled, fog_disabled;
 uniform float p[38];
+uniform bool cull_mesh = false;
 uniform bool attached_enabled = false;
 uniform bool has_reflection = false;
 uniform vec4 reflection_params;
@@ -38,7 +39,7 @@ void vertex() {
 
 }
 void fragment() {
-	if (!attached_enabled) discard;
+	if (!attached_enabled || (cull_mesh && !FRONT_FACING)) discard;
 	vec4 texel = texture(source_texture, addressed(layer_uv(UV,21,uv_center,uv_flip,cell), address_mode));
 	if (has_mult) texel *= texture(mult_texture,addressed(layer_uv(UV,28,mult_center,mult_flip,cell_mult),mult_address));
 	vec4 lit = texel * vec4(p[7], p[8], p[9], p[10]);

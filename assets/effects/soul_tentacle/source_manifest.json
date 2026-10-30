@@ -38,5 +38,50 @@
         "Side2"
       ]
     }
-  ]
+  ],
+  "roles": [
+    {
+      "variant": "avatar",
+      "source_system": "Characters/Illaoi/Skins/Skin0/Particles/Illaoi_Base_P_TentacleAvatarActive",
+      "role": "spawn/idle/attack/death attached mesh",
+      "sampled_sha256": "d1860997a0dbf45d26a1d87dd7cfe7e9879981ec8ce7b07c68fb7e75044ce8ca",
+      "raw_sha256": "c3f955e9cc6c53b0ec875a7d6a5d88e0a2b49476990a730eb7ec04c71d9973db"
+    },
+    {
+      "variant": "base_active",
+      "source_system": "Characters/Illaoi/Skins/Skin0/Particles/Illaoi_Base_P_TentacleBaseActive",
+      "role": "continuous from model birth; stop emission on death",
+      "sampled_sha256": "7478f34f34b31537fb3de5066a2b5edd1b2b4c7aa807b63bc91429e49fd5b5a3",
+      "raw_sha256": "3f70f68cdf96a35931860d92a57d3040d5c77aa60e11e90b739e3e049bbaba4f",
+      "loop": "Native startup 0..12s; 8s birth cohort from source 4..12s with complete survivor tails; cycle-unique particle IDs. No finite runtime lifetime.",
+      "death": "Stop emission at death start; native maximum 3s tails compressed into 0.8s project death animation; hide mesh and particles on completion. Exact original client removal frame unproven."
+    },
+    {
+      "variant": "slam",
+      "source_system": "Characters/Illaoi/Skins/Skin0/Particles/Illaoi_Base_P_TentacleCas",
+      "role": "basic attack impact only",
+      "sampled_sha256": "005a82963c7629bb69f42dc8cc1df184ea588eb67021e335ecb9082b0ecb18b6",
+      "raw_sha256": "972008b0aa0549960f97a8d3956d50f2d9c9edf175de5948452c464bd6b4c157"
+    },
+    {
+      "variant": "activation",
+      "source_system": "Characters/Illaoi/Skins/Skin0/Particles/Illaoi_Base_P_TentacleAvatarActive",
+      "source_emitter": "fireLine",
+      "role": "orange-red tentacle generation flash at skill start, excluding ground impact/dust",
+      "birth_delay": 0.15,
+      "particle_lifetime": 0.4,
+      "raw_sha256": "c3f955e9cc6c53b0ec875a7d6a5d88e0a2b49476990a730eb7ec04c71d9973db",
+      "sampled_sha256": "f3e24a2b9597103aa7df97e4f7ef0e8d9fe4145196caf9184803b34e2c971ab7",
+      "extraction": "Select original fireLine emitter and corresponding frame channel; keep original colour, texture, transform and timing. Texture dependency shared with avatar."
+    }
+  ],
+  "excluded": [
+    "P_TentacleSpawn (prebirth)",
+    "P_TentacleAvatarDormant (not IdleAngry)",
+    "R_impact (hero slam)",
+    "R_IllaoiBuff/R_IllaoiBuffGlow (hero body)",
+    "R_TentacleBurst (rejected ground-impact set)"
+  ],
+  "r_note": "User correction: R_TentacleBurst is the wrong ground-impact set. Use the native orange-red fireLine in P_TentacleAvatarActive for the requested tentacle-generation flash. No hero R body glow or recurring impact.",
+  "attached_note": "Transparent E_SpiritMat base; native Active lines/edges/base, per-emitter backface culling, original UV scrolling."
 }

@@ -253,6 +253,7 @@ func _find_player(node: Node) -> void:
 		_find_player(child)
 
 func _collect_bounds(node: Node, output: Array[AABB]) -> void:
+	if node.is_in_group("presentation_fx"): return
 	if node is MeshInstance3D and node.mesh != null and node.is_visible_in_tree():
 		output.append(node.global_transform * node.get_aabb())
 	for child in node.get_children():
