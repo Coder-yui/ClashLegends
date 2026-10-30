@@ -9,6 +9,7 @@ func run(harness: Object) -> void:
 	_check_health_sources()
 	_check_visibility_and_recovery()
 	_check_growth_forms_and_replica()
+	_check_untargetable_replica()
 	_main.free()
 	_main = null
 
@@ -73,6 +74,7 @@ func _check_visibility_and_recovery() -> void:
 	var sion := _spawn("sion")
 	sion.take_damage(sion.hp * 2)
 	_expect(sion.death_form.waiting() and sion.hp == 0 and sion.presentation_state().health_bar_visible, "赛恩真实零生命进入复生等待并显示进度")
+	_expect(sion.untargetable_visual() and sion.presentation_state().untargetable, "赛恩复生等待显示不可选取虚化")
 	sion.death_form.waiting_ticks = 10
 	var view := sion.presentation_state()
 	view.advance_health_bar(0)
@@ -84,6 +86,7 @@ func _check_visibility_and_recovery() -> void:
 	_run_main_ticks(1)
 	view.advance_health_bar(0)
 	_expect(not sion.death_form.waiting() and sion.hp == sion.max_hp and view.health_ratio == 1, "复生完成恢复新形态普通生命显示")
+	_expect(not sion.untargetable_visual(), "复生结束恢复可选取外观")
 	sion.free()
 
 func _check_growth_forms_and_replica() -> void:
@@ -129,6 +132,14 @@ func _check_growth_forms_and_replica() -> void:
 		_expect(unit.get_health_bar_fill_color() == Color(0.95, 0.25, 0.25), "蓝方视角红方单位显示敌方血色")
 		unit.team = 0
 		_expect(unit.get_health_bar_fill_color() == Color(0.2, 0.9, 0.2), "蓝方视角友方血色")
+		if card == "sion":
+			unit.take_damage(unit.hp * 2)
+			client._snapshot_system._apply_units([preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, unit.net_id, unit)])
+			_expect(replica.death_form.waiting() and replica.presentation_state().untargetable and replica.presentation_state().health_bar_alpha < 1.0, "赛恩复生等待快照显示虚化进度条")
+			unit.death_form.waiting_ticks = 1
+			_run_main_ticks(1)
+			client._snapshot_system._apply_units([preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, unit.net_id, unit)])
+			_expect(not replica.presentation_state().untargetable and replica.presentation_state().health_bar_alpha == 1.0, "赛恩复生结束快照恢复实色血条")
 		if card == "gnar":
 			unit.transform_to_small()
 			_expect(unit.presentation_state().base_health_bar_width == widths[0], "还原小纳尔恢复原生W")
@@ -141,3 +152,35 @@ func _same_layout(a: Dictionary, b: Dictionary) -> bool:
 	for key in a:
 		if not is_equal_approx(a[key], b[key]): return false
 	return true
+
+func _check_untargetable_replica() -> void:
+	var unit := _spawn("soul_tentacle")
+	var view := unit.presentation_state()
+	unit.apply_active_buff(8.0, 1.0, 1.0, 1.5)
+	_expect(not view.untargetable and view.health_bar_alpha == 1.0, "普通增益不能冒充不可选取")
+	unit.control.hard.apply(&"untargetable", &"bar_test", 8.0, {})
+	_expect(view.untargetable and view.health_bar_visible and view.health_ratio == 1.0, "满血不可选取仍显示真实生命")
+	view.advance_health_bar(1.2)
+	_expect(is_equal_approx(view.health_bar_alpha, 0.3), "虚化最低透明度保留可读性")
+	view.advance_health_bar(1.2)
+	_expect(is_equal_approx(view.health_bar_alpha, 0.6), "2.4秒慢呼吸循环无闪灭")
+	var client = preload("res://tests/fixtures/authority_battle.gd").new()
+	_harness.root.add_child(client)
+	client.runtime.mode = "client"
+	var replica: Unit = client._spawn_unit(UnitSpawnRequest.new(0, "soul_tentacle", unit.position, {"deploy_time_override": 0.0}))
+	replica.net_id = unit.net_id
+	client.world.register_replica_unit(replica)
+	var fixture = preload("res://tests/fixtures/network_fixture.gd")
+	var payload: Array = fixture.snapshot_payload(_main._snapshot_system, unit.net_id, unit)
+	_expect(client._snapshot_system._apply_units([payload]), "不可选取字段正式快照应用成功")
+	_expect(replica.control.hard.remaining(&"untargetable") == 0.0 and replica.presentation_state().untargetable and replica.presentation_state().health_bar_alpha < 1.0, "客户端只读快照保护位，不本地生成权威状态")
+	var packet: Array = fixture.packet(_main._snapshot_system, [payload], [], fixture.tower_payloads(_main._snapshot_system), 0.0, 180.0, false)
+	_expect(_main._snapshot_system.decode_validated(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)) != null, "新字段合法整包可解码")
+	packet[NetworkSnapshotSystem.S_UNITS][0][NetworkSnapshotSystem.U_UNTARGETABLE] = 1
+	_expect(_main._snapshot_system.decode_validated(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)) == null, "不可选取字段拒绝整数冒充布尔值")
+	unit.control.hard.clear_family(&"untargetable")
+	view.advance_health_bar(0.0)
+	client._snapshot_system._apply_units([fixture.snapshot_payload(_main._snapshot_system, unit.net_id, unit)])
+	_expect(not replica.presentation_state().untargetable and replica.presentation_state().health_bar_alpha == 1.0 and view.health_bar_alpha == 1.0, "到期快照双方立即恢复实色血条")
+	unit.free()
+	client.free()

@@ -448,6 +448,7 @@ var net_skill_resource_enabled := false
 var net_active_speed_multiplier := 1.0
 var net_active_attack_speed_multiplier := 1.0
 var net_active_buff_active := false
+var net_untargetable := false
 var net_facing_direction := Vector2.ZERO
 ## 主机快照同步当前普攻目标是否为建筑，供客户端选择对应动作；不参与伤害判定。
 var net_attacking_structure := false
@@ -978,6 +979,9 @@ func active_buff_clock_visual() -> Vector2:
 	var age := float(buffs.tick_index - _buff_visual_start_tick) / StatusInstances.TICKS_PER_SECOND
 	if age > _buff_visual_duration + 2.1: return Vector2.ZERO
 	return Vector2(age, _buff_visual_duration)
+
+func untargetable_visual() -> bool:
+	return death_form.waiting() or hp > 0.0 and (net_untargetable if _in_client_mode() else control.hard.remaining(&"untargetable") > 0.0)
 
 func get_active_buff_active_visual() -> bool:
 	return net_active_buff_active if _in_client_mode() else ((burst_attacks_left > 0 or burst_finishing) and not CombatInteraction.in_stasis(self)) or active_buff_timer > 0.0 or buffs.remaining(&"timed_lifesteal") > 0.0 or buffs.remaining(&"counter_strike") > 0.0 or buffs.remaining(&"damage_reduction") > 0.0 or buffs.remaining(&"effect_shield") > 0.0
@@ -3675,18 +3679,28 @@ func _draw() -> void:
 	var bar_left := _health_bar_center.x - bar_w * 0.5
 	if view.health_bar_visible:
 		var layout := view.health_bar_layout
+		var bar_alpha := view.health_bar_alpha
+		var fill := get_health_bar_fill_color()
+		if view.untargetable: fill = fill.lerp(Color(0.68, 0.9, 0.94), 0.45)
+		fill.a = bar_alpha
 		var bar_position := Vector2(bar_left, _health_bar_center.y - HEALTH_BAR_HEIGHT * 0.5)
-		draw_rect(Rect2(bar_position, Vector2(layout.background_width, HEALTH_BAR_HEIGHT)), Color(0.15, 0.15, 0.15))
+		draw_rect(Rect2(bar_position, Vector2(layout.background_width, HEALTH_BAR_HEIGHT)), Color(0.15, 0.15, 0.15, bar_alpha))
 		if layout.normal_width > 0.0:
-			draw_rect(Rect2(bar_position, Vector2(layout.normal_width, HEALTH_BAR_HEIGHT)), get_health_bar_fill_color())
+			draw_rect(Rect2(bar_position, Vector2(layout.normal_width, HEALTH_BAR_HEIGHT)), fill)
 		if layout.overflow_width > 0.0:
-			draw_rect(Rect2(bar_position + Vector2(layout.full_health_x, 0.0), Vector2(layout.overflow_width, HEALTH_BAR_HEIGHT)), Color(0.82, 0.35, 1.0))
+			draw_rect(Rect2(bar_position + Vector2(layout.full_health_x, 0.0), Vector2(layout.overflow_width, HEALTH_BAR_HEIGHT)), Color(0.82, 0.35, 1.0, bar_alpha))
 		if layout.shield_width > 0.0:
-			draw_rect(Rect2(bar_position + Vector2(layout.shield_start, 0.0), Vector2(layout.shield_width, HEALTH_BAR_HEIGHT)), Color.WHITE)
+			draw_rect(Rect2(bar_position + Vector2(layout.shield_start, 0.0), Vector2(layout.shield_width, HEALTH_BAR_HEIGHT)), Color(1.0, 1.0, 1.0, bar_alpha))
 		# 当前正常满血边界；深色描边让浅色短刻线在白盾上仍可辨认。
 		var marker := bar_position + Vector2(layout.full_health_x, 0.0)
-		draw_line(marker - Vector2(0.0, 1.0), marker + Vector2(0.0, HEALTH_BAR_HEIGHT + 1.0), Color(0.08, 0.08, 0.10), 3.0)
-		draw_line(marker - Vector2(0.0, 1.0), marker + Vector2(0.0, HEALTH_BAR_HEIGHT + 1.0), Color(0.96, 0.96, 1.0), 1.0)
+		draw_line(marker - Vector2(0.0, 1.0), marker + Vector2(0.0, HEALTH_BAR_HEIGHT + 1.0), Color(0.08, 0.08, 0.10, bar_alpha), 3.0)
+		draw_line(marker - Vector2(0.0, 1.0), marker + Vector2(0.0, HEALTH_BAR_HEIGHT + 1.0), Color(0.96, 0.96, 1.0, bar_alpha), 1.0)
+		if view.untargetable:
+			var font := CardArt.ui_font()
+			var label := "不可选取"
+			var label_at := Vector2(_health_bar_center.x - font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x * 0.5, bar_position.y - 5.0)
+			draw_string_outline(font, label_at, label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, 3, Color(0.04, 0.10, 0.12, 0.9))
+			draw_string(font, label_at, label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(0.76, 0.96, 1.0, 0.9))
 		if grievous_wounds_visual():
 			_draw_grievous_wounds(Vector2(bar_left + maxf(bar_w, float(layout.background_width)) + 10.0, _health_bar_center.y))
 		if team_attack_boost_multiplier > 1.0:

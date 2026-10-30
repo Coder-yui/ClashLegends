@@ -32,12 +32,20 @@ var attack_rate: float:
 	get: return _unit.get_active_attack_speed_multiplier_visual()
 var active_buff: bool:
 	get: return _unit.get_active_buff_active_visual()
+var active_buff_clock: Vector2:
+	get: return _unit.active_buff_clock_visual()
+var untargetable: bool:
+	get: return not dead and _unit.untargetable_visual()
 var can_move: bool:
 	get: return not dead and (_unit.get_action_permissions_visual() & 1) != 0
 var can_attack: bool:
 	get: return not dead and (_unit.get_action_permissions_visual() & 2) != 0
 
 ## 血条只读权威复生计时。帧间最多外推一个Tick，不能恢复真实生命或提前解锁。
+var _ghost_phase := 0.0
+var health_bar_alpha: float:
+	get: return 0.45 + 0.15 * cos(_ghost_phase * TAU / 2.4) if untargetable else 1.0
+
 var _recovery_ratio := 0.0
 var _observed_wait_ticks := -1
 var health_ratio: float:
@@ -57,7 +65,7 @@ var base_health_bar_width: float:
 var health_bar_visible: bool:
 	get:
 		return PresentationConfig.status_indicators_visible(_unit) and (
-			_unit.death_form.waiting() or not is_equal_approx(health_ratio, 1.0)
+			untargetable or _unit.death_form.waiting() or not is_equal_approx(health_ratio, 1.0)
 			or _unit.grievous_wounds_visual() or _unit.get_shield_health_ratio() > 0.0 or _unit.team_attack_boost_multiplier > 1.0
 			or _unit.is_skill_resource_visible())
 
@@ -72,6 +80,7 @@ func _authoritative_recovery_ratio() -> float:
 	return clampf(1.0 - float(_unit.death_form.waiting_ticks) / ceilf(duration * 20.0), 0.0, 1.0)
 
 func advance_health_bar(delta: float) -> void:
+	_ghost_phase = fmod(_ghost_phase + maxf(delta, 0.0), 2.4) if untargetable else 0.0
 	if not is_instance_valid(_unit) or not _unit.death_form.waiting():
 		_observed_wait_ticks = -1
 		_recovery_ratio = 0.0

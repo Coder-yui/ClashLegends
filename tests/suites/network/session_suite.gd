@@ -72,12 +72,12 @@ func run(harness: Object) -> void:
 	harness._expect(main.runtime.session.phase == MatchSession.Phase.DISCONNECTED and _has_startup_failure(main, "超时"), "加载超时停止并显示可返回菜单的失败界面")
 	main.free()
 	harness._expect(MatchSession.content_fingerprint() == MatchSession.content_fingerprint() and MatchSession.content_fingerprint().length() == 64, "内容指纹稳定且完整")
-	var legacy_fingerprint := var_to_bytes([118, CardDB.all(), MatchRules.REGULATION_TIME, MatchRules.OVERTIME_TIME, FixedStepClock.STEP]).hex_encode().sha256_text()
-	harness._expect(MatchSession.PROTOCOL_VERSION == 125 and NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION == MatchSession.PROTOCOL_VERSION and MatchSession.content_fingerprint() != legacy_fingerprint, "协议125同时拥有握手/快照版本，并与118相同卡牌规则的旧指纹隔离")
+	var legacy_fingerprint := var_to_bytes([125, CardDB.all(), MatchRules.REGULATION_TIME, MatchRules.OVERTIME_TIME, FixedStepClock.STEP]).hex_encode().sha256_text()
+	harness._expect(MatchSession.PROTOCOL_VERSION == 126 and NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION == MatchSession.PROTOCOL_VERSION and MatchSession.content_fingerprint() != legacy_fingerprint, "协议126同时拥有握手/快照版本，并与125相同卡牌规则的旧指纹隔离")
 
 	_check_private_hand_and_adaptation(harness)
 	_check_buffer_clock_and_playback(harness)
-	_check_default_local_deck(harness)
+	await _check_default_local_deck(harness)
 	_check_client_team_presentation(harness)
 	await run_skill_input(harness)
 	_check_growth_refresh_changes(harness)
@@ -316,7 +316,10 @@ func _check_default_local_deck(harness: Object) -> void:
 		if unit is Unit and unit.card_id == card and unit.team == 0: spawned = true
 	if String(CardDB.get_card(card).get("type", "unit")) != "spell":
 		harness._expect(spawned, "默认卡组命令实际生成单位而非只更新界面")
-	local.free()
+	# 让本帧创建的模型先完成渲染注册，再随场景正常退出。
+	await harness.process_frame
+	local.queue_free()
+	await harness.process_frame
 
 func _check_client_team_presentation(harness: Object) -> void:
 	var main = load("res://scenes/main.tscn").instantiate()

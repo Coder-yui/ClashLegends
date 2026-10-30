@@ -45,6 +45,7 @@ func run(harness: SceneTree) -> void:
 			if card == "match" and cue in [&"victory", &"defeat"]: result_cues.append(cue))
 	var bomb_case = preload("res://tests/fixtures/mega_inferno_bomb_network_case.gd").new() if OS.get_environment("CLASH_TEST_MEGA_INFERNO_BOMB") == "1" else null
 	var tentacle_case = preload("res://tests/fixtures/soul_tentacle_network_case.gd").new() if OS.get_environment("CLASH_TEST_SOUL_TENTACLE") == "1" else null
+	if tentacle_case != null: terminal_not_before = maxi(terminal_not_before, 225)
 	var spark_case = preload("res://tests/fixtures/final_spark_network_case.gd").new() if OS.get_environment("CLASH_TEST_FINAL_SPARK") == "1" else null
 	var pulse_case = preload("res://tests/fixtures/convergent_pulse_network_case.gd").new() if OS.get_environment("CLASH_TEST_CONVERGENT_PULSE") == "1" else null
 	var solar_case = preload("res://tests/fixtures/solar_flare_network_case.gd").new() if OS.get_environment("CLASH_TEST_SOLAR_FLARE") == "1" else null

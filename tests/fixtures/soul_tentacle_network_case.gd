@@ -4,6 +4,8 @@ var buff_started := false
 var damaged := false
 var buff_seen := false
 var attack_seen := false
+var protection_seen := false
+var protection_ended := false
 var source: Unit
 var target: Unit
 func poll(main: Node2D) -> void:
@@ -26,7 +28,9 @@ func _observe(unit: Unit) -> void:
 	if unit.card_id == "soul_tentacle":
 		attack_seen = attack_seen or unit.get_attack_visual_serial() > 0
 		buff_seen = buff_seen or unit.get_active_buff_active_visual()
+		protection_seen = protection_seen or unit.presentation_state().untargetable
+		protection_ended = protection_ended or (protection_seen and not unit.presentation_state().untargetable)
 	if unit.card_id == "target_dummy" and unit.team == 1:
 		damaged = damaged or unit.hp <= unit.max_hp - 180.0
 func result() -> Dictionary:
-	return {"passed": damaged and buff_seen and attack_seen, "damaged":damaged,"buff_seen":buff_seen,"attack_seen":attack_seen}
+	return {"passed": damaged and buff_seen and attack_seen and protection_seen and protection_ended, "protection_seen":protection_seen,"protection_ended":protection_ended,"damaged":damaged,"buff_seen":buff_seen,"attack_seen":attack_seen}
