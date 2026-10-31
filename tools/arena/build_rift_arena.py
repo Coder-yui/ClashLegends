@@ -10,7 +10,8 @@ from pathlib import Path
 from mathutils import Vector, Matrix
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / 'ClashLegends-开发素材库/03-制作中/3D地图'
+import os
+OUT = Path(os.environ.get('CLASH_ARENA_SOURCE', str(ROOT / 'ClashLegends-开发素材库/03-制作中/3D地图')))
 RNG = random.Random(20260912)
 SQ = math.sqrt(2)
 bpy.ops.object.select_all(action='SELECT')
@@ -256,20 +257,32 @@ def fern(x,r,size,flower=False):
             crown_obj=boulder('River iris',xx,rr,.10,.065,.05,.06,petals[j%3],'River gardens')
 
 
-# A sculpted, finite diorama silhouette. Open playable field is perfectly flat.
-for a,b in [(-1.6,15),(17,33.6)]:
-    mesh('RiftGround bank', [pt(-2.2,a,-.025),pt(20.2,a,-.025),pt(20.2,b,-.025),pt(-2.2,b,-.025)],
-         [(0,3,2,1)],ground,'Terrain')
-    box('Earth terrace',9,(a+b)/2,-.67,22.4,b-a,1.25,soil,'Terrain',.34)
-    # Lower shelves are hidden in the gameplay camera, readable in the model overview.
-    box('Bedrock shelf',9,(a+b)/2,-1.36,21.8,b-a-.30,.48,rock_mats[0],'Terrain',.3)
-mesh('RiverSurface', [pt(-2.25,15,-.20),pt(20.25,15,-.20),pt(20.25,17,-.20),pt(-2.25,17,-.20)],
-     [(0,3,2,1)],water,'RiverSurface')
-box('Recessed river bed',9,16,-.70,22.4,2,.75,rock_mats[0],'Terrain')
-# Thin hanging water lips express the river cross section in the diorama view.
-for x in [-2.23,20.23]:
-    mesh('RiverSurface spill lip', [pt(x,15,-.2),pt(x,17,-.2),pt(x,17,-.78),pt(x,15,-.78)],
-         [(0,1,2,3)],water,'RiverSurface')
+# Continuous terrain covers BattleLayout's entire bounded expanded view, plus
+# a guard band for raised geometry and perspective projection (presentation only).
+# Keep the authoritative river perfectly straight inside the playable field.
+def river_offset(x):
+    d=max(abs(x-9)-11.2,0)
+    return math.sin(d*.24)*min(d*.22,2.5)
+
+xs=[-22+i for i in range(63)]
+for north in [True,False]:
+    vs=[];fs=[]
+    for x in xs:
+        bank=(15 if north else 17)+river_offset(x)
+        end=-22 if north else 54
+        vs.extend([pt(x,end,-.025),pt(x,bank,-.025)])
+    for i in range(len(xs)-1):
+        k=i*2
+        fs.append((k,k+1,k+3,k+2) if north else (k+2,k+3,k+1,k))
+    mesh('Continuous forest floor',vs,fs,ground,'Terrain')
+vs=[];fs=[]
+for x in xs:
+    offset=river_offset(x)
+    vs.extend([pt(x,15+offset,-.20),pt(x,17+offset,-.20)])
+for i in range(len(xs)-1):
+    k=i*2;fs.append((k,k+1,k+3,k+2))
+mesh('RiverSurface',vs,fs,water,'RiverSurface')
+box('Deep landscape bedrock',9,16,-1.25,62,76,1.4,soil,'Terrain',0)
 
 # Restrained, irregular remnants of paving. Earth/grass continue between the stones.
 for lane in [3.5,14.5]:
@@ -415,47 +428,128 @@ for i,(x,r) in enumerate([(.18,3.4),(.18,9.7),(.2,12.8),(17.85,3.5),(17.8,7.3),(
 for x,r in [(7.2,9.8),(10.6,12.4),(6.8,20.5),(10.5,23),(8.8,7.8),(9.0,26.1)]:
     slab(x,r,.30,.18,RNG.random(),'Meadow buried fragment',top=-.012)
 
-# 2026-09: layered forest margins. A separate seed preserves the original layout.
-RNG = random.Random(20260923)
-# Taller rear trees frame clustered mid-height saplings; avoid a uniform hedge.
-for side in [0, 18]:
-    outward = -1 if side == 0 else 1
-    for index, row in enumerate([1.6, 5.1, 9.3, 12.7, 19.3, 23.2, 27.2, 30.7]):
-        x = side + outward * RNG.uniform(.45, 1.25)
-        source_prop(['pine_broad', 'pine_tall', 'pine_compact'][index % 3],
-                    x, row, 0, RNG.uniform(1.25, 1.7), RNG.uniform(-2.5, 2.5))
-        source_prop('pine_compact', side + outward * .05, row + .8,
-                    0, RNG.uniform(.62, .9), RNG.uniform(-2.5, 2.5))
-    # Low plants extend just inside the camera edge, with gaps by towers and bridges.
-    for index, row in enumerate([1.3, 3.9, 8.8, 10.7, 12.9, 18.5, 20.5, 22.7, 27.9, 30.2]):
-        x = side - outward * RNG.uniform(.25, .48)
-        source_prop('mossy_boulder', x + outward * .35, row, -.06,
-                    RNG.uniform(.34, .52), RNG.uniform(-2.5, 2.5), 'Source relics')
+# 2026-10: authored outer arena gardens, quiet paths, then layered forest.
+# Independent seed keeps combat-space landmarks stable across exterior revisions.
+RNG = random.Random(20261030)
+# Low broken retaining walls make the arena readable without a solid hedge.
+for x in [-.58,18.58]:
+    for row in [1.1,5.8,9.9,21.8,26.1,30.6]:
+        box('Weathered arena sill',x,row,.10,.44,1.8,.28,stone[2],'Relics',.07)
+        box('Chipped sill coping',x,row,.26,.56,1.87,.12,stone[1],'Relics',.05)
+        for j in [-1,1]:
+            slab(x+j*.22,row+j*.74,.27,.17,.3,'Sill fallen chip','Relics')
+# Four recessed garden courts: large readable masses, sparse faction accents.
+for x,row,team in [(-5.4,5,1),(23.4,5,1),(-5.4,27,0),(23.4,27,0)]:
+    accent=red if team else blue
+    prism('Outer garden court',x,row,[(2.1,1.8)]*12,-.10,-.005,stone[2],'Relics',.13)
+    for i in range(12):
+        a=i*math.tau/12
+        if (i+team)%5==0:continue
+        ring('Broken garden rim',x,row,2.4,.21,stone[i%4],.015,'Relics',a+.05,a+.43,4)
+    # Eastern court is a ruined colonnade; western court carries a crest.
+    if x>18:
+        for dx,dy,height in [(-1.1,-.6,1.4),(.9,-.8,.8),(1.2,.5,.45)]:
+            prism('Court column',x+dx,row+dy,[(.24,.24)]*7,.03,height,stone[0],'Relics')
+            box('Court column cap',x+dx,row+dy,height,.64,.58,.16,stone[1],'Relics',.06)
+        source_prop('carved_runestone',x-.1,row+.3,.02,.6,.8,'Source relics')
+        fern(x-.7,row+1.2,.7,True)
+        continue
+    # An ancient plinth, with a restrained heraldic inset and chipped crest.
+    box('Garden plinth foot',x,row,.15,1.5,1.3,.35,stone[0],'Relics',.12)
+    box('Garden monument',x,row,.83,.82,.72,1.2,stone[2],'Relics',.14)
+    box('Garden monument crown',x,row,1.48,1.12,.96,.18,stone[1],'Relics',.08)
+    prism('Garden faction gem',x,row,[(.20,.20)]*5,1.56,2.06,accent,'Accents',.3)
+    for j in range(4):
+        fern(x+RNG.uniform(-2,2),row+RNG.choice([-1,1])*1.8,.45,j==0)
+# Broad worn stepping paths connect courts behind the woodland frame.
+for side in [-1,1]:
+    for row in [-5,-2,1,9,12,20,23,31,34,37]:
+        x=9+side*(14.6+math.sin(row*.29)*1.1)
+        for j in range(2):slab(x+j*.72,row,.70,.50,RNG.uniform(-.3,.3),'Outer path paving','Relics')
+# End approach terraces with empty central gates; keep both Nexus silhouettes clear.
+for row in [-4.8,36.8]:
+    for x in [3.2,14.8]:
+        for j in range(3):
+            box('Gateway terrace step',x,row+j*.32,-.12+j*.08,2.6,.56,.20,stone[j%4],'Relics',.07)
+        arch(x,row+.8,1)
+    for x in [6.4,11.6]:
+        source_prop('carved_runestone',x,row,.02,.82,.25,'Source relics')
+# Irregular broad cliff shoulders, grouped into groves instead of uniform rows.
+# All new tall props are >3 tiles outside the playable rectangle.
+for side in [-1,1]:
+    for row in [-11,-3,8.2,23.5,34,43.5]:
+        x=9+side*RNG.uniform(17,21)
+        for j in range(3):
+            xx=x+side*j*1.6; rr=row+RNG.uniform(-1.3,1.3)
+            boulder('Forest escarpment',xx,rr,.15+j*.1,2.1,1.8,.85+j*.15)
+            source_prop('mossy_boulder',xx,rr+.3,.1,.75,RNG.uniform(-2,2),'Source relics')
         for j in range(5):
-            fern(x + RNG.uniform(-.24, .24), row + RNG.uniform(-.65, .65),
-                 RNG.uniform(.32, .54), j % 3 == 0)
-        # Roots connect stone and undergrowth rather than isolated decorative dots.
-        tube('Forest margin root', [(x + outward * .3, row, .12),
-             (x, row + .36, .06), (x - outward * .20, row + .62, .015)],
-             [.09, .05, .008], bark, 'Woodland')
-# Fallen timber and aged markers make the four perimeter pockets distinct.
-for asset, x, row, scale, yaw in [
-    ('hollow_log', -.20, 5.0, .64, -1.0),
-    ('hollow_log', 18.25, 23.4, .67, .8),
-    ('carved_runestone', -.15, 28.3, .46, .7),
-    ('mossy_boulder', 18.0, 5.8, .67, -.4)]:
-    source_prop(asset, x, row, .01, scale, yaw, 'Source relics')
-# Richer river pockets stay clear of both bridge decks and approach lanes.
-for x, row in [(.6, 14.86), (6.7, 14.86), (10.5, 17.12), (17.4, 17.14)]:
+            xx=x+RNG.uniform(-2.4,3.0);rr=row+RNG.uniform(-3.3,.2)
+            source_prop(['pine_broad','pine_tall','pine_compact'][j%3],xx,rr,.25,
+                        RNG.uniform(1.75,2.35),RNG.uniform(-3,3))
+        source_prop('hollow_log',x-side*2,row+2.4,.02,.9,RNG.uniform(-2,2),'Source relics')
+# Inner grove layer is staggered, exposing courts and leaving river mouths open.
+for side in [-1,1]:
+    for k,row in enumerate([-6,-.8,10.6,12.8,19.5,21.5,32.6,38.3]):
+        x=9+side*RNG.uniform(12.5,14.0)
+        source_prop('pine_broad' if k%2 else 'pine_tall',x,row,0,RNG.uniform(1.35,1.9),RNG.uniform(-2,2))
+        source_prop('pine_compact',x+side*.8,row+1.1,0,.85,RNG.uniform(-2,2))
+        source_prop('mossy_boulder',x-side*.4,row+.5,-.03,.75,RNG.uniform(-2,2),'Source relics')
+        for j in range(3):fern(x+RNG.uniform(-1,1),row+RNG.uniform(-.7,.7),.48,j==0)
+# Northern and southern backgrounds, visible on tall mobile screens.
+for end in [-1,1]:
+    for x in [-16,-9,-2,5,12,19,26,33]:
+        row=16+end*RNG.uniform(23,27)
+        boulder('Background ridge',x,row,.2,2.8,2.4,1.3)
+        for j in range(3):
+            source_prop(['pine_broad','pine_tall','pine_compact'][j],x+RNG.uniform(-1.5,1.5),row+RNG.uniform(-1.2,1.2),.1,
+                        RNG.uniform(1.4,2.1),RNG.uniform(-3,3))
+# Outermost woodland stays subdued but covers the maximum horizontal camera bound.
+for side in [-1,1]:
+    for row in [-14,-7,0,8,23,31,39,46]:
+        x=9+side*RNG.uniform(25.5,28.5)
+        boulder('Distant ridge',x,row,.1,2.8,2.5,1.1)
+        for j in range(3):
+            source_prop('pine_broad',x+RNG.uniform(-2,2),row+RNG.uniform(-2,2),.1,RNG.uniform(1.6,2.3),RNG.uniform(-3,3))
+# Exterior banks: exposed shelves and reeds make the lateral river continuation
+# feel connected; the center's exact bridge and crossing geometry stays intact.
+for x in [-20,-16,-11,-6,24,29,34,38]:
+    off=river_offset(x)
+    for row in [15+off,17+off]:
+        boulder('Outer bank shelf',x,row,-.12,1.7,.36,.32,stone[2],'River gardens')
+        for j in range(3):fern(x+RNG.uniform(-1,1),row,.42,j==0)
+
+# Sloped irregular silt shoulders soften the razor-straight water cut. Keep the
+# bridge approaches completely free; the modest lip is entirely in the river.
+for north in [True,False]:
+    vs=[];fs=[]
+    for i in range(249):
+        x=-22+i*.25; off=river_offset(x)
+        row=(15 if north else 17)+off
+        approach=any(abs(x-lane)<1.75 for lane in [3.5,14.5])
+        width=.025 if approach else .09+.055*(1+math.sin(x*2.7))
+        vs.extend([pt(x,row,-.029),pt(x,row+(width if north else -width),-.19)])
+    for i in range(248):
+        k=i*2;fs.append((k,k+1,k+3,k+2) if north else (k+2,k+3,k+1,k))
+    mesh('Worn riverbank slope',vs,fs,soil,'River gardens')
+# Four modest fabric standards outside deployment space evoke an arena, with
+# pointed cloth silhouettes instead of extra crystals or bright effects.
+cloths=[mat('RiftBannerOrder',(.12,.39,.49)),mat('RiftBannerChaos',(.52,.19,.13))]
+for x,row,team in [(-1.1,7.2,1),(19.1,7.2,1),(-1.1,25.1,0),(19.1,25.1,0)]:
+    direction=-1 if x<0 else 1
+    box('Standard footing',x,row,.10,.48,.48,.24,stone[2],'Relics',.06)
+    tube('Standard carved pole',[(x,row,.18),(x,row,2.05)],[.065,.045],brass,'Accents')
+    tube('Standard crossbar',[(x,row,1.96),(x+direction*.88,row,1.96)],[.045,.035],brass,'Accents')
+    vs=[];fs=[]
     for j in range(5):
-        fern(x + RNG.uniform(-.36, .36), row + RNG.uniform(-.08, .08),
-             RNG.uniform(.25, .39), j == 0)
-# Low fern/stone groups on the end terraces keep the two central nexus wells open.
-for row in [-.7, 32.9]:
-    for x in [2.0, 4.8, 13.1, 16.2]:
-        source_prop('pine_compact', x, row, -.02, .85, RNG.uniform(-2, 2))
-        for j in range(4):
-            fern(x + RNG.uniform(-.5, .5), row + RNG.uniform(-.25, .25), .4, j == 0)
+        for i in range(7):
+            u=i/6;v=j/4
+            vs.append(pt(x+direction*(.1+u*.73),row+math.sin(u*5+v)*.09,
+                         1.91-v*(.91+.17*(1-abs(u*2-1)))))
+    for j in range(4):
+        for i in range(6):
+            k=j*7+i;fs.append((k,k+1,k+8,k+7))
+    mesh('Hanging faction standard',vs,fs,cloths[team],'Accents')
 
 # Useful Blender reference camera and lighting; neither is exported to the game.
 scene=bpy.context.scene
@@ -468,23 +562,43 @@ scene.render.resolution_x=720;scene.render.resolution_y=1280;scene.render.resolu
 bpy.ops.object.light_add(type='SUN',location=(5,-8,20))
 sun=bpy.context.object;sun.name='Sunlit forest key';sun.rotation_euler=(.45,-.5,-.4);sun.data.energy=1.6
 scene['authoritative_grid']='18x32; river rows 15..17; bridges x 2..5 and 13..16; all walking surfaces <= 0.'
-scene['art_version']='2026-09-23 Sunlit Rift / layered woodland margins / flowing river'
+scene['art_version']='2026-10-30 Rift garden arena / expanded woodland / bounded adaptive view'
 scene['mapping']='Blender(tile_x-9,(16-tile_row)*sqrt(2),height) -> Godot(x,height,-Blender_y)'
 scene['purpose']='Presentation-only candidate; no collision/navigation/gameplay state.'
 OUT.joinpath('source').mkdir(parents=True,exist_ok=True)
 bpy.context.preferences.filepaths.save_version=0
 # Preserve individually editable meshes before runtime batching.
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'source/rift_arena.blend'))
+# Blender joins mutate the active mesh datablock. Imported prop instances share
+# data across spatial regions, so detach it before any join to avoid recursively
+# duplicating earlier batches into every later region.
+for col in COLS.values():
+    for obj in col.objects:
+        if obj.type=='MESH':obj.data=obj.data.copy()
+source_faces=sum(len(o.data.polygons) for c in COLS.values() for o in c.objects if o.type=='MESH')
 for group,col in COLS.items():
     batches={}
     for o in list(col.objects):
-        if o.type=='MESH':batches.setdefault(o.data.materials[0].name,[]).append(o)
-    for material,objects in batches.items():
+        if o.type=='MESH':
+            # Spatial batches let portrait cameras cull expanded scenery. Use the
+            # real transformed bounds: many authored meshes store world vertices.
+            points=[o.matrix_world @ Vector(v) for v in o.bound_box]
+            cx=(min(v.x for v in points)+max(v.x for v in points))*.5
+            cy=(min(v.y for v in points)+max(v.y for v in points))*.5
+            region='Core'
+            if cx < -11:region='West'
+            elif cx > 11:region='East'
+            elif cy > 26:region='North'
+            elif cy < -26:region='South'
+            batches.setdefault((o.data.materials[0].name,region),[]).append(o)
+    for (material,region),objects in batches.items():
         bpy.ops.object.select_all(action='DESELECT')
         for o in objects:o.select_set(True)
         bpy.context.view_layer.objects.active=objects[0]
         bpy.ops.object.join()
-        objects[0].name=group.replace(' ','_')+'__'+material
+        objects[0].name=group.replace(' ','_')+'__'+region+'__'+material
+batched_faces=sum(len(o.data.polygons) for c in COLS.values() for o in c.objects if o.type=='MESH')
+assert batched_faces==source_faces, (source_faces,batched_faces)
 bpy.ops.object.select_all(action='DESELECT')
 for col in COLS.values():
     for o in col.objects:o.select_set(True)

@@ -782,5 +782,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "ArenaBackdropSuite",
+    "script": "res://tests/suites/presentation/arena_backdrop_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "presentation"
   }
 ]

@@ -34,7 +34,16 @@ void fragment() {
     grass=mix(grass,vec3(.17,.27,.12),.18)*vec3(.90,1.00,1.08);
     vec3 earth=texture(meadow_atlas,vec2(.613,.455)+mirror_uv(tile*.37)*vec2(.037,.07)).rgb;
     earth=mix(earth,vec3(.26,.205,.115),.64);
-    float bank=1.0-smoothstep(.0,.68,min(abs(tile.y-15.0),abs(tile.y-17.0)));
+    // Curved river only outside the original diorama; matches build_rift_arena.py.
+    float outside_x=max(abs(tile.x-9.0)-11.2,0.0);
+    float river_offset=sin(outside_x*.24)*min(outside_x*.22,2.5);
+    float bank=1.0-smoothstep(.0,.78,min(abs(tile.y-15.0-river_offset),abs(tile.y-17.0-river_offset)));
+    float outside=max(max(-tile.x,tile.x-18.0),max(-tile.y,tile.y-32.0));
+    // Stop the two combat lanes at their bases; no phantom lane through the forest.
+    path*=smoothstep(-1.5,.5,tile.y)*(1.0-smoothstep(31.5,33.5,tile.y));
+    grass*=vec3(.86,.90,.95);
+    vec3 woodland=mix(vec3(.065,.115,.075),vec3(.12,.20,.105),noise(tile*.36));
+    grass=mix(grass,woodland,smoothstep(.4,7.0,outside)*.76);
     vec3 result=mix(grass,earth,path*.76);
     result=mix(result,result*vec3(.77,.92,.97),bank*.34);
     float edge=1.0-smoothstep(.0,1.25,min(tile.x,18.0-tile.x));

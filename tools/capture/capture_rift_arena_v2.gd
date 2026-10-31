@@ -1,6 +1,8 @@
 extends SceneTree
 ## Rendering QA and free-camera inspection for the production 3D arena.
 ## Godot --path . --script tools/capture/capture_rift_arena_v2.gd [-- --hold|--inspect|--motion]
+## --responsive --size=720x1600 --team=1 --output=<absolute directory>
+## Add --gameplay for a blue-view Main/HUD/two-card fixture, not full-match QA.
 ## Captures are actual Godot frames, including the existing six tower proxies.
 
 const CANDIDATE_PATH := "res://assets/arena/rift_arena/rift_arena.tscn"
@@ -25,6 +27,14 @@ class CandidatePreviewMain extends "res://scripts/main.gd":
 			_draw_deployment_preview(stats)
 		runtime._commands.draw_deployments(_draw_card_pre_deploy_indicator)
 
+class PreviewContext extends BattleContext:
+	var observer := 0
+	func _init(team: int) -> void:
+		super(null, null)
+		observer = team
+	func has_presentation() -> bool: return true
+	func local_player_team() -> int: return observer
+
 class InspectionControls extends Node:
 	var handler: Callable
 
@@ -37,8 +47,6 @@ var _presentation: BattlePresentation3D
 var _candidate: Node3D
 var _output: String
 var _proxy_process_states: Dictionary = {}
-var _gameplay_transform: Transform3D
-var _gameplay_camera_size: float
 var _inspection_panel: Control
 var _inspection_label: Label
 var _inspection_mode := ""
@@ -50,11 +58,14 @@ func _initialize() -> void:
 
 
 func _capture() -> void:
+	if OS.get_cmdline_user_args().has("--responsive"):
+		await _capture_responsive()
+		return
 	if DisplayServer.get_name() == "headless":
 		push_error("Arena v2 capture needs the graphics renderer; omit --headless.")
 		quit(1)
 		return
-	root.size = Vector2i(720, 1400)
+	root.size = Vector2i(720, 1280)
 	root.title = "ClashLegends — Rift Arena"
 	RenderingServer.set_default_clear_color(STUDIO_BACKGROUND)
 	_output = ProjectSettings.globalize_path(OUTPUT_PATH)
@@ -67,7 +78,10 @@ func _capture() -> void:
 	root.add_child(_main)
 	current_scene = _main
 	await process_frame
+	_main._resources.prepare(["garen", "ashe"])
+	_main._battle_loading = true
 	_main._start_local()
+	_main._battle_loading = false
 	_main.set_process(false)
 	_main._ai.enabled = false
 	_main.runtime._minion_waves_enabled = false
@@ -96,6 +110,8 @@ func _capture() -> void:
 	# normal position validation. The immediate option is the existing dev flow.
 	for spec in [[0, "garen", Vector2(140, 760)], [1, "garen", Vector2(140, 520)],
 		[0, "ashe", Vector2(580, 840)], [1, "ashe", Vector2(580, 440)]]:
+		var payer = _main.runtime.account(spec[0])
+		if payer != null: payer.elixir = 10.0
 		if not _main.play_card(spec[0], spec[1], spec[2], {"immediate": true}):
 			push_error("Arena v2 capture could not play card: " + str(spec))
 			quit(1)
@@ -110,8 +126,6 @@ func _capture() -> void:
 		return
 	# Proxies project authority pixels through the camera every frame. Freeze their
 	# positions before inspecting the model with a different local preview camera.
-	_gameplay_transform = _presentation._camera.transform
-	_gameplay_camera_size = _presentation._camera.size
 	_freeze_proxy_positions()
 	_presentation._viewport.size = Vector2i(1680, 1500)
 	_fit_overview()
@@ -119,9 +133,9 @@ func _capture() -> void:
 	if not _save_viewport(_presentation._viewport, "rift_arena_overview.png"):
 		return
 	_presentation._viewport.size = Vector2i(1600, 1000)
-	_presentation._camera.position = Vector3(3.5, 20.0, 19.0)
-	_presentation._camera.look_at(Vector3(0.0, -0.1, 0.0), Vector3.UP)
-	_presentation._camera.size = 15.7
+	_presentation._render_camera.position = Vector3(3.5, 20.0, 19.0)
+	_presentation._render_camera.look_at(Vector3(0.0, -0.1, 0.0), Vector3.UP)
+	_presentation._render_camera.size = 15.7
 	await _settle_frames(12)
 	if not _save_viewport(_presentation._viewport, "rift_arena_river_detail.png"):
 		return
@@ -142,6 +156,11 @@ func _capture() -> void:
 	if OS.get_cmdline_user_args().has("--hold"):
 		print("[Arena v2 capture] Holding candidate gameplay view; close the window to exit.")
 		return
+	_main.clear_preview_battle()
+	_main.free()
+	_main = null
+	await _settle_frames(2)
+	await create_timer(.3).timeout
 	quit()
 
 
@@ -202,10 +221,8 @@ func _freeze_proxy_positions() -> void:
 
 
 func _restore_gameplay_camera() -> void:
-	_presentation._viewport.size = Vector2i(720, 1280)
-	_presentation._camera.transform = _gameplay_transform
-	_presentation._camera.size = _gameplay_camera_size
-	_presentation._camera.far = 100.0
+	_main._refresh_display_layout()
+	_presentation._render_camera.far = 100.0
 	for child in _proxy_process_states:
 		if is_instance_valid(child):
 			child.set_process(_proxy_process_states[child])
@@ -256,8 +273,8 @@ func _switch_inspection_view(mode: String) -> void:
 	_freeze_proxy_positions()
 	_inspection_mode = mode
 	if mode == "gameplay":
-		root.size = Vector2i(720, 1400)
-		root.content_scale_size = Vector2i(720, 1400)
+		root.size = Vector2i(720, 1280)
+		root.content_scale_size = Vector2i(720, 1280)
 		_inspection_panel.hide()
 		_restore_gameplay_camera()
 		root.title = "Rift Arena v2 — 1 Gameplay | 2 Overview | 3 River"
@@ -272,9 +289,9 @@ func _switch_inspection_view(mode: String) -> void:
 		root.title = "Rift Arena v2 — Overview / 全景检查"
 	else:
 		_presentation._viewport.size = Vector2i(1600, 1000)
-		_presentation._camera.position = Vector3(3.5, 20.0, 19.0)
-		_presentation._camera.look_at(Vector3(0.0, -0.1, 0.0), Vector3.UP)
-		_presentation._camera.size = 15.7
+		_presentation._render_camera.position = Vector3(3.5, 20.0, 19.0)
+		_presentation._render_camera.look_at(Vector3(0.0, -0.1, 0.0), Vector3.UP)
+		_presentation._render_camera.size = 15.7
 		root.title = "Rift Arena v2 — River / 河道检查"
 
 
@@ -290,9 +307,9 @@ func _inspect_input(event: InputEvent) -> void:
 			KEY_LEFT, KEY_RIGHT:
 				if _inspection_mode == "overview":
 					var angle := -0.10 if event.keycode == KEY_LEFT else 0.10
-					var offset := _presentation._camera.position - _orbit_center
-					_presentation._camera.position = _orbit_center + offset.rotated(Vector3.UP, angle)
-					_presentation._camera.look_at(_orbit_center, Vector3.UP)
+					var offset := _presentation._render_camera.position - _orbit_center
+					_presentation._render_camera.position = _orbit_center + offset.rotated(Vector3.UP, angle)
+					_presentation._render_camera.look_at(_orbit_center, Vector3.UP)
 			_:
 				return
 		root.set_input_as_handled()
@@ -304,7 +321,7 @@ func _inspect_input(event: InputEvent) -> void:
 			zoom = 1.10
 		else:
 			return
-		_presentation._camera.size = clampf(_presentation._camera.size * zoom, 12.0, 120.0)
+		_presentation._render_camera.size = clampf(_presentation._render_camera.size * zoom, 12.0, 120.0)
 		root.set_input_as_handled()
 
 
@@ -321,7 +338,7 @@ func _fit_overview() -> void:
 	for point in bounds_points:
 		bounds = bounds.expand(point)
 	var center := bounds.get_center()
-	var camera := _presentation._camera
+	var camera := _presentation._render_camera
 	camera.position = center + Vector3(28.0, 39.0, 41.0)
 	camera.look_at(center, Vector3.UP)
 	camera.far = 160.0
@@ -364,3 +381,101 @@ func _save_viewport(viewport: Viewport, filename: String) -> bool:
 		return false
 	print("[Arena v2 capture] ", filename, " ", frame.get_width(), "×", frame.get_height())
 	return true
+
+
+## Current production camera/layout, without full-deck prewarming. Six real tower
+## proxies share the arena depth. This is a visual fixture, not a match benchmark.
+func _capture_responsive() -> void:
+	if DisplayServer.get_name() == "headless":
+		push_error("Responsive arena capture requires graphics")
+		quit(1)
+		return
+	var size := Vector2i(720, 1280)
+	var team := 0
+	_output = ProjectSettings.globalize_path(OUTPUT_PATH)
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--output="): _output = arg.trim_prefix("--output=")
+		if arg.begins_with("--team="): team = int(arg.trim_prefix("--team="))
+		if arg.begins_with("--size="):
+			var parts := arg.trim_prefix("--size=").split("x")
+			size = Vector2i(int(parts[0]), int(parts[1]))
+	DirAccess.make_dir_recursive_absolute(_output)
+	root.size = size
+	root.content_scale_size = size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	root.title = "ClashLegends — Arena %s / team %d" % [size, team]
+	if OS.get_cmdline_user_args().has("--gameplay"):
+		if team != 0:
+			push_error("--gameplay uses the blue local view; omit it for red-view scenery inspection")
+			quit(2)
+			return
+		await _capture_responsive_gameplay(size)
+		return
+	var layout := preload("res://scripts/ui/battle_layout.gd")
+	var canvas := layout.canvas(Vector2(size), team == 1)
+	root.canvas_transform = canvas
+	_presentation = BattlePresentation3D.new()
+	root.add_child(_presentation)
+	_presentation.setup(Vector2(720, 1280), 40, team == 1)
+	_presentation.set_view_rect(layout.visible_world(Vector2(size), canvas))
+	for spec in [[0, Vector2(140,1020), false], [0, Vector2(580,1020), false],
+		[1, Vector2(140,260), false], [1, Vector2(580,260), false],
+		[0, Vector2(360,1160), true], [1, Vector2(360,120), true]]:
+		var tower := Tower.new()
+		tower.set_battle_context(PreviewContext.new(team))
+		tower.setup(spec[0], CardDB.NEXUS_STATS if spec[2] else CardDB.PRINCESS_TOWER_STATS, spec[2])
+		tower.position = spec[1]
+		root.add_child(tower)
+		_presentation.attach_tower(tower, CardDB.NEXUS_VISUAL_CONFIG if spec[2] else CardDB.PRINCESS_TOWER_VISUAL_CONFIG)
+	await create_timer(2.8).timeout
+	await _settle_frames(6)
+	var name := "arena_%dx%d_team%d" % [size.x, size.y, team]
+	if not _save_viewport(root, name + ".png"): return
+	var stats := {"size": str(size), "team": team, "visible_world": str(layout.visible_world(Vector2(size), canvas)),
+		"draw_calls": Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
+		"primitives": Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME)}
+	FileAccess.open(_output.path_join(name + ".json"), FileAccess.WRITE).store_string(JSON.stringify(stats, "\t"))
+	print("[ARENA_RESPONSIVE] ", JSON.stringify(stats))
+	if not OS.get_cmdline_user_args().has("--hold"): quit()
+
+
+func _capture_responsive_gameplay(size: Vector2i) -> void:
+	# Bounded visual fixture: normal Main, HUD, towers and play_card/simulation.
+	# Prepare only the two observed cards, not the randomly chosen AI deck.
+	set_meta("display_window_initialized", true)
+	_main = load("res://scenes/main.tscn").instantiate()
+	root.add_child(_main)
+	current_scene = _main
+	_main.set_process(false)
+	_main._resources.prepare(["garen", "ashe"])
+	_main._battle_loading = true
+	_main._start_local()
+	_main._battle_loading = false
+	_main._ai.enabled = false
+	_main.runtime._minion_waves_enabled = false
+	_main._refresh_display_layout()
+	for spec in [[0, "garen", Vector2(140, 760)], [1, "garen", Vector2(140, 520)],
+		[0, "ashe", Vector2(580, 840)], [1, "ashe", Vector2(580, 440)]]:
+		var payer = _main.runtime.account(spec[0])
+		if payer != null: payer.elixir = 10.0
+		if not _main.play_card(spec[0], spec[1], spec[2], {"immediate": true}):
+			push_error("Responsive gameplay could not play " + str(spec))
+			quit(1)
+			return
+	for _i in 40:
+		_main._sim_step(.05)
+		await process_frame
+	_main._selected_card = "garen"
+	_main._update_deployment_preview(Vector2(340, 820))
+	_main.queue_redraw()
+	await create_timer(2.8).timeout
+	await _settle_frames(6)
+	if not _save_viewport(root, "gameplay_%dx%d.png" % [size.x,size.y]): return
+	print("[ARENA_GAMEPLAY] completed ", size)
+	if not OS.get_cmdline_user_args().has("--hold"):
+		_main.clear_preview_battle()
+		_main.free()
+		_main = null
+		await _settle_frames(2)
+		await create_timer(.3).timeout
+		quit()

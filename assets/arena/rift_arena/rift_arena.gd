@@ -61,6 +61,8 @@ func _make_material(key: String, original: StandardMaterial3D) -> Material:
 			shader.set_shader_parameter("atlas_region", Vector4(0.15, 0.033, 0.25, 0.065))
 			shader.set_shader_parameter("texture_scale", 0.75)
 			shader.set_shader_parameter("painted_weight", 0.85)
+			var tier := float(key.trim_prefix("RiftStone_"))
+			shader.set_shader_parameter("tint", Vector3(1.08, 1.12, 1.04) * (0.94 + tier * 0.035))
 		elif key.begins_with("RiftCrown"):
 			shader.set_shader_parameter("painted_atlas", CANOPY)
 			shader.set_shader_parameter("atlas_region", Vector4(0.19, 0.08, 0.19, 0.15))

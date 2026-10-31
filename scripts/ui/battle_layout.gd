@@ -12,6 +12,9 @@ const SKILL_GAP := 3.0
 const BLUE_BACK_EDGE := (ArenaRules.TEAM_0_LAST_ROW + 1) * ArenaRules.TILE_SIZE
 const RED_BACK_EDGE := (ArenaRules.ARENA_ROWS - 1 - ArenaRules.TEAM_0_LAST_ROW) * ArenaRules.TILE_SIZE
 const BACK_MARGIN := ArenaRules.TILE_SIZE * 2.0
+## Presentation-only scenery bounds; covers 16:9 without scaling the battlefield.
+## Expanded arena floor spans tile columns -22..40, rows -22..54.
+const BACKDROP_BOUNDS := Rect2(-880, -640, 2480, 2560)
 const BASE_TOP := RED_BACK_EDGE - BACK_MARGIN
 const BASE_BOTTOM := BLUE_BACK_EDGE + BACK_MARGIN
 const BASE_WORLD_HEIGHT := BASE_BOTTOM - BASE_TOP
@@ -34,9 +37,9 @@ static func visible_world(size: Vector2, transform: Transform2D) -> Rect2:
 	var inverse := transform.affine_inverse()
 	var a := inverse * Vector2.ZERO
 	var b := inverse * size
-	# 手机9:16～9:20优先；异常比例只显示有限外围，余下留统一背景。
-	var start := a.min(b).max(-FIELD_SIZE * Vector2(1, 0.5)).floor()
-	var end := a.max(b).min(FIELD_SIZE * Vector2(2, 1.5)).ceil()
+	# 手机9:16～9:20及16:9横屏连续覆盖；极端比例仍限制纹理尺寸。
+	var start := a.min(b).max(BACKDROP_BOUNDS.position).floor()
+	var end := a.max(b).min(BACKDROP_BOUNDS.end).ceil()
 	return Rect2(start, end - start)
 
 static func hand_origin(size: Vector2) -> Vector2:

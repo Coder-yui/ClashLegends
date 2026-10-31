@@ -25,7 +25,8 @@ void fragment() {
     vec3 color=mix(tint*.20,paint*tint*1.10,painted_weight);
     // Soft colored occlusion is local to scenery, independent of simulation/time.
     float top=max(world_normal.y,0.0);
-    ALBEDO=color*(.82+top*.18);
+    float exterior=max(max(abs(world_position.x)-9.0,abs(world_position.z)-16.0),0.0);
+    ALBEDO=color*(.82+top*.18)*mix(1.0,.79,smoothstep(1.0,8.0,exterior));
     EMISSION=ALBEDO*.13;
     ROUGHNESS=1.0;
 }

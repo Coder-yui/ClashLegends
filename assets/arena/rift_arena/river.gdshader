@@ -4,8 +4,10 @@ varying vec3 world_position;
 void vertex() { world_position=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz; }
 void fragment() {
     vec2 p=world_position.xz;
+    float outside_x=max(abs(p.x)-11.2,0.0);
+    p.y-=sin(outside_x*.24)*min(outside_x*.22,2.5);
     float t=TIME*.22;
-    float depth=1.0-smoothstep(.45,1.40,abs(p.y));
+    float depth=1.0-smoothstep(.25,1.0,abs(p.y));
     // Broad drifting strokes, with broken highlights instead of a cellular grid.
     float bend=sin(p.x*.62+t)*.20+sin(p.x*1.73-t)*.07;
     float stream=sin((p.y+bend)*12.0+p.x*.28-t*1.4);
@@ -17,7 +19,7 @@ void fragment() {
     vec3 shallow=vec3(.095,.34,.33);
     vec3 water=mix(shallow,deep,depth*.74);
     water+=vec3(.04,.10,.10)*(highlight*.43+ripple*.30);
-    float shore=smoothstep(1.18,1.42,abs(p.y));
+    float shore=smoothstep(.80,1.0,abs(p.y));
     water+=vec3(.065,.13,.12)*shore*(.40+.24*sin(p.x*7.0-t));
     ALBEDO=water;
     EMISSION=water*.17;

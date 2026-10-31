@@ -10,7 +10,7 @@
 | `capture_cover_combat.gd` | 对战封面抓拍（复用 BattlePresentation3D + Tower 搭场景），支持 `--ratio=9x16\|16x9` `--out=<路径>`；默认输出到游戏项目同级 `ClashLegends-promo-materials/Video05-新3D竞技场和音效接入演示/03-封面与成片/`，由项目路径推导，不依赖启动命令的当前目录。 |
 | `capture_cover_video7.gd` | 四英雄封面抓拍（潘森部署冲击波+虚空女皇 vs 蛮王暴击火光+天使远程），支持 `--ratio=9x16\|16x9` `--out=<路径>`，默认输出到项目同级宣传素材库的 `Video07-卡牌数量翻倍/03-封面与成片/` |
 | `capture_rift_arena.gd` | 正式 2D 战场与候选地图斜视角 |
-| `capture_rift_arena_v2.gd` | 正式 3D 地图单独预览，支持 `-- --hold` / `-- --inspect`；`-- --motion` 额外保存实战与河道各 36 帧及真实时间 JSON |
+| `capture_rift_arena_v2.gd` | 正式3D地图预览；新增 `--responsive --size=720x1600 --team=1 --output=<绝对目录>` 使用实际取景，附加 `--gameplay` 拍摄蓝方实际Main/手牌/双方单位（限定两卡预热，非完整对局验证）；支持 `-- --hold` / `-- --inspect`；`-- --motion` 额外保存实战与河道各 36 帧及真实时间 JSON |
 | `capture_sun_disc_battle_qa.gd` | 圆盘的实战表现验收 |
 
 Godot 脚本使用 `Godot --path . --script tools/capture/脚本.gd`。摄影需要图形渲染；先读文件顶部参数、输出与退出方式。卡面以原版优先，不因重放历史配方覆盖已有原版素材。
