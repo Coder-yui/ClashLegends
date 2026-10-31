@@ -12,8 +12,6 @@ var pending_label: Label
 var lock_mark: Control
 var resource: Dictionary = {}
 var _fallback := ""
-var _coin_text := ""
-static var _coin_font: SystemFont
 
 func _ready() -> void:
 	size = Vector2.ONE * DIAMETER
@@ -50,24 +48,10 @@ func _ready() -> void:
 	coin.position = Vector2(-7, -7)
 	coin.size = Vector2(25, 25)
 	coin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var coin_style := StyleBoxFlat.new()
-	coin_style.bg_color = Color(0.93, 0.67, 0.18)
-	coin_style.border_color = Color(1.0, 0.86, 0.40)
-	coin_style.set_border_width_all(2)
-	coin_style.set_corner_radius_all(13)
-	coin.add_theme_stylebox_override("panel", coin_style)
+	coin.add_theme_stylebox_override("panel", GoldCoin.style())
 	add_child(coin)
-	cost_label = _label(Vector2.ZERO, coin.size, 15)
-	cost_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	cost_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-	if _coin_font == null:
-		_coin_font = SystemFont.new()
-		_coin_font.font_names = PackedStringArray(["Arial", "Helvetica", "Liberation Sans"])
-		_coin_font.font_weight = 700
-	cost_label.add_theme_font_override("font", _coin_font)
-	cost_label.reparent(coin, false)
-	cost_label.add_theme_color_override("font_outline_color", Color(0.16, 0.085, 0.015))
-	cost_label.add_theme_constant_override("outline_size", 2)
+	cost_label = GoldCoin.amount(15)
+	coin.add_child(cost_label)
 	uses_label = _badge(Vector2(38, 43), Vector2(27, 23), Color(0.065, 0.14, 0.24), Color(0.55, 0.73, 0.9), 16)
 	pending_label = _badge(Vector2(34, -6), Vector2(32, 19), Color(0.09, 0.2, 0.29), Color(0.58, 0.83, 1), 12)
 	var lock := _badge(Vector2(-1, 40), Vector2(18, 17), Color(0.08, 0.10, 0.14), Color(0.6, 0.66, 0.72), 12)
@@ -113,8 +97,7 @@ func present(state: Dictionary) -> void:
 	visible = bool(state.has_uses)
 	resource = state.resource
 	cost_label.text = BattleNumbers.format_value(float(state.cost))
-	cost_label.add_theme_color_override("font_color", Color(1.0, 0.16, 0.12) if poor else Color.WHITE)
-	_center_coin_number()
+	cost_label.add_theme_color_override("font_color", Color("9a231c") if poor else Color("352514"))
 	uses_label.text = "∞" if bool(state.unlimited) else str(1 if bool(state.free_recast) else int(state.uses))
 	cooldown_label.visible = cooling
 	cooldown_label.text = countdown_text(remaining) if cooling else ""
@@ -162,28 +145,3 @@ func _make_custom_tooltip(for_text: String) -> Object:
 	label.add_theme_font_override("font", CardArt.ui_font())
 	label.add_theme_font_size_override("font_size", 15)
 	return label
-
-## 对齐网站src/app.js:centerCoinNumbers：居中实际墨迹，排除行框/字面侧边留白。
-## 文字左上对齐，直接计算基线；轮廓坐标替代Web的actualBoundingBox指标。
-func _center_coin_number() -> void:
-	if cost_label.text == _coin_text: return
-	_coin_text = cost_label.text
-	var font := cost_label.get_theme_font("font")
-	var font_size := cost_label.get_theme_font_size("font_size")
-	var text_server := TextServerManager.get_primary_interface()
-	var font_rid: RID = font.get_rids()[0]
-	var pen := 0.0
-	var ink := Rect2()
-	var first := true
-	for character in _coin_text:
-		var glyph := text_server.font_get_glyph_index(font_rid, font_size, character.unicode_at(0), 0)
-		var contours := text_server.font_get_glyph_contours(font_rid, font_size, glyph)
-		var points: PackedVector3Array = contours.get("points", PackedVector3Array())
-		for point in points:
-			var position := Vector2(pen + point.x, point.y)
-			ink = Rect2(position, Vector2.ZERO) if first else ink.expand(position)
-			first = false
-		pen += font.get_char_size(character.unicode_at(0), font_size).x
-	assert(not first, "金币数字缺少可测量字形轮廓")
-	# x=center-(left+right)/2；y=center+(ascent-descent)/2，与网站同一公式。
-	cost_label.position = Vector2(12.5, 12.5) - ink.get_center() - Vector2(0, font.get_ascent(font_size))

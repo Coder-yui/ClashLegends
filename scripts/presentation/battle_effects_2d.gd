@@ -165,10 +165,10 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 			ink_top = minf(ink_top, offset.y)
 			ink_bottom = maxf(ink_bottom, offset.y + glyph_size.y)
 		var coin := rise + Vector2(text_width + 14.0, (ink_top + ink_bottom) * 0.5)
-		draw_circle(coin, 10.0, Color(0.24, 0.12, 0.02, alpha))
-		draw_circle(coin, 8.5, Color(1.0, 0.73, 0.14, alpha))
-		draw_arc(coin, 6.0, 0.0, TAU, 24, Color(0.67, 0.37, 0.04, alpha), 1.5, true)
-		draw_line(coin + Vector2(0.0, -3.5), coin + Vector2(0.0, 3.5), Color(1.0, 0.94, 0.61, alpha), 2.0, true)
+		# 金币是屏幕UI符号，抵消战场投影的纵向压缩，保持与费用角标同样的圆形。
+		var canvas_scale := get_global_transform_with_canvas().get_scale().abs()
+		var coin_size := Vector2(24.0, 24.0 * canvas_scale.x / maxf(canvas_scale.y, 0.001))
+		GoldCoin.draw_icon(self, Rect2(coin - coin_size * 0.5, coin_size), alpha)
 		return
 	if shape in [&"jayce_field_hit", &"powder_keg_burst", &"malphite_slam", &"scuttle_void_shrine", &"scuttle_shrine", &"randuin", &"counter_strike", &"counter_strike_hit", &"aftershock", &"rewind_hit", &"rewind_appear", &"rewind_vanish", &"riftwalk_appear", &"riftwalk_vanish"]: return # 由3D原版余震粒子播放器消费。
 	if shape == &"trapezoid" and source is Unit and source.card_id == "sett": return
