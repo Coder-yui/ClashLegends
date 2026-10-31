@@ -5,7 +5,6 @@ extends RefCounted
 ## 卡面会裁切 Loading Screen，因此 UI 使用更接近实体卡牌的宽比例，而不是原图比例。
 const CARD_FRAME_ASPECT := 0.72
 const DEFAULT_ACCENT := Color(0.30, 0.62, 0.94)
-const ELIXIR_PURPLE := Color(0.83, 0.16, 0.93)
 const UI_FONT: SystemFont = preload("res://assets/ui/chinese_font.tres")
 static var _textures: Dictionary = {}
 
@@ -74,17 +73,9 @@ static func frame_style(background: Color, border: Color, border_width: int = 2,
 	style.content_margin_bottom = 4.0
 	return style
 
-static func _badge_style(color: Color, border: Color = Color(1.0, 0.72, 1.0, 0.9)) -> StyleBoxFlat:
-	var style := frame_style(color, border, 2, 99)
-	style.content_margin_left = 0.0
-	style.content_margin_right = 0.0
-	style.content_margin_top = 0.0
-	style.content_margin_bottom = 0.0
-	return style
-
 static func _name_bar_style(accent: Color, selected: bool) -> StyleBoxFlat:
-	var background := Color(0.025, 0.055, 0.10, 0.94)
-	var border := Color(1.0, 0.82, 0.28, 0.95) if selected else accent.lightened(0.18)
+	var background := UIPalette.INK
+	var border := UIPalette.card_border(accent).lightened(0.30 if selected else 0.0)
 	var style := frame_style(background, border, 1, 5)
 	style.corner_radius_top_left = 2
 	style.corner_radius_top_right = 2
@@ -115,18 +106,17 @@ static func apply_frame(button: Button, height: float, compact: bool = false, wi
 	_apply_button_styles(button)
 
 static func _apply_button_styles(button: Button) -> void:
-	var accent: Color = button.get_meta("card_accent", DEFAULT_ACCENT)
 	var selected := bool(button.get_meta("card_selected", false))
 	var affordable := bool(button.get_meta("card_affordable", true))
-	var active_skill_card := bool(button.get_meta("active_skill_card", false))
-	var border_width := 4 if selected else (3 if active_skill_card else 2)
-	var normal_border := Color(1.0, 0.82, 0.25) if selected else (Color(1.0, 0.76, 0.28, 0.96) if active_skill_card else accent.lightened(0.18))
-	button.add_theme_stylebox_override("normal", frame_style(Color(0.045, 0.08, 0.14), normal_border, border_width))
-	var hover_border := Color(1.0, 0.91, 0.54, 1.0) if active_skill_card else accent.lightened(0.38)
-	button.add_theme_stylebox_override("hover", frame_style(Color(0.08, 0.16, 0.26), hover_border, 3))
-	button.add_theme_stylebox_override("pressed", frame_style(Color(0.07, 0.22, 0.36), Color(1.0, 0.84, 0.28), 4))
-	var disabled_border := normal_border.darkened(0.48) if affordable else Color(0.20, 0.24, 0.31)
-	button.add_theme_stylebox_override("disabled", frame_style(Color(0.035, 0.045, 0.065), disabled_border, 2))
+	var source: Color = button.get_meta("card_accent", DEFAULT_ACCENT)
+	var accent := UIPalette.LINE if bool(button.get_meta("card_empty", false)) else UIPalette.card_border(source)
+	var border_width := 4 if selected else 2
+	var normal_border := accent.lightened(0.30) if selected else accent
+	button.add_theme_stylebox_override("normal", UIMaterials.panel(Color(0.40, 0.52, 0.59), 4) if bool(button.get_meta("card_empty", false)) and not selected else frame_style(UIPalette.INK, normal_border, border_width))
+	button.add_theme_stylebox_override("hover", frame_style(UIPalette.PANEL, accent.lightened(0.25), 3))
+	button.add_theme_stylebox_override("pressed", frame_style(UIPalette.PANEL_LIGHT, accent.lightened(0.42), 4))
+	var disabled_border := accent.darkened(0.15 if affordable else 0.40)
+	button.add_theme_stylebox_override("disabled", frame_style(UIPalette.INK, disabled_border, 2))
 
 ## 将 Loading Screen 以 cover 方式放进卡框。没有图片的牌使用数据色占位卡面。
 ## 名称和费用始终由独立控件显示，避免长文本互相覆盖形成“乱码”。
@@ -143,6 +133,7 @@ static func apply_to_button(
 	button.tooltip_text = "%s · %d 费" % [title, cost]
 	button.set_meta("card_compact", compact)
 	button.set_meta("card_accent", accent)
+	button.set_meta("card_empty", false)
 
 	var artwork := button.get_node_or_null("CardArtwork") as TextureRect
 	if artwork == null:
@@ -225,29 +216,28 @@ static func apply_to_button(
 	name_bar.visible = true
 	name_bar.offset_top = -name_height
 	name_bar.offset_bottom = -4.0
+	name_bar.offset_left = 4.0
+	name_bar.offset_right = -4.0
 	name_label.text = title
-	name_label.add_theme_font_size_override("font_size", 13 if compact else 18)
+	var name_font_size := 13 if compact else 18
+	var available_width := button.custom_minimum_size.x - 14.0
+	while name_font_size > (9 if compact else 12) and ui_font().get_string_size(title, HORIZONTAL_ALIGNMENT_LEFT, -1, name_font_size).x > available_width:
+		name_font_size -= 1
+	name_label.add_theme_font_size_override("font_size", name_font_size)
 	name_label.add_theme_constant_override("outline_size", 3 if compact else 4)
 
-	var cost_badge := button.get_node_or_null("CardCostBadge") as PanelContainer
+	var cost_badge := button.get_node_or_null("CardCostBadge") as Panel
 	var cost_label := button.get_node_or_null("CardCostBadge/CardCost") as Label
 	if cost_badge == null:
-		cost_badge = PanelContainer.new()
+		cost_badge = Panel.new()
 		cost_badge.name = "CardCostBadge"
 		cost_badge.set_anchors_preset(Control.PRESET_TOP_LEFT)
 		cost_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		button.add_child(cost_badge)
-		cost_label = Label.new()
+		cost_label = GoldCoin.amount(17 if compact else 22)
 		cost_label.name = "CardCost"
-		cost_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		cost_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		cost_label.add_theme_color_override("font_color", Color.WHITE)
-		cost_label.add_theme_font_override("font", ui_font())
-		cost_label.add_theme_color_override("font_outline_color", Color(0.16, 0.01, 0.20, 0.95))
-		cost_label.add_theme_constant_override("outline_size", 3)
-		cost_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		cost_badge.add_child(cost_label)
-	var badge_size := 29.0 if compact else 37.0
+	var badge_size := 32.0 if compact else 40.0
 	cost_badge.visible = true
 	cost_badge.offset_left = 1.0
 	cost_badge.offset_top = 1.0
@@ -271,6 +261,7 @@ static func show_empty_slot(button: Button, slot_number: int) -> void:
 		if child != null:
 			child.visible = false
 	button.set_meta("card_accent", Color(0.23, 0.34, 0.48))
+	button.set_meta("card_empty", true)
 	button.set_meta("card_selected", false)
 	button.set_meta("card_affordable", true)
 	button.set_meta("active_skill_card", false)
@@ -281,13 +272,13 @@ static func set_affordable(button: Button, affordable: bool) -> void:
 	var tint := button.get_node_or_null("CardUnavailableTint") as ColorRect
 	if tint != null:
 		tint.visible = not affordable
-	var cost_badge := button.get_node_or_null("CardCostBadge") as PanelContainer
+	var cost_badge := button.get_node_or_null("CardCostBadge") as Panel
 	if cost_badge != null:
-		var badge_color := ELIXIR_PURPLE if affordable else Color(0.34, 0.28, 0.38)
-		cost_badge.add_theme_stylebox_override("panel", _badge_style(badge_color))
+		cost_badge.add_theme_stylebox_override("panel", GoldCoin.style())
+		cost_badge.modulate = Color.WHITE if affordable else Color(0.75, 0.76, 0.76)
 	_apply_button_styles(button)
 
-## 主动卡的非文字识别标记：细金边 + 角落符印，跟随卡牌而不是跟随手牌位置。
+## 主动卡的符文基石跟随卡牌轮换；卡牌色边不承担主动槽识别，备战槽另画独立外框。
 static func set_active_skill_card(button: Button, active: bool) -> void:
 	button.set_meta("active_skill_card", active)
 	var marker := button.get_node_or_null("ActiveSkillMarker") as Control
@@ -302,30 +293,18 @@ static func set_active_skill_card(button: Button, active: bool) -> void:
 		marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		button.add_child(marker)
 
-		var halo := Panel.new()
-		halo.name = "Halo"
-		halo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		halo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		halo.add_theme_stylebox_override("panel", frame_style(Color(0.36, 0.20, 0.04, 0.48), Color(1.0, 0.86, 0.48, 0.88), 1, 99))
-		marker.add_child(halo)
-
-		var gem := Panel.new()
-		gem.name = "Gem"
-		gem.position = Vector2(8.0, 8.0)
-		gem.size = Vector2(10.0, 10.0)
-		gem.pivot_offset = Vector2(5.0, 5.0)
-		gem.rotation = PI * 0.25
-		gem.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		gem.add_theme_stylebox_override("panel", frame_style(Color(1.0, 0.76, 0.22, 0.98), Color(1.0, 0.97, 0.72, 1.0), 1, 3))
-		marker.add_child(gem)
-
-		var core := Panel.new()
-		core.name = "Core"
-		core.position = Vector2(11.0, 11.0)
-		core.size = Vector2(4.0, 4.0)
-		core.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		core.add_theme_stylebox_override("panel", _badge_style(Color(0.12, 0.08, 0.02, 0.95), Color(1.0, 0.93, 0.62, 1.0)))
-		marker.add_child(core)
+		var crest := TextureRect.new()
+		crest.texture = UIMaterials.rune()
+		crest.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		crest.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		crest.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		crest.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		crest.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		marker.add_child(crest)
+	var compact := bool(button.get_meta("card_compact", false))
+	marker.offset_left = -35.0 if compact else -43.0
+	marker.offset_right = -5.0
+	marker.offset_bottom = 35.0 if compact else 43.0
 	marker.move_to_front()
 	marker.visible = active
 	_apply_button_styles(button)

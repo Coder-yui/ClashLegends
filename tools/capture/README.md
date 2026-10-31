@@ -4,6 +4,7 @@
 
 | 脚本 | 用途 |
 | --- | --- |
+| `capture_ui_art.gd` | 手牌与备战页实际渲染；`-- --output=<素材库内绝对目录> [--size=720x1280]`，拍摄备战满组/空组/操作菜单/详情、建筑筛选的费用/名称四种排序及战斗默认/选中/缺钱与等待/双方金币收益；凯隐零进度/部分/近满/选中/缺钱/解锁。只预热盖伦、艾希；主动按钮由真实卡牌定义投影，不据此证明主动资格或完整对局。支持长屏与横屏。 |
 | `capture_*_card_art.gd` | 冰鸟、炮台、士兵、皮克斯、圆盘、墓碑的专用构图；候选输出到素材库按次生成的批次目录，选定后再同步正式卡面 |
 | `capture_promo_videos.gd` | 宣传场景拍摄 |
 | `capture_control_scenes.gd` / `record_control_scenes.py` | 控制机制 9 组、15 条隔离实机场景，含格温雾圈来源保护、腕豪 W 击退前后命中、先锋冲撞免疫凝滞与同框艾希受控对照；生产 20Hz 模拟、原生 720×1400／60fps、内部游戏混音，输出到新宣传素材批次，拒绝覆盖旧 take。`python3 tools/capture/record_control_scenes.py --output ../ClashLegends-promo-materials/Video06-控制与状态机制/02-原始素材/新批次`；可用 `--shots judgment` 或 `--shots mist_baseline mist knockback_baseline knockback` 选拍；先锋用 `--shots herald_enemy_stasis herald_friendly_stasis`。 |

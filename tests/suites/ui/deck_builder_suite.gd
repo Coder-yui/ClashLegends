@@ -45,6 +45,26 @@ func run(harness: Object, main: Node2D) -> void:
 	var desc_last_id: String = String(desc_pool[-1].get_meta("card_id", ""))
 	var desc_ok: bool = desc_pool.size() > 1 and int(CardDB.get_card(desc_first_id).cost) >= int(CardDB.get_card(desc_last_id).cost)
 	_expect(asc_ok and desc_ok, "牌库支持按金币消耗递增或递减排序")
+	# Exercise the two visible sort controls through all four combinations.
+	builder._on_deck_sort_selected(1)
+	for action in [[builder._deck_sort_kind, "name"], [builder._deck_sort_direction, "name_desc"], [builder._deck_sort_kind, "cost_desc"], [builder._deck_sort_direction, "cost_asc"]]:
+		(action[0] as Button).emit_signal("pressed")
+		var mode := String(action[1])
+		_expect(builder._deck_pool_sort == mode, "排序图标点击切换到 " + mode)
+		var rows := builder._deck_pool_grid.get_children()
+		var ordered := true
+		for index in range(1, rows.size()):
+			var a := CardDB.get_card(String(rows[index - 1].get_meta("card_id")))
+			var b := CardDB.get_card(String(rows[index].get_meta("card_id")))
+			if mode == "name": ordered = ordered and String(a.name) <= String(b.name)
+			elif mode == "name_desc": ordered = ordered and String(a.name) >= String(b.name)
+			elif mode == "cost_asc": ordered = ordered and int(a.cost) <= int(b.cost)
+			else: ordered = ordered and int(a.cost) >= int(b.cost)
+		_expect(ordered and rows.size() > 1, "当前牌库全列表符合排序 " + mode)
+	builder._on_deck_sort_selected(3)
+	builder._filter_buttons[3].emit_signal("pressed")
+	_expect(builder._deck_pool_sort == "name_desc" and builder._filter_buttons[3].button_pressed and builder._deck_toggles.has("tombstone") and not builder._deck_toggles.has("garen"), "类型按钮保留排序并准确切换建筑卡池")
+	builder._filter_buttons[0].emit_signal("pressed")
 	builder._on_deck_sort_selected(0)
 	builder._on_deck_pool_card_pressed("garen")
 	_expect(

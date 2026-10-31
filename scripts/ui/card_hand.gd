@@ -24,8 +24,8 @@ const GROWTH_RED := Color(1.0, 0.24, 0.28)
 
 const LAYOUT := preload("res://scripts/ui/battle_layout.gd")
 const HAND_AREA_HEIGHT := LAYOUT.HAND_HEIGHT
-const HAND_CARD_HEIGHT := 110.0
-const HAND_CARD_WIDTH := 112.0
+const HAND_CARD_HEIGHT := 108.0
+const HAND_CARD_WIDTH := 124.0
 
 # 卡组轮换
 var _hand: Array[String] = []   # 当前4张手牌
@@ -117,27 +117,27 @@ func _build_ui() -> void:
 	panel.offset_bottom = HAND_AREA_HEIGHT
 	panel.grow_vertical = Control.GROW_DIRECTION_END
 	panel.custom_minimum_size = Vector2(0.0, HAND_AREA_HEIGHT)
-	panel.add_theme_stylebox_override("panel", CardArt.frame_style(Color(0.018, 0.085, 0.17, 0.86), Color(0.08, 0.50, 0.86, 1.0), 3, 0))
+	panel.add_theme_stylebox_override("panel", UIMaterials.panel(Color(0.85, 0.91, 0.98), 4))
 	root.add_child(panel)
 	var content_margin := MarginContainer.new()
-	content_margin.add_theme_constant_override("margin_left", 10)
-	content_margin.add_theme_constant_override("margin_right", 10)
-	content_margin.add_theme_constant_override("margin_top", 2)
-	content_margin.add_theme_constant_override("margin_bottom", 2)
+	content_margin.add_theme_constant_override("margin_left", 18)
+	content_margin.add_theme_constant_override("margin_right", 18)
+	content_margin.add_theme_constant_override("margin_top", 5)
+	content_margin.add_theme_constant_override("margin_bottom", 3)
 	panel.add_child(content_margin)
 	var vbox := VBoxContainer.new()
 	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	vbox.add_theme_constant_override("separation", 1)
+	vbox.add_theme_constant_override("separation", 6)
 	content_margin.add_child(vbox)
 
 	# 参考皇室战争：左侧下一张预览，中间是当前4张手牌。
 	var card_row := HBoxContainer.new()
 	card_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	card_row.add_theme_constant_override("separation", 10)
+	card_row.add_theme_constant_override("separation", 18)
 	vbox.add_child(card_row)
 	var next_drawer := PanelContainer.new()
-	next_drawer.custom_minimum_size = Vector2(66.0, HAND_CARD_HEIGHT)
-	next_drawer.add_theme_stylebox_override("panel", CardArt.frame_style(Color(0.025, 0.12, 0.24, 0.98), Color(0.10, 0.34, 0.58), 2, 7))
+	next_drawer.custom_minimum_size = Vector2(74.0, HAND_CARD_HEIGHT)
+	next_drawer.add_theme_stylebox_override("panel", UIMaterials.panel(Color(0.63, 0.75, 0.82), 4))
 	card_row.add_child(next_drawer)
 	var next_column := VBoxContainer.new()
 	next_column.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -147,17 +147,17 @@ func _build_ui() -> void:
 	_next_label.text = "下一张"
 	_next_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_next_label.add_theme_font_size_override("font_size", 11)
-	_next_label.add_theme_color_override("font_color", Color(0.63, 0.82, 1.0))
+	_next_label.add_theme_color_override("font_color", UIPalette.MUTED)
 	next_column.add_child(_next_label)
 	_next_button = Button.new()
 	_next_button.focus_mode = Control.FOCUS_NONE
 	_next_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_next_button.disabled = true
-	CardArt.apply_frame(_next_button, 60.0, true, 50.0)
+	CardArt.apply_frame(_next_button, 72.0, true, 58.0)
 	next_column.add_child(_next_button)
 	var hand_row := HBoxContainer.new()
 	hand_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	hand_row.add_theme_constant_override("separation", 6)
+	hand_row.add_theme_constant_override("separation", 10)
 	card_row.add_child(hand_row)
 	# 4 张手牌按钮
 	for i in range(4):
@@ -174,38 +174,33 @@ func _build_ui() -> void:
 	vbox.add_child(bar_row)
 	_elixir_bar = ProgressBar.new()
 	_elixir_bar.max_value = ElixirManager.MAX_ELIXIR
-	_elixir_bar.custom_minimum_size = Vector2(500, 19)
+	_elixir_bar.custom_minimum_size = Vector2(510, 18)
 	_elixir_bar.show_percentage = false
 	var bar_background := StyleBoxFlat.new()
-	bar_background.bg_color = Color(0.04, 0.12, 0.23, 0.95)
+	bar_background.bg_color = UIPalette.PANEL
 	bar_background.set_corner_radius_all(8)
-	bar_background.border_color = Color(0.36, 0.08, 0.48, 0.95)
+	bar_background.border_color = UIPalette.LINE
 	bar_background.set_border_width_all(2)
 	var bar_fill := StyleBoxFlat.new()
-	bar_fill.bg_color = Color(0.86, 0.18, 0.96, 1.0)
+	bar_fill.bg_color = UIPalette.GOLD
 	bar_fill.set_corner_radius_all(8)
 	_elixir_bar.add_theme_stylebox_override("background", bar_background)
 	_elixir_bar.add_theme_stylebox_override("fill", bar_fill)
-	var elixir_orb := Label.new()
-	elixir_orb.text = "●"
-	elixir_orb.add_theme_font_size_override("font_size", 18)
-	elixir_orb.add_theme_color_override("font_color", Color(0.90, 0.24, 1.0))
-	elixir_orb.add_theme_color_override("font_outline_color", Color(0.18, 0.01, 0.25))
-	elixir_orb.add_theme_constant_override("outline_size", 4)
-	bar_row.add_child(elixir_orb)
+	bar_row.add_theme_constant_override("separation", 8)
+	bar_row.add_child(GoldCoin.icon(26.0))
 	_elixir_label = Label.new()
-	_elixir_label.custom_minimum_size = Vector2(28.0, 0.0)
+	_elixir_label.custom_minimum_size = Vector2(55.0, 26.0)
 	_elixir_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_elixir_label.add_theme_font_size_override("font_size", 18)
 	_elixir_label.add_theme_color_override("font_color", Color.WHITE)
-	_elixir_label.add_theme_color_override("font_outline_color", Color(0.12, 0.01, 0.17))
+	_elixir_label.add_theme_color_override("font_outline_color", UIPalette.INK)
 	_elixir_label.add_theme_constant_override("outline_size", 4)
 	bar_row.add_child(_elixir_label)
 	bar_row.add_child(_elixir_bar)
 	# 细分刻度让资源条更容易估算每张牌还差多少金币。
 	for i in range(1, int(ElixirManager.MAX_ELIXIR)):
 		var tick := ColorRect.new()
-		tick.color = Color(0.12, 0.015, 0.18, 0.52)
+		tick.color = Color(0.04, 0.10, 0.12, 0.65)
 		tick.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		tick.anchor_left = float(i) / ElixirManager.MAX_ELIXIR
 		tick.anchor_right = float(i) / ElixirManager.MAX_ELIXIR
@@ -240,7 +235,7 @@ func _refresh(_value: float) -> void:
 		return
 	_refresh_growth_notice()
 	_elixir_bar.value = _elixir.elixir
-	_elixir_label.text = str(int(_elixir.elixir))
+	_elixir_label.text = "%d / %d" % [int(_elixir.elixir), int(ElixirManager.MAX_ELIXIR)]
 	# 下一张卡预览
 	if _next_label != null and _next_button != null and not _next_card.is_empty():
 		var next_stats: Dictionary = CardDB.get_card(_next_card)
@@ -330,29 +325,14 @@ func _apply_growth_bars(button: Button, card_id: String) -> void:
 	if overlay != null: overlay.visible = enabled
 	if not enabled: return
 	if overlay == null:
-		overlay = Control.new()
+		overlay = CardGrowthBars.new()
 		overlay.name = "GrowthBars"
-		overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		button.add_child(overlay)
 		overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		for kind in ["ranged", "melee"]:
-			var count := int(stats["growth_" + kind + "_hits"])
-			for index in range(count):
-				var cell := ColorRect.new()
-				cell.name = kind + str(index)
-				cell.mouse_filter = Control.MOUSE_FILTER_IGNORE
-				cell.anchor_left = 0.0 if kind == "ranged" else 1.0
-				cell.anchor_right = cell.anchor_left
-				cell.anchor_top = 1.0 - float(index + 1) / count
-				cell.anchor_bottom = 1.0 - float(index) / count
-				cell.offset_left = 2.0 if kind == "ranged" else -8.0
-				cell.offset_right = 8.0 if kind == "ranged" else -2.0
-				cell.offset_top = 3.0
-				cell.offset_bottom = -3.0
-				overlay.add_child(cell)
+		(overlay as CardGrowthBars).configure(int(stats.growth_ranged_hits), int(stats.growth_melee_hits))
 	button.move_child(overlay, -1)
 	for kind in ["ranged", "melee"]:
 		var tint := GROWTH_BLUE if kind == "ranged" else GROWTH_RED
 		for index in range(int(stats["growth_" + kind + "_hits"])):
-			var cell := overlay.get_node(kind + str(index)) as ColorRect
+			var cell := overlay.get_node(kind + str(index)) as CardGrowthBars.Crystal
 			cell.color = tint if index < int(progress.get(kind, 0)) else tint.darkened(0.75)

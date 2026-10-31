@@ -2,7 +2,6 @@ class_name DeckBuilder
 extends CanvasLayer
 ## 备战卡组、卡牌详情、主动技能选择和皮肤选择的独立 UI 模块。
 
-const ARENA_BACKGROUND_PATH := "res://assets/arena/arena_rift_v4.png"
 
 var _deck: Array = []
 # 详情浏览/编辑偏好可包含组外卡；交付对局时另按最终卡组投影。
@@ -18,8 +17,10 @@ var _deck_status: Label
 var _deck_average_label: Label
 var _deck_ui_root: Control
 var _deck_pool_grid: GridContainer
-var _deck_filter_option: OptionButton
-var _deck_sort_option: OptionButton
+var _filter_buttons: Array[Button] = []
+var _deck_sort_kind: Button
+var _deck_sort_direction: Button
+var _pool_count_label: Label
 var _deck_pool_filter := "all"
 var _deck_pool_sort := "name"
 var _deck_pending_slot := -1
@@ -52,15 +53,15 @@ func _make_menu_button(text: String) -> Button:
 	button.custom_minimum_size = Vector2(260.0, 44.0)
 	return button
 
-func _deck_style(background: Color, border: Color, border_width: int = 2) -> StyleBoxFlat:
-	return CardArt.frame_style(background, border, border_width)
+func _deck_style(_background: Color, border: Color, _border_width: int = 2) -> StyleBoxTexture:
+	return UIMaterials.panel(border.lerp(Color.WHITE, 0.6))
 
 func _make_deck_card_button(card_id: String, is_slot: bool) -> Button:
 	var button := Button.new()
 	button.toggle_mode = false
 	button.focus_mode = Control.FOCUS_NONE
 	button.set_meta("card_id", card_id)
-	CardArt.apply_frame(button, 165.0 if is_slot else 172.0)
+	CardArt.apply_frame(button, 166.0 if is_slot else 178.0, false, 128.0 if is_slot else 140.0)
 	if card_id.is_empty():
 		CardArt.show_empty_slot(button, 1)
 		button.disabled = false
@@ -71,29 +72,16 @@ func _make_deck_card_button(card_id: String, is_slot: bool) -> Button:
 	return button
 
 func _set_active_slot_badge(button: Button, enabled: bool) -> void:
-	var badge := button.get_node_or_null("ActiveSlotBadge") as Label
-	if badge == null:
-		badge = Label.new()
-		badge.name = "ActiveSlotBadge"
-		badge.position = Vector2(4.0, 42.0)
-		badge.custom_minimum_size = Vector2(72.0, 24.0)
-		badge.text = "主动位"
-		badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		badge.add_theme_font_override("font", CardArt.ui_font())
-		badge.add_theme_font_size_override("font_size", 14)
-		badge.add_theme_color_override("font_color", Color(1.0, 0.88, 0.30))
-		badge.add_theme_color_override("font_outline_color", Color(0.03, 0.04, 0.08))
-		badge.add_theme_constant_override("outline_size", 4)
-		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		button.add_child(badge)
-	badge.visible = enabled
-	button.move_child(badge, button.get_child_count() - 1)
+	# 前两席拥有独立槽框；卡牌保持自己的色边，符文与战斗手牌一致。
+	CardArt.set_active_skill_card(button, enabled)
+	var frame := button.get_parent() as RuneSlotFrame
+	if frame != null: frame.active = enabled
 
 ## 在对战开始前弹出选卡组界面；上方固定 8 个卡位，下方滚动卡池。
 func _pick_deck_ui(after_start: Callable) -> void:
 	_deck_selected = _deck.duplicate() if _deck.size() == 8 else []
 	_deck_pool_filter = "all"
-	_deck_pool_sort = "name"
+	_deck_pool_sort = "cost_asc"
 	_deck_pending_slot = -1
 	var layer := CanvasLayer.new()
 	layer.layer = 20
@@ -103,153 +91,122 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	layer.add_child(root)
 	_deck_ui_root = root
-	var background_art := TextureRect.new()
-	background_art.texture = load(ARENA_BACKGROUND_PATH)
-	background_art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	background_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	background_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	background_art.modulate = Color(0.18, 0.32, 0.52, 0.28)
-	background_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(background_art)
-	var background_tint := ColorRect.new()
-	background_tint.color = Color(0.018, 0.055, 0.12, 0.93)
-	background_tint.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	background_tint.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(background_tint)
-	var top_glow := ColorRect.new()
-	top_glow.color = Color(0.04, 0.42, 0.78, 0.20)
-	top_glow.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	top_glow.offset_bottom = 150.0
-	top_glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(top_glow)
+	var background := TextureRect.new()
+	background.texture = UIMaterials.BACKGROUND
+	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(background)
 	var margin := MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 18)
-	margin.add_theme_constant_override("margin_right", 18)
-	margin.add_theme_constant_override("margin_top", 18)
-	margin.add_theme_constant_override("margin_bottom", 18)
+	margin.anchor_left = 0.5
+	margin.anchor_right = 0.5
+	margin.offset_left = -360
+	margin.offset_right = 360
+	for edge in ["left", "right", "top", "bottom"]:
+		margin.add_theme_constant_override("margin_" + edge, 24)
 	root.add_child(margin)
-	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 7)
-	margin.add_child(vbox)
-	var header_panel := PanelContainer.new()
-	header_panel.custom_minimum_size = Vector2(0.0, 78.0)
-	header_panel.add_theme_stylebox_override("panel", _deck_style(Color(0.025, 0.16, 0.30, 0.96), Color(0.08, 0.55, 0.94), 2))
-	vbox.add_child(header_panel)
-	var header_box := VBoxContainer.new()
-	header_box.alignment = BoxContainer.ALIGNMENT_CENTER
-	header_box.add_theme_constant_override("separation", -2)
-	header_panel.add_child(header_box)
-	var title := Label.new()
-	title.text = "备战卡组"
-	title.add_theme_font_size_override("font_size", 32)
-	title.add_theme_color_override("font_color", Color(1.0, 0.86, 0.42))
-	title.add_theme_color_override("font_outline_color", Color(0.02, 0.04, 0.08))
-	title.add_theme_constant_override("outline_size", 5)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	header_box.add_child(title)
-	var subtitle := Label.new()
-	subtitle.text = "前两席携带主动；镜像在主动席时，也会复制其他席位预选的技能"
-	subtitle.add_theme_font_size_override("font_size", 14)
-	subtitle.add_theme_color_override("font_color", Color(0.68, 0.84, 1.0))
-	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	header_box.add_child(subtitle)
-	var deck_header := HBoxContainer.new()
-	deck_header.alignment = BoxContainer.ALIGNMENT_CENTER
-	vbox.add_child(deck_header)
-	var deck_header_title := Label.new()
-	deck_header_title.text = "我的卡组"
-	deck_header_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	deck_header_title.add_theme_font_size_override("font_size", 20)
-	deck_header_title.add_theme_color_override("font_color", Color(0.93, 0.97, 1.0))
-	deck_header.add_child(deck_header_title)
-	_deck_average_label = Label.new()
-	_deck_average_label.add_theme_font_size_override("font_size", 16)
-	_deck_average_label.add_theme_color_override("font_color", Color(0.94, 0.48, 1.0))
-	deck_header.add_child(_deck_average_label)
-	var random_button := _make_deck_action_button("随机卡组", Color(0.08, 0.43, 0.72), Color(0.36, 0.78, 1.0))
+	var layout := VBoxContainer.new()
+	layout.add_theme_constant_override("separation", 14)
+	margin.add_child(layout)
+
+	var header := HBoxContainer.new()
+	header.custom_minimum_size.y = 56
+	header.add_theme_constant_override("separation", 16)
+	layout.add_child(header)
+	var back := _toolbar_button("", "back", "返回")
+	back.custom_minimum_size = Vector2(48, 48)
+	back.pressed.connect(_clear_deck_ui)
+	header.add_child(back)
+	var title := _section_label("备战", 30)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_child(title)
+	var random_button := _toolbar_button("随机", "shuffle", "随机选择八张卡牌与主动技能")
 	random_button.name = "RandomDeck"
-	random_button.tooltip_text = "重新随机选择 8 张卡牌，主动槽随机选择可用技能"
+	random_button.custom_minimum_size = Vector2(104, 48)
 	random_button.pressed.connect(_randomize_deck)
-	deck_header.add_child(random_button)
+	header.add_child(random_button)
+
 	var deck_panel := PanelContainer.new()
-	deck_panel.custom_minimum_size = Vector2(0.0, 352.0)
-	deck_panel.add_theme_stylebox_override("panel", _deck_style(Color(0.025, 0.09, 0.17, 0.97), Color(0.10, 0.42, 0.70), 2))
-	vbox.add_child(deck_panel)
-	var deck_margin := MarginContainer.new()
-	deck_margin.add_theme_constant_override("margin_left", 12)
-	deck_margin.add_theme_constant_override("margin_right", 12)
-	deck_margin.add_theme_constant_override("margin_top", 6)
-	deck_margin.add_theme_constant_override("margin_bottom", 6)
-	deck_panel.add_child(deck_margin)
+	deck_panel.add_theme_stylebox_override("panel", UIMaterials.panel(Color(0.80, 0.86, 0.91), 12))
+	layout.add_child(deck_panel)
+	var deck_box := VBoxContainer.new()
+	deck_box.add_theme_constant_override("separation", 10)
+	deck_panel.add_child(deck_box)
+	var deck_header := HBoxContainer.new()
+	deck_header.add_theme_constant_override("separation", 12)
+	deck_box.add_child(deck_header)
+	deck_header.add_child(_section_label("出战卡组", 20))
+	_deck_status = _section_label("", 15, UIPalette.MUTED)
+	_deck_status.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	deck_header.add_child(_deck_status)
+	deck_header.add_child(GoldCoin.icon(23))
+	_deck_average_label = _section_label("", 16, UIPalette.GOLD_LIGHT)
+	_deck_average_label.tooltip_text = "八张出战卡牌的平均金币费用；镜像法术的费用随上一张卡变化"
+	deck_header.add_child(_deck_average_label)
 	var deck_center := CenterContainer.new()
-	deck_margin.add_child(deck_center)
+	deck_box.add_child(deck_center)
 	var deck_grid := GridContainer.new()
 	deck_grid.columns = 4
-	deck_grid.add_theme_constant_override("h_separation", 14)
-	deck_grid.add_theme_constant_override("v_separation", 10)
+	deck_grid.add_theme_constant_override("h_separation", 12)
+	deck_grid.add_theme_constant_override("v_separation", 8)
 	deck_center.add_child(deck_grid)
 	_deck_slot_buttons.clear()
 	for i in range(8):
 		var slot := _make_deck_card_button("", true)
+		var frame := RuneSlotFrame.new()
+		frame.name = "DeckSlotFrame%d" % (i + 1)
+		frame.add_child(slot)
+		deck_grid.add_child(frame)
 		CardArt.show_empty_slot(slot, i + 1)
 		_set_active_slot_badge(slot, i < 2)
-		slot.tooltip_text = "主动技能位" if i < 2 else "普通卡位"
+		slot.tooltip_text = "符文席：携带主动技能" if i < 2 else "选择卡牌"
 		slot.pressed.connect(_on_deck_slot_pressed.bind(i))
-		deck_grid.add_child(slot)
 		_deck_slot_buttons.append(slot)
-	_deck_status = Label.new()
-	_deck_status.add_theme_font_size_override("font_size", 16)
-	_deck_status.add_theme_color_override("font_color", Color(0.67, 0.82, 0.96))
-	_deck_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(_deck_status)
-	var pool_header := Label.new()
-	pool_header.text = "卡牌库"
-	pool_header.add_theme_font_size_override("font_size", 20)
-	pool_header.add_theme_color_override("font_color", Color(0.92, 0.95, 1.0))
-	vbox.add_child(pool_header)
-	var pool_controls := HBoxContainer.new()
-	pool_controls.add_theme_constant_override("separation", 8)
-	vbox.add_child(pool_controls)
-	var filter_label := Label.new()
-	filter_label.text = "类型"
-	filter_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	filter_label.add_theme_font_size_override("font_size", 15)
-	filter_label.add_theme_color_override("font_color", Color(0.68, 0.84, 1.0))
-	pool_controls.add_child(filter_label)
-	_deck_filter_option = OptionButton.new()
-	_deck_filter_option.custom_minimum_size = Vector2(150.0, 38.0)
-	_deck_filter_option.add_theme_font_override("font", CardArt.ui_font())
-	_deck_filter_option.add_theme_font_size_override("font_size", 15)
-	for filter_name in ["全部", "地面", "空军", "建筑", "法术"]:
-		_deck_filter_option.add_item(filter_name)
-	_deck_filter_option.select(0)
-	_deck_filter_option.item_selected.connect(_on_deck_filter_selected)
-	pool_controls.add_child(_deck_filter_option)
-	var sort_label := Label.new()
-	sort_label.text = "排序"
-	sort_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	sort_label.add_theme_font_size_override("font_size", 15)
-	sort_label.add_theme_color_override("font_color", Color(0.68, 0.84, 1.0))
-	pool_controls.add_child(sort_label)
-	_deck_sort_option = OptionButton.new()
-	_deck_sort_option.custom_minimum_size = Vector2(190.0, 38.0)
-	_deck_sort_option.add_theme_font_override("font", CardArt.ui_font())
-	_deck_sort_option.add_theme_font_size_override("font_size", 15)
-	for sort_name in ["名称排序", "金币消耗递增", "金币消耗递减"]:
-		_deck_sort_option.add_item(sort_name)
-	_deck_sort_option.select(0)
-	_deck_sort_option.item_selected.connect(_on_deck_sort_selected)
-	pool_controls.add_child(_deck_sort_option)
+
+	var library_header := HBoxContainer.new()
+	library_header.add_theme_constant_override("separation", 10)
+	layout.add_child(library_header)
+	library_header.add_child(_section_label("卡牌库", 22))
+	_pool_count_label = _section_label("", 14, UIPalette.MUTED)
+	_pool_count_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	library_header.add_child(_pool_count_label)
+	_deck_sort_kind = _toolbar_button("费用", "", "切换按金币费用或名称排序")
+	_deck_sort_kind.icon = GoldCoin.TEXTURE
+	_deck_sort_kind.custom_minimum_size = Vector2(98, 40)
+	_deck_sort_kind.pressed.connect(_toggle_sort_kind)
+	library_header.add_child(_deck_sort_kind)
+	_deck_sort_direction = _toolbar_button("", "asc", "费用从低到高，点击倒序")
+	_deck_sort_direction.custom_minimum_size = Vector2(44, 40)
+	_deck_sort_direction.pressed.connect(_toggle_sort_direction)
+	library_header.add_child(_deck_sort_direction)
+	var filter_row := HBoxContainer.new()
+	filter_row.add_theme_constant_override("separation", 6)
+	layout.add_child(filter_row)
+	_filter_buttons.clear()
+	var group := ButtonGroup.new()
+	var filters := ["all", "ground", "air", "building", "spell"]
+	var names := ["全部", "地面", "空军", "建筑", "法术"]
+	for index in filters.size():
+		var button := _toolbar_button(names[index], filters[index], "显示" + names[index] + "卡牌")
+		button.toggle_mode = true
+		button.button_group = group
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.custom_minimum_size = Vector2(0, 44)
+		button.pressed.connect(_on_deck_filter_selected.bind(index))
+		filter_row.add_child(button)
+		_filter_buttons.append(button)
+	_filter_buttons[0].set_pressed_no_signal(true)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.custom_minimum_size = Vector2(0.0, 160.0)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	vbox.add_child(scroll)
+	layout.add_child(scroll)
 	var grid := GridContainer.new()
 	_deck_pool_grid = grid
 	grid.columns = 4
-	grid.add_theme_constant_override("h_separation", 14)
+	grid.add_theme_constant_override("h_separation", 18)
 	grid.add_theme_constant_override("v_separation", 12)
 	var grid_center := CenterContainer.new()
 	grid_center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -257,25 +214,68 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	grid_center.add_child(grid)
 	scroll.add_child(grid_center)
 	_refresh_deck_pool()
-	var btn_row := HBoxContainer.new()
-	btn_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	btn_row.add_theme_constant_override("separation", 16)
-	vbox.add_child(btn_row)
-	var back := _make_menu_button("返回")
-	back.custom_minimum_size = Vector2(150, 52)
-	back.add_theme_stylebox_override("normal", _deck_style(Color(0.08, 0.15, 0.24), Color(0.30, 0.46, 0.64), 2))
-	back.pressed.connect(_clear_deck_ui)
-	btn_row.add_child(back)
-	_deck_confirm = _make_menu_button("开始对战")
-	_deck_confirm.custom_minimum_size = Vector2(230, 52)
-	_deck_confirm.add_theme_font_size_override("font_size", 20)
-	_deck_confirm.add_theme_stylebox_override("normal", _deck_style(Color(0.05, 0.42, 0.74), Color(0.34, 0.78, 1.0), 3))
-	_deck_confirm.add_theme_stylebox_override("hover", _deck_style(Color(0.08, 0.54, 0.88), Color(0.60, 0.90, 1.0), 3))
-	_deck_confirm.add_theme_stylebox_override("pressed", _deck_style(Color(0.04, 0.32, 0.60), Color(1.0, 0.84, 0.32), 3))
+	var footer := CenterContainer.new()
+	layout.add_child(footer)
+	_deck_confirm = _toolbar_button("开始游戏", "", "使用当前八张卡牌开始游戏")
+	_deck_confirm.custom_minimum_size = Vector2(380, 58)
+	_deck_confirm.add_theme_font_size_override("font_size", 22)
+	_deck_confirm.add_theme_color_override("font_color", UIPalette.GOLD_LIGHT)
+	_deck_confirm.add_theme_stylebox_override("normal", UIMaterials.panel(Color(1.22, 1.12, 0.92)))
+	_deck_confirm.add_theme_stylebox_override("hover", UIMaterials.panel(Color(1.45, 1.30, 1.05)))
 	_deck_confirm.pressed.connect(func(): _confirm_deck(after_start))
-	btn_row.add_child(_deck_confirm)
+	footer.add_child(_deck_confirm)
 	_create_deck_context_popup(root)
 	_update_deck_ui()
+
+func _section_label(text: String, font_size: int, color: Color = UIPalette.TEXT) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_override("font", CardArt.ui_font())
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", color)
+	label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
+	label.add_theme_constant_override("shadow_offset_y", 2)
+	return label
+
+func _toolbar_button(text: String, icon_name: String, hint: String) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.tooltip_text = hint
+	button.focus_mode = Control.FOCUS_NONE
+	button.add_theme_font_override("font", CardArt.ui_font())
+	button.add_theme_font_size_override("font_size", 16)
+	button.add_theme_color_override("font_color", UIPalette.TEXT)
+	button.add_theme_color_override("font_pressed_color", UIPalette.GOLD_LIGHT)
+	button.add_theme_color_override("font_hover_color", Color.WHITE)
+	button.add_theme_color_override("font_disabled_color", UIPalette.MUTED)
+	button.add_theme_constant_override("icon_max_width", 20)
+	button.add_theme_constant_override("h_separation", 6)
+	if not icon_name.is_empty(): button.icon = load("res://assets/ui/controls/" + icon_name + ".svg")
+	button.add_theme_stylebox_override("normal", UIMaterials.panel(Color(0.65, 0.74, 0.80), 10))
+	button.add_theme_stylebox_override("hover", UIMaterials.panel(Color(0.95, 1.02, 1.06), 10))
+	button.add_theme_stylebox_override("pressed", UIMaterials.panel(Color(1.18, 1.08, 0.85), 10))
+	button.add_theme_stylebox_override("disabled", UIMaterials.panel(Color(0.36, 0.43, 0.47), 10))
+	return button
+
+func _toggle_sort_kind() -> void:
+	var descending := _deck_pool_sort.ends_with("desc")
+	var use_name := _deck_pool_sort.begins_with("cost")
+	_on_deck_sort_selected((3 if descending else 0) if use_name else (2 if descending else 1))
+
+func _toggle_sort_direction() -> void:
+	var descending := _deck_pool_sort.ends_with("desc")
+	var use_name := _deck_pool_sort.begins_with("name")
+	_on_deck_sort_selected((0 if descending else 3) if use_name else (1 if descending else 2))
+
+func _refresh_sort_controls() -> void:
+	if _deck_sort_kind == null: return
+	var use_name := _deck_pool_sort.begins_with("name")
+	var descending := _deck_pool_sort.ends_with("desc")
+	_deck_sort_kind.text = "名称" if use_name else "费用"
+	_deck_sort_kind.icon = preload("res://assets/ui/controls/name.svg") if use_name else GoldCoin.TEXTURE
+	_deck_sort_direction.icon = preload("res://assets/ui/controls/desc.svg") if descending else preload("res://assets/ui/controls/asc.svg")
+	_deck_sort_direction.tooltip_text = ("名称降序" if descending else "名称升序") if use_name else ("费用从高到低" if descending else "费用从低到高")
 
 func _randomize_deck() -> void:
 	var pool := CardDB.selectable_ids().duplicate()
@@ -296,7 +296,7 @@ func _create_deck_context_popup(root: Control) -> void:
 	_deck_context_popup.custom_minimum_size = Vector2(132.0, 96.0)
 	_deck_context_popup.size = Vector2(132.0, 96.0)
 	_deck_context_popup.z_index = 50
-	_deck_context_popup.add_theme_stylebox_override("panel", _deck_style(Color(0.025, 0.12, 0.22, 0.99), Color(0.28, 0.72, 1.0), 3))
+	_deck_context_popup.add_theme_stylebox_override("panel", _deck_style(UIPalette.PANEL, UIPalette.GOLD, 3))
 	root.add_child(_deck_context_popup)
 	var margin := MarginContainer.new()
 	margin.add_theme_constant_override("margin_left", 7)
@@ -307,7 +307,7 @@ func _create_deck_context_popup(root: Control) -> void:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 5)
 	margin.add_child(box)
-	_deck_context_info = _make_deck_action_button("信息", Color(0.08, 0.43, 0.72), Color(0.36, 0.78, 1.0))
+	_deck_context_info = _make_deck_action_button("信息", UIPalette.PANEL_LIGHT, UIPalette.TEAL)
 	_deck_context_info.pressed.connect(_open_selected_card_info)
 	box.add_child(_deck_context_info)
 	_deck_context_action = _make_deck_action_button("添加", Color(0.08, 0.55, 0.30), Color(0.38, 0.95, 0.58))
@@ -324,7 +324,7 @@ func _make_deck_action_button(text: String, background: Color, border: Color) ->
 	button.add_theme_font_size_override("font_size", 17)
 	button.add_theme_stylebox_override("normal", _deck_style(background, border, 2))
 	button.add_theme_stylebox_override("hover", _deck_style(background.lightened(0.12), border.lightened(0.12), 3))
-	button.add_theme_stylebox_override("pressed", _deck_style(background.darkened(0.12), Color(1.0, 0.84, 0.30), 3))
+	button.add_theme_stylebox_override("pressed", _deck_style(background.darkened(0.12), UIPalette.GOLD, 3))
 	button.add_theme_stylebox_override("disabled", _deck_style(Color(0.08, 0.10, 0.14), Color(0.28, 0.32, 0.38), 2))
 	return button
 
@@ -414,14 +414,16 @@ func _on_deck_filter_selected(index: int) -> void:
 	if index < 0 or index >= filters.size():
 		return
 	_deck_pool_filter = filters[index]
+	for i in _filter_buttons.size(): _filter_buttons[i].set_pressed_no_signal(i == index)
 	_hide_deck_context()
 	_refresh_deck_pool()
 
 func _on_deck_sort_selected(index: int) -> void:
-	var sort_modes := ["name", "cost_asc", "cost_desc"]
+	var sort_modes := ["name", "cost_asc", "cost_desc", "name_desc"]
 	if index < 0 or index >= sort_modes.size():
 		return
 	_deck_pool_sort = sort_modes[index]
+	_refresh_sort_controls()
 	_hide_deck_context()
 	_refresh_deck_pool()
 
@@ -447,12 +449,15 @@ func _sort_deck_card_ids(first_id: String, second_id: String) -> bool:
 			return first_cost < second_cost if _deck_pool_sort == "cost_asc" else first_cost > second_cost
 	var first_name := String(first_stats.get("name", first_id))
 	var second_name := String(second_stats.get("name", second_id))
-	return first_name < second_name if first_name != second_name else first_id < second_id
+	if first_name != second_name:
+		return first_name > second_name if _deck_pool_sort == "name_desc" else first_name < second_name
+	return first_id < second_id
 
 func _refresh_deck_pool() -> void:
 	if _deck_pool_grid == null:
 		return
 	for child in _deck_pool_grid.get_children():
+		_deck_pool_grid.remove_child(child)
 		child.queue_free()
 	_deck_toggles.clear()
 	var card_ids: Array = []
@@ -462,6 +467,7 @@ func _refresh_deck_pool() -> void:
 			continue
 		card_ids.append(card_id)
 	card_ids.sort_custom(Callable(self, "_sort_deck_card_ids"))
+	if _pool_count_label != null: _pool_count_label.text = "%d 张" % card_ids.size()
 	for card_id in card_ids:
 		var card_button := _make_deck_card_button(card_id, false)
 		card_button.pressed.connect(_on_deck_pool_card_pressed.bind(card_id))
@@ -532,7 +538,7 @@ func _open_card_info(card_id: String) -> void:
 	# 信息页按内容自然收缩，避免固定大面板在内容较少时把下半部分留空。
 	panel.custom_minimum_size = Vector2(650.0, 0.0)
 	panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	panel.add_theme_stylebox_override("panel", _deck_style(Color(0.025, 0.075, 0.14, 0.995), accent.lightened(0.22), 3))
+	panel.add_theme_stylebox_override("panel", _deck_style(UIPalette.INK, UIPalette.GOLD, 3))
 	center.add_child(panel)
 	var margin := MarginContainer.new()
 	margin.add_theme_constant_override("margin_left", 20)
@@ -560,7 +566,7 @@ func _open_card_info(card_id: String) -> void:
 	name_label.text = String(stats.name)
 	name_label.add_theme_font_override("font", CardArt.ui_font())
 	name_label.add_theme_font_size_override("font_size", 34)
-	name_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.42))
+	name_label.add_theme_color_override("font_color", UIPalette.GOLD_LIGHT)
 	name_label.add_theme_color_override("font_outline_color", Color(0.0, 0.02, 0.06))
 	name_label.add_theme_constant_override("outline_size", 5)
 	identity.add_child(name_label)
@@ -568,7 +574,7 @@ func _open_card_info(card_id: String) -> void:
 	identity_line.text = "法术　·　动态费用（上一张卡本身费用）" if CardPlayHistory.is_mirror(card_id) else "%s　·　%d 费" % [CardDetails.type_name(String(stats.get("type", "unit")), stats), int(stats.cost)]
 	identity_line.add_theme_font_override("font", CardArt.ui_font())
 	identity_line.add_theme_font_size_override("font_size", 19)
-	identity_line.add_theme_color_override("font_color", Color(0.68, 0.86, 1.0))
+	identity_line.add_theme_color_override("font_color", UIPalette.MUTED)
 	identity.add_child(identity_line)
 	# 皮肤入口固定在信息面板右上角，默认选择原皮；未来只需在卡牌数据中
 	# 增加 skins 数组即可出现更多选项，皮肤选择不参与战斗数值。
@@ -625,6 +631,7 @@ func _open_card_info(card_id: String) -> void:
 	details.add_child(_make_card_info_heading("主动"))
 	var skills := CardDB.active_skills_for(card_id)
 	_deck_info_active_option = OptionButton.new()
+	_style_deck_option(_deck_info_active_option)
 	_deck_info_active_option.custom_minimum_size = Vector2(0.0, 46.0)
 	_deck_info_active_option.add_theme_font_override("font", CardArt.ui_font())
 	_deck_info_active_option.add_theme_font_size_override("font_size", 17)
@@ -651,7 +658,7 @@ func _open_card_info(card_id: String) -> void:
 		details.add_child(_deck_info_active_rules)
 	_deck_info_active_description = _make_card_info_body(CardDetails.active_choice_description(card_id, int(_active_skill_choices.get(card_id, 0))))
 	details.add_child(_deck_info_active_description)
-	var close := _make_deck_action_button("返回备战", Color(0.08, 0.38, 0.68), Color(0.38, 0.80, 1.0))
+	var close := _make_deck_action_button("返回备战", UIPalette.PANEL_LIGHT, UIPalette.TEAL)
 	close.custom_minimum_size = Vector2(220.0, 48.0)
 	close.pressed.connect(_close_card_info)
 	var close_center := CenterContainer.new()
@@ -661,6 +668,7 @@ func _open_card_info(card_id: String) -> void:
 
 func _make_card_skin_option(card_id: String, stats: Dictionary) -> OptionButton:
 	var option := OptionButton.new()
+	_style_deck_option(option)
 	option.custom_minimum_size = Vector2(124.0, 42.0)
 	option.add_theme_font_override("font", CardArt.ui_font())
 	option.add_theme_font_size_override("font_size", 15)
@@ -694,7 +702,7 @@ func _make_card_info_heading(text: String) -> Label:
 	label.text = text
 	label.add_theme_font_override("font", CardArt.ui_font())
 	label.add_theme_font_size_override("font_size", 21)
-	label.add_theme_color_override("font_color", Color(1.0, 0.82, 0.32))
+	label.add_theme_color_override("font_color", UIPalette.GOLD)
 	return label
 
 func _make_card_info_body(text: String) -> Label:
@@ -704,7 +712,7 @@ func _make_card_info_body(text: String) -> Label:
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_font_override("font", CardArt.ui_font())
 	label.add_theme_font_size_override("font_size", 16)
-	label.add_theme_color_override("font_color", Color(0.84, 0.91, 0.98))
+	label.add_theme_color_override("font_color", UIPalette.TEXT)
 	label.add_theme_constant_override("line_spacing", 4)
 	return label
 
@@ -713,7 +721,7 @@ func _make_card_info_subheading(text: String) -> Label:
 	label.text = text
 	label.add_theme_font_override("font", CardArt.ui_font())
 	label.add_theme_font_size_override("font_size", 16)
-	label.add_theme_color_override("font_color", Color(0.64, 0.82, 1.0))
+	label.add_theme_color_override("font_color", UIPalette.MUTED)
 	return label
 
 func _make_card_attribute_grid(stats: Dictionary, quantity_override: String = "") -> Control:
@@ -732,13 +740,13 @@ func _make_card_attribute_rows(attributes: Array[Dictionary]) -> Control:
 		var item := PanelContainer.new()
 		item.custom_minimum_size = Vector2(0.0, 32.0)
 		item.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		item.add_theme_stylebox_override("panel", _deck_style(Color(0.035, 0.12, 0.21, 0.88), Color(0.10, 0.30, 0.48, 0.75), 1))
+		item.add_theme_stylebox_override("panel", _deck_style(UIPalette.PANEL, UIPalette.LINE, 1))
 		var label := Label.new()
 		label.text = "%s：%s" % [String(attribute.get("name", "")), attribute_value]
 		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		label.add_theme_font_override("font", CardArt.ui_font())
 		label.add_theme_font_size_override("font_size", 15)
-		label.add_theme_color_override("font_color", Color(0.86, 0.93, 1.0))
+		label.add_theme_color_override("font_color", UIPalette.TEXT)
 		label.add_theme_color_override("font_outline_color", Color(0.0, 0.03, 0.08, 0.70))
 		label.add_theme_constant_override("outline_size", 2)
 		item.add_child(label)
@@ -753,15 +761,15 @@ func _make_card_passive_row(name: String, description: String) -> Label:
 func _make_active_skill_rules(skill: Dictionary) -> PanelContainer:
 	var panel := PanelContainer.new()
 	panel.custom_minimum_size = Vector2(0.0, 38.0)
-	panel.add_theme_stylebox_override("panel", _deck_style(Color(0.035, 0.13, 0.22, 0.95), Color(0.18, 0.45, 0.65, 0.9), 1))
+	panel.add_theme_stylebox_override("panel", _deck_style(UIPalette.PANEL, UIPalette.LINE, 1))
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 8)
 	panel.add_child(row)
 	_deck_info_active_cost_label = _make_active_skill_rule_label("")
-	_deck_info_active_cost_label.add_theme_color_override("font_color", Color(1.0, 0.84, 0.34))
+	_deck_info_active_cost_label.add_theme_color_override("font_color", UIPalette.GOLD)
 	_deck_info_active_uses_label = _make_active_skill_rule_label("")
-	_deck_info_active_uses_label.add_theme_color_override("font_color", Color(0.60, 0.86, 1.0))
+	_deck_info_active_uses_label.add_theme_color_override("font_color", UIPalette.MUTED)
 	row.add_child(_deck_info_active_cost_label)
 	row.add_child(_deck_info_active_uses_label)
 	_update_active_skill_rules(skill)
@@ -826,9 +834,9 @@ func _update_deck_ui() -> void:
 		return
 	var selected_count := _selected_card_count()
 	if _deck_pending_slot >= 0:
-		_deck_status.text = "已选择 %d / 8　·　已选中第%d个卡槽，请点击下方卡牌　·　1、2 号为主动技能位" % [selected_count, _deck_pending_slot + 1]
+		_deck_status.text = "第 %d 席待选" % (_deck_pending_slot + 1)
 	else:
-		_deck_status.text = "已选择 %d / 8　·　点卡牌后选择信息或添加/移除　·　1、2 号为主动技能位" % selected_count
+		_deck_status.text = "%d / 8" % selected_count
 	var total_cost := 0.0
 	var dynamic_cost := false
 	for selected_id in _deck_selected:
@@ -836,7 +844,7 @@ func _update_deck_ui() -> void:
 			total_cost += float(CardDB.get_card(String(selected_id)).cost)
 			dynamic_cost = dynamic_cost or CardPlayHistory.is_mirror(String(selected_id))
 	if _deck_average_label != null:
-		_deck_average_label.text = "平均金币  动态" if dynamic_cost else ("平均金币  --" if selected_count == 0 else "平均金币  %.2f" % (total_cost / selected_count))
+		_deck_average_label.text = "平均 · 动态" if dynamic_cost else ("平均 —" if selected_count == 0 else "平均 %.1f" % (total_cost / selected_count))
 	for i in range(_deck_slot_buttons.size()):
 		var slot: Button = _deck_slot_buttons[i]
 		var card_id := String(_deck_selected[i]) if i < _deck_selected.size() else ""
@@ -862,7 +870,7 @@ func _update_deck_ui() -> void:
 	var ready := selected_count == 8
 	if _deck_confirm != null:
 		_deck_confirm.disabled = not ready
-		_deck_confirm.text = "开始对战" if ready else "请选择 8 张卡"
+		_deck_confirm.text = "开始游戏" if ready else "还需选择 %d 张卡" % (8 - selected_count)
 
 func _set_card_in_deck_badge(button: Button, in_deck: bool) -> void:
 	var badge := button.get_node_or_null("InDeckBadge") as Label
@@ -916,8 +924,10 @@ func _clear_deck_ui() -> void:
 	_deck_average_label = null
 	_deck_ui_root = null
 	_deck_pool_grid = null
-	_deck_filter_option = null
-	_deck_sort_option = null
+	_filter_buttons.clear()
+	_deck_sort_kind = null
+	_deck_sort_direction = null
+	_pool_count_label = null
 	_deck_pending_slot = -1
 	_deck_context_popup = null
 	_deck_context_info = null
@@ -927,3 +937,15 @@ func _clear_deck_ui() -> void:
 	_deck_context_from_pool = false
 	_deck_context_anchor = null
 	queue_free()
+
+func _style_deck_option(option: OptionButton) -> void:
+	# Arrow lives inside the metal bevel, with a separate text reserve.
+	option.add_theme_constant_override("arrow_margin", 18)
+	option.add_theme_constant_override("h_separation", 12)
+	option.add_theme_stylebox_override("normal", _deck_style(UIPalette.PANEL, UIPalette.LINE, 1))
+	option.add_theme_stylebox_override("hover", _deck_style(UIPalette.PANEL_LIGHT, UIPalette.TEAL, 1))
+	option.add_theme_stylebox_override("pressed", _deck_style(UIPalette.INK, UIPalette.GOLD, 1))
+	option.add_theme_stylebox_override("disabled", _deck_style(UIPalette.PANEL, UIPalette.LINE, 1))
+	option.add_theme_color_override("font_color", UIPalette.TEXT)
+	option.get_popup().add_theme_stylebox_override("panel", _deck_style(UIPalette.INK, UIPalette.GOLD, 1))
+	option.get_popup().add_theme_stylebox_override("hover", _deck_style(UIPalette.PANEL_LIGHT, UIPalette.TEAL, 1))
