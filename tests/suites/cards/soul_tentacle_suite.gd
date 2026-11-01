@@ -98,6 +98,7 @@ func run(harness: Object, main: Node2D) -> void:
 
 	_check_native_presentation()
 	_check_standalone_preview()
+	_check_buff_audio()
 
 func _check_native_presentation() -> void:
 	var stats := CardDB.get_card("soul_tentacle")
@@ -116,8 +117,29 @@ func _check_native_presentation() -> void:
 		view._sync_visual(false, 0.0)
 		_expect(player.current_animation == "illaoiminion_idleangry", "完整出生后接原生IdleAngry")
 		for kind in [&"locomotion", &"attack", &"action_out", &"death"]:
-			_expect(view._transition_blend(kind) == 0.0, "源图零混合:" + String(kind))
+			_expect(view._transition_blend(kind) > 0.0, "项目动作启用衔接:" + String(kind))
+		for phase in [0.2, 2.7, 7.9]:
+			view._playing_attack = false
+			view._current_state = 1
+			player.play("illaoiminion_idleangry", 0.0)
+			player.seek(phase, true)
+			var skeleton: Skeleton3D = view._model_root.find_children("*", "Skeleton3D", true, false)[0]
+			var poses: Array[Quaternion] = []
+			for bone in skeleton.get_bone_count(): poses.append(skeleton.get_bone_pose_rotation(bone))
+			source.attack_timeline.visual_elapsed = 0.0
+			view._play_attack(1)
+			var jump := 0.0
+			for bone in skeleton.get_bone_count(): jump = maxf(jump, poses[bone].angle_to(skeleton.get_bone_pose_rotation(bone)))
+			_expect(player.current_animation == "illaoiminion_attack1" and is_equal_approx(view._last_clip_blend_time, 0.12), "任意待机相位立即进入攻击混合")
+			_expect(jump < 0.01, "攻击切入首帧保留待机骨骼姿态")
+			player.advance(0.15)
 		var model: Node3D = view._model_root
+		var slam: Node3D = model._players.slam
+		var ground: Array = slam._data.frames[12][0][0]
+		_expect(is_equal_approx(ground[5] * 2.0 * slam.scale.x, 2.0), "拍地主地裂纹宽度匹配2格")
+		_expect(is_equal_approx(ground[4] * 2.0 * slam.scale.z, 9.0), "拍地主地裂纹长度匹配9格")
+		_expect(absf((ground[3] - ground[4]) * slam.scale.z + slam.position.z) < 0.00001, "拍地起点对齐权威攻击起点")
+		_expect(is_equal_approx(slam.scale.y, 0.01), "拍地高度保持原生比例")
 		model.sync_combat_visual(source.presentation_state(), 4.05, false)
 		_expect(model._players.base_active.visible and model._players.avatar._attached.size() == 3, "正常待机常驻底座与完整三层激活材质")
 		_expect(is_equal_approx(model.get_node("Model").scale.x, 0.009), "拍击宽倍率0.01乘源skinScale0.9")
@@ -154,3 +176,34 @@ func _check_standalone_preview() -> void:
 	preview.model._process(180.0)
 	_expect(preview.model._players.base_active.has_live_particles(), "独立预览长时间仍显示底座")
 	preview.free()
+
+func _check_buff_audio() -> void:
+	var audio := GameAudioManager.new()
+	_main.add_child(audio)
+	audio.begin_battle()
+	var unit := spawn("soul_tentacle", 0, Vector2(360, 900))
+	audio.attach_unit(unit, CardDB.get_card("soul_tentacle"))
+	var cues: Array[StringName] = []
+	audio.cue_played.connect(func(_id: String, cue: StringName, _point: Vector2): cues.append(cue))
+	unit.apply_active_buff(8.0, 1.0, 1.0, 1.5)
+	audio._process(0.0)
+	audio._process(0.0)
+	var key := audio._sustain_key(unit.get_instance_id(), &"buff")
+	_expect(audio._sustain_players.has(key) and cues.count(&"active_buff:sustain") == 1, "触手技能持续声开始一次并持有")
+	unit.buffs.clear_family(&"buff")
+	audio._process(0.0)
+	audio._process(0.0)
+	_expect(not audio._sustain_players.has(key) and cues.count(&"active_buff:end") == 1, "技能消退停止循环且结束声只播放一次")
+	unit.apply_active_buff(8.0, 1.0, 1.0, 1.5)
+	audio._process(0.0)
+	unit._die()
+	_expect(not audio._sustain_players.has(key) and cues.count(&"active_buff:end") == 1, "死亡停止持续声，不补播自然消退")
+	unit.free()
+	unit = spawn("soul_tentacle", 0, Vector2(360, 900))
+	audio.attach_unit(unit, CardDB.get_card("soul_tentacle"))
+	unit.apply_active_buff(8.0, 1.0, 1.0, 1.5)
+	audio._process(0.0)
+	audio.end_battle()
+	_expect(audio._sustain_players.is_empty() and cues.count(&"active_buff:end") == 1, "清场停止循环，不补播消退")
+	unit.free()
+	audio.free()

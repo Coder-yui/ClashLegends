@@ -42,6 +42,15 @@ func fit_indicator(size_tiles: Vector2) -> void:
 	scale.z = size_tiles.y / (2.0 * half_length)
 	position.z = (half_length - float(ground[3])) * scale.z
 
+## 主地裂纹完整矩形：宽500、长1035、中心Z430；高度保持原倍率。
+func fit_slam(size_tiles: Vector2) -> void:
+	var ground: Array = _data.frames[12][0][0]
+	var half_length := float(ground[4])
+	var half_width := float(ground[5])
+	scale.x = size_tiles.x / (2.0 * half_width)
+	scale.z = size_tiles.y / (2.0 * half_length)
+	position.z = (half_length - float(ground[3])) * scale.z
+
 func advance(delta: float) -> void:
 	seek(_age + delta)
 

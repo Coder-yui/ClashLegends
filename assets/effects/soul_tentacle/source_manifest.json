@@ -83,5 +83,20 @@
     "R_TentacleBurst (rejected ground-impact set)"
   ],
   "r_note": "User correction: R_TentacleBurst is the wrong ground-impact set. Use the native orange-red fireLine in P_TentacleAvatarActive for the requested tentacle-generation flash. No hero R body glow or recurring impact.",
-  "attached_note": "Transparent E_SpiritMat base; native Active lines/edges/base, per-emitter backface culling, original UV scrolling."
+  "attached_note": "Transparent E_SpiritMat base; native Active lines/edges/base, per-emitter backface culling, original UV scrolling.",
+  "slam_range_fit": {
+    "reference_emitter": "SpikeGroundLine2",
+    "source_full_width": 500,
+    "source_full_length": 1035,
+    "source_center_z": 430,
+    "target_tiles": [
+      2,
+      9
+    ],
+    "scale_x": 0.004,
+    "scale_y": 0.01,
+    "scale_z": 0.008695652173913044,
+    "offset_z": 0.7608695652173914,
+    "note": "User-requested ground footprint adaptation shared by all slam layers; model/base unchanged; natural glow/particle overhang is not collision"
+  }
 }

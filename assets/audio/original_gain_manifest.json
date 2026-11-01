@@ -69239,6 +69239,107 @@
         "wwiser_master_gain_db": 0.0
       },
       "note": "完整原版触手事件，不作归一化或裁剪"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleactive_onbuffactivate.wav",
+      "sha256": "0153fa5bda40d0c3a80e15b755cabe2a3bedfd1ca71bedc7ee34322f0c846a0d",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio-buff-20261101/txtp/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffActivate.txtp",
+          "txtp_sha256": "d857950a390850db32ed16ed9192964442e8457b02fbdb6451800517e2243185",
+          "event_ids": [
+            "3780517995"
+          ],
+          "media_ids": [
+            492057323,
+            205198234,
+            461184974
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Fresh wwiser -gv=0dB; vgmstream-cli -i -W 4; PCM16 without normalization; sustain loops full rendered clip"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleactive_onbuffdeactivate_r1.wav",
+      "sha256": "6742ade9f7e0ccf1f3b419a41084a20d63c3147630464df7a9aef78dd1138055",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio-buff-20261101/txtp/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffDeactivate {r1}.txtp",
+          "txtp_sha256": "331ecc934cbe849f49b48e4fd96179e5283a9e473152a4f217ec15f9dc60a280",
+          "event_ids": [
+            "866457922"
+          ],
+          "media_ids": [
+            710339984,
+            202838523,
+            390234085,
+            5149769,
+            34021794,
+            313726750
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Fresh wwiser -gv=0dB; vgmstream-cli -i -W 4; PCM16 without normalization; sustain loops full rendered clip"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleactive_onbuffdeactivate_r2.wav",
+      "sha256": "e0930e28aa4daa4130b41fe7378262c29ad462aa3a55280e58e0292b9a9ca37c",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio-buff-20261101/txtp/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffDeactivate {r2}.txtp",
+          "txtp_sha256": "aac3e950fb83819077a6f40fb222a4b873dd5257b883210e83c7d6c57406445b",
+          "event_ids": [
+            "866457922"
+          ],
+          "media_ids": [
+            710339984,
+            202838523,
+            390234085,
+            5149769,
+            34021794,
+            313726750
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Fresh wwiser -gv=0dB; vgmstream-cli -i -W 4; PCM16 without normalization; sustain loops full rendered clip"
+    },
+    {
+      "file": "assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleactive_onbuffdeactivate_r3.wav",
+      "sha256": "1cc0ca96a0a17d9e770b0a71761e82bb29e45bb3c1bcd49082a3043b02e9aaad",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio-buff-20261101/txtp/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffDeactivate {r3}.txtp",
+          "txtp_sha256": "39261e0f289321f33fa75f9850347da3b795e69eac43af33cdb4109031e415a4",
+          "event_ids": [
+            "866457922"
+          ],
+          "media_ids": [
+            710339984,
+            202838523,
+            390234085,
+            5149769,
+            34021794,
+            313726750
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "Fresh wwiser -gv=0dB; vgmstream-cli -i -W 4; PCM16 without normalization; sustain loops full rendered clip"
     }
   ]
 }

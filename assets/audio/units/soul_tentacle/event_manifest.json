@@ -216,5 +216,74 @@
     "processing": "vgmstream-cli -i; source event gain retained",
     "sha256": "97ea698c3806d19d135015ea87284cea41161d935c018709bdbb1a5ad8b6106b",
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentacleactive_onbuffactivate.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffActivate",
+    "event_id": 3780517995,
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio-buff-20261101/txtp/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffActivate.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio-buff-20261101/play_sfx_illaoi_illaoitentacleactive_onbuffactivate.float.wav",
+    "media_ids": [
+      492057323,
+      205198234,
+      461184974
+    ],
+    "duration": 48.62798185941043,
+    "processing": "Fresh wwiser -gv=0dB; vgmstream-cli -i -W 4; PCM16 without normalization; sustain loops full rendered clip",
+    "sha256": "0153fa5bda40d0c3a80e15b755cabe2a3bedfd1ca71bedc7ee34322f0c846a0d"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentacleactive_onbuffdeactivate_r1.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffDeactivate",
+    "event_id": 866457922,
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio-buff-20261101/txtp/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffDeactivate {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio-buff-20261101/play_sfx_illaoi_illaoitentacleactive_onbuffdeactivate_r1.float.wav",
+    "media_ids": [
+      710339984,
+      202838523,
+      390234085,
+      5149769,
+      34021794,
+      313726750
+    ],
+    "duration": 2.0824716553287983,
+    "processing": "Fresh wwiser -gv=0dB; vgmstream-cli -i -W 4; PCM16 without normalization; sustain loops full rendered clip",
+    "sha256": "6742ade9f7e0ccf1f3b419a41084a20d63c3147630464df7a9aef78dd1138055"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentacleactive_onbuffdeactivate_r2.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffDeactivate",
+    "event_id": 866457922,
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio-buff-20261101/txtp/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffDeactivate {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio-buff-20261101/play_sfx_illaoi_illaoitentacleactive_onbuffdeactivate_r2.float.wav",
+    "media_ids": [
+      710339984,
+      202838523,
+      390234085,
+      5149769,
+      34021794,
+      313726750
+    ],
+    "duration": 2.301292517006803,
+    "processing": "Fresh wwiser -gv=0dB; vgmstream-cli -i -W 4; PCM16 without normalization; sustain loops full rendered clip",
+    "sha256": "e0930e28aa4daa4130b41fe7378262c29ad462aa3a55280e58e0292b9a9ca37c"
+  },
+  {
+    "file": "play_sfx_illaoi_illaoitentacleactive_onbuffdeactivate_r3.wav",
+    "event": "Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffDeactivate",
+    "event_id": 866457922,
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio-buff-20261101/txtp/Play_sfx_Illaoi_IllaoiTentacleActive_OnBuffDeactivate {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/audio-buff-20261101/play_sfx_illaoi_illaoitentacleactive_onbuffdeactivate_r3.float.wav",
+    "media_ids": [
+      710339984,
+      202838523,
+      390234085,
+      5149769,
+      34021794,
+      313726750
+    ],
+    "duration": 2.3510204081632655,
+    "processing": "Fresh wwiser -gv=0dB; vgmstream-cli -i -W 4; PCM16 without normalization; sustain loops full rendered clip",
+    "sha256": "1cc0ca96a0a17d9e770b0a71761e82bb29e45bb3c1bcd49082a3043b02e9aaad"
   }
 ]

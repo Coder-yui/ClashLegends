@@ -4,7 +4,7 @@
 
 触手外观使用原生P_TentacleAvatarActive附着网格层，保留纹理、滚动、透明度、白色反射贴图对应的视角项及源深度标志。原模型的亮色基础贴图不直接作为最终外观；原版MatOverride层由透明基础材质替代，光边与主体来自附着层。
 
-出生动画开始即显示P_TentacleBaseActive常驻底座及完整Avatar三层，不使用出生前P_TentacleSpawn；普通IdleAngry也不切换休眠材质。拍地节点只播放P_TentacleCas。过界信仰起始只播放P_TentacleAvatarActive中的fireLine橙红生成闪光：源SRU_Chaos_fireLine纹理、白色调制，延迟0.15秒、粒子持续0.4秒。独立抽取此层，不重复叠加触手附着网格，不播放R_TentacleBurst的烟尘/地面冲击，也不接英雄R_impact或R_IllaoiBuff。普通出生仅保留常驻层，不额外播放此瞬时闪光。模型及上述粒子保留原生XYZ比例，按原版拍击宽200映射到2格，粒子统一缩放0.01，模型额外保留源skinScale=0.9。采样播放读取攻击进度。
+出生动画开始即显示P_TentacleBaseActive常驻底座及完整Avatar三层，不使用出生前P_TentacleSpawn；普通IdleAngry也不切换休眠材质。拍地节点只播放P_TentacleCas。过界信仰起始只播放P_TentacleAvatarActive中的fireLine橙红生成闪光：源SRU_Chaos_fireLine纹理、白色调制，延迟0.15秒、粒子持续0.4秒。独立抽取此层，不重复叠加触手附着网格，不播放R_TentacleBurst的烟尘/地面冲击，也不接英雄R_impact或R_IllaoiBuff。普通出生仅保留常驻层，不额外播放此瞬时闪光。模型、常驻及开启粒子按原版拍击宽200映射到2格，保持0.01等比，模型额外保留源skinScale=0.9。拍地系统按用户要求独立映射地面范围：以SpikeGroundLine2完整矩形（宽500、长1035、中心Z430）为基准，XZ缩放为0.004及9/1035，Z平移约0.76087格，使主地裂纹覆盖X=[-1,1]、Z=[0,9]；11层共用该映射保持相对位置，Y仍为0.01。其他动态扫光、烟雾及透明光晕可自然越过主矩形，不作碰撞依据。采样播放读取攻击进度。
 
 范围预警使用独立原版P_IndicatorBLU/Red系统，各保留GroundLines、Side1、Side2三层，蓝红贴图与侧边颜色分别来自源件。按本地观察方显示友军蓝、敌军红，翻转视角随之切换。提示方向在起手锁定，拍击后消失。
 

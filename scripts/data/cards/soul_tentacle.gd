@@ -27,13 +27,16 @@ static func definition() -> Dictionary:
 				"deploy": "illaoiminion_spawn",
 				"idle": "illaoiminion_idleangry", "attack": "illaoiminion_attack1", "death": "illaoiminion_death",
 				"death_duration": 0.8,
-				# 源动画图 mCascadeBlendValue 和显式 TimeBlendData 均为0。
-				"transition_blends": {"locomotion": 0.0, "action_in": 0.0, "action_out": 0.0, "attack": 0.0, "sequence": 0.0, "death": 0.0, "model_swap": 0.0},
+				# 项目适配：任意待机相位平滑切入，不改变权威前摇。
+				"transition_blends": {"locomotion": 0.16, "action_in": 0.12, "action_out": 0.16, "attack": 0.12, "sequence": 0.12, "death": 0.08, "model_swap": 0.0},
 			},
 		},
 		# BEGIN IMPORTED AUDIO soul_tentacle
 		"audio": {
 			"events": {
+				"active_buff:sustain": {"pool": ["res://assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleactive_onbuffactivate.wav"], "volume_db": 0.0, "bus": "Combat"},
+				"active_buff:end": {"pool": ["res://assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleactive_onbuffdeactivate_r1.wav", "res://assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleactive_onbuffdeactivate_r2.wav", "res://assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentacleactive_onbuffdeactivate_r3.wav"], "volume_db": 0.0, "bus": "Combat"},
+
 				"deploy:start": {
 					"pool": [
 						"res://assets/audio/units/soul_tentacle/play_sfx_illaoi_illaoitentaclespawn_buffactivate_r1.wav",

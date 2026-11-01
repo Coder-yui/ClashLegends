@@ -13,8 +13,8 @@
   ],
   "hit_frame": 22,
   "source_fps": 30,
-  "card_art_source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/灵魂触手/card-native2.png",
-  "card_art_sha256": "d584fd91b2c3e7de64e9177c518ed0cc6f51f7def9e28c30665bb6f3c3f38d35",
+  "card_art_source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/3D摄影棚/shots/灵魂触手_20261101_222822.png",
+  "card_art_sha256": "ab360f69aae3721db3db2ce71417e7439b3dbd32259978cc6566926e75b83277",
   "material_note": "原版附着网格层与白色反射参数；MatOverride黑贴图用透明基础层替代。",
   "scale_basis": {
     "source": "data/characters/illaoi/illaoi.bin: IllaoiPassive.PassiveTentacleWidth",
@@ -34,6 +34,16 @@
       0
     ],
     "deploy": "source 76/30s compressed to authority 1s; no continuation",
-    "death": "source 49/30s compressed to project 0.8s"
+    "death": "source 49/30s compressed to project 0.8s",
+    "project_transition_blends": {
+      "action_in": 0.12,
+      "action_out": 0.16,
+      "locomotion": 0.16,
+      "attack": 0.12,
+      "sequence": 0.12,
+      "death": 0.08,
+      "model_swap": 0.0
+    },
+    "adaptation_note": "2026-11-01 user requested smooth interruption at any idle phase; source zero blends retained as source facts only"
   }
 }

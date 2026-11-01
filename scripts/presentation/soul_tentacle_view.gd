@@ -25,6 +25,8 @@ func _ready() -> void:
 		add_child(player)
 		player.load_kind(kind)
 		player.setup_native(native_scale)
+		if kind == "slam":
+			player.fit_slam(Vector2(float(_stats.fixed_attack_width), float(_stats.fixed_attack_length)) / 40.0)
 		if kind.begins_with("indicator_"):
 			player.fit_indicator(Vector2(float(_stats.fixed_attack_width), float(_stats.fixed_attack_length)) / 40.0)
 		player.visible = false
