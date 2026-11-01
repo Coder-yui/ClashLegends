@@ -17,6 +17,7 @@ var _deck_status: Label
 var _deck_average_label: Label
 var _deck_ui_root: Control
 var _deck_pool_grid: GridContainer
+var _deck_pool_scroll: ScrollContainer
 var _filter_buttons: Array[Button] = []
 var _deck_sort_kind: Button
 var _deck_sort_direction: Button
@@ -55,6 +56,15 @@ func _make_menu_button(text: String) -> Button:
 
 func _deck_style(_background: Color, border: Color, _border_width: int = 2) -> StyleBoxTexture:
 	return UIMaterials.panel(border.lerp(Color.WHITE, 0.6))
+
+func _quiet_style(background: Color, border: Color = Color("42565c"), width: int = 1, padding: float = 10.0) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = background
+	style.border_color = border
+	style.set_border_width_all(width)
+	style.set_corner_radius_all(5)
+	style.set_content_margin_all(padding)
+	return style
 
 func _make_deck_card_button(card_id: String, is_slot: bool) -> Button:
 	var button := Button.new()
@@ -199,6 +209,7 @@ func _pick_deck_ui(after_start: Callable) -> void:
 		_filter_buttons.append(button)
 	_filter_buttons[0].set_pressed_no_signal(true)
 	var scroll := ScrollContainer.new()
+	_deck_pool_scroll = scroll
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.custom_minimum_size = Vector2(0.0, 160.0)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -293,19 +304,19 @@ func _randomize_deck() -> void:
 
 func _create_deck_context_popup(root: Control) -> void:
 	_deck_context_popup = PanelContainer.new()
-	_deck_context_popup.custom_minimum_size = Vector2(132.0, 96.0)
-	_deck_context_popup.size = Vector2(132.0, 96.0)
+	_deck_context_popup.custom_minimum_size = Vector2(140.0, 84.0)
+	_deck_context_popup.size = Vector2(140.0, 84.0)
 	_deck_context_popup.z_index = 50
-	_deck_context_popup.add_theme_stylebox_override("panel", _deck_style(UIPalette.PANEL, UIPalette.GOLD, 3))
+	_deck_context_popup.add_theme_stylebox_override("panel", UIMaterials.fine_panel(Color(.82, .88, .92), 5))
 	root.add_child(_deck_context_popup)
 	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 7)
-	margin.add_theme_constant_override("margin_right", 7)
-	margin.add_theme_constant_override("margin_top", 6)
-	margin.add_theme_constant_override("margin_bottom", 6)
+	margin.add_theme_constant_override("margin_left", 0)
+	margin.add_theme_constant_override("margin_right", 0)
+	margin.add_theme_constant_override("margin_top", 0)
+	margin.add_theme_constant_override("margin_bottom", 0)
 	_deck_context_popup.add_child(margin)
 	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 5)
+	box.add_theme_constant_override("separation", 2)
 	margin.add_child(box)
 	_deck_context_info = _make_deck_action_button("信息", UIPalette.PANEL_LIGHT, UIPalette.TEAL)
 	_deck_context_info.pressed.connect(_open_selected_card_info)
@@ -315,17 +326,20 @@ func _create_deck_context_popup(root: Control) -> void:
 	box.add_child(_deck_context_action)
 	_deck_context_popup.visible = false
 
-func _make_deck_action_button(text: String, background: Color, border: Color) -> Button:
+func _make_deck_action_button(text: String, _background: Color, _border: Color) -> Button:
 	var button := Button.new()
 	button.text = text
-	button.custom_minimum_size = Vector2(116.0, 38.0)
+	button.custom_minimum_size = Vector2(128.0, 36.0)
 	button.focus_mode = Control.FOCUS_NONE
 	button.add_theme_font_override("font", CardArt.ui_font())
 	button.add_theme_font_size_override("font_size", 17)
-	button.add_theme_stylebox_override("normal", _deck_style(background, border, 2))
-	button.add_theme_stylebox_override("hover", _deck_style(background.lightened(0.12), border.lightened(0.12), 3))
-	button.add_theme_stylebox_override("pressed", _deck_style(background.darkened(0.12), UIPalette.GOLD, 3))
-	button.add_theme_stylebox_override("disabled", _deck_style(Color(0.08, 0.10, 0.14), Color(0.28, 0.32, 0.38), 2))
+	button.add_theme_color_override("font_color", UIPalette.TEXT)
+	button.add_theme_color_override("font_hover_color", UIPalette.GOLD_LIGHT)
+	button.add_theme_color_override("font_disabled_color", Color("65767b"))
+	button.add_theme_stylebox_override("normal", _quiet_style(Color(0, 0, 0, 0), Color.TRANSPARENT, 0, 6))
+	button.add_theme_stylebox_override("hover", _quiet_style(Color("233b44"), Color.TRANSPARENT, 0, 6))
+	button.add_theme_stylebox_override("pressed", _quiet_style(Color("304b50"), Color.TRANSPARENT, 0, 6))
+	button.add_theme_stylebox_override("disabled", _quiet_style(Color(0, 0, 0, 0), Color.TRANSPARENT, 0, 6))
 	return button
 
 func _on_deck_pool_card_pressed(card_id: String) -> void:
@@ -364,11 +378,14 @@ func _show_deck_context(card_id: String, slot_index: int, from_pool: bool, ancho
 	if from_pool:
 		_deck_context_action.disabled = _deck_selected.has(card_id) or _selected_card_count() >= 8
 		_deck_context_action.tooltip_text = "已在卡组中" if _deck_selected.has(card_id) else ("卡组已满" if _selected_card_count() >= 8 else "添加到下一个空卡位")
-		_deck_context_action.add_theme_stylebox_override("normal", _deck_style(Color(0.08, 0.55, 0.30), Color(0.38, 0.95, 0.58), 2))
+		_deck_context_action.add_theme_color_override("font_color", Color("b8d4c6"))
 	else:
 		_deck_context_action.disabled = false
 		_deck_context_action.tooltip_text = "从卡组移除"
-		_deck_context_action.add_theme_stylebox_override("normal", _deck_style(Color(0.70, 0.16, 0.18), Color(1.0, 0.43, 0.43), 2))
+		_deck_context_action.add_theme_color_override("font_color", Color("d8aaa3"))
+	if from_pool and _deck_pool_scroll != null:
+		_deck_pool_scroll.ensure_control_visible(anchor)
+	set_process(true)
 	_deck_context_popup.visible = true
 	_deck_context_popup.move_to_front()
 	_update_deck_ui()
@@ -474,18 +491,37 @@ func _refresh_deck_pool() -> void:
 		_deck_pool_grid.add_child(card_button)
 		_deck_toggles[card_id] = card_button
 
+func _process(_delta: float) -> void:
+	if _deck_context_popup != null and _deck_context_popup.visible:
+		_position_deck_context_popup()
+
 func _position_deck_context_popup() -> void:
-	if _deck_context_popup == null or not _deck_context_popup.visible or _deck_context_anchor == null or not is_instance_valid(_deck_context_anchor) or _deck_ui_root == null:
+	if _deck_context_popup == null or not _deck_context_popup.visible or _deck_ui_root == null:
+		return
+	if not is_instance_valid(_deck_context_anchor) or not _deck_context_anchor.is_visible_in_tree():
+		_hide_deck_context()
 		return
 	var anchor_rect := _deck_context_anchor.get_global_rect()
 	var root_rect := _deck_ui_root.get_global_rect()
+	var bounds := root_rect.grow(-8)
+	bounds.size.y -= 68.0
+	if _deck_context_from_pool and is_instance_valid(_deck_pool_scroll):
+		bounds = bounds.intersection(_deck_pool_scroll.get_global_rect())
+		# Once clipped, the original trigger is no longer a valid visible anchor.
+		if not bounds.grow(1).encloses(anchor_rect):
+			_hide_deck_context()
+			_update_deck_ui()
+			return
 	var popup_size := _deck_context_popup.size
-	var x := anchor_rect.position.x - root_rect.position.x + (anchor_rect.size.x - popup_size.x) * 0.5
-	var y := anchor_rect.end.y - root_rect.position.y + 5.0
-	x = clampf(x, 8.0, maxf(8.0, root_rect.size.x - popup_size.x - 8.0))
-	if y + popup_size.y > root_rect.size.y - 76.0:
-		y = anchor_rect.position.y - root_rect.position.y - popup_size.y - 5.0
-	_deck_context_popup.position = Vector2(x, maxf(y, 8.0))
+	var x := clampf(anchor_rect.get_center().x - popup_size.x * .5, bounds.position.x, maxf(bounds.position.x, bounds.end.x - popup_size.x))
+	var y := anchor_rect.end.y + 6.0
+	if y + popup_size.y > bounds.end.y:
+		y = anchor_rect.position.y - popup_size.y - 6.0
+	if y < bounds.position.y:
+		_hide_deck_context()
+		_update_deck_ui()
+		return
+	_deck_context_popup.position = Vector2(x, y) - root_rect.position
 
 func _perform_deck_context_action() -> void:
 	if _deck_context_card_id.is_empty():
@@ -505,6 +541,7 @@ func _perform_deck_context_action() -> void:
 	_update_deck_ui()
 
 func _hide_deck_context() -> void:
+	set_process(false)
 	_deck_context_card_id = ""
 	_deck_context_slot = -1
 	_deck_context_from_pool = false
@@ -553,7 +590,7 @@ func _open_card_info(card_id: String) -> void:
 	header.add_theme_constant_override("separation", 18)
 	layout.add_child(header)
 	var preview := _make_deck_card_button(card_id, false)
-	CardArt.apply_frame(preview, 224.0)
+	CardArt.apply_frame(preview, 184.0)
 	CardArt.apply_to_button(preview, card_id, stats.name, stats.cost, false, accent)
 	preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	header.add_child(preview)
@@ -564,16 +601,18 @@ func _open_card_info(card_id: String) -> void:
 	header.add_child(identity)
 	var name_label := Label.new()
 	name_label.text = String(stats.name)
+	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	name_label.add_theme_font_override("font", CardArt.ui_font())
-	name_label.add_theme_font_size_override("font_size", 34)
+	name_label.add_theme_font_size_override("font_size", 30)
 	name_label.add_theme_color_override("font_color", UIPalette.GOLD_LIGHT)
 	name_label.add_theme_color_override("font_outline_color", Color(0.0, 0.02, 0.06))
-	name_label.add_theme_constant_override("outline_size", 5)
+	name_label.add_theme_constant_override("outline_size", 2)
 	identity.add_child(name_label)
 	var identity_line := Label.new()
 	identity_line.text = "法术　·　动态费用（上一张卡本身费用）" if CardPlayHistory.is_mirror(card_id) else "%s　·　%d 费" % [CardDetails.type_name(String(stats.get("type", "unit")), stats), int(stats.cost)]
+	identity_line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	identity_line.add_theme_font_override("font", CardArt.ui_font())
-	identity_line.add_theme_font_size_override("font_size", 19)
+	identity_line.add_theme_font_size_override("font_size", 16)
 	identity_line.add_theme_color_override("font_color", UIPalette.MUTED)
 	identity.add_child(identity_line)
 	# 皮肤入口固定在信息面板右上角，默认选择原皮；未来只需在卡牌数据中
@@ -589,10 +628,9 @@ func _open_card_info(card_id: String) -> void:
 	layout.add_child(separator)
 	var details := VBoxContainer.new()
 	details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	details.add_theme_constant_override("separation", 7)
+	details.add_theme_constant_override("separation", 10)
 	# 详情内容控制弹窗自身高度；当前属性量可完整放下，不再用会被压成零高的滚动容器。
 	layout.add_child(details)
-	details.add_child(_make_card_info_heading("简介"))
 	details.add_child(_make_card_info_body(CardDetails.brief_description(stats)))
 	details.add_child(_make_card_info_heading("属性"))
 	details.add_child(_make_card_attribute_grid(stats))
@@ -652,6 +690,7 @@ func _open_card_info(card_id: String) -> void:
 		_deck_info_active_option.select(selected_skill)
 		_deck_info_active_option.disabled = skills.size() <= 1
 		_deck_info_active_option.item_selected.connect(_on_info_active_skill_selected.bind(card_id))
+	if _deck_info_active_option.disabled: _hide_option_arrow(_deck_info_active_option)
 	details.add_child(_deck_info_active_option)
 	if not skills.is_empty():
 		_deck_info_active_rules = _make_active_skill_rules(skills[clampi(int(_active_skill_choices.get(card_id, 0)), 0, skills.size() - 1)])
@@ -659,7 +698,10 @@ func _open_card_info(card_id: String) -> void:
 	_deck_info_active_description = _make_card_info_body(CardDetails.active_choice_description(card_id, int(_active_skill_choices.get(card_id, 0))))
 	details.add_child(_deck_info_active_description)
 	var close := _make_deck_action_button("返回备战", UIPalette.PANEL_LIGHT, UIPalette.TEAL)
-	close.custom_minimum_size = Vector2(220.0, 48.0)
+	close.custom_minimum_size = Vector2(220.0, 46.0)
+	close.add_theme_stylebox_override("normal", UIMaterials.fine_panel(Color(.94, .96, .90)))
+	close.add_theme_stylebox_override("hover", UIMaterials.fine_panel(Color(1.15, 1.12, .96)))
+	close.add_theme_stylebox_override("pressed", UIMaterials.fine_panel(Color(.72, .82, .84)))
 	close.pressed.connect(_close_card_info)
 	var close_center := CenterContainer.new()
 	close_center.add_child(close)
@@ -683,6 +725,8 @@ func _make_card_skin_option(card_id: String, stats: Dictionary) -> OptionButton:
 			selected_index = i
 	_skin_choices[card_id] = String(skins[selected_index].get("id", "default"))
 	option.select(selected_index)
+	option.disabled = skins.size() <= 1
+	if option.disabled: _hide_option_arrow(option)
 	option.item_selected.connect(_on_info_skin_selected.bind(card_id, skins))
 	return option
 
@@ -701,7 +745,7 @@ func _make_card_info_heading(text: String) -> Label:
 	var label := Label.new()
 	label.text = text
 	label.add_theme_font_override("font", CardArt.ui_font())
-	label.add_theme_font_size_override("font_size", 21)
+	label.add_theme_font_size_override("font_size", 18)
 	label.add_theme_color_override("font_color", UIPalette.GOLD)
 	return label
 
@@ -731,25 +775,28 @@ func _make_card_attribute_rows(attributes: Array[Dictionary]) -> Control:
 	var grid := GridContainer.new()
 	grid.columns = 2
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	grid.add_theme_constant_override("h_separation", 10)
-	grid.add_theme_constant_override("v_separation", 6)
+	grid.add_theme_constant_override("h_separation", 24)
+	grid.add_theme_constant_override("v_separation", 0)
 	for attribute in attributes:
 		var attribute_value := String(attribute.get("value", ""))
-		if attribute_value.is_empty():
-			continue
+		if attribute_value.is_empty(): continue
 		var item := PanelContainer.new()
-		item.custom_minimum_size = Vector2(0.0, 32.0)
 		item.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		item.add_theme_stylebox_override("panel", _deck_style(UIPalette.PANEL, UIPalette.LINE, 1))
-		var label := Label.new()
-		label.text = "%s：%s" % [String(attribute.get("name", "")), attribute_value]
-		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		label.add_theme_font_override("font", CardArt.ui_font())
-		label.add_theme_font_size_override("font_size", 15)
-		label.add_theme_color_override("font_color", UIPalette.TEXT)
-		label.add_theme_color_override("font_outline_color", Color(0.0, 0.03, 0.08, 0.70))
-		label.add_theme_constant_override("outline_size", 2)
-		item.add_child(label)
+		var style := _quiet_style(Color.TRANSPARENT, Color(0.44, .56, .56, .22), 0, 0)
+		style.border_width_bottom = 1
+		style.content_margin_top = 7
+		style.content_margin_bottom = 7
+		item.add_theme_stylebox_override("panel", style)
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 12)
+		item.add_child(row)
+		var label := _section_label(String(attribute.get("name", "")), 14, UIPalette.MUTED)
+		row.add_child(label)
+		var value := _section_label(attribute_value, 15, UIPalette.TEXT)
+		value.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		value.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		value.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		row.add_child(value)
 		grid.add_child(item)
 	return grid
 
@@ -761,7 +808,7 @@ func _make_card_passive_row(name: String, description: String) -> Label:
 func _make_active_skill_rules(skill: Dictionary) -> PanelContainer:
 	var panel := PanelContainer.new()
 	panel.custom_minimum_size = Vector2(0.0, 38.0)
-	panel.add_theme_stylebox_override("panel", _deck_style(UIPalette.PANEL, UIPalette.LINE, 1))
+	panel.add_theme_stylebox_override("panel", _quiet_style(Color.TRANSPARENT, Color.TRANSPARENT, 0, 0))
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 8)
@@ -782,7 +829,7 @@ func _make_active_skill_rule_label(text: String) -> Label:
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.add_theme_font_override("font", CardArt.ui_font())
-	label.add_theme_font_size_override("font_size", 16)
+	label.add_theme_font_size_override("font_size", 14)
 	return label
 
 func _update_active_skill_rules(skill: Dictionary) -> void:
@@ -924,6 +971,7 @@ func _clear_deck_ui() -> void:
 	_deck_average_label = null
 	_deck_ui_root = null
 	_deck_pool_grid = null
+	_deck_pool_scroll = null
 	_filter_buttons.clear()
 	_deck_sort_kind = null
 	_deck_sort_direction = null
@@ -939,13 +987,21 @@ func _clear_deck_ui() -> void:
 	queue_free()
 
 func _style_deck_option(option: OptionButton) -> void:
-	# Arrow lives inside the metal bevel, with a separate text reserve.
-	option.add_theme_constant_override("arrow_margin", 18)
+	option.add_theme_constant_override("arrow_margin", 12)
 	option.add_theme_constant_override("h_separation", 12)
-	option.add_theme_stylebox_override("normal", _deck_style(UIPalette.PANEL, UIPalette.LINE, 1))
-	option.add_theme_stylebox_override("hover", _deck_style(UIPalette.PANEL_LIGHT, UIPalette.TEAL, 1))
-	option.add_theme_stylebox_override("pressed", _deck_style(UIPalette.INK, UIPalette.GOLD, 1))
-	option.add_theme_stylebox_override("disabled", _deck_style(UIPalette.PANEL, UIPalette.LINE, 1))
+	option.add_theme_stylebox_override("normal", _quiet_style(Color("10232d")))
+	option.add_theme_stylebox_override("hover", _quiet_style(Color("1b343d"), Color("8c947f")))
+	option.add_theme_stylebox_override("pressed", _quiet_style(Color("132a33"), UIPalette.GOLD))
+	option.add_theme_stylebox_override("disabled", _quiet_style(Color("10232d"), Color("34494f")))
 	option.add_theme_color_override("font_color", UIPalette.TEXT)
-	option.get_popup().add_theme_stylebox_override("panel", _deck_style(UIPalette.INK, UIPalette.GOLD, 1))
-	option.get_popup().add_theme_stylebox_override("hover", _deck_style(UIPalette.PANEL_LIGHT, UIPalette.TEAL, 1))
+	option.add_theme_color_override("font_disabled_color", UIPalette.TEXT)
+	var popup := option.get_popup()
+	popup.add_theme_stylebox_override("panel", _quiet_style(Color("10212b"), Color("52686c"), 1, 8))
+	popup.add_theme_stylebox_override("hover", _quiet_style(Color("263e46"), Color.TRANSPARENT, 0, 6))
+	popup.add_theme_font_override("font", CardArt.ui_font())
+	popup.add_theme_font_size_override("font_size", 16)
+	popup.add_theme_constant_override("v_separation", 12)
+
+func _hide_option_arrow(option: OptionButton) -> void:
+	var blank := Image.create(1, 1, false, Image.FORMAT_RGBA8)
+	option.add_theme_icon_override("arrow", ImageTexture.create_from_image(blank))

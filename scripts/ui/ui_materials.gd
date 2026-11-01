@@ -6,6 +6,7 @@ const RUNE := preload("res://assets/ui/materials/active_rune.png")
 const PANEL := preload("res://assets/ui/materials/slate_panel.png")
 const SLOT_FRAME := preload("res://assets/ui/materials/active_slot_frame.png")
 static var _slot_frame: Texture2D
+static var _fine_panel: Texture2D
 static var _panel: Texture2D
 static var _rune: Texture2D
 
@@ -41,3 +42,17 @@ static func slot_frame() -> Texture2D:
 		source.generate_mipmaps()
 		_slot_frame = ImageTexture.create_from_image(source)
 	return _slot_frame
+
+## Small controls use a narrow physical rim, not the large panel's 16px bevel.
+static func fine_panel(tint: Color = Color.WHITE, content_margin: float = 8.0) -> StyleBoxTexture:
+	if _fine_panel == null:
+		var source := PANEL.get_image()
+		if source.is_compressed(): source.decompress()
+		source.resize(64, 64, Image.INTERPOLATE_LANCZOS)
+		_fine_panel = ImageTexture.create_from_image(source)
+	var style := StyleBoxTexture.new()
+	style.texture = _fine_panel
+	style.set_texture_margin_all(4)
+	style.set_content_margin_all(content_margin)
+	style.modulate_color = tint
+	return style

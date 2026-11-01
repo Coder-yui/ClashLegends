@@ -65,6 +65,7 @@ func run(harness: Object, main: Node2D) -> void:
 	builder._filter_buttons[3].emit_signal("pressed")
 	_expect(builder._deck_pool_sort == "name_desc" and builder._filter_buttons[3].button_pressed and builder._deck_toggles.has("tombstone") and not builder._deck_toggles.has("garen"), "类型按钮保留排序并准确切换建筑卡池")
 	builder._filter_buttons[0].emit_signal("pressed")
+	await _check_context_scroll(builder)
 	builder._on_deck_sort_selected(0)
 	builder._on_deck_pool_card_pressed("garen")
 	_expect(
@@ -120,7 +121,7 @@ func run(harness: Object, main: Node2D) -> void:
 			_expect(member.attributes.any(func(row): return row.name == "生命" and row.value == CardDetails.format_number(roundf(float(real.hp)))) and member.attributes.any(func(row): return row.name == "单次伤害" and row.value == CardDetails.format_number(roundf(float(real.damage)))), "成员详情读取真实每只生命与伤害：" + member.id)
 		if card_id == "heavy_minion_squad" and member_scroll != null:
 			var displayed := "\n".join(PackedStringArray(member_scroll.find_children("*", "Label", true, false).map(func(label): return label.text)))
-			_expect(displayed.contains("超级兵 ×1（每只）") and displayed.contains("炮车兵 ×1（每只）") and displayed.contains("生命：720") and displayed.contains("生命：390") and displayed.contains("单次伤害：72") and displayed.contains("单次伤害：58"), "备战真实详情同时显示重装部队两个不同成员的正确数值")
+			_expect(displayed.contains("超级兵 ×1（每只）") and displayed.contains("炮车兵 ×1（每只）") and displayed.contains("生命\n720") and displayed.contains("生命\n390") and displayed.contains("单次伤害\n72") and displayed.contains("单次伤害\n58"), "备战真实详情同时显示重装部队两个不同成员的正确数值")
 	_expect(CardArt.skill_icon({"name": "无素材技能"}) == null, "缺省图标仍返回空纹理以保留文字占位能力")
 	builder._close_card_info()
 	builder._on_deck_slot_pressed(0)
@@ -334,3 +335,36 @@ func _check_background_resources() -> void:
 	var cancelled := MatchResources.new()
 	await cancelled.prepare_async(["corrosion"], _main.get_tree(), func(): return true)
 	_expect(cancelled.threaded_requests == 0 and cancelled._pending.is_empty(), "取消准备后不再发出后台请求")
+
+func _check_context_scroll(builder: DeckBuilder) -> void:
+	builder._on_deck_sort_selected(1)
+	builder._deck_pool_scroll.scroll_vertical = 0
+	for i in 3: await _main.get_tree().process_frame
+	var anchor := builder._deck_pool_grid.get_child(4) as Button
+	var id := String(anchor.get_meta("card_id"))
+	builder._on_deck_pool_card_pressed(id)
+	for i in 3: await _main.get_tree().process_frame
+	var before := builder._deck_context_popup.global_position
+	var anchor_before := anchor.global_position
+	_expect(builder._deck_context_popup.visible, "卡池中的完整可见卡牌拥有操作菜单")
+	builder._deck_pool_scroll.scroll_vertical += 32
+	for i in 3: await _main.get_tree().process_frame
+	_expect(builder._deck_context_popup.visible and (builder._deck_context_popup.global_position - before).is_equal_approx(anchor.global_position - anchor_before), "向下滚动时菜单与选中卡牌同步移动")
+	builder._deck_pool_scroll.scroll_vertical -= 24
+	for i in 3: await _main.get_tree().process_frame
+	_expect(builder._deck_context_popup.visible and (builder._deck_context_popup.global_position - before).is_equal_approx(anchor.global_position - anchor_before), "向上滚动时菜单仍保持相同锚点距离")
+	builder._deck_pool_scroll.scroll_vertical = 420
+	for i in 3: await _main.get_tree().process_frame
+	_expect(not builder._deck_context_popup.visible and builder._deck_context_card_id.is_empty(), "卡牌移出可视区域时关闭菜单并清理选择身份")
+	builder._on_deck_pool_card_pressed(id)
+	for i in 3: await _main.get_tree().process_frame
+	_expect(builder._deck_context_popup.visible and builder._deck_pool_scroll.get_global_rect().encloses(anchor.get_global_rect()), "程序选择或再次选择会先将卡牌滚入可视区域")
+	var lower := builder._deck_pool_grid.get_child(8) as Button
+	builder._deck_pool_scroll.scroll_vertical += roundi(lower.get_global_rect().end.y - builder._deck_pool_scroll.get_global_rect().end.y)
+	for i in 3: await _main.get_tree().process_frame
+	builder._on_deck_pool_card_pressed(String(lower.get_meta("card_id")))
+	for i in 3: await _main.get_tree().process_frame
+	_expect(builder._deck_context_popup.visible and builder._deck_context_popup.get_global_rect().end.y < lower.get_global_rect().position.y and builder._deck_pool_scroll.get_global_rect().encloses(builder._deck_context_popup.get_global_rect()), "卡池底部空间不足时菜单翻到卡牌上方且不盖住底部主按钮")
+	builder._on_deck_filter_selected(3)
+	_expect(not builder._deck_context_popup.visible and builder._deck_context_anchor == null, "更换筛选后不会引用旧卡牌菜单锚点")
+	builder._on_deck_filter_selected(0)

@@ -2,6 +2,7 @@ extends SceneTree
 ## Actual production UI/arena rendering, bounded to two prepared unit resources.
 ## Godot --path . --script tools/capture/capture_ui_art.gd -- --output=<absolute directory> [--size=720x1280]
 var output := ""
+var details_only := false
 var main: Node2D
 var dimensions := Vector2i(720, 1280)
 const DECK := ["garen", "ashe", "final_spark", "soul_tentacle", "mirror", "heal", "medium_lightning", "kayle"]
@@ -15,6 +16,7 @@ func capture() -> void:
 		quit(1)
 		return
 	for argument in OS.get_cmdline_user_args():
+		if argument == "--details-only": details_only = true
 		if argument.begins_with("--output="): output = argument.trim_prefix("--output=")
 		if argument.begins_with("--size="):
 			var parts := argument.trim_prefix("--size=").split("x")
@@ -25,6 +27,7 @@ func capture() -> void:
 		return
 	DirAccess.make_dir_recursive_absolute(output)
 	set_meta("display_window_initialized", true)
+	root.gui_embed_subwindows = true
 	root.size = dimensions
 	root.content_scale_size = Vector2i(720, 1280)
 	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
@@ -67,12 +70,45 @@ func capture() -> void:
 	await save_frame("deck_context")
 	builder._open_selected_card_info()
 	await save_frame("deck_details")
+	builder._deck_info_active_option.show_popup()
+	await save_frame("details_skill_menu")
+	builder._deck_info_active_option.get_popup().hide()
 	builder._close_card_info()
+	for id in ["melee_minion", "gnar", "heavy_minion_squad", "final_spark", "mirror"]:
+		assert(CardDB.has_card(id), "Detail capture card missing: " + id)
+		builder._open_card_info(id)
+		await save_frame("details_" + id)
+		builder._close_card_info()
+	builder._deck_selected = []
+	builder._refresh_deck_pool()
+	builder._update_deck_ui()
+	builder._deck_pool_scroll.scroll_vertical = 0
+	for i in 3: await process_frame
+	var menu_card := builder._deck_pool_grid.get_child(4) as Button
+	builder._on_deck_pool_card_pressed(String(menu_card.get_meta("card_id")))
+	await save_frame("context_before_scroll")
+	builder._deck_pool_scroll.scroll_vertical += 32
+	await save_frame("context_after_scroll")
+	builder._deck_pool_scroll.scroll_vertical = 420
+	await save_frame("context_offscreen")
+	var lower_card := builder._deck_pool_grid.get_child(8) as Button
+	builder._deck_pool_scroll.scroll_vertical += roundi(lower_card.get_global_rect().end.y - builder._deck_pool_scroll.get_global_rect().end.y)
+	for i in 3: await process_frame
+	builder._on_deck_pool_card_pressed(String(lower_card.get_meta("card_id")))
+	await save_frame("context_flipped")
+	builder._hide_deck_context()
+	builder._deck_pool_scroll.scroll_vertical = 0
 	builder._deck_selected = []
 	builder._refresh_deck_pool()
 	builder._update_deck_ui()
 	await save_frame("deck_empty")
 	builder._clear_deck_ui()
+	if details_only:
+		main.free()
+		await process_frame
+		print("[UI_ART] details completed ", dimensions)
+		quit()
+		return
 	main._resources.prepare(["garen", "ashe"])
 	main._battle_loading = true
 	main._start_local()
