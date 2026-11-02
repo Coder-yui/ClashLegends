@@ -98,7 +98,7 @@ static func _configured_animation_names(animations: Dictionary) -> Array[StringN
 		for edge in transitions:
 			var source := String(edge).get_slice(">", 0)
 			# 冒号来源是由CardValidator校验的表现事件，不是模型中的动画片段。
-			if not source.contains(":") and source not in ["attack", "skill", "deploy", "transform", "idle", "move", "locomotion"]:
+			if not source.contains(":") and source not in ["attack", "skill", "deploy", "transform", "idle", "move", "locomotion", "dormant"]:
 				_append_animation_names(names, source)
 		for value in (transitions as Dictionary).values():
 			if value is Dictionary:

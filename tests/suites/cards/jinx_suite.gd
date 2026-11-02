@@ -64,6 +64,7 @@ func run(harness: Object, main: Node2D) -> void:
 	var natural := _spawn_ready_unit("target_dummy", 1, Vector2(500, 1100))
 	source.record_structure_attack(natural)
 	natural._lifespan_left = 0.05
+	natural.hp = 1
 	natural._tick_building_lifetime(0.05)
 	_expect(source.structure_haste_visual(), "建筑被命中后3秒内自然到期触发助攻")
 	source.buffs.clear_family(&"structure_haste")
@@ -80,6 +81,7 @@ func run(harness: Object, main: Node2D) -> void:
 		if marked: source.record_structure_attack(expired)
 		main.runtime._sim_tick_id += 61
 		expired._lifespan_left = 0.05
+		expired.hp = 1
 		expired._tick_building_lifetime(0.05)
 		_expect(not source.structure_haste_visual(), "未命中或命中超过3秒的建筑自然死亡不触发")
 		expired.free()

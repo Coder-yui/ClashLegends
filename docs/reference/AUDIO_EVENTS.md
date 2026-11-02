@@ -114,3 +114,5 @@
 虚空召唤的 `spell:zone_sustain` 使用虚空女皇大招施放、激活、持续循环预合成的3条8秒序列，`natural_tail=true`避免开始段重播；到8秒区域结束停止。1秒激活衔接属于项目适配。出生/攻击/死亡由各虚空鱼自身事件派发。
 
 杰斯双形态补充：`first_strike:cast` / `first_strike:missile_launch` / `first_strike_hit` 也支持换形首击；`active_buff:attack_swing` 属于可取消的当前攻击，连同既有launch/hit覆盖远程W。`persistent_area:sustain` / `persistent_area:end` 读取独立领域时钟，换形保留持续音，死亡/清场停止。
+
+建筑待机：`dormant:enter` / `dormant:exit` 仅由 `dormant_without_targets` 建筑的权威待机变化派发一次；客户端消费可靠表现事件，不根据本地索敌猜测。

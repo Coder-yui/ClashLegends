@@ -48,7 +48,7 @@ static func _validate_periodic_summons(card_id: String, stats: Dictionary, error
 		if stats.has(field) and not stats.has("spawn_interval") and not (field == "spawn_initial_delay" and stats.get("spell_kind", "") == "void_summoning"): errors.append(card_id + "." + field + ": 必须配置周期召唤")
 	for field in ["spawn_initial_delay", "spawn_sequence_interval"]:
 		if stats.has(field) and float(stats[field]) < 0.0: errors.append(card_id + "." + field + ": 必须非负")
-	if stats.has("spawn_sequence_interval") and stats.get("spawn_side", "") != "below": errors.append(card_id + ".spawn_sequence_interval: 要求下方召唤")
+	if stats.has("spawn_sequence_interval") and stats.get("spawn_side", "") != "below" and not stats.has("spawn_waves"): errors.append(card_id + ".spawn_sequence_interval: 要求下方召唤或循环兵线")
 	if float(stats.get("spawn_sequence_interval", 0.0)) * maxi(int(stats.get("spawn_count", 1)) - 1, 0) >= float(stats.get("spawn_interval", INF)):
 		errors.append(card_id + ".spawn_sequence_interval: 一批必须在下一周期前完成")
 	if stats.has("spawn_flight_duration"):
@@ -59,7 +59,7 @@ static func _validate_periodic_summons(card_id: String, stats: Dictionary, error
 		if stats.has("spawn_distance"): errors.append(card_id + ".spawn_distance: 必须配置周期召唤")
 		return
 	if String(stats.get("type", "")) not in ["unit", "building"]: errors.append(card_id + ".spawn_interval: 仅单位或建筑支持周期召唤")
-	if float(stats.spawn_interval) <= 0.0 or int(stats.get("spawn_count", 0)) <= 0 or String(stats.get("spawn_id", "")).is_empty():
+	if float(stats.spawn_interval) <= 0.0 or (not stats.has("spawn_waves") and (int(stats.get("spawn_count", 0)) <= 0 or String(stats.get("spawn_id", "")).is_empty())):
 		errors.append(card_id + ".spawn_interval: 周期召唤要求正间隔、正数量和有效单位")
 	if String(stats.get("spawn_side", "")) not in ["", "map_side", "bilateral", "below"]: errors.append(card_id + ".spawn_side: 未支持的方位")
 	if stats.get("spawn_side", "") == "bilateral" and (float(stats.get("spawn_distance", 0.0)) <= 0.0 or int(stats.get("spawn_count", 0)) != 2): errors.append(card_id + ".spawn_distance: 左右召唤要求正距离和两只单位")
@@ -685,6 +685,9 @@ static func _validate_building(card_id: String, stats: Dictionary, errors: Packe
 	_require_fields(card_id, stats, [&"is_building", &"footprint_tiles", &"lifespan", &"visual_radius"], errors)
 	if not bool(stats.get("is_building", false)):
 		errors.append("%s.is_building: building 卡必须为 true" % card_id)
+	if stats.has("dormant_without_targets"):
+		if typeof(stats.dormant_without_targets) != TYPE_BOOL or not bool(stats.get("is_building", false)) or float(stats.get("damage", 0.0)) <= 0.0:
+			errors.append("%s.dormant_without_targets: 仅支持可攻击建筑的bool开关" % card_id)
 	if stats.has("lifespan_hp_decay") and typeof(stats.lifespan_hp_decay) != TYPE_BOOL:
 		errors.append("%s.lifespan_hp_decay: 必须是 bool" % card_id)
 	if float(stats.get("lifespan", 0.0)) > 0.0 and not bool(stats.get("lifespan_hp_decay", false)):
@@ -698,7 +701,7 @@ static func _validate_building(card_id: String, stats: Dictionary, errors: Packe
 		errors.append("%s.speed: 建筑必须为 0" % card_id)
 	if float(stats.get("spawn_interval", 0.0)) < 0.0:
 		errors.append("%s.spawn_interval: 必须 >= 0" % card_id)
-	if float(stats.get("spawn_interval", 0.0)) > 0.0:
+	if float(stats.get("spawn_interval", 0.0)) > 0.0 and not stats.has("spawn_waves"):
 		_require_fields(card_id, stats, [&"spawn_id", &"spawn_count"], errors)
 		if int(stats.get("spawn_count", 0)) <= 0:
 			errors.append("%s.spawn_count: 周期召唤数量必须 > 0" % card_id)
@@ -723,6 +726,11 @@ static func _validate_rush(card_id: String, stats: Dictionary, errors: PackedStr
 
 static func _validate_references(card_id: String, stats: Dictionary, cards: Dictionary, errors: PackedStringArray) -> void:
 	_validate_rush(card_id, stats, errors)
+	if stats.has("death_spawn_side") and (stats.death_spawn_side != "map_side" or int(stats.get("death_spawn_count", 0)) <= 0 or float(stats.get("death_spawn_spread", 0.0)) > 0.0):
+		errors.append(card_id + ".death_spawn_side: 仅支持非散开死亡召唤的map_side")
+	if stats.has("death_spawn_deploy_time"):
+		if float(stats.death_spawn_deploy_time) < 0.0 or int(stats.get("death_spawn_count", 0)) <= 0:
+			errors.append(card_id + ".death_spawn_deploy_time: 需要非负时长与死亡召唤数量")
 	if stats.has("death_spawn_spread") or stats.has("death_spawn_duration"):
 		for field in ["death_spawn_spread", "death_spawn_duration"]:
 			if float(stats.get(field, 0.0)) <= 0.0:
@@ -732,6 +740,19 @@ static func _validate_references(card_id: String, stats: Dictionary, cards: Dict
 			errors.append("%s.death_spawn_spread: 需要死亡召唤单位与正数数量" % card_id)
 		elif cards.has(summon_id) and bool(cards[summon_id].get("is_building", false)):
 			errors.append("%s.death_spawn_spread: 召唤建筑不能散开移动" % card_id)
+	if stats.has("spawn_waves"):
+		if stats.spawn_waves.is_empty() or float(stats.get("spawn_interval", 0.0)) <= 0.0 or stats.has("spawn_id") or stats.has("spawn_count") or String(stats.get("spawn_side", "")) not in ["", "map_side"]:
+			errors.append(card_id + ".spawn_waves: 要求非空批次、正周期和默认/地图侧方位，不可混用单类召唤")
+		for wave in stats.spawn_waves:
+			if wave.is_empty(): errors.append(card_id + ".spawn_waves: 批次不能为空")
+			var total := 0
+			for member in wave: total += int(member.get("spawn_count", 0))
+			if float(stats.get("spawn_sequence_interval", 0.0)) * maxi(total - 1, 0) >= float(stats.get("spawn_interval", INF)):
+				errors.append(card_id + ".spawn_waves: 一批必须在下一周期前完成")
+			for member in wave:
+				var count := float(member.get("spawn_count", 0))
+				if count <= 0 or count != floorf(count) or not _unit_reference_exists(String(member.get("spawn_id", "")), cards):
+					errors.append(card_id + ".spawn_waves: 要求有效实体及正整数数量")
 	for conversion_field in ["assist_conversion_unit_id", "assist_conversion_building_id"]:
 		var converted_id := String(stats.get(conversion_field, ""))
 		if not converted_id.is_empty() and cards.has(converted_id):
@@ -878,7 +899,7 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 				if typeof(value) not in [TYPE_FLOAT, TYPE_INT] or not is_finite(float(value)) or float(value) < 0.0:
 					errors.append("%s.visual_animations.clip_blends.%s: 必须是有限非负秒数" % [label, edge])
 	for state in [
-		&"deploy", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"charge_move", &"terrain_move", &"full_resource_move", &"move_cycle", &"attack", &"attack_hit", &"attack_recover",
+		&"dormant_idle", &"deploy", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"charge_move", &"terrain_move", &"full_resource_move", &"move_cycle", &"attack", &"attack_hit", &"attack_recover",
 		&"initial_move", &"attack_structure", &"attack_move", &"attack_to_move", &"active_buff_idle", &"active_buff_move", &"empowered_idle", &"empowered_move", &"first_strike_attack", &"empowered_attack",
 		&"empowered_attack_hit", &"empowered_attack_recover", &"empowered_attack_to_move",
 	]:
@@ -1050,6 +1071,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s: 必须是 Dictionary" % label)
 			continue
 		_validate_known_fields(label, skill, ACTIVE_SKILL_FIELDS, errors)
+		if skill.has("spawn_deploy_time") and (float(skill.spawn_deploy_time) < 0.0 or skill.get("kind", "") != "summon" or skill.get("spawn_side", "") == "below"):
+			errors.append(label + ".spawn_deploy_time: 需要非负时长与普通召唤技能")
 		if skill.has("form_kinds"):
 			if skill.form_kinds.size() != 2 or stats.get("transformed_stats", {}).is_empty(): errors.append(label + ".form_kinds: 需要两个形态与两个效果类型")
 			for form_kind in skill.form_kinds:
@@ -1107,8 +1130,12 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.max_uses: 必须 > 0" % label)
 		if float(skill.get("cooldown", -1.0)) < 0.0:
 			errors.append("%s.cooldown: 必须 >= 0" % label)
-		if (kind not in [&"permanent_growth", &"sacrifice_empower"] and (skill.has("health_bonus_ratio") or skill.has("body_scale_multiplier"))) or (kind != &"permanent_growth" and skill.has("knockback_radius")):
-			errors.append(label + ".health_bonus_ratio/body_scale_multiplier/knockback_radius: 仅永久成长读取这些字段")
+		if (kind not in [&"permanent_growth", &"sacrifice_empower", &"buff"] and (skill.has("health_bonus_ratio") or skill.has("body_scale_multiplier"))) or (kind != &"permanent_growth" and skill.has("knockback_radius")):
+			errors.append(label + ".health_bonus_ratio/body_scale_multiplier/knockback_radius: 生命与体型仅成长/牺牲/buff读取，击退范围仅永久成长读取")
+		if kind == &"buff":
+			for field in ["health_bonus_ratio", "body_scale_multiplier"]:
+				if skill.has(field) and (float(skill.get("duration", 0.0)) <= 0.0 or float(skill[field]) <= (1.0 if field == "body_scale_multiplier" else 0.0)):
+					errors.append(label + "." + field + ": 需要正持续时间与正生命增量/大于1的体型倍率")
 		if skill.has("visual_scale_multiplier") and kind != &"sacrifice_empower":
 			errors.append(label + ".visual_scale_multiplier: 仅用于牺牲强化表现")
 		if skill.has("sacrifice_source") and (typeof(skill.sacrifice_source) != TYPE_BOOL or kind != &"summon"):
@@ -1217,7 +1244,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				if float(skill.get("duration", 0.0)) <= 0.0: errors.append(label + ".duration: 必须大于0")
 			&"summon":
 				_require_fields(label, skill, [&"spawn_id", &"spawn_count"], errors)
-				if skill.has("spawn_side"):
+				if skill.get("spawn_side", "") == "map_side":
+					if skill.has("spawn_sequence_interval"): errors.append(label + ".spawn_sequence_interval: map_side不使用序列")
+				elif skill.has("spawn_side"):
 					if String(skill.spawn_side) != "below" or String(skill.get("spawn_id", "")) != "voidling": errors.append("%s.spawn_side: below仅支持虚灵裂隙" % label)
 					if not (skill.get("spawn_sequence_interval") is float or skill.get("spawn_sequence_interval") is int) or float(skill.get("spawn_sequence_interval", 0.0)) <= 0.0: errors.append("%s.spawn_sequence_interval: 必须为正数" % label)
 				elif skill.has("spawn_sequence_interval"): errors.append("%s.spawn_sequence_interval: 需要spawn_side" % label)

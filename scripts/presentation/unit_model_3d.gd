@@ -31,6 +31,7 @@ var _active_buff_scene_path := ""
 var _model_resources := ModelVisualResources.new()
 var _last_buff_visible := false
 var _last_stealth_pose := false
+var _last_dormant_pose := false
 
 var _state: UnitPresentationState
 var _current_clip_speed := 1.0
@@ -316,7 +317,7 @@ func _process(delta: float) -> void:
 	if _source == null or not is_instance_valid(_source):
 		_retire()
 		return
-	scale = Vector3.ONE * _source.growth_body_scale * _source.sacrifice_empowerment.y
+	scale = Vector3.ONE * _source.growth_body_scale * _source.sacrifice_empowerment.y * _source.timed_growth_stats.y
 	_tick_form_elevation(delta)
 	_tick_spawn_transition(delta)
 	if _sync_control_override():
@@ -455,6 +456,9 @@ func _sync_visual(force: bool, delta: float) -> void:
 	# 无部署锁的出生动作只是表现：新外力提前结束后，真实移动可直接接管。
 	if _playing_visual_action and _active_action_kind == &"deploy" and _source.is_deployed() and locomotion_state == 2:
 		_finish_visual_action()
+	if _last_dormant_pose != _source.dormant:
+		_last_dormant_pose = _source.dormant
+		force = true
 	var stealth_pose := _source.stealth_hidden()
 	if stealth_pose != _last_stealth_pose:
 		_last_stealth_pose = stealth_pose
@@ -821,6 +825,8 @@ func _transition_to_basic_state(state: int, blend_time: float = -1.0, from_actio
 		_play_stance_locomotion(state, from_action)
 		return
 	_idle_transition_animation = &""
+	if state == 1 and _source.dormant and _animation_names.has("dormant_idle"):
+		from_action = &"dormant"
 	var previous_state := _current_state
 	_current_state = state
 	_move_sequence_active = false
@@ -1197,6 +1203,9 @@ func _play_state(state: int, blend_time: float = -1.0) -> void:
 	if state in [1, 2] and _source.stealth_hidden():
 		var stealth_clip := _first_valid_animation("stealth_idle" if state == 1 else "stealth_move")
 		if stealth_clip != &"": configured = stealth_clip
+	if state == 1 and _source.dormant:
+		var dormant_clip := _first_valid_animation("dormant_idle")
+		if dormant_clip != &"": configured = dormant_clip
 	# deploy 配置为数组时由部署序列生命周期单独处理。
 	if configured is Array:
 		configured = ""
@@ -1500,7 +1509,7 @@ func _state_playback_speed(state: int, animation_name: StringName) -> float:
 func _configure_looping_animations() -> void:
 	if _animation_player == null:
 		return
-	for key in ["idle"]:
+	for key in ["idle", "dormant_idle"]:
 		var animation_name := StringName(_animation_names.get(key, ""))
 		if animation_name == &"" or not _animation_player.has_animation(animation_name):
 			continue

@@ -206,6 +206,8 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 					bool(target_skill.get("ignore_attack_speed_slow", false)),
 					source.status_source(String(skill.get("name", "buff")))
 				)
+				if target_skill.has("health_bonus_ratio") or target_skill.has("body_scale_multiplier"):
+					target.apply_timed_growth(float(target_skill.duration), float(target_skill.get("health_bonus_ratio", 0.0)), float(target_skill.get("body_scale_multiplier", 1.0)))
 				if bool(target_skill.get("untargetable", false)):
 					var grant_untargetable := func():
 						if is_instance_valid(target) and target.hp > 0.0:
@@ -547,7 +549,8 @@ func activate_summon(source: Unit, skill: Dictionary) -> void:
 	for index in range(count):
 		var angle := TAU * float(index) / float(count)
 		var offset := Vector2.RIGHT.rotated(angle) * (source_radius + summon_radius + Unit.SUMMON_SEPARATION)
-		_controller.spawn_summoned(summon_team, spawn_id, summon_center + offset, -1.0, "", -1, summon_center)
+		var spawn_position := source.map_side_summon_position(summon_radius, index, count) if skill.get("spawn_side", "") == "map_side" else summon_center + offset
+		_controller.spawn_summoned(summon_team, spawn_id, spawn_position, float(skill.get("spawn_deploy_time", -1.0)), "", -1, summon_center)
 
 
 ## 扇形/梯形主动统一按施法开始时锁定的朝向结算。目标碰撞圆会扩张边界，

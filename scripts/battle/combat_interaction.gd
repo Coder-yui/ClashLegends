@@ -16,11 +16,12 @@ static func allows(target: Node2D, source: Node2D = null, source_team: int = -1,
 		source_team = int(source.team)
 		source_position = source.global_position
 	if source_team < 0 or source_team == target.team: return true
+	if target.dormant: return false
 	var protection: TargetProtectionState = target.target_protection
 	return not protection.active() or not protection.contains(target.global_position) or protection.contains(source_position)
 
 static func can_acquire(target, observer_team: int) -> bool:
-	return is_instance_valid(target) and not in_stasis(target) and (not target is Unit or (target.control.hard.remaining(&"untargetable") <= 0.0 and target.perceived_by_team(observer_team)))
+	return is_instance_valid(target) and not in_stasis(target) and (not target is Unit or (target.control.hard.remaining(&"untargetable") <= 0.0 and target.perceived_by_team(observer_team) and (not target.dormant or target.team == observer_team)))
 
 static func effect_context(source: Node2D = null, team: int = -1, position: Vector2 = Vector2(INF, INF), attached: bool = false) -> Dictionary:
 	return {"source": source, "team": team, "position": position, "attached": attached, "delivery": current_delivery}

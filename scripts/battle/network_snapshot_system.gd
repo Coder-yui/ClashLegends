@@ -105,7 +105,9 @@ const U_POOL_SHIELD := 67
 const U_GRIEVOUS_WOUNDS := 68
 const U_ACTIVE_SKILL_START_READY := 69
 const U_UNTARGETABLE := 70
-const UNIT_PAYLOAD_SIZE := 71
+const U_DORMANT := 71
+const U_TIMED_GROWTH := 72
+const UNIT_PAYLOAD_SIZE := 73
 
 const P_ID := 0
 const P_X := 1
@@ -304,6 +306,9 @@ func decode_validated(snapshot_bytes: PackedByteArray) -> DecodedSnapshot:
 		if not payload[U_ACTION_CLOCK] is Vector2: return null
 		if not (payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is int or payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is float): return null
 		if not is_finite(float(payload[U_TEAM_ATTACK_BOOST_MULTIPLIER])) or float(payload[U_TEAM_ATTACK_BOOST_MULTIPLIER]) < 1.0: return null
+		if not payload[U_TIMED_GROWTH] is Vector2: return null
+		var timed_growth: Vector2 = payload[U_TIMED_GROWTH]
+		if not is_finite(timed_growth.x) or not is_finite(timed_growth.y) or timed_growth.x < 0.0 or timed_growth.y < 1.0: return null
 		if not payload[U_GROWTH] is Vector2: return null
 		var growth: Vector2 = payload[U_GROWTH]
 		if not is_finite(growth.x) or not is_finite(growth.y) or growth.x < 0.0 or growth.y < 1.0: return null
@@ -316,6 +321,7 @@ func decode_validated(snapshot_bytes: PackedByteArray) -> DecodedSnapshot:
 		if not payload[U_GRIEVOUS_WOUNDS] is bool: return null
 		if not payload[U_ACTIVE_SKILL_START_READY] is bool: return null
 		if not payload[U_UNTARGETABLE] is bool: return null
+		if not payload[U_DORMANT] is bool: return null
 		if not _finite_number(payload[U_SUNLIGHT]) or float(payload[U_SUNLIGHT]) < 0.0: return null
 		if not payload[U_FREE_RECAST] is bool or not payload[U_BLEED_STACKS] is int or int(payload[U_BLEED_STACKS]) < 0 or not (payload[U_BLOOD_RAGE] is float or payload[U_BLOOD_RAGE] is int) or not is_finite(float(payload[U_BLOOD_RAGE])) or float(payload[U_BLOOD_RAGE]) < 0.0: return null
 		if not payload[U_CONTINUOUS_TARGET_AIR_ID] is int or int(payload[U_CONTINUOUS_TARGET_AIR_ID]) < -1: return null
@@ -433,7 +439,7 @@ func _apply_units(units_data: Array) -> bool:
 			"cancellation": d[U_CANCELLATION], "deploy_left": d[U_DEPLOY_LEFT],
 			"position": Vector2(d[U_X], d[U_Y]), "teleport": d[U_TELEPORT_SERIAL],
 			"form": d[U_FORM], "form_serial": d[U_FORM_CHANGE_SERIAL], "hp": d[U_HP],
-			"growth": d[U_GROWTH], "sacrifice_stats": d[U_SACRIFICE_STATS],
+			"timed_growth": d[U_TIMED_GROWTH], "growth": d[U_GROWTH], "sacrifice_stats": d[U_SACRIFICE_STATS],
 			"sacrifice_empowerment": d[U_SACRIFICE_EMPOWERMENT], "team_boost": d[U_TEAM_ATTACK_BOOST_MULTIPLIER],
 			"frozen": d[U_FROZEN] == 1, "stunned": d[U_STUN] == 1, "stasis": d[U_STASIS],
 			"protection": d[U_TARGET_PROTECTION], "death_form": d[U_DEATH_FORM], "bleed": d[U_BLEED_STACKS],
@@ -495,6 +501,7 @@ func _apply_units(units_data: Array) -> bool:
 		u.net_pool_shield = d[U_POOL_SHIELD]
 		u.net_grievous_wounds = d[U_GRIEVOUS_WOUNDS]
 		u.net_untargetable = d[U_UNTARGETABLE]
+		u.dormant = d[U_DORMANT]
 		u.net_sunlight = float(d[U_SUNLIGHT])
 		u.net_buff_visual_clock = d[U_BUFF_VISUAL_CLOCK]
 		u.net_hit_haste_full = d[U_HIT_HASTE_FULL]
@@ -733,7 +740,7 @@ func _unit_snapshot_payload(id: int, u: Unit, birth: Dictionary, has_continuous_
 		u.lifesteal_state_visual(), u.active_buff_clock_visual(),
 		u.restoration_shield_state_visual(),
 		u.blind_visual(), u.teleport_serial, u.deployment_shield_active_visual(), int(u.is_charged_visual()), u.sunlight_visual(), u.pool_shield_visual(), u.grievous_wounds_visual(),
-		_active_skill_start_ready(u), u.untargetable_visual(),
+		_active_skill_start_ready(u), u.untargetable_visual(), u.dormant, u.timed_growth_stats,
 	]
 
 ## 起手结果仅用于UI锁；不包含付款、冷却或次数，不赋予客户端结算能力。

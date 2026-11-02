@@ -2,6 +2,7 @@ class_name PresentationEvents
 extends RefCounted
 ## 当前实际派发能力表；新增 cue 必须同时实现权威派发与消费者。
 static func supports(stats: Dictionary, cue: String) -> bool:
+	if cue in ["dormant:enter", "dormant:exit"]: return bool(stats.get("dormant_without_targets", false))
 	if cue == "attack:ground": return float(stats.get("fixed_attack_length", 0.0)) > 0.0
 	if cue in ["burst:start", "burst:end"]: return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "attack_burst")
 	if cue == "transform:start" and float(stats.get("form_cycle_interval", 0.0)) > 0.0: return true

@@ -286,7 +286,10 @@ static func passives(stats: Dictionary) -> Array[Dictionary]:
 	if stats.has("heal_every_hits"):
 		result.append({"name": String(stats.get("heal_on_hit_name", "无畏战吼")), "description": "每第%d次普通攻击命中回复%s点生命。" % [int(stats.get("heal_every_hits", 0)), format_number(roundf(float(stats.get("heal_amount", 0.0)))) ]})
 	if float(stats.get("on_hit_slow_duration", 0.0)) > 0.0:
-		result.append({"name": String(stats.get("on_hit_passive_name", "冰霜射击")), "description": "普通攻击命中使敌人减速%s%%，持续%s秒；万箭齐发也触发此被动。" % [format_number((1.0 - float(stats.on_hit_slow_multiplier)) * 100.0), format_number(float(stats.on_hit_slow_duration))]})
+		var slow_description := "普通攻击命中使敌人减速%s%%，持续%s秒。" % [format_number((1.0 - float(stats.on_hit_slow_multiplier)) * 100.0), format_number(float(stats.on_hit_slow_duration))]
+		for skill in stats.get("active_skills", []):
+			if bool(skill.get("applies_on_hit_slow", false)): slow_description += "%s也触发此被动。" % String(skill.name)
+		result.append({"name": String(stats.get("on_hit_passive_name", "攻击减速")), "description": slow_description})
 	if float(stats.get("on_hit_max_health_ratio", 0.0)) > 0.0:
 		var scope := "普攻与每次剪切" if (stats.get("active_skills", []) as Array).any(func(skill): return bool(skill.get("applies_on_hit_passive",false))) else "普通攻击命中"
 		result.append({"name": String(stats.get("on_hit_passive_name", "千穿百孔")), "description": "%s附加目标最大生命值%s%%的伤害（四舍五入）；对防御塔和水晶固定附加%d点。" % [scope, format_number(float(stats.on_hit_max_health_ratio) * 100.0), roundi(float(stats.get("on_hit_tower_damage", 0.0)))]})
@@ -325,6 +328,13 @@ static func passives(stats: Dictionary) -> Array[Dictionary]:
 		var spawn_stats := CardDB.get_unit_stats(spawn_id)
 		var spawn_name := String(spawn_stats.get("name", spawn_id))
 		var description := "部署完成生成%d只%s，之后每%s秒再次生成。" % [int(stats.get("spawn_count", 0)), spawn_name, format_number(float(stats.get("spawn_interval", 0.0)))]
+		if stats.has("spawn_waves"):
+			var waves := PackedStringArray()
+			for wave in stats.spawn_waves:
+				var members := PackedStringArray()
+				for member in wave: members.append("%d个%s" % [int(member.spawn_count), CardDB.get_unit_stats(String(member.spawn_id)).get("name", member.spawn_id)])
+				waves.append("＋".join(members))
+			description = "部署完成立即召唤，每%s秒一波，依次循环：%s。" % [format_number(float(stats.spawn_interval)), " → ".join(waves)]
 		if float(stats.get("spawn_flight_duration", 0.0)) > 0.0:
 			description = "部署完成发出紫光，%s秒后生成%d只%s，之后每%s秒再次发出。" % [format_number(float(stats.spawn_flight_duration)), int(stats.get("spawn_count", 0)), spawn_name, format_number(float(stats.spawn_interval))]
 		if bool(stats.get("spawn_defer_while_controlled", false)):

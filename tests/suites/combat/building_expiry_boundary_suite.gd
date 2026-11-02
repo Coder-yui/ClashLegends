@@ -41,6 +41,7 @@ func _check_due_attack(permutation: int) -> void:
 	_run_main_ticks(3)
 	_expect(attacker._attack_hit_index == 0 and attacker._attacking and is_equal_approx(attacker.attack_timeline.windup, 0.05), "到期夹具：正常索敌前摇，本 Tick 尚未出手")
 	building._lifespan_left = 0.05
+	building.hp = 1
 	var backup: Unit = _main._spawn_unit(UnitSpawnRequest.new(1 - team, "garen", Vector2(290, 760), {"deploy_time_override": 0}))
 	backup.freeze(100)
 	if permutation & 4: _main.move_child(building, attacker.get_index())
@@ -58,6 +59,7 @@ func _check_stale_acceptance() -> void:
 	var source := _attacker(0)
 	var target := _building(1)
 	target._lifespan_left = 0.05
+	target.hp = 1
 	_main._combat.begin_batch(100, "stale_natural_exit")
 	var result: Dictionary = _main._combat.submit_damage(target, 10, source, 0, source.position)
 	source.position = target.position + Vector2(0, 30)
@@ -105,6 +107,7 @@ func _check_lifecycle_edges() -> void:
 		building._spawn_timer = 0.05
 		building._initial_summons_spawned = not deploying
 		building._lifespan_left = 0.05
+		building.hp = 1
 		if deploying: building._deploy_timer = 0.05
 		var before := _main.get_tree().get_nodes_in_group("combatants").size()
 		_main._sim_step(0.05)
@@ -122,6 +125,7 @@ func _check_lifecycle_edges() -> void:
 	_expect(result.landed and result.health_lost == 0 and source.hp == 110 and source.skill_resource_value == 2, "存活建筑全盾吸收仍是合法命中，回血和资源正常发放")
 	var healed := source.hp
 	building._lifespan_left = 0.05
+	building.hp = 1
 	_main._sim_step(0.05)
 	_expect(source.hp == healed, "随后自然到期不追溯撤销先前阶段收益")
 	source.free()
@@ -136,7 +140,12 @@ func _check_tombstone_death_summons() -> void:
 			if cause in ["expiry", "healed_expiry"]:
 				_run_main_ticks(399)
 				_expect(building.hp == 1 and is_equal_approx(building._lifespan_left, Unit.SIM_DT), "墓碑19.95秒仍存活，按20秒寿命自然衰血")
-				if cause == "healed_expiry": building.heal(100)
+				if cause == "healed_expiry":
+					building.heal(100)
+					_main._sim_step(Unit.SIM_DT)
+					_expect(building.hp == 100 and building.is_in_group("combatants") and not building.nav_cells.is_empty(), "治疗后跨过20秒仍存活并保留占位")
+					_run_main_ticks(99)
+					_expect(building.hp == 1, "超过标称时间持续自然衰血")
 				building.spawn_interval = 5.0
 				building._spawn_timer = Unit.SIM_DT
 				building._initial_summons_spawned = team == 0

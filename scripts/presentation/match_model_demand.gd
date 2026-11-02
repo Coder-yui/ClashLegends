@@ -136,6 +136,13 @@ static func _merge(target: Dictionary, extra: Dictionary, additive: bool) -> voi
 
 static func _events(stats: Dictionary) -> Array:
 	var result := []
+	var wave_counts := {}
+	for wave in stats.get("spawn_waves", []):
+		var counts := {}
+		for member in wave: counts[member.spawn_id] = int(counts.get(member.spawn_id, 0)) + int(member.spawn_count)
+		for id in counts: wave_counts[id] = maxi(int(wave_counts.get(id, 0)), int(counts[id]))
+	for id in wave_counts:
+		result.append({"id": String(id), "field": "spawn_waves", "burst": wave_counts[id], "reserve": wave_counts[id], "repeat_interval": float(stats.spawn_interval), "unbounded": true})
 	for field in EVENTS:
 		if not stats.has(field): continue
 		var count := int(stats.get(field.trim_suffix("_id") + "_count", 1))

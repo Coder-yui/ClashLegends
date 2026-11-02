@@ -80,6 +80,11 @@ func navigation(crosses_river: bool = false) -> NavGrid:
 func field_width() -> float:
 	return float(ArenaRules.FIELD_W)
 
+## 建筑体型变化同步刷新导航圆形障碍，保持引用计数与缩小后的释放一致。
+func refresh_building_body_obstacle(unit: Unit) -> void:
+	_world.release_structure_footprint(unit)
+	if unit.hp > 0.0: _world.register_dynamic_building(unit)
+
 func ensure_unit_form_resize_safe(unit: Unit) -> void:
 	_world.ensure_unit_form_resize_safe(unit)
 

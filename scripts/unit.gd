@@ -124,6 +124,7 @@ var continuous_attack := false
 ## 一次性永久成长：固定生命增量与体型倍率，不写回共享定义。
 var growth_health_bonus := 0.0
 var growth_body_scale := 1.0
+var timed_growth_stats := Vector2(0.0, 1.0)
 ## 永久牺牲强化：伤害倍率、纯表现缩放；不改变碰撞或生命。
 var sacrifice_empowerment := Vector2.ONE
 # 最大生命增量、身体倍率、永久移速倍率；由权威写入并随快照同步。
@@ -326,7 +327,7 @@ var net_target_pos: Vector2
 ## 只用于下牌占地；移动、寻路和攻击距离始终使用 body_radius 的圆柱碰撞。
 var footprint_tiles := Vector2i.ONE
 var lifespan := 0.0
-## 可选的建筑寿命表现：按初始最大生命/寿命匀速扣减，仍由固定模拟驱动。
+## 建筑自然衰血开关：固定模拟按最大生命/存在时间匀速扣减，生命归零才死亡。
 var lifespan_hp_decay := false
 var natural_structure_exit := false
 ## 由主机在生成时固化并可靠同步。只声明“这次部署位于已毁防御塔九格内”，
@@ -337,6 +338,9 @@ var taunt_source: WeakRef
 var channel_attack := ChanneledAttackState.new()
 var spawn_initial_delay_left := 0.0
 var spawn_sequence_interval := 0.0
+var spawn_waves: Array = []
+var _spawn_wave_index := 0
+var _pending_wave_members: Array[Dictionary] = []
 var spawn_interval := 0.0
 var spawn_count := 1
 var spawn_distance := 0.0
@@ -345,7 +349,9 @@ var spawn_flight_duration := 0.0
 var spawn_defer_while_controlled := false
 var spawn_side := ""
 var active_death_spawn_id := ""
+var death_spawn_side := ""
 var death_spawn_id := ""
+var death_spawn_deploy_time := -1.0
 var death_spawn_count := 0
 var death_spawn_spread := 0.0
 var death_spawn_duration := 0.0
@@ -449,6 +455,7 @@ var net_active_speed_multiplier := 1.0
 var net_active_attack_speed_multiplier := 1.0
 var net_active_buff_active := false
 var net_untargetable := false
+var dormant := false
 var net_facing_direction := Vector2.ZERO
 ## 主机快照同步当前普攻目标是否为建筑，供客户端选择对应动作；不参与伤害判定。
 var net_attacking_structure := false
@@ -540,6 +547,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	continuous_attack = stats.get("is_continuous_attack", false)
 	growth_health_bonus = 0.0
 	growth_body_scale = 1.0
+	timed_growth_stats = Vector2(0.0, 1.0)
 	sacrifice_stats = Vector3(0.0, 1.0, 1.0)
 	sacrifice_empowerment = Vector2.ONE
 	team_attack_boost_multiplier = 1.0
@@ -642,6 +650,9 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	channel_attack = ChanneledAttackState.new()
 	spawn_initial_delay_left = float(stats.get("spawn_initial_delay", 0.0))
 	spawn_sequence_interval = float(stats.get("spawn_sequence_interval", 0.0))
+	spawn_waves = stats.get("spawn_waves", []).duplicate(true)
+	_spawn_wave_index = 0
+	_pending_wave_members.clear()
 	spawn_interval = stats.get("spawn_interval", 0.0)
 	spawn_count = maxi(int(stats.get("spawn_count", 1)), 1)
 	spawn_distance = float(stats.get("spawn_distance", 0.0))
@@ -649,6 +660,8 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	spawn_flight_duration = float(stats.get("spawn_flight_duration", 0.0))
 	spawn_defer_while_controlled = bool(stats.get("spawn_defer_while_controlled", false))
 	spawn_side = String(stats.get("spawn_side", ""))
+	death_spawn_deploy_time = float(stats.get("death_spawn_deploy_time", -1.0))
+	death_spawn_side = String(stats.get("death_spawn_side", ""))
 	death_spawn_id = String(stats.get("death_spawn_id", ""))
 	death_spawn_count = maxi(int(stats.get("death_spawn_count", 0)), 0)
 	death_spawn_spread = float(stats.get("death_spawn_spread", 0.0))
@@ -981,7 +994,7 @@ func active_buff_clock_visual() -> Vector2:
 	return Vector2(age, _buff_visual_duration)
 
 func untargetable_visual() -> bool:
-	return death_form.waiting() or hp > 0.0 and (net_untargetable if _in_client_mode() else control.hard.remaining(&"untargetable") > 0.0)
+	return death_form.waiting() or hp > 0.0 and (net_untargetable if _in_client_mode() else dormant or control.hard.remaining(&"untargetable") > 0.0)
 
 func get_active_buff_active_visual() -> bool:
 	return net_active_buff_active if _in_client_mode() else ((burst_attacks_left > 0 or burst_finishing) and not CombatInteraction.in_stasis(self)) or active_buff_timer > 0.0 or buffs.remaining(&"timed_lifesteal") > 0.0 or buffs.remaining(&"counter_strike") > 0.0 or buffs.remaining(&"damage_reduction") > 0.0 or buffs.remaining(&"effect_shield") > 0.0
@@ -1226,6 +1239,22 @@ func set_sacrifice_stats(value: Vector3) -> void:
 	sacrifice_stats = value
 	_finish_body_change(old_body_radius, is_air)
 
+## 暂时提高上限并补足新增容量；刷新不重复加血，结束时仅裁剪超出上限的当前生命。
+func apply_timed_growth(duration: float, health_ratio: float, body_scale: float) -> void:
+	if _in_client_mode() or hp <= 0.0: return
+	var bonus := BattleNumbers.quantity((max_hp - timed_growth_stats.x) * health_ratio)
+	buffs.apply(&"timed_growth", &"timed_growth", duration, {})
+	var compensation := maxf(bonus - timed_growth_stats.x, 0.0)
+	_set_timed_growth(Vector2(bonus, body_scale), compensation)
+
+func _set_timed_growth(value: Vector2, compensation: float = 0.0) -> void:
+	var old_radius := body_radius
+	_change_max_health(max_hp + value.x - timed_growth_stats.x, compensation, true)
+	body_radius = body_radius / timed_growth_stats.y * value.y
+	visual_radius = visual_radius / timed_growth_stats.y * value.y
+	timed_growth_stats = value
+	_finish_body_change(old_radius, is_air)
+
 ## 成长与普通换形分别持有状态；仅首次获得时增加当前生命。
 func apply_permanent_growth(health_ratio: float, body_scale: float) -> bool:
 	if not is_finite(health_ratio) or not is_finite(body_scale) or health_ratio <= 0.0 or body_scale <= 1.0: return false
@@ -1244,6 +1273,8 @@ func _finish_body_change(old_body_radius: float, was_air: bool) -> void:
 	_path.clear()
 	_path_index = 0
 	_repath_cd = 0.0
+	if is_building and not is_equal_approx(body_radius, old_body_radius) and not _in_client_mode() and battle_context != null:
+		battle_context.refresh_building_body_obstacle(self)
 	if (body_radius > old_body_radius or (was_air and not is_air)) and not _in_client_mode() and battle_context != null:
 		battle_context.ensure_unit_form_resize_safe(self)
 	queue_redraw()
@@ -1298,7 +1329,7 @@ func sync_network_form(next_form_index: int, next_form_serial: int = 0) -> void:
 	form_index = net_form_index
 	if not changed: return
 	var stats: Dictionary = transformed_stats if form_index == 1 else _base_form_stats
-	max_hp = BattleNumbers.quantity(float(stats.get("hp", max_hp))) + growth_health_bonus + sacrifice_stats.x
+	max_hp = BattleNumbers.quantity(float(stats.get("hp", max_hp))) + growth_health_bonus + sacrifice_stats.x + timed_growth_stats.x
 	_load_form_attributes(stats)
 	body_radius *= sacrifice_stats.y
 	_health_bar_center = Vector2(0.0, -visual_radius - HEALTH_BAR_HEAD_GAP - HEALTH_BAR_HEIGHT * 0.5)
@@ -1322,6 +1353,11 @@ func restore_replica_combat_state(state: Dictionary) -> void:
 	visual_radius = visual_radius / growth_body_scale * growth.y
 	growth_health_bonus = growth.x
 	growth_body_scale = growth.y
+	var timed: Vector2 = state.timed_growth
+	max_hp += timed.x - timed_growth_stats.x
+	body_radius = body_radius / timed_growth_stats.y * timed.y
+	visual_radius = visual_radius / timed_growth_stats.y * timed.y
+	timed_growth_stats = timed
 	var sacrifice: Vector3 = state.sacrifice_stats
 	max_hp += sacrifice.x - sacrifice_stats.x
 	body_radius = body_radius / sacrifice_stats.y * sacrifice.y
@@ -1423,7 +1459,7 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool) -> void:
 	var old_max_hp := max_hp
 	var old_body_radius := body_radius
 	var was_air := is_air
-	var next_max := BattleNumbers.quantity(float(next_stats.get("hp", max_hp))) + growth_health_bonus
+	var next_max := BattleNumbers.quantity(float(next_stats.get("hp", max_hp))) + growth_health_bonus + timed_growth_stats.x
 	_change_max_health(next_max, maxf(next_max - old_max_hp, 0.0) if grant_max_hp_increase else 0.0, true)
 	_load_form_attributes(next_stats)
 	if not attack_passive_multipliers.is_empty():
@@ -1460,8 +1496,8 @@ func _load_form_attributes(next_stats: Dictionary) -> void:
 	passive_first_hit_time = float(next_stats.get("passive_first_hit", -1.0))
 	empowered_first_hit = float(next_stats.get("empowered_first_hit", -1.0))
 	move_speed = snappedf(float(next_stats.get("speed", move_speed)), 0.01)
-	body_radius = float(next_stats.get("radius", body_radius)) * growth_body_scale
-	visual_radius = float(next_stats.get("visual_radius", next_stats.get("radius", body_radius))) * growth_body_scale
+	body_radius = float(next_stats.get("radius", body_radius)) * growth_body_scale * timed_growth_stats.y
+	visual_radius = float(next_stats.get("visual_radius", next_stats.get("radius", body_radius))) * growth_body_scale * timed_growth_stats.y
 	mass = float(next_stats.get("mass", mass))
 	sight_range = float(next_stats.get("sight", sight_range))
 	is_air = bool(next_stats.get("is_air", is_air))
@@ -1671,6 +1707,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 			return
 	if _deploy_timer <= 0.0 and spawn_initial_delay_left > 0.0 and not summons_started:
 		spawn_initial_delay_left = maxf(0.0, spawn_initial_delay_left - dt)
+	_update_dormancy()
 	channel_attack.tick(self, dt)
 	if not is_building and spawn_interval > 0.0 and not summons_started:
 		if not _initial_summons_spawned:
@@ -2050,8 +2087,9 @@ func prepare_natural_lifecycle(dt: float) -> void:
 func _tick_building_lifetime(dt: float) -> void:
 	if control.hard.any_flag(&"untargetable", &"pause_lifespan"): return
 	if lifespan > 0.0:
-		var lifetime_step := minf(dt, _lifespan_left)
-		_lifespan_left -= lifetime_step
+		var lifetime_step := dt
+		# 存在时间仅定义衰血速率；治疗后的建筑跨过标称时间仍持续衰血。
+		_lifespan_left = maxf(0.0, _lifespan_left - lifetime_step)
 		if lifespan_hp_decay and lifetime_step > 0.0:
 			# 自然寿命衰减不算受击，不触发护盾、资源、闪白或直接击杀收益；死亡信号仍检查既有建筑助攻。
 			_lifespan_decay_remainder += max_hp * lifetime_step / lifespan
@@ -2062,17 +2100,27 @@ func _tick_building_lifetime(dt: float) -> void:
 				natural_structure_exit = true
 				_die(death_spawn_count > 0)
 				return
-		if _lifespan_left <= 0.000001:
-			hp = 0.0
-			natural_structure_exit = true
-			_die(death_spawn_count > 0)
-			return
+
+## 每个权威Tick检查真实射程；控制不会延后保护切换，待机不暂停自然寿命。
+func _update_dormancy() -> void:
+	if not bool(_base_form_stats.get("dormant_without_targets", false)): return
+	var was_dormant := dormant
+	dormant = _find_nearest_attackable_in_range() == null
+	if was_dormant != dormant and battle_context != null:
+		battle_context.notify_unit_audio_event(self, &"dormant:enter" if dormant else &"dormant:exit", get_visual_screen_position())
+	if was_dormant and not dormant: play_visual_action(&"activate", 0.2)
+	if dormant:
+		_target = null
+		_attacking = false
+		attack_timeline.cancel(true)
+		_attack_visual_pending = true
 
 func _building_tick(dt: float, natural_lifecycle_prepared: bool = false, summons_started: bool = false) -> void:
 	if not natural_lifecycle_prepared:
 		_tick_building_lifetime(dt)
 	if hp <= 0.0 or is_queued_for_deletion(): return
 	if summons_started: return
+	_tick_wave_members(dt)
 	if not _initial_summons_spawned:
 		_spawn_initial_summons()
 		return # 首批发出当帧不预扣下一周期，等待期间也不另排周期批次。
@@ -2111,6 +2159,34 @@ func begin_summon_sequence(id: String, count: int, interval: float, deploy_overr
 	battle_context.notify_unit_audio_event(self, &"summon:start", global_position)
 
 func _spawn_batch() -> void:
+	if not spawn_waves.is_empty():
+		if battle_context == null: return
+		var wave: Array = spawn_waves[_spawn_wave_index % spawn_waves.size()]
+		_spawn_wave_index += 1
+		var index := 0
+		for member in wave:
+			for count in int(member.spawn_count):
+				if index == 0 or spawn_sequence_interval <= 0.0:
+					_spawn_single_batch(String(member.spawn_id), 1)
+				else:
+					_pending_wave_members.append({"spawn_id": String(member.spawn_id), "remaining": index * spawn_sequence_interval})
+				index += 1
+		return
+	_spawn_single_batch(spawn_id, spawn_count)
+
+## 同批成员由权威Tick逐个发出；控制期间暂停，死亡/清场不再推进。
+func _tick_wave_members(dt: float) -> void:
+	if _pending_wave_members.is_empty() or (spawn_defer_while_controlled and _summon_controlled()): return
+	var waiting: Array[Dictionary] = []
+	for member in _pending_wave_members:
+		member.remaining = float(member.remaining) - dt
+		if float(member.remaining) <= 0.000001:
+			_spawn_single_batch(String(member.spawn_id), 1)
+		else:
+			waiting.append(member)
+	_pending_wave_members = waiting
+
+func _spawn_single_batch(spawn_id: String, spawn_count: int) -> void:
 	if battle_context == null or spawn_id.is_empty():
 		return
 	if spawn_side == "below":
@@ -2136,14 +2212,8 @@ func _spawn_batch() -> void:
 				battle_context.spawn_summoned(team, spawn_id, global_position + offset, spawn_deploy_time)
 		return
 	if spawn_side == "map_side":
-		# 以地图中线决定产出侧：左半区始终在左侧，右半区始终在右侧。
-		var side := Vector2.LEFT if global_position.x < battle_context.field_width() * 0.5 else Vector2.RIGHT
-		var lateral_step := summon_radius * 2.0 + SUMMON_SEPARATION
-		var first_lateral := -float(count - 1) * lateral_step * 0.5
-		var spawn_distance := body_radius + summon_radius + SUMMON_SEPARATION
 		for index in count:
-			var lateral := first_lateral + float(index) * lateral_step
-			var spawn_pos := global_position + side * spawn_distance + Vector2.UP * lateral
+			var spawn_pos := map_side_summon_position(summon_radius, index, count)
 			battle_context.spawn_summoned(team, spawn_id, spawn_pos, spawn_deploy_time, "", -1, global_position)
 		_spawn_counter += count
 		return
@@ -2153,6 +2223,12 @@ func _spawn_batch() -> void:
 		var spawn_pos: Vector2 = global_position + direction * spawn_distance
 		_spawn_counter += 1
 		battle_context.spawn_summoned(team, spawn_id, spawn_pos, spawn_deploy_time, "", -1, global_position)
+
+## 周期、主动与亡语按同一地图半区规则求召唤原点，最终落点仍走合法性修正。
+func map_side_summon_position(summon_radius: float, index: int = 0, count: int = 1) -> Vector2:
+	var side := Vector2.LEFT if global_position.x < battle_context.field_width() * 0.5 else Vector2.RIGHT
+	var lateral := (float(index) - float(count - 1) * 0.5) * (summon_radius * 2.0 + SUMMON_SEPARATION)
+	return global_position + side * (body_radius + summon_radius + SUMMON_SEPARATION) + Vector2.UP * lateral
 
 ## 目标管理：攻击中的目标失效/超距时优先原地换打射程内最近合法目标；
 ## 只有没有替代目标时才退出 Attack 并按视野规则重新索敌/追击。
@@ -3276,6 +3352,7 @@ func _tick_active_statuses(dt: float) -> void:
 		if hp > 0.0 and battle_context != null: battle_context.queue_expiry_explosion(self, effect)
 	shields.expired_effects.clear()
 	for expired in buffs.advance(dt):
+		if expired.family == &"timed_growth": _set_timed_growth(Vector2(0.0, 1.0))
 		if expired.family == &"counter_strike" and hp > 0.0 and not CombatInteraction.in_stasis(self) and battle_context != null:
 			var explosion: Dictionary = expired.potency.expiry_skill.duplicate(true)
 			explosion.damage = float(explosion.damage) * (1.0 + int(expired.potency.dodges) * float(explosion.damage_per_dodge))
@@ -3405,6 +3482,8 @@ func begin_death_form_transition(delay: float) -> void:
 	body_radius /= growth_body_scale
 	visual_radius /= growth_body_scale
 	growth_body_scale = 1.0
+	buffs.clear_family(&"timed_growth")
+	_set_timed_growth(Vector2(0.0, 1.0))
 	set_sacrifice_stats(Vector3(0.0, 1.0, 1.0))
 	sacrifice_empowerment = Vector2.ONE
 	cancel_basic_attack(ActionCancellation.DEATH_FORM)
@@ -3567,7 +3646,9 @@ func _spawn_death_summons() -> void:
 		var direction: Vector2 = SPAWN_DIRECTIONS[index % SPAWN_DIRECTIONS.size()]
 		var scattering := death_spawn_spread > 0.0 and death_spawn_duration > 0.0
 		var spawn_pos := global_position if scattering else global_position + direction * spawn_distance
-		var summoned: Unit = battle_context.spawn_summoned(team, death_spawn_id, spawn_pos, 0.0 if scattering else -1.0)
+		if not scattering and death_spawn_side == "map_side":
+			spawn_pos = map_side_summon_position(summon_radius, index, death_spawn_count)
+		var summoned: Unit = battle_context.spawn_summoned(team, death_spawn_id, spawn_pos, 0.0 if scattering else death_spawn_deploy_time)
 		if scattering and is_instance_valid(summoned):
 			# 出生外力复用权威位移/碰撞，不结算敌方击退、质量缩放或受击事件。
 			summoned._body_facing_direction = direction
