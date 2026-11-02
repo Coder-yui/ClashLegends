@@ -796,5 +796,19 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "ThornSpitterSuite",
+    "script": "res://tests/suites/cards/thorn_spitter_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
+    "id": "VineLasherSuite",
+    "script": "res://tests/suites/cards/vine_lasher_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

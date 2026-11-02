@@ -70050,6 +70050,979 @@
       },
       "note": "原版高地水晶事件增益，建筑死亡保留完整尾音；固定随机分支",
       "peak": 0.4003172814846039
+    },
+    {
+      "file": "assets/audio/units/thorn_spitter/play_sfx_zyrathornplant_zyraqplantmissile_oncast_r1_d.wav",
+      "sha256": "ef017f3dc0aa0444013bc86389b96a336f51af0589bd73f323615dc05643bc1f",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraThornPlant_ZyraQPlantMissile_OnCast {r1} {d}.txtp",
+          "txtp_sha256": "29c4895e407e5167e935f4406c8e2cb43700e1b62f2b0ce264b46f96fac7d603",
+          "event_ids": [
+            "288908266"
+          ],
+          "media_ids": [
+            "28847286",
+            "780747468",
+            "843121231"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/thorn_spitter/play_sfx_zyrathornplant_zyraqplantmissile_oncast_r2_d.wav",
+      "sha256": "162e16145c9b347a729229c749ee8d88221918fe721fcfcb574d08cce63ee360",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraThornPlant_ZyraQPlantMissile_OnCast {r2} {d}.txtp",
+          "txtp_sha256": "2add04fa4c415e2632e119f676cef58bb467cb46df1c1351aa9b4b124254bd39",
+          "event_ids": [
+            "288908266"
+          ],
+          "media_ids": [
+            "28847286",
+            "780747468",
+            "843121231"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/thorn_spitter/play_sfx_zyrathornplant_zyraqplantmissile_oncast_r3_d.wav",
+      "sha256": "a9ab8e9298155bd9b0b1a8fee65ab225d0ee9e02e3de91f85e8a7701f314862e",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraThornPlant_ZyraQPlantMissile_OnCast {r3} {d}.txtp",
+          "txtp_sha256": "6b2f9eaa8c86cba0f63e491fe52566b7abb576d614ac93d5fb61a134de82e1d8",
+          "event_ids": [
+            "288908266"
+          ],
+          "media_ids": [
+            "28847286",
+            "780747468",
+            "843121231"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/thorn_spitter/play_sfx_zyrathornplant_zyraqplantmissile_onhit_r1_d.wav",
+      "sha256": "419a9c1914425818e6fdf9fa6f39b650002388f0551ca4b0fd4fff66190201dc",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraThornPlant_ZyraQPlantMissile_OnHit {r1} {d}.txtp",
+          "txtp_sha256": "5221ad53905a5ac7af54bc459c56d9e0e50f6daae382ec18dde57d4879c231a5",
+          "event_ids": [
+            "3790842718"
+          ],
+          "media_ids": [
+            "243718463",
+            "307892085",
+            "399240063",
+            "662401223"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/thorn_spitter/play_sfx_zyrathornplant_zyraqplantmissile_onhit_r2_d.wav",
+      "sha256": "0fb6c11d5f23719252b820bd69c680f88c597cc3a9454db122b43e96049a1ae5",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraThornPlant_ZyraQPlantMissile_OnHit {r2} {d}.txtp",
+          "txtp_sha256": "cb7202dbe13d700bc3bbaac55fa0fef265d21aa42512a468b6acd27a9bef89cd",
+          "event_ids": [
+            "3790842718"
+          ],
+          "media_ids": [
+            "243718463",
+            "307892085",
+            "399240063",
+            "662401223"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/thorn_spitter/play_sfx_zyrathornplant_zyraqplantmissile_onhit_r3_d.wav",
+      "sha256": "2db970b68525c6660ba86c90016e06bbf80cfe79e4f6af5ab479fccb9ae59f1b",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraThornPlant_ZyraQPlantMissile_OnHit {r3} {d}.txtp",
+          "txtp_sha256": "5831a18f4e1a08d5a9325a25c55eed5ffe3f56b7292e96ccce21e93cecfc28ca",
+          "event_ids": [
+            "3790842718"
+          ],
+          "media_ids": [
+            "243718463",
+            "307892085",
+            "399240063",
+            "662401223"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/thorn_spitter/play_sfx_zyrathornplant_zyraqplantmissile_missilelaunch_r1.wav",
+      "sha256": "e552807b7787f6fb6319fc1c9aabeb99e11c16c0bc8ceb8c43a01d638ca5f159",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraThornPlant_ZyraQPlantMissile_missilelaunch {r1}.txtp",
+          "txtp_sha256": "d2c10a883f8f8d2bbe76bedf7bad9d0ef74f7557db735d47c0da5dc49bea11de",
+          "event_ids": [
+            "1830067205"
+          ],
+          "media_ids": [
+            "253159234",
+            "307915027",
+            "508733615",
+            "837876728"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/thorn_spitter/play_sfx_zyrathornplant_zyraqplantmissile_missilelaunch_r2.wav",
+      "sha256": "561973c39190c658f1e37d3203be05b3dc6fca15a51ed5dd5f8e1634fb5995f4",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraThornPlant_ZyraQPlantMissile_missilelaunch {r2}.txtp",
+          "txtp_sha256": "99db0af8ce7254adbad65939867c05f5e336c3bd9a5904ba91c45bcd66b5d47d",
+          "event_ids": [
+            "1830067205"
+          ],
+          "media_ids": [
+            "253159234",
+            "307915027",
+            "508733615",
+            "837876728"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/thorn_spitter/play_sfx_zyrathornplant_zyraqplantmissile_missilelaunch_r3.wav",
+      "sha256": "e38c6865af36d79b12a7f7e00fbde62a943f6d59fddbaed72c49d6de06e896e5",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraThornPlant_ZyraQPlantMissile_missilelaunch {r3}.txtp",
+          "txtp_sha256": "e9029cb8aef53dae34e43d35bd0d08d457575422e08a159583cd30e51ccbdd45",
+          "event_ids": [
+            "1830067205"
+          ],
+          "media_ids": [
+            "253159234",
+            "307915027",
+            "508733615",
+            "837876728"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/thorn_spitter/play_sfx_zyra_zyraqplant_onbuffactivate_r1.wav",
+      "sha256": "18c9a2fdc7ffe3ea7363b7575862ef3764b5a533c4d8b96aaed84a9b8906c2f3",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_Zyra_ZyraQPlant_OnBuffActivate {r1}.txtp",
+          "txtp_sha256": "ab7faf9cb3ac07bebf1aea4b56081f17dd20764ceac3bcb08ca621baf5de1b95",
+          "event_ids": [
+            "465033715"
+          ],
+          "media_ids": [
+            "159681573",
+            "922498258",
+            "1003412638"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/thorn_spitter/play_sfx_zyra_zyraqplant_onbuffactivate_r2.wav",
+      "sha256": "adb0d0c1685b16e7a009d2352b9f8dea5b4f2f32e29eebd1d87c5803f41d3f9a",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_Zyra_ZyraQPlant_OnBuffActivate {r2}.txtp",
+          "txtp_sha256": "b80566c1d5b88ec8c92f61982765342decb7faf7e6c3d0c717666f68abe96830",
+          "event_ids": [
+            "465033715"
+          ],
+          "media_ids": [
+            "159681573",
+            "922498258",
+            "1003412638"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/thorn_spitter/play_sfx_zyra_zyraqplant_onbuffactivate_r3.wav",
+      "sha256": "789e016c545177a55f71e9c0a2bce35ce9b8a22563fea1d9064f055e82eeddf0",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_Zyra_ZyraQPlant_OnBuffActivate {r3}.txtp",
+          "txtp_sha256": "e1cdc7e2e67619b0ae4d3b6939896cb75c84c9b762cba8c0964f16275b62aa75",
+          "event_ids": [
+            "465033715"
+          ],
+          "media_ids": [
+            "159681573",
+            "922498258",
+            "1003412638"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/thorn_spitter/play_sfx_zyra_zyraqplant_onbuffdeactivate_d.wav",
+      "sha256": "b4fe0a92f84d46017a85a9e1423aafb2ddab3b1e536057558b63648747e5e06d",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_Zyra_ZyraQPlant_OnBuffDeactivate {d}.txtp",
+          "txtp_sha256": "9763ac51dd4ef05ad27b53510ecfb32357b011c73171179aabc2aaf105de8f2f",
+          "event_ids": [
+            "1548824490"
+          ],
+          "media_ids": [
+            "108917737"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0,
+        "death_envelope": {
+          "source_duration": 2.477936507936508,
+          "source_sha256": "8b82c7dee2cdd6900d9ce15c779dfa9e2ed843b701cf84888112cac70b5a69dd",
+          "keep_seconds": 1.5,
+          "fade_start_seconds": 1.0,
+          "fade_seconds": 0.5,
+          "curve": "linear_amplitude"
+        }
+      },
+      "note": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyragraspingplant_zyraeplantattack_oncast_r1_d.wav",
+      "sha256": "8a3858fdbe8b548e35c6b5ac3ba2ad6653ccd32853180adba060c87a7273a751",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnCast {r1} {d}.txtp",
+          "txtp_sha256": "cf0c8a064663b215fcca582c75b9ccefe42946356b0b852c787d4a621a243458",
+          "event_ids": [
+            "306201020"
+          ],
+          "media_ids": [
+            "367792508",
+            "430175351",
+            "1002357058"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyragraspingplant_zyraeplantattack_oncast_r2_d.wav",
+      "sha256": "1785e47103e9aa811b17f3bbc0c6dfe9122aa9231437506f621779a3ccd82eab",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnCast {r2} {d}.txtp",
+          "txtp_sha256": "f8692ea9b5f8006aca83e5ba1ba5ebef40183e9d640e7baeea738e7d787dbc1b",
+          "event_ids": [
+            "306201020"
+          ],
+          "media_ids": [
+            "367792508",
+            "430175351",
+            "1002357058"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyragraspingplant_zyraeplantattack_oncast_r3_d.wav",
+      "sha256": "91466c75187cea95d987084b118b3266c247b515859fa2cfcb253e1736581c2d",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnCast {r3} {d}.txtp",
+          "txtp_sha256": "4cb25f01e47b9b4efb15b86f73e8d7cc55a0cda005ae18fa010db64081e3d928",
+          "event_ids": [
+            "306201020"
+          ],
+          "media_ids": [
+            "367792508",
+            "430175351",
+            "1002357058"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyragraspingplant_zyraeplantattack2_oncast_r1.wav",
+      "sha256": "8a3858fdbe8b548e35c6b5ac3ba2ad6653ccd32853180adba060c87a7273a751",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnCast {r1}.txtp",
+          "txtp_sha256": "5126301ae82d325f32f03900e001cb55f06af3d859109d0f9a0e76dfe3373875",
+          "event_ids": [
+            "2691893188"
+          ],
+          "media_ids": [
+            "367792508",
+            "430175351",
+            "1002357058"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyragraspingplant_zyraeplantattack2_oncast_r2.wav",
+      "sha256": "1785e47103e9aa811b17f3bbc0c6dfe9122aa9231437506f621779a3ccd82eab",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnCast {r2}.txtp",
+          "txtp_sha256": "ddc75301871842b708687475fb0f9d51a5be008c889087fde7bcad2a25cf2c43",
+          "event_ids": [
+            "2691893188"
+          ],
+          "media_ids": [
+            "367792508",
+            "430175351",
+            "1002357058"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyragraspingplant_zyraeplantattack2_oncast_r3.wav",
+      "sha256": "91466c75187cea95d987084b118b3266c247b515859fa2cfcb253e1736581c2d",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnCast {r3}.txtp",
+          "txtp_sha256": "a8b8f36d1b61416e3102f532040217589625b5a744640f3e3ef948cf2f6cc2c5",
+          "event_ids": [
+            "2691893188"
+          ],
+          "media_ids": [
+            "367792508",
+            "430175351",
+            "1002357058"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyragraspingplant_zyraeplantattack_onhit_r1_d.wav",
+      "sha256": "b0ecd24d301f933a9f5ac4d870cad28d92a6b73009832b31418134e1009924b1",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnHit {r1} {d}.txtp",
+          "txtp_sha256": "0543db399cdf6dd3ef7c013bfd803a6c286ffbfac15e984ba91991bab3405781",
+          "event_ids": [
+            "2486442900"
+          ],
+          "media_ids": [
+            "248353434",
+            "356816726",
+            "546162360",
+            "616354438"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyragraspingplant_zyraeplantattack_onhit_r2_d.wav",
+      "sha256": "1d4984be921b2b4d14361f1125138f4f63168bf477727619af34fd1ed4415968",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnHit {r2} {d}.txtp",
+          "txtp_sha256": "7a6575570ca30079025ad43eaec9c082d0fad082e6bc77f316cb727e7c328db6",
+          "event_ids": [
+            "2486442900"
+          ],
+          "media_ids": [
+            "248353434",
+            "356816726",
+            "546162360",
+            "616354438"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyragraspingplant_zyraeplantattack_onhit_r3_d.wav",
+      "sha256": "12e2be17c9628ff2a592854ff59e1677beb517a6925b8e1e6cb5337d43fe91ec",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnHit {r3} {d}.txtp",
+          "txtp_sha256": "d0a6d7add71ae23828d1273ab7c72ea2c26c2a632c9a7ac2e670c3fa37279614",
+          "event_ids": [
+            "2486442900"
+          ],
+          "media_ids": [
+            "248353434",
+            "356816726",
+            "546162360",
+            "616354438"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyragraspingplant_zyraeplantattack2_onhit_r1.wav",
+      "sha256": "b0ecd24d301f933a9f5ac4d870cad28d92a6b73009832b31418134e1009924b1",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnHit {r1}.txtp",
+          "txtp_sha256": "4aff44872845d6dc281619152a5590990535cd31f812685939ea7fc1ea6872f0",
+          "event_ids": [
+            "3138029036"
+          ],
+          "media_ids": [
+            "248353434",
+            "356816726",
+            "546162360",
+            "616354438"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyragraspingplant_zyraeplantattack2_onhit_r2.wav",
+      "sha256": "1d4984be921b2b4d14361f1125138f4f63168bf477727619af34fd1ed4415968",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnHit {r2}.txtp",
+          "txtp_sha256": "17b71d1d42bd23539119f475f754ba01f4fd4bf7391dbfdc1d39c11e21a71229",
+          "event_ids": [
+            "3138029036"
+          ],
+          "media_ids": [
+            "248353434",
+            "356816726",
+            "546162360",
+            "616354438"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyragraspingplant_zyraeplantattack2_onhit_r3.wav",
+      "sha256": "12e2be17c9628ff2a592854ff59e1677beb517a6925b8e1e6cb5337d43fe91ec",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnHit {r3}.txtp",
+          "txtp_sha256": "8a33a589710ec29b5b136d5685ea17d79aa31a10b6289fc4039a7ed22bcfb4e8",
+          "event_ids": [
+            "3138029036"
+          ],
+          "media_ids": [
+            "248353434",
+            "356816726",
+            "546162360",
+            "616354438"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyra_zyraeplant_onbuffactivate_r1.wav",
+      "sha256": "2cc74c8a23ad5248d8c01b6647c20bd3fac2cbd1a289813165cefab5671f8d52",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_Zyra_ZyraEPlant_OnBuffActivate {r1}.txtp",
+          "txtp_sha256": "1f54d13c970d90b0387e74057df637b8f00314dbf439b1c02356d886c06b69d3",
+          "event_ids": [
+            "4276641879"
+          ],
+          "media_ids": [
+            "19906188",
+            "233474436",
+            "962121335"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyra_zyraeplant_onbuffactivate_r2.wav",
+      "sha256": "315e3367d95ca7e06c35cbaa417a7e5087c1a5982b1009e775c417453845d197",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_Zyra_ZyraEPlant_OnBuffActivate {r2}.txtp",
+          "txtp_sha256": "753433381d4f11c7ec1fb8095c3ebe0a3fc0ef56f34fd63da8f49c70af9fe152",
+          "event_ids": [
+            "4276641879"
+          ],
+          "media_ids": [
+            "19906188",
+            "233474436",
+            "962121335"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyra_zyraeplant_onbuffactivate_r3.wav",
+      "sha256": "0da61f26410a08355b2e5e53edfdabeaf79f673bd6544f2db2ff76d689454be2",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_Zyra_ZyraEPlant_OnBuffActivate {r3}.txtp",
+          "txtp_sha256": "7bc6f23c6fc616a9f41c4b26b4103c65017cc3a722b3f3ac708d998676975c45",
+          "event_ids": [
+            "4276641879"
+          ],
+          "media_ids": [
+            "19906188",
+            "233474436",
+            "962121335"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/vine_lasher/play_sfx_zyra_zyraeplant_onbuffdeactivate.wav",
+      "sha256": "b4fe0a92f84d46017a85a9e1423aafb2ddab3b1e536057558b63648747e5e06d",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_Zyra_ZyraEPlant_OnBuffDeactivate.txtp",
+          "txtp_sha256": "445699d9becf99051b6e3c3d749f65e00d41fbecb8c4032702247cfbeeefe214",
+          "event_ids": [
+            "3184056510"
+          ],
+          "media_ids": [
+            "108917737"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_events.bnk",
+              "sha256": "d0ef6c7d569e8c380061d9c3af9b9478ebf032ca3681a23ea26ee35ea732ae1e"
+            },
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/assets/sounds/wwise2016/sfx/characters/zyra/skins/base/zyra_base_sfx_audio.bnk",
+              "sha256": "7cab299a59e4dc7abfbc843e02dd7f89af38394f681f0fc1347032063258f082"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
     }
   ]
 }

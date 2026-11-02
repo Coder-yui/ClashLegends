@@ -967,5 +967,23 @@
     "source_path": "assets/characters/inhibitor/hud/inhibitor_blue_square.tex",
     "source_sha256": "94bada451f74cc08c4d61145a07d659502132c12a2b59a63d471145390fa1e0c",
     "sha256": "3e7a3363b0fb2ccda7791a239a0adb807d6f6d8140b54c260de70a2066b841a2"
+  },
+  {
+    "card": "thorn_spitter",
+    "skill_index": 0,
+    "path": "res://assets/skills/zyra_q.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Zyra.wad.client",
+    "source_path": "assets/characters/zyra/hud/icons2d/zyraq.dds",
+    "source_sha256": "fe0c1f9e22ee4ea69e1e1df6dadbce1295535aca1bf3ba7b696de14088ed97f8",
+    "sha256": "6741a943aca32930229041be24291d8c0da0ce974353b3d398650af60c15465d"
+  },
+  {
+    "card": "vine_lasher",
+    "skill_index": 0,
+    "path": "res://assets/skills/zyra_e.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Zyra.wad.client",
+    "source_path": "assets/characters/zyra/hud/icons2d/zyrae.dds",
+    "source_sha256": "f3b22a9f7f0a387461099355872bbd17b8fb8d21a526b57192d8fb1a1828181e",
+    "sha256": "d9b13ec2dc373aba80ddf6e0981ffc6ec433f2f6ec4d2694fa8244d3ff06b2e1"
   }
 ]

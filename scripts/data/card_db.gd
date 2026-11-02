@@ -6,6 +6,8 @@ const VALIDATOR = preload("res://scripts/data/card_validator.gd")
 const DEFINITIONS = [
 	preload("res://scripts/data/cards/inhibitor.gd"),
 	preload("res://scripts/data/cards/soul_tentacle.gd"),
+	preload("res://scripts/data/cards/thorn_spitter.gd"),
+	preload("res://scripts/data/cards/vine_lasher.gd"),
 	preload("res://scripts/data/cards/final_spark.gd"),
 	preload("res://scripts/data/cards/severing_bolt.gd"),
 	preload("res://scripts/data/cards/pool_of_reflection.gd"),

@@ -1,0 +1,13 @@
+{
+  "model_source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/藤蔓鞭击者/荆棘之兴 (3).glb",
+  "model_sha256": "94e6221a520314dd85e8e5a59bcb26f7b779b2b87dc7295d0430d73da1cc3835",
+  "model_scale": 0.016,
+  "source_skin_scale": 1.2,
+  "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Zyra.wad.client",
+  "effects": [
+    "Zyra_Base_P_Enrage"
+  ],
+  "buff_anchor": "C_Buffbone_Glb_Center_Loc (project attachment; source server script unavailable)",
+  "card_art_source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/3D摄影棚/shots/藤蔓鞭击者_20261103_002724.png",
+  "card_art_sha256": "27ab4820fbf2858a563e065b27afe686df6798f56f0cb973e17279981300828a"
+}

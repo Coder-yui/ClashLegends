@@ -1,0 +1,270 @@
+[
+  {
+    "file": "play_sfx_zyragraspingplant_zyraeplantattack_oncast_r1_d.wav",
+    "event": "Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnCast",
+    "event_id": 306201020,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnCast {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnCast {r1} {d}.txtp",
+    "media_ids": [
+      367792508,
+      430175351,
+      1002357058
+    ],
+    "duration": 0.8398,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8a3858fdbe8b548e35c6b5ac3ba2ad6653ccd32853180adba060c87a7273a751",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyragraspingplant_zyraeplantattack_oncast_r2_d.wav",
+    "event": "Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnCast",
+    "event_id": 306201020,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnCast {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnCast {r2} {d}.txtp",
+    "media_ids": [
+      367792508,
+      430175351,
+      1002357058
+    ],
+    "duration": 0.8468,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1785e47103e9aa811b17f3bbc0c6dfe9122aa9231437506f621779a3ccd82eab",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyragraspingplant_zyraeplantattack_oncast_r3_d.wav",
+    "event": "Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnCast",
+    "event_id": 306201020,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnCast {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnCast {r3} {d}.txtp",
+    "media_ids": [
+      367792508,
+      430175351,
+      1002357058
+    ],
+    "duration": 1.1405,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "91466c75187cea95d987084b118b3266c247b515859fa2cfcb253e1736581c2d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyragraspingplant_zyraeplantattack2_oncast_r1.wav",
+    "event": "Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnCast",
+    "event_id": 2691893188,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnCast {r1}.txtp",
+    "media_ids": [
+      367792508,
+      430175351,
+      1002357058
+    ],
+    "duration": 0.8398,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8a3858fdbe8b548e35c6b5ac3ba2ad6653ccd32853180adba060c87a7273a751",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyragraspingplant_zyraeplantattack2_oncast_r2.wav",
+    "event": "Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnCast",
+    "event_id": 2691893188,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnCast {r2}.txtp",
+    "media_ids": [
+      367792508,
+      430175351,
+      1002357058
+    ],
+    "duration": 0.8468,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1785e47103e9aa811b17f3bbc0c6dfe9122aa9231437506f621779a3ccd82eab",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyragraspingplant_zyraeplantattack2_oncast_r3.wav",
+    "event": "Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnCast",
+    "event_id": 2691893188,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnCast {r3}.txtp",
+    "media_ids": [
+      367792508,
+      430175351,
+      1002357058
+    ],
+    "duration": 1.1405,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "91466c75187cea95d987084b118b3266c247b515859fa2cfcb253e1736581c2d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyragraspingplant_zyraeplantattack_onhit_r1_d.wav",
+    "event": "Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnHit",
+    "event_id": 2486442900,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnHit {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnHit {r1} {d}.txtp",
+    "media_ids": [
+      248353434,
+      356816726,
+      546162360,
+      616354438
+    ],
+    "duration": 1.2298,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b0ecd24d301f933a9f5ac4d870cad28d92a6b73009832b31418134e1009924b1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyragraspingplant_zyraeplantattack_onhit_r2_d.wav",
+    "event": "Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnHit",
+    "event_id": 2486442900,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnHit {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnHit {r2} {d}.txtp",
+    "media_ids": [
+      248353434,
+      356816726,
+      546162360,
+      616354438
+    ],
+    "duration": 1.0947,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1d4984be921b2b4d14361f1125138f4f63168bf477727619af34fd1ed4415968",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyragraspingplant_zyraeplantattack_onhit_r3_d.wav",
+    "event": "Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnHit",
+    "event_id": 2486442900,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnHit {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack_OnHit {r3} {d}.txtp",
+    "media_ids": [
+      248353434,
+      356816726,
+      546162360,
+      616354438
+    ],
+    "duration": 1.608,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "12e2be17c9628ff2a592854ff59e1677beb517a6925b8e1e6cb5337d43fe91ec",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyragraspingplant_zyraeplantattack2_onhit_r1.wav",
+    "event": "Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnHit",
+    "event_id": 3138029036,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnHit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnHit {r1}.txtp",
+    "media_ids": [
+      248353434,
+      356816726,
+      546162360,
+      616354438
+    ],
+    "duration": 1.2298,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b0ecd24d301f933a9f5ac4d870cad28d92a6b73009832b31418134e1009924b1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyragraspingplant_zyraeplantattack2_onhit_r2.wav",
+    "event": "Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnHit",
+    "event_id": 3138029036,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnHit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnHit {r2}.txtp",
+    "media_ids": [
+      248353434,
+      356816726,
+      546162360,
+      616354438
+    ],
+    "duration": 1.0947,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1d4984be921b2b4d14361f1125138f4f63168bf477727619af34fd1ed4415968",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyragraspingplant_zyraeplantattack2_onhit_r3.wav",
+    "event": "Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnHit",
+    "event_id": 3138029036,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnHit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_ZyraGraspingPlant_ZyraEPlantAttack2_OnHit {r3}.txtp",
+    "media_ids": [
+      248353434,
+      356816726,
+      546162360,
+      616354438
+    ],
+    "duration": 1.608,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "12e2be17c9628ff2a592854ff59e1677beb517a6925b8e1e6cb5337d43fe91ec",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyra_zyraeplant_onbuffactivate_r1.wav",
+    "event": "Play_sfx_Zyra_ZyraEPlant_OnBuffActivate",
+    "event_id": 4276641879,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_Zyra_ZyraEPlant_OnBuffActivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_Zyra_ZyraEPlant_OnBuffActivate {r1}.txtp",
+    "media_ids": [
+      19906188,
+      233474436,
+      962121335
+    ],
+    "duration": 2.3098,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2cc74c8a23ad5248d8c01b6647c20bd3fac2cbd1a289813165cefab5671f8d52",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyra_zyraeplant_onbuffactivate_r2.wav",
+    "event": "Play_sfx_Zyra_ZyraEPlant_OnBuffActivate",
+    "event_id": 4276641879,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_Zyra_ZyraEPlant_OnBuffActivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_Zyra_ZyraEPlant_OnBuffActivate {r2}.txtp",
+    "media_ids": [
+      19906188,
+      233474436,
+      962121335
+    ],
+    "duration": 1.9257,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "315e3367d95ca7e06c35cbaa417a7e5087c1a5982b1009e775c417453845d197",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyra_zyraeplant_onbuffactivate_r3.wav",
+    "event": "Play_sfx_Zyra_ZyraEPlant_OnBuffActivate",
+    "event_id": 4276641879,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_Zyra_ZyraEPlant_OnBuffActivate {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_Zyra_ZyraEPlant_OnBuffActivate {r3}.txtp",
+    "media_ids": [
+      19906188,
+      233474436,
+      962121335
+    ],
+    "duration": 2.1668,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0da61f26410a08355b2e5e53edfdabeaf79f673bd6544f2db2ff76d689454be2",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_zyra_zyraeplant_onbuffdeactivate.wav",
+    "event": "Play_sfx_Zyra_ZyraEPlant_OnBuffDeactivate",
+    "event_id": 3184056510,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/event_wav/Play_sfx_Zyra_ZyraEPlant_OnBuffDeactivate.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/audio/zyra/txtp/Play_sfx_Zyra_ZyraEPlant_OnBuffDeactivate.txtp",
+    "media_ids": [
+      108917737
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "b4fe0a92f84d46017a85a9e1423aafb2ddab3b1e536057558b63648747e5e06d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.477936507936508,
+      "source_sha256": "8b82c7dee2cdd6900d9ce15c779dfa9e2ed843b701cf84888112cac70b5a69dd",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  }
+]

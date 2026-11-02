@@ -1,0 +1,22 @@
+{
+  "model_source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者/荆棘之兴 (1).glb",
+  "model_sha256": "d70bd53041f71c236c7ae27b91db2ee5306e4cf8f3bc5439f7216b4957576888",
+  "model_scale": 0.016,
+  "card_art_source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/3D摄影棚/shots/荆棘喷射者_20261102_230639.png",
+  "card_art_sha256": "7c13a88c9cdbbdf21fa94fd6019afe6165fe44aa7e565e844a5643949ec701f1",
+  "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Zyra.wad.client",
+  "effects": [
+    "Zyra_Base_Q_Plant_Mis",
+    "Zyra_Base_P_Enrage"
+  ],
+  "effects_source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/荆棘喷射者",
+  "attack_timing": "Attack1 tickDuration 0.032258, ZyraQPlantMissile castFrame 2 with animator framerate; 2*0.032258/0.967741*1.25=0.083333, config 0.08, 20Hz launch about 0.10. Active buff retains one missile at 150% damage.",
+  "missile_emitter_selection": [
+    "vine_thorn"
+  ],
+  "missile_excluded": "trail, trail2, poison_trail, poison_smoke_02, poison_smoke, spores, leaves, poison; user requested original projectile mesh only",
+  "source_skin_scale": 1.2,
+  "native_effect_scale": 0.013333333333333334,
+  "projectile_anchor": "Buffbone_Glb_Weapon_1 (project attachment; no source start bone override)",
+  "buff_anchor": "C_Buffbone_Glb_Center_Loc (project attachment; source server script unavailable)"
+}

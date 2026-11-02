@@ -6,6 +6,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_client_state_ownership()
 	_check_projectile_travel()
+	_check_thorn_spitter_impact()
 	_check_tower_projectile_visual()
 	_check_projectile_visual_snapshot()
 	_check_imp_tower_damage()
@@ -248,7 +249,7 @@ func _attack_trace(card_id: String, configured: Dictionary, team: int, lethal: b
 	var legacy_edge := card_id in ["ashe", "teemo", "gnar", "anivia", "kayle_ranged", "lulu", "twitch", "tristana", "corki", "jinx"]
 	var expected_start := attacker.position + Vector2(attacker.body_radius + 7.5, 0) if legacy_edge else attacker.position
 	if card_id == "jayce": expected_start = attacker.position + Vector2(attacker.body_radius, 0)
-	var expected_radius := 7.0 if card_id == "tower" else (3.0 if card_id in ["ashe", "evolution_turret"] else 4.0)
+	var expected_radius := 7.0 if card_id == "tower" else (3.0 if card_id in ["ashe", "evolution_turret", "thorn_spitter"] else 4.0)
 	if not change_visual:
 		_expect(shot.pos == expected_start and shot.radius == expected_radius, "%s：保持迁移前权威出生点与碰撞半径" % card_id)
 	var trace: Array = [[shot.pos, shot.radius, target.hp]]
@@ -335,3 +336,22 @@ func _check_client_state_ownership() -> void:
 	_expect(owner.client_snapshot().is_empty(), "客户端弹体清场入口可重复调用")
 	owner.clear_client()
 	owner.free()
+
+func _check_thorn_spitter_impact() -> void:
+	_main._projectile_system.clear_all()
+	var plant: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "thorn_spitter", Vector2(220, 900), {"position_resolved": true, "deploy_time_override": 0.0}))
+	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "target_dummy", Vector2(360, 900), {"position_resolved": true, "deploy_time_override": 0.0}))
+	target.is_air = true
+	_expect(plant._target_is_attackable(target), "荆棘喷射者可选择空军")
+	var hp := target.hp
+	plant._attack_visual_serial = 1
+	_main.launch_attack(plant, target, 100.0, plant.projectile_speed, 0.0, 0.0, plant.color)
+	_expect(target.hp == hp and _main._projectile_system.impact_effects.is_empty(), "植物发射不提前伤害或产生命中特效")
+	plant._die()
+	for tick in 10: _main._tick_projectiles(0.05)
+	_expect(target.hp == hp - 100.0, "植物死亡后已发尖刺仍结算一次伤害")
+	_expect(_main._projectile_system.impact_effects.is_empty(), "荆棘喷射者命中后不生成命中特效")
+	_main._projectile_system.clear_all()
+	_expect(_main._projectile_system.impact_effects.is_empty(), "清场释放植物命中表现")
+	plant.free()
+	target.free()

@@ -44,6 +44,10 @@ func run(harness: SceneTree) -> void:
 		main._audio_manager.cue_played.connect(func(card, cue, _pos):
 			if card == "match" and cue in [&"victory", &"defeat"]: result_cues.append(cue))
 	var bomb_case = preload("res://tests/fixtures/mega_inferno_bomb_network_case.gd").new() if OS.get_environment("CLASH_TEST_MEGA_INFERNO_BOMB") == "1" else null
+	var thorn_case = preload("res://tests/fixtures/thorn_spitter_network_case.gd").new() if OS.get_environment("CLASH_TEST_THORN_SPITTER") == "1" else null
+	var vine_case = preload("res://tests/fixtures/vine_lasher_network_case.gd").new() if OS.get_environment("CLASH_TEST_VINE_LASHER") == "1" else null
+	if vine_case != null: terminal_not_before = maxi(terminal_not_before, 225)
+	if thorn_case != null: terminal_not_before = maxi(terminal_not_before, 225)
 	var evolution_case = preload("res://tests/fixtures/evolution_turret_network_case.gd").new() if OS.get_environment("CLASH_TEST_EVOLUTION_TURRET") == "1" else null
 	if evolution_case != null: terminal_not_before = maxi(terminal_not_before, 140)
 	var tentacle_case = preload("res://tests/fixtures/soul_tentacle_network_case.gd").new() if OS.get_environment("CLASH_TEST_SOUL_TENTACLE") == "1" else null
@@ -81,6 +85,8 @@ func run(harness: SceneTree) -> void:
 	while Time.get_ticks_msec() - start < 20000:
 		await harness.process_frame
 		if bomb_case != null: bomb_case.poll(main)
+		if thorn_case != null: thorn_case.poll(main)
+		if vine_case != null: vine_case.poll(main)
 		if evolution_case != null: evolution_case.poll(main)
 		if tentacle_case != null: tentacle_case.poll(main)
 		if spark_case != null: spark_case.poll(main)
@@ -279,6 +285,12 @@ func run(harness: SceneTree) -> void:
 		if bomb_case != null:
 			result["mega_inferno_bomb"] = bomb_case.result()
 			result["passed"] = result.passed and result.mega_inferno_bomb.passed
+		if vine_case != null:
+			result["vine_lasher"] = vine_case.result()
+			result["passed"] = result.passed and result.vine_lasher.passed
+		if thorn_case != null:
+			result["thorn_spitter"] = thorn_case.result()
+			result["passed"] = result.passed and result.thorn_spitter.passed
 		if evolution_case != null:
 			result["evolution_turret"] = evolution_case.result()
 			result["passed"] = result.passed and result.evolution_turret.passed

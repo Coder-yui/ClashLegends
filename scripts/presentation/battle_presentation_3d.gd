@@ -12,6 +12,7 @@ func visual_team(team: int) -> int:
 
 var projectiles: Node2D
 var _blitzcrank_projectiles: Node3D
+var _thorn_projectiles: Node3D
 var _evolution_projectiles: Node3D
 var _jayce_projectiles: Node3D
 var _samira_projectiles: Node3D
@@ -75,6 +76,8 @@ func _process(delta: float) -> void:
 		_rewind_effect.sync_effects(skills, _camera)
 	if _blitzcrank_projectiles != null:
 		_blitzcrank_projectiles.sync_effects(projectiles, _camera)
+	if _thorn_projectiles != null:
+		_thorn_projectiles.set_sources(projectiles, _camera)
 	if _evolution_projectiles != null:
 		_evolution_projectiles.set_sources(projectiles, _camera)
 	if _jayce_projectiles != null:
@@ -198,6 +201,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 
 	_blitzcrank_projectiles = preload("res://scripts/presentation/blitzcrank_projectile_3d.gd").new()
 	_world_root.add_child(_blitzcrank_projectiles)
+	_thorn_projectiles = preload("res://scripts/presentation/thorn_spitter_projectile_3d.gd").new()
+	_world_root.add_child(_thorn_projectiles)
 	_evolution_projectiles = preload("res://scripts/presentation/evolution_turret_projectile_3d.gd").new()
 	_world_root.add_child(_evolution_projectiles)
 	_jayce_projectiles = preload("res://scripts/presentation/jayce_projectile_3d.gd").new()
