@@ -100,6 +100,7 @@
 | `super_minion` · [超级兵](../units/super_minion.md) | 近战；男爵移速/伤害/独立盾 | [动作](../units/animations/super_minion.md) · [声音](../units/audio/super_minion.md) |
 | `super_minion_squad` · [攻城部队](../units/super_minion_squad.md) | 2超级兵编队；资格转交、成员Buff | [动作](../units/animations/super_minion.md) · [声音](../units/audio/super_minion_squad.md) |
 | `inhibitor` · [高地水晶](../units/inhibitor.md) | 三波兵线循环，死亡与主动召唤超级兵 | [动作](../units/animations/inhibitor.md) · [声音](../units/audio/inhibitor.md) |
+| `evolution_turret` · [H-28G进化炮台](../units/evolution_turret.md) | 24秒衰血；射程无目标时敌方不可选取，主动修复 | [动作](../units/animations/evolution_turret.md) · [声音](../units/audio/evolution_turret.md) |
 | `target_dummy` · [训练木桩（建筑卡）](../units/target_dummy.md) | 15秒衰血、不可普攻；余震减伤及到期爆炸，与工作台木桩独立 | [动作](../units/animations/target_dummy.md) · [声音](../units/audio/target_dummy.md) |
 | `teemo` · [提莫](../units/teemo.md) | 强化致盲两次；无持续毒伤 | [动作](../units/animations/teemo.md) · [声音](../units/audio/teemo.md) |
 | `tombstone` · [墓碑](../units/tombstone.md) | 20秒寿命；受控最多保留一批、被击杀或自然死亡额外召唤两只 | [动作](../units/animations/tombstone.md) · [声音](../units/audio/tombstone.md) |

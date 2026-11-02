@@ -69342,6 +69342,567 @@
       "note": "Fresh wwiser -gv=0dB; vgmstream-cli -i -W 4; PCM16 without normalization; sustain loops full rendered clip"
     },
     {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimertyellowbasicattack2_oncast_r1.wav",
+      "sha256": "0abcd0e53c505d5c11a98e780382e7202fcb64883afa6273192b13344189e910",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnCast {r1}.txtp",
+          "txtp_sha256": "c7efe7b950a0efcfb35e4c9671e11cad32a836c4a089479cd25b0d86645879bb",
+          "event_ids": [
+            "2811818664"
+          ],
+          "media_ids": [
+            64413714,
+            129453777,
+            260610384
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnCast {r1} {d}.txtp",
+          "txtp_sha256": "a37220e4cca252bedbbfacd2127a7ed9a123db9983f6cabceab3d28d2775e6a4",
+          "event_ids": [
+            "4095629304"
+          ],
+          "media_ids": [
+            64413714,
+            129453777,
+            260610384
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimertyellowbasicattack2_oncast_r2.wav",
+      "sha256": "a4806334dae0055ee4d963d72c3858efb6adac8f03201498399b3ea1d0726f9e",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnCast {r2}.txtp",
+          "txtp_sha256": "397c0bc344246bf5770dc5fa37d5624798861f1cd510a681cf7d9d2345e0396a",
+          "event_ids": [
+            "2811818664"
+          ],
+          "media_ids": [
+            64413714,
+            129453777,
+            260610384
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnCast {r2} {d}.txtp",
+          "txtp_sha256": "d4986c1b67e2f59fadeebdf89cd7c8ba3d4b2b2bbc5779b4eda720d9e288eff2",
+          "event_ids": [
+            "4095629304"
+          ],
+          "media_ids": [
+            64413714,
+            129453777,
+            260610384
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimertyellowbasicattack2_oncast_r3.wav",
+      "sha256": "07ecb0bb56cba98f9661cea52fb1beb251b1315e8dda3723bcf716098e750a95",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnCast {r3}.txtp",
+          "txtp_sha256": "4679f3ebc6bd4e029eef6de113c3808a81a438a1d19965e02684ca8c417d3ae1",
+          "event_ids": [
+            "2811818664"
+          ],
+          "media_ids": [
+            64413714,
+            129453777,
+            260610384
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnCast {r3} {d}.txtp",
+          "txtp_sha256": "d994534a6eeb172d9f4ff03cd90aa8b32d62d33b8e2b5a7d14a78112339b111a",
+          "event_ids": [
+            "4095629304"
+          ],
+          "media_ids": [
+            64413714,
+            129453777,
+            260610384
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimertyellowbasicattack2_onmissilelaunch_r1.wav",
+      "sha256": "f10e99439b35a9a6664959c20c6dfe4b37d623c2c7e88b92897c5856f7d832a3",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnMissileLaunch {r1}.txtp",
+          "txtp_sha256": "7f095cab9bb7deb129bc8488d5cb6a8beca2d7e1dab1759b3a6a345803f99e25",
+          "event_ids": [
+            "50697238"
+          ],
+          "media_ids": [
+            140771516,
+            330799502,
+            631515596
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnMissileLaunch {r1} {d}.txtp",
+          "txtp_sha256": "6c923097d68218564fe46c666ff1dd856e227e52adb46e5bf12d0fb07b9294d9",
+          "event_ids": [
+            "1352874150"
+          ],
+          "media_ids": [
+            140771516,
+            330799502,
+            631515596
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimertyellowbasicattack2_onmissilelaunch_r2.wav",
+      "sha256": "454b2f4c4804bbc63fc2589383a3046c9935ea9a0c312671486465887393c024",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnMissileLaunch {r2}.txtp",
+          "txtp_sha256": "36092ed9bcb9b4adeb09b67fd4d679f8afeaa926a194af1ac7ecedcfa4680694",
+          "event_ids": [
+            "50697238"
+          ],
+          "media_ids": [
+            140771516,
+            330799502,
+            631515596
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnMissileLaunch {r2} {d}.txtp",
+          "txtp_sha256": "61358ddca02c271cec415303274057cb6e48a5c6706a4f76c0c1442d91d8cf49",
+          "event_ids": [
+            "1352874150"
+          ],
+          "media_ids": [
+            140771516,
+            330799502,
+            631515596
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimertyellowbasicattack2_onmissilelaunch_r3.wav",
+      "sha256": "a0750d4a161ea7180f293408c6bc5aa33753e756cf9afc1b50b34b6dd4f83647",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnMissileLaunch {r3}.txtp",
+          "txtp_sha256": "3f274d75bd98ff8786bbea3690321d67ee5e9e4df7bd204a4c297b761b243961",
+          "event_ids": [
+            "50697238"
+          ],
+          "media_ids": [
+            140771516,
+            330799502,
+            631515596
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnMissileLaunch {r3} {d}.txtp",
+          "txtp_sha256": "7ad16d0529f79f93f6ca2a3a27c5a984bfe25258044ffb30e1ef0d188c392a18",
+          "event_ids": [
+            "1352874150"
+          ],
+          "media_ids": [
+            140771516,
+            330799502,
+            631515596
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimertyellowbasicattack2_onhit_r1.wav",
+      "sha256": "4a4fe9c6000dd478df09b80596a8ff17f916bc97ab7d551deddea72e8f07189c",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnHit {r1}.txtp",
+          "txtp_sha256": "35e67efcb4ff35fe122beaad798bde38d9bff7067b1620ff2d7292244335d0b3",
+          "event_ids": [
+            "2085060536"
+          ],
+          "media_ids": [
+            888669,
+            224891789,
+            275716958
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnHit {r1} {d}.txtp",
+          "txtp_sha256": "03beee75ee917aa2d8c7dc88131f2d0e49a8cdd5a008b84356a6a7afd85447bb",
+          "event_ids": [
+            "1258986120"
+          ],
+          "media_ids": [
+            888669,
+            224891789,
+            275716958
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimertyellowbasicattack2_onhit_r2.wav",
+      "sha256": "a2d4b8a4fb9cde91255773cedd6229420aa356071877069789330ac281e81923",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnHit {r2}.txtp",
+          "txtp_sha256": "fe3b5a192d87150da8e546fe65e3f09d61daf7198c76d12972aa6c2c76b6dc98",
+          "event_ids": [
+            "2085060536"
+          ],
+          "media_ids": [
+            888669,
+            224891789,
+            275716958
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnHit {r2} {d}.txtp",
+          "txtp_sha256": "7c1deff015f2fce15e6cab9be73f934eae6f553aac66e448c1a72a09563d9639",
+          "event_ids": [
+            "1258986120"
+          ],
+          "media_ids": [
+            888669,
+            224891789,
+            275716958
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimertyellowbasicattack2_onhit_r3.wav",
+      "sha256": "2bf1ca1ff2f4c94fa5956db866036f0a528461c2a5587d6c981ec0973e73e98d",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnHit {r3}.txtp",
+          "txtp_sha256": "17fb899959aaa753077adda1644a3f2db3fb35413716065e436be59fbfab5598",
+          "event_ids": [
+            "2085060536"
+          ],
+          "media_ids": [
+            888669,
+            224891789,
+            275716958
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnHit {r3} {d}.txtp",
+          "txtp_sha256": "2688cc9e4db41b6d2e4b69e6741f90353a28df91406552e42557761259ee0c4f",
+          "event_ids": [
+            "1258986120"
+          ],
+          "media_ids": [
+            888669,
+            224891789,
+            275716958
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffactivate_r1_d.wav",
+      "sha256": "e09f8be388de436ca5e079166537acceb3efd72def66c6a07530c227c4a126c7",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate {r1} {d}.txtp",
+          "txtp_sha256": "a4bb6e10f08f4e1d739c9d01e51f30af2a9a5ab58f69ece3933287fa0b897c5e",
+          "event_ids": [
+            "4008859642"
+          ],
+          "media_ids": [
+            5681745,
+            14511344,
+            266734436
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained",
+      "shared_event_playback": [
+        {
+          "event": "dormant:exit",
+          "runtime_gain_db": -6.0,
+          "source_events": [
+            {
+              "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffDeactivate {r1}.txtp",
+              "txtp_sha256": "19eb96888e02033e09f2f8739cff8f0f873b141581c91171fe358ecab7706fe2",
+              "event_ids": [
+                "2328798914"
+              ],
+              "media_ids": []
+            }
+          ],
+          "note": "Same source media; preserve original shutdown-exit event gain using playback offset."
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffactivate_r2_d.wav",
+      "sha256": "8f6088a57bc724ad0008269935b15c9d7e9bfe6ee80a09db655865d414c73b8a",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate {r2} {d}.txtp",
+          "txtp_sha256": "aec8c4ef83834b2e6ee7343c3ae25694af1cd775fc6cec3c74f4b025e2e87486",
+          "event_ids": [
+            "4008859642"
+          ],
+          "media_ids": [
+            5681745,
+            14511344,
+            266734436
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained",
+      "shared_event_playback": [
+        {
+          "event": "dormant:exit",
+          "runtime_gain_db": -6.0,
+          "source_events": [
+            {
+              "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffDeactivate {r2}.txtp",
+              "txtp_sha256": "8a7a67493453182aef1061e2ea6d4fd34532e1ec254ffabd5daf499b67a6d32d",
+              "event_ids": [
+                "2328798914"
+              ],
+              "media_ids": []
+            }
+          ],
+          "note": "Same source media; preserve original shutdown-exit event gain using playback offset."
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffactivate_r3_d.wav",
+      "sha256": "a0be40e217d8c40ea8100647a6edcaa2a004c5432a2eb9d629036fd0e2596dee",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate {r3} {d}.txtp",
+          "txtp_sha256": "4fd0e408bbd6aecf46069bb5e50559cbfb22fbaa52b0980c5b6f621e5db7bd2f",
+          "event_ids": [
+            "4008859642"
+          ],
+          "media_ids": [
+            5681745,
+            14511344,
+            266734436
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained",
+      "shared_event_playback": [
+        {
+          "event": "dormant:exit",
+          "runtime_gain_db": -6.0,
+          "source_events": [
+            {
+              "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffDeactivate {r3}.txtp",
+              "txtp_sha256": "94882bc9b28534c82e583e4f176f29c351cbd5a52821d68cf4ad01711f79c143",
+              "event_ids": [
+                "2328798914"
+              ],
+              "media_ids": []
+            }
+          ],
+          "note": "Same source media; preserve original shutdown-exit event gain using playback offset."
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffdeactivate_r1.wav",
+      "sha256": "95f6c5a965e9ad28ad88417de367846a7d72018d85f0176cd7d25d83861bd578",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate {r1}.txtp",
+          "txtp_sha256": "77202a4ca6f127a28bf3c8c3544b33ac3f895ad597e7530334f0580941707396",
+          "event_ids": [
+            "3652533003"
+          ],
+          "media_ids": [
+            281129591,
+            703650768,
+            998471615
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffdeactivate_r2.wav",
+      "sha256": "9185b5f520160299692e3e91bcb36f678fa094445bed2761914b894a7f636875",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate {r2}.txtp",
+          "txtp_sha256": "fb363c72b9fbc6551acf41e69697b04a31346a7e70a9abe2850fd53321698803",
+          "event_ids": [
+            "3652533003"
+          ],
+          "media_ids": [
+            281129591,
+            703650768,
+            998471615
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained"
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffdeactivate_r3.wav",
+      "sha256": "77a3e0e8068d17ccca677c412de123f5c71734893c7877f5413515765267be24",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate {r3}.txtp",
+          "txtp_sha256": "7099d347c42e517256d69dd48bf711687d3309e553f0bcf04750f6d0e11a4b9d",
+          "event_ids": [
+            "3652533003"
+          ],
+          "media_ids": [
+            281129591,
+            703650768,
+            998471615
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimerturretshutdown_onbuffactivate_r1.wav",
+      "sha256": "2bce16ad05baf81a7fc2a89ce5784769e6b54b2130780da480fd0376baba01c4",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffActivate {r1}.txtp",
+          "txtp_sha256": "79fad98b7b45e222123cc23a33d4ce92d8238bc9bb08c725e53be2b35c88a4da",
+          "event_ids": [
+            "2342162923"
+          ],
+          "media_ids": []
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "fresh decode, wwiser master 0dB; original event gain retained"
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimerturretshutdown_onbuffactivate_r2.wav",
+      "sha256": "494144c119a8b74c62e0237f1abc5f47f837f186ad6cf3d55993ee0ec1e51b7a",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffActivate {r2}.txtp",
+          "txtp_sha256": "73b407fa0b6f7dc704f2bdec5179c3fcee2573a2b7afc95825ab91af25e5275e",
+          "event_ids": [
+            "2342162923"
+          ],
+          "media_ids": []
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "fresh decode, wwiser master 0dB; original event gain retained"
+    },
+    {
+      "file": "assets/audio/units/evolution_turret/play_sfx_heimertyellow_heimerturretshutdown_onbuffactivate_r3.wav",
+      "sha256": "860e74fa0c6b0bfdf83e719227c88e962f3a3738c123dd6259f5c34f29ea0ed6",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffActivate {r3}.txtp",
+          "txtp_sha256": "1f0fe01c4db2395db26e62220868b96edd66f3fc7c9515234e988779d9a53133",
+          "event_ids": [
+            "2342162923"
+          ],
+          "media_ids": []
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "fresh decode, wwiser master 0dB; original event gain retained"
+    },
+    {
       "file": "assets/audio/units/inhibitor/idle.wav",
       "sha256": "ad9c130b18f0abb290689f461a4eab062bbe60d1d7626d9524efce930b4867d6",
       "source_events": [

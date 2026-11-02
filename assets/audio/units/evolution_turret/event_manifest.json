@@ -1,0 +1,480 @@
+[
+  {
+    "file": "play_sfx_heimertyellow_heimertyellowbasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnCast",
+    "event_id": 2811818664,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnCast {r1}.txtp",
+    "media_ids": [
+      64413714,
+      129453777,
+      260610384
+    ],
+    "duration": 0.5155,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0abcd0e53c505d5c11a98e780382e7202fcb64883afa6273192b13344189e910",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnCast",
+        "event_id": 4095629304,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnCast {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnCast {r1} {d}.txtp",
+        "media_ids": [
+          64413714,
+          129453777,
+          260610384
+        ],
+        "duration": 0.5155,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "0abcd0e53c505d5c11a98e780382e7202fcb64883afa6273192b13344189e910",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_heimertyellow_heimertyellowbasicattack_oncast_r1_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimertyellowbasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnCast",
+    "event_id": 2811818664,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnCast {r2}.txtp",
+    "media_ids": [
+      64413714,
+      129453777,
+      260610384
+    ],
+    "duration": 0.5155,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a4806334dae0055ee4d963d72c3858efb6adac8f03201498399b3ea1d0726f9e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnCast",
+        "event_id": 4095629304,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnCast {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnCast {r2} {d}.txtp",
+        "media_ids": [
+          64413714,
+          129453777,
+          260610384
+        ],
+        "duration": 0.5155,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "a4806334dae0055ee4d963d72c3858efb6adac8f03201498399b3ea1d0726f9e",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_heimertyellow_heimertyellowbasicattack_oncast_r2_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimertyellowbasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnCast",
+    "event_id": 2811818664,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnCast {r3}.txtp",
+    "media_ids": [
+      64413714,
+      129453777,
+      260610384
+    ],
+    "duration": 0.5155,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "07ecb0bb56cba98f9661cea52fb1beb251b1315e8dda3723bcf716098e750a95",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnCast",
+        "event_id": 4095629304,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnCast {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnCast {r3} {d}.txtp",
+        "media_ids": [
+          64413714,
+          129453777,
+          260610384
+        ],
+        "duration": 0.5155,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "07ecb0bb56cba98f9661cea52fb1beb251b1315e8dda3723bcf716098e750a95",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_heimertyellow_heimertyellowbasicattack_oncast_r3_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimertyellowbasicattack2_onmissilelaunch_r1.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnMissileLaunch",
+    "event_id": 50697238,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnMissileLaunch {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnMissileLaunch {r1}.txtp",
+    "media_ids": [
+      140771516,
+      330799502,
+      631515596
+    ],
+    "duration": 0.4823,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f10e99439b35a9a6664959c20c6dfe4b37d623c2c7e88b92897c5856f7d832a3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnMissileLaunch",
+        "event_id": 1352874150,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnMissileLaunch {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnMissileLaunch {r1} {d}.txtp",
+        "media_ids": [
+          140771516,
+          330799502,
+          631515596
+        ],
+        "duration": 0.4823,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "f10e99439b35a9a6664959c20c6dfe4b37d623c2c7e88b92897c5856f7d832a3",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_heimertyellow_heimertyellowbasicattack_onmissilelaunch_r1_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimertyellowbasicattack2_onmissilelaunch_r2.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnMissileLaunch",
+    "event_id": 50697238,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnMissileLaunch {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnMissileLaunch {r2}.txtp",
+    "media_ids": [
+      140771516,
+      330799502,
+      631515596
+    ],
+    "duration": 0.5016,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "454b2f4c4804bbc63fc2589383a3046c9935ea9a0c312671486465887393c024",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnMissileLaunch",
+        "event_id": 1352874150,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnMissileLaunch {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnMissileLaunch {r2} {d}.txtp",
+        "media_ids": [
+          140771516,
+          330799502,
+          631515596
+        ],
+        "duration": 0.5016,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "454b2f4c4804bbc63fc2589383a3046c9935ea9a0c312671486465887393c024",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_heimertyellow_heimertyellowbasicattack_onmissilelaunch_r2_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimertyellowbasicattack2_onmissilelaunch_r3.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnMissileLaunch",
+    "event_id": 50697238,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnMissileLaunch {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnMissileLaunch {r3}.txtp",
+    "media_ids": [
+      140771516,
+      330799502,
+      631515596
+    ],
+    "duration": 0.4956,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a0750d4a161ea7180f293408c6bc5aa33753e756cf9afc1b50b34b6dd4f83647",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnMissileLaunch",
+        "event_id": 1352874150,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnMissileLaunch {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnMissileLaunch {r3} {d}.txtp",
+        "media_ids": [
+          140771516,
+          330799502,
+          631515596
+        ],
+        "duration": 0.4956,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "a0750d4a161ea7180f293408c6bc5aa33753e756cf9afc1b50b34b6dd4f83647",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_heimertyellow_heimertyellowbasicattack_onmissilelaunch_r3_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimertyellowbasicattack2_onhit_r1.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnHit",
+    "event_id": 2085060536,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnHit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnHit {r1}.txtp",
+    "media_ids": [
+      888669,
+      224891789,
+      275716958
+    ],
+    "duration": 0.4528,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4a4fe9c6000dd478df09b80596a8ff17f916bc97ab7d551deddea72e8f07189c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnHit",
+        "event_id": 1258986120,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnHit {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnHit {r1} {d}.txtp",
+        "media_ids": [
+          888669,
+          224891789,
+          275716958
+        ],
+        "duration": 0.4528,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "4a4fe9c6000dd478df09b80596a8ff17f916bc97ab7d551deddea72e8f07189c",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_heimertyellow_heimertyellowbasicattack_onhit_r1_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimertyellowbasicattack2_onhit_r2.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnHit",
+    "event_id": 2085060536,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnHit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnHit {r2}.txtp",
+    "media_ids": [
+      888669,
+      224891789,
+      275716958
+    ],
+    "duration": 0.4002,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a2d4b8a4fb9cde91255773cedd6229420aa356071877069789330ac281e81923",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnHit",
+        "event_id": 1258986120,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnHit {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnHit {r2} {d}.txtp",
+        "media_ids": [
+          888669,
+          224891789,
+          275716958
+        ],
+        "duration": 0.4002,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "a2d4b8a4fb9cde91255773cedd6229420aa356071877069789330ac281e81923",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_heimertyellow_heimertyellowbasicattack_onhit_r2_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimertyellowbasicattack2_onhit_r3.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnHit",
+    "event_id": 2085060536,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnHit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack2_OnHit {r3}.txtp",
+    "media_ids": [
+      888669,
+      224891789,
+      275716958
+    ],
+    "duration": 0.4025,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2bf1ca1ff2f4c94fa5956db866036f0a528461c2a5587d6c981ec0973e73e98d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnHit",
+        "event_id": 1258986120,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnHit {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTYellowBasicAttack_OnHit {r3} {d}.txtp",
+        "media_ids": [
+          888669,
+          224891789,
+          275716958
+        ],
+        "duration": 0.4025,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "2bf1ca1ff2f4c94fa5956db866036f0a528461c2a5587d6c981ec0973e73e98d",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_heimertyellow_heimertyellowbasicattack_onhit_r3_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffactivate_r1_d.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate",
+    "event_id": 4008859642,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate {r1} {d}.txtp",
+    "media_ids": [
+      5681745,
+      14511344,
+      266734436
+    ],
+    "duration": 1.0052,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e09f8be388de436ca5e079166537acceb3efd72def66c6a07530c227c4a126c7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_heimertyellow_heimerturretshutdown_onbuffdeactivate_r1.wav",
+        "event": "Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffDeactivate",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffDeactivate {r1}.txtp",
+        "duration": 1.0051927437641723,
+        "processing": "fresh decode, wwiser master 0dB; original event gain retained",
+        "sha256": "78c5796a8c8647b7bc7edc61819cfc4e9ef15b1425e162289a5656963c2cabfd",
+        "runtime_gain_db": -6.0,
+        "sharing_note": "同源WEM，源事件比生成声低6dB；共享生成WAV并由dormant:exit音量还原"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffactivate_r2_d.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate",
+    "event_id": 4008859642,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate {r2} {d}.txtp",
+    "media_ids": [
+      5681745,
+      14511344,
+      266734436
+    ],
+    "duration": 1.1225,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8f6088a57bc724ad0008269935b15c9d7e9bfe6ee80a09db655865d414c73b8a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_heimertyellow_heimerturretshutdown_onbuffdeactivate_r2.wav",
+        "event": "Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffDeactivate",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffDeactivate {r2}.txtp",
+        "duration": 1.122517006802721,
+        "processing": "fresh decode, wwiser master 0dB; original event gain retained",
+        "sha256": "460c596fe28f8f2b598faba0fa149a2c1cba7b24c78a42ef8a082f0fd90441b8",
+        "runtime_gain_db": -6.0,
+        "sharing_note": "同源WEM，源事件比生成声低6dB；共享生成WAV并由dormant:exit音量还原"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffactivate_r3_d.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate",
+    "event_id": 4008859642,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate {r3} {d}.txtp",
+    "media_ids": [
+      5681745,
+      14511344,
+      266734436
+    ],
+    "duration": 1.0497,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a0be40e217d8c40ea8100647a6edcaa2a004c5432a2eb9d629036fd0e2596dee",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_heimertyellow_heimerturretshutdown_onbuffdeactivate_r3.wav",
+        "event": "Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffDeactivate",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffDeactivate {r3}.txtp",
+        "duration": 1.0496825396825398,
+        "processing": "fresh decode, wwiser master 0dB; original event gain retained",
+        "sha256": "7f1ded1ac8cb4660c4cea958e6d392b16c758303addd73cebc0e914b9dbc972d",
+        "runtime_gain_db": -6.0,
+        "sharing_note": "同源WEM，源事件比生成声低6dB；共享生成WAV并由dormant:exit音量还原"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffdeactivate_r1.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate",
+    "event_id": 3652533003,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate {r1}.txtp",
+    "media_ids": [
+      281129591,
+      703650768,
+      998471615
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "95f6c5a965e9ad28ad88417de367846a7d72018d85f0176cd7d25d83861bd578",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 1.553718820861678,
+      "source_sha256": "46b871e1d6d0c0142ca25e672e30a449807ed56ce913f569d19cd627d838fe9a",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffdeactivate_r2.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate",
+    "event_id": 3652533003,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate {r2}.txtp",
+    "media_ids": [
+      281129591,
+      703650768,
+      998471615
+    ],
+    "duration": 1.3254,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9185b5f520160299692e3e91bcb36f678fa094445bed2761914b894a7f636875",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffdeactivate_r3.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate",
+    "event_id": 3652533003,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate {r3}.txtp",
+    "media_ids": [
+      281129591,
+      703650768,
+      998471615
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "77a3e0e8068d17ccca677c412de123f5c71734893c7877f5413515765267be24",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 1.522312925170068,
+      "source_sha256": "2411ee3c967b307ac9190b1e0e12f8a798f04a9c01becb46dd999e453555fd46",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerturretshutdown_onbuffactivate_r1.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffActivate",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffActivate {r1}.txtp",
+    "duration": 1.063514739229025,
+    "processing": "fresh decode, wwiser master 0dB; original event gain retained",
+    "sha256": "2bce16ad05baf81a7fc2a89ce5784769e6b54b2130780da480fd0376baba01c4"
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerturretshutdown_onbuffactivate_r2.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffActivate",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffActivate {r2}.txtp",
+    "duration": 1.2512244897959184,
+    "processing": "fresh decode, wwiser master 0dB; original event gain retained",
+    "sha256": "494144c119a8b74c62e0237f1abc5f47f837f186ad6cf3d55993ee0ec1e51b7a"
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerturretshutdown_onbuffactivate_r3.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffActivate",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerTurretShutdown_OnBuffActivate {r3}.txtp",
+    "duration": 1.3496825396825396,
+    "processing": "fresh decode, wwiser master 0dB; original event gain retained",
+    "sha256": "860e74fa0c6b0bfdf83e719227c88e962f3a3738c123dd6259f5c34f29ea0ed6"
+  }
+]

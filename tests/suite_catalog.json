@@ -789,5 +789,12 @@
     "method": "run",
     "scene": "none",
     "group": "presentation"
+  },
+  {
+    "id": "EvolutionTurretSuite",
+    "script": "res://tests/suites/cards/evolution_turret_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

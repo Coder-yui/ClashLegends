@@ -951,6 +951,15 @@
     "sha256": "401c10436a90a73143ef8857bd83f69636169084763ced927e8a257dd29dfe5a"
   },
   {
+    "card": "evolution_turret",
+    "skill_index": 0,
+    "path": "res://assets/skills/heimerdinger_passive.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Heimerdinger.wad.client",
+    "source_path": "assets/characters/heimerdinger/hud/icons2d/heimerdinger_passive.dds",
+    "source_sha256": "4782fee2c565ec8a7971323d35ecd97c37e11024cbeecfa309ddc258f4ec61cd",
+    "sha256": "4dba568cbf2ab3f2b0a7e6e511f85f601610bd8e01e59bffd6085b51f928d401"
+  },
+  {
     "card": "inhibitor",
     "skill_index": 0,
     "path": "res://assets/skills/inhibitor_0.png",

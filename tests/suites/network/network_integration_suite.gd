@@ -44,6 +44,8 @@ func run(harness: SceneTree) -> void:
 		main._audio_manager.cue_played.connect(func(card, cue, _pos):
 			if card == "match" and cue in [&"victory", &"defeat"]: result_cues.append(cue))
 	var bomb_case = preload("res://tests/fixtures/mega_inferno_bomb_network_case.gd").new() if OS.get_environment("CLASH_TEST_MEGA_INFERNO_BOMB") == "1" else null
+	var evolution_case = preload("res://tests/fixtures/evolution_turret_network_case.gd").new() if OS.get_environment("CLASH_TEST_EVOLUTION_TURRET") == "1" else null
+	if evolution_case != null: terminal_not_before = maxi(terminal_not_before, 140)
 	var tentacle_case = preload("res://tests/fixtures/soul_tentacle_network_case.gd").new() if OS.get_environment("CLASH_TEST_SOUL_TENTACLE") == "1" else null
 	if tentacle_case != null: terminal_not_before = maxi(terminal_not_before, 225)
 	var spark_case = preload("res://tests/fixtures/final_spark_network_case.gd").new() if OS.get_environment("CLASH_TEST_FINAL_SPARK") == "1" else null
@@ -79,6 +81,7 @@ func run(harness: SceneTree) -> void:
 	while Time.get_ticks_msec() - start < 20000:
 		await harness.process_frame
 		if bomb_case != null: bomb_case.poll(main)
+		if evolution_case != null: evolution_case.poll(main)
 		if tentacle_case != null: tentacle_case.poll(main)
 		if spark_case != null: spark_case.poll(main)
 		if pulse_case != null: pulse_case.poll(main)
@@ -176,6 +179,7 @@ func run(harness: SceneTree) -> void:
 			var building: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "tombstone", Vector2(500, 950), {"deploy_time_override": 0}))
 			building.spawn_interval = 0
 			building._lifespan_left = 0.05
+			building.hp = 1
 			expired_id = building.net_id
 			boundary_unit = main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(480, 850), {"deploy_time_override": 0}))
 			boundary_unit.apply_knockback(Vector2(400, 850), 40, 0.4)
@@ -275,6 +279,9 @@ func run(harness: SceneTree) -> void:
 		if bomb_case != null:
 			result["mega_inferno_bomb"] = bomb_case.result()
 			result["passed"] = result.passed and result.mega_inferno_bomb.passed
+		if evolution_case != null:
+			result["evolution_turret"] = evolution_case.result()
+			result["passed"] = result.passed and result.evolution_turret.passed
 		if tentacle_case != null:
 			result["soul_tentacle"] = tentacle_case.result()
 			result["passed"] = result.passed and result.soul_tentacle.passed

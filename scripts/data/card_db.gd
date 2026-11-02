@@ -82,6 +82,7 @@ const DEFINITIONS = [
 	preload("res://scripts/data/cards/sett.gd"),
 	preload("res://scripts/data/cards/tombstone.gd"),
 	preload("res://scripts/data/cards/apex_turret.gd"),
+	preload("res://scripts/data/cards/evolution_turret.gd"),
 	preload("res://scripts/data/cards/sun_disc.gd"),
 	preload("res://scripts/data/cards/aurelionsol.gd"),
 	preload("res://scripts/data/cards/anivia.gd"),
