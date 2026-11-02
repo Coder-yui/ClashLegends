@@ -1,6 +1,8 @@
+#include "res://assets/arena/rift_arena/model_aperture.gdshaderinc"
 // Match TowerModel3D's ground-plane aperture: expose the native stone well.
 // Project every terrain layer onto the opening so buried foundations do not seal it.
 void clip_nexus_well(vec3 position, vec3 to_camera) {
+    clip_model_wells(position, to_camera);
     if (position.y > 0.01 || abs(to_camera.y) < 0.0001) { return; }
     vec2 aperture = (position - to_camera * position.y / to_camera.y).xz;
     float nexus_z = 13.0;

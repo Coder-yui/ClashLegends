@@ -15,7 +15,7 @@ var _key_light: DirectionalLight3D
 var _fill_light: DirectionalLight3D
 var _rim_light: DirectionalLight3D
 var _floor: MeshInstance3D
-var _floor_material: StandardMaterial3D
+var _floor_material: ShaderMaterial
 var _model_roots: Array[Node3D] = []
 var _models: Array[Node3D] = []
 var _players: Array[AnimationPlayer] = []
@@ -75,14 +75,18 @@ func _ready() -> void:
 		_viewport.add_child(_rim_light)
 		_floor = MeshInstance3D.new()
 		var floor_mesh := PlaneMesh.new()
-		floor_mesh.size = Vector2(20, 20)
+		floor_mesh.size = Vector2(200, 200)
 		_floor.mesh = floor_mesh
-		_floor_material = StandardMaterial3D.new()
-		_floor_material.albedo_color = Color("172337")
-		_floor_material.roughness = 0.78
+		_floor_material = ShaderMaterial.new()
+		_floor_material.shader = preload("res://assets/arena/rift_arena/preview_floor.gdshader")
+		_floor_material.set_shader_parameter("floor_color", Color("172337"))
 		_floor.material_override = _floor_material
 		_floor.visible = true
 		_viewport.add_child(_floor)
+		var apertures := preload("res://scripts/presentation/ground_apertures.gd").new()
+		_viewport.add_child(apertures)
+		apertures.setup(_viewport, _floor)
+		_floor_material = _floor.material_override
 		_apply_camera()
 	else:
 		var light := DirectionalLight3D.new()
@@ -253,6 +257,11 @@ func _find_player(node: Node) -> void:
 		_find_player(child)
 
 func _collect_bounds(node: Node, output: Array[AABB]) -> void:
+	if node is Node3D and node.has_method("get_preview_bounds"):
+		var authored_bounds = node.call("get_preview_bounds")
+		if authored_bounds is AABB:
+			output.append(node.global_transform * authored_bounds)
+			return
 	if node.is_in_group("presentation_fx"): return
 	if node is MeshInstance3D and node.mesh != null and node.is_visible_in_tree():
 		output.append(node.global_transform * node.get_aabb())
@@ -332,7 +341,7 @@ func set_background(color: Color, transparent: bool = false) -> void:
 	if _viewport != null:
 		_viewport.transparent_bg = transparent
 	if _floor_material != null:
-		_floor_material.albedo_color = color.darkened(0.42)
+		(_floor.get_active_material(0) as ShaderMaterial).set_shader_parameter("floor_color", color.darkened(0.42))
 	camera_changed.emit()
 
 func set_floor_visible(value: bool) -> void:

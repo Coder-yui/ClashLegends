@@ -177,6 +177,9 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	var arena := preload("res://assets/arena/rift_arena/rift_arena.tscn").instantiate()
 	arena.scale.z = 1.0 / sqrt(2.0) # Undo baked 45-degree map compensation.
 	_world_root.add_child(arena)
+	var apertures := preload("res://scripts/presentation/ground_apertures.gd").new()
+	_world_root.add_child(apertures)
+	apertures.setup(_world_root, arena)
 	# 只用于射线/反投影计算，不渲染、不复制场景。
 	_projection_viewport = SubViewport.new()
 	_projection_viewport.name = "BattleProjectionReference"

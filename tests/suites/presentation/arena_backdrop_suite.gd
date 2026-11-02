@@ -3,6 +3,7 @@ extends RefCounted
 const LAYOUT := preload("res://scripts/ui/battle_layout.gd")
 
 func run(harness: Object) -> void:
+	_check_aperture_lifecycle(harness)
 	for flipped in [false, true]:
 		var view := BattlePresentation3D.new()
 		harness.root.add_child(view)
@@ -34,3 +35,40 @@ func run(harness: Object) -> void:
 				var drawn := view._render_camera.unproject_position(world)*view._overlay.scale+rect.position
 				harness._expect(drawn.distance_to(point)<.02, "外围扩展不改变桥头、水晶和输入投影")
 		view.free()
+
+class Well extends Node3D:
+	func ground_aperture_radius() -> float: return 0.82
+
+func _check_aperture_lifecycle(harness: Object) -> void:
+	var world := Node3D.new()
+	var other_world := Node3D.new()
+	harness.root.add_child(world)
+	harness.root.add_child(other_world)
+	var surfaces := Node3D.new()
+	world.add_child(surfaces)
+	var controller := preload("res://scripts/presentation/ground_apertures.gd").new()
+	world.add_child(controller)
+	controller.setup(world, surfaces)
+	var own := Well.new()
+	var other := Well.new()
+	world.add_child(own)
+	other_world.add_child(other)
+	own.add_to_group("ground_aperture_views")
+	other.add_to_group("ground_aperture_views")
+	own.position = Vector3(3, 0, -5)
+	controller._process(0)
+	harness._expect(controller._previous == PackedVector3Array([Vector3(3, -5, 0.82)]), "地表开口只收集同一渲染世界的可见模型")
+	own.position.x = 4
+	controller._process(0)
+	harness._expect(controller._previous[0].x == 4, "开口随模型表现位置更新")
+	own.hide()
+	controller._process(0)
+	harness._expect(controller._previous.is_empty(), "隐藏或回收模型恢复地表")
+	own.show()
+	controller._process(0)
+	harness._expect(controller._previous.size() == 1, "重新显示模型恢复开口")
+	own.free()
+	controller._process(0)
+	harness._expect(controller._previous.is_empty(), "模型释放后无残留开口")
+	world.free()
+	other_world.free()
