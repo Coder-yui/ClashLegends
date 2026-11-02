@@ -5,6 +5,8 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_inhibitor_waves()
+	_check_inhibitor_controlled_waves()
 	_check_registered_building_decay()
 	_check_tombstone_art_integration()
 	_check_apex_turret()
@@ -33,10 +35,16 @@ func _check_registered_building_decay() -> void:
 			var half_ticks := roundi(unit.lifespan / _main.SIM_DT / 2.0)
 			for tick in half_ticks: unit._tick_building_lifetime(_main.SIM_DT)
 			_expect(unit.hp == unit.max_hp * 0.5 and is_equal_approx(unit.presentation_state().health_ratio, 0.5) and hit_events[0] == 0, "%s 阵营%d未受击经过半寿命，生命和血条均为一半且不发受击事件" % [card_id, team])
+			unit.heal(unit.max_hp)
+			for tick in half_ticks: unit._tick_building_lifetime(_main.SIM_DT)
+			_expect(unit.hp == unit.max_hp * 0.5 and not unit.is_queued_for_deletion(), "%s 阵营%d治疗后超过标称存在时间仍存活" % [card_id, team])
 			unit.take_damage(10.0)
 			var after_hit := unit.hp
 			unit._tick_building_lifetime(_main.SIM_DT)
 			_expect(after_hit == unit.max_hp * 0.5 - 10.0 and unit.hp < after_hit and hit_events[0] == 1, "%s 阵营%d首次伤害从残血扣除并发一次受击，随后自然衰血不追加事件" % [card_id, team])
+			for tick in half_ticks:
+				if unit.hp > 0: unit._tick_building_lifetime(_main.SIM_DT)
+			_expect(unit.hp == 0, "%s 阵营%d标称时间后继续衰血直到死亡" % [card_id, team])
 			unit.free()
 		for value in [false, null]:
 			var invalid := CardDB.all().duplicate(true)
@@ -1052,3 +1060,105 @@ func _check_tombstone_deferred_summons() -> void:
 		_expect(unit.hp <= 0.0 and _imp_units().size() == before + 6, "墓碑受控自然到期不延寿、不补待发，独立死亡产出恰好两只雾行者")
 		if not unit.is_queued_for_deletion(): unit.free()
 		for imp in _imp_units(): imp.free()
+
+func _check_inhibitor_waves() -> void:
+	for placement in [Vector2(0, 240), Vector2(0, 480), Vector2(1, 240), Vector2(1, 480)]:
+		var team := int(placement.x)
+		var stats := CardDB.get_card("inhibitor").duplicate(true)
+		var source := Unit.new()
+		source.card_id = "inhibitor"
+		source.position = Vector2(placement.y, 900 if team == 0 else 380)
+		source.setup(team, stats, stats.name)
+		_main.add_child(source)
+		var original := _main.get_tree().get_nodes_in_group("combatants")
+		for tick in 19: source.sim_tick(0.05)
+		_expect(not source.is_deployed() and _inhibitor_counts(original) == [0, 0, 0, 0], "水晶部署不足1秒不出兵")
+		source.sim_tick(0.05)
+		_expect(source.is_deployed(), "水晶第20Tick结束1秒部署")
+		_expect(_inhibitor_counts(original) == [1, 0, 0, 0], "部署结束只发首个近战兵")
+		for tick in 9: source.sim_tick(0.05)
+		_expect(_inhibitor_counts(original) == [1, 0, 0, 0], "不足0.5秒不出第二个兵")
+		source.sim_tick(0.05)
+		_expect(_inhibitor_counts(original) == [1, 1, 0, 0], "第10Tick生成远程兵")
+		for unit in _main.get_tree().get_nodes_in_group("combatants"):
+			if unit not in original:
+				_expect((unit.position.x - source.position.x) * (-1.0 if placement.y < 360.0 else 1.0) > 0.0, "双方兵线按部署半区从对应侧出生")
+		for tick in 149: source.sim_tick(0.05)
+		_expect(_inhibitor_counts(original) == [1, 1, 0, 0], "159Tick不提前出第二波")
+		source.sim_tick(0.05)
+		_expect(_inhibitor_counts(original) == [2, 1, 0, 0], "160Tick发第二波首兵")
+		for tick in 160: source.sim_tick(0.05)
+		_expect(_inhibitor_counts(original) == [3, 2, 0, 0], "第三波先发一个近战兵")
+		for tick in 10: source.sim_tick(0.05)
+		_expect(_inhibitor_counts(original) == [4, 2, 0, 0], "第三波0.5秒发第二个近战兵")
+		for tick in 10: source.sim_tick(0.05)
+		_expect(_inhibitor_counts(original) == [4, 2, 1, 0], "第三波1秒发炮车")
+		for tick in 140: source.sim_tick(0.05)
+		_expect(_inhibitor_counts(original) == [5, 2, 1, 0], "第四波保持8秒起波周期")
+		for tick in 10: source.sim_tick(0.05)
+		_expect(_inhibitor_counts(original) == [5, 3, 1, 0], "第四波回普通批次")
+		_main._active_skill_effect_system.activate_summon(source, stats.active_skills[0])
+		_expect(_inhibitor_counts(original) == [5, 3, 1, 1], "主动增援生成超级兵")
+		source._spawn_batch() # 留下一名尚未出生的远程兵，验证死亡取消。
+		source.take_damage(99999.0)
+		for tick in 20: source._building_tick(0.05)
+		_expect(_inhibitor_counts(original) == [6, 3, 1, 2], "水晶被摧毁只召唤一个超级兵")
+		for unit in _main.get_tree().get_nodes_in_group("combatants"):
+			if unit not in original:
+				_expect(unit.is_deployed() and unit.deploy_time == 0.0, "所有波次、主动与亡语小兵均无部署等待")
+				if unit.card_id == "super_minion":
+					_expect((unit.position.x - source.position.x) * (-1.0 if placement.y < 360.0 else 1.0) > 0.0, "主动与亡语超级兵遵守双方左右半区")
+				unit.free()
+		if is_instance_valid(source): source.free()
+	var natural_stats := CardDB.get_card("inhibitor").duplicate(true)
+	natural_stats.deploy_time = 0.0
+	var natural := Unit.new()
+	natural.card_id = "inhibitor"
+	natural.position = Vector2(480, 900)
+	natural.setup(0, natural_stats, natural_stats.name)
+	_main.add_child(natural)
+	var before := _main.get_tree().get_nodes_in_group("combatants")
+	for tick in 1000: natural._tick_building_lifetime(0.05)
+	_expect(natural.hp == 0 and _inhibitor_counts(before) == [0, 0, 0, 1], "水晶50秒自然衰血死亡同样召唤一个超级兵")
+	for unit in _main.get_tree().get_nodes_in_group("combatants"):
+		if unit not in before: unit.free()
+	natural.free()
+	var cards := CardDB.all().duplicate(true)
+	cards.inhibitor.spawn_waves[0][0].spawn_id = "missing_unit"
+	_expect(not CardDB.VALIDATOR.validate_all(cards, false).is_empty(), "循环批次拒绝无效召唤引用")
+	cards = CardDB.all().duplicate(true)
+	cards.inhibitor.spawn_waves[0][0].spawn_count = 0.5
+	_expect(not CardDB.VALIDATOR.validate_all(cards, false).is_empty(), "循环批次拒绝小数数量")
+
+func _inhibitor_counts(original: Array) -> Array:
+	var counts := [0, 0, 0, 0]
+	var ids := ["melee_minion", "ranged_minion", "siege_minion", "super_minion"]
+	for unit in _main.get_tree().get_nodes_in_group("combatants"):
+		if unit in original or not unit is Unit: continue
+		var index := ids.find(unit.card_id)
+		if index >= 0: counts[index] += 1
+	return counts
+
+func _check_inhibitor_controlled_waves() -> void:
+	for kind in ["freeze", "stasis"]:
+		var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "inhibitor", Vector2(240, 880)))
+		var original := _main.get_tree().get_nodes_in_group("combatants")
+		if kind == "freeze": source.freeze(20.0)
+		else: source.apply_stasis(20.0)
+		for tick in 30: source.sim_tick(0.05)
+		_expect(_inhibitor_counts(original) == [0, 0, 0, 0], "水晶%s部署完成仍延迟首兵" % kind)
+		source.control.hard.clear_family(StringName(kind))
+		source.sim_tick(0.05)
+		_expect(_inhibitor_counts(original) == [1, 0, 0, 0], "水晶解控后发首兵")
+		if kind == "freeze": source.freeze(20.0)
+		else: source.apply_stasis(20.0)
+		for tick in 180: source.sim_tick(0.05)
+		_expect(_inhibitor_counts(original) == [1, 0, 0, 0], "水晶%s暂停波内后续兵与到期新波" % kind)
+		source.control.hard.clear_family(StringName(kind))
+		for tick in 10: source.sim_tick(0.05)
+		_expect(_inhibitor_counts(original) == [2, 1, 0, 0], "解控仅补一波首兵与先前待生远程兵，不累计多波")
+		for tick in 1: source.sim_tick(0.05)
+		_expect(_inhibitor_counts(original) == [2, 2, 0, 0], "新波远程兵同样保持0.5秒间隔")
+		for unit in _main.get_tree().get_nodes_in_group("combatants"):
+			if unit not in original: unit.free()
+		source.free()

@@ -949,5 +949,14 @@
     "source_path": "assets/characters/illaoi/hud/icons2d/illaoi_r.dds",
     "source_sha256": "e41195c4389be822d61a1fd9eecd5c4b2b85391b9720fa9df4f02ae04c2ce524",
     "sha256": "401c10436a90a73143ef8857bd83f69636169084763ced927e8a257dd29dfe5a"
+  },
+  {
+    "card": "inhibitor",
+    "skill_index": 0,
+    "path": "res://assets/skills/inhibitor_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client",
+    "source_path": "assets/characters/inhibitor/hud/inhibitor_blue_square.tex",
+    "source_sha256": "94bada451f74cc08c4d61145a07d659502132c12a2b59a63d471145390fa1e0c",
+    "sha256": "3e7a3363b0fb2ccda7791a239a0adb807d6f6d8140b54c260de70a2066b841a2"
   }
 ]

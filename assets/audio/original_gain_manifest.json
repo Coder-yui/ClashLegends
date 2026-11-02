@@ -69340,6 +69340,155 @@
         "wwiser_master_gain_db": 0.0
       },
       "note": "Fresh wwiser -gv=0dB; vgmstream-cli -i -W 4; PCM16 without normalization; sustain loops full rendered clip"
+    },
+    {
+      "file": "assets/audio/units/inhibitor/idle.wav",
+      "sha256": "ad9c130b18f0abb290689f461a4eab062bbe60d1d7626d9524efce930b4867d6",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/高地水晶/audio_render/txtp/Play_sfx_Env_sruap_chaos_inhibitor_alive_loop.txtp",
+          "txtp_sha256": "cd04c2099011f2fde8a0fc9876fa9bff8ff53a62fc6999d8a2a30dbcfc159fc0",
+          "event_ids": [
+            "2324425030"
+          ],
+          "media_ids": [
+            "719188354"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/高地水晶/audio_render/audio.bnk",
+              "sha256": "42597ed80c7e6d6391b9bfb512ecb5551183e0c061227eb6393371528eb95f25"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "原版高地水晶事件增益，建筑死亡保留完整尾音；固定随机分支",
+      "peak": 0.005327220540493727
+    },
+    {
+      "file": "assets/audio/units/inhibitor/spawn.wav",
+      "sha256": "1d35a3fef9a3eb5a8426e5469f8612f4930a3ea9a852c030118c655882f93be6",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/高地水晶/audio_render/txtp/Play_sfx_Env_sruap_chaos_inhibitor_spawn.txtp",
+          "txtp_sha256": "30d879e8444f526ca10c9d00d403651bb72e25c02b0fa08f45f3987422b13b6f",
+          "event_ids": [
+            "67963075"
+          ],
+          "media_ids": [
+            "872054266"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/高地水晶/audio_render/audio.bnk",
+              "sha256": "42597ed80c7e6d6391b9bfb512ecb5551183e0c061227eb6393371528eb95f25"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "原版高地水晶事件增益，建筑死亡保留完整尾音；固定随机分支",
+      "peak": 0.09848206490278244
+    },
+    {
+      "file": "assets/audio/units/inhibitor/death_r1.wav",
+      "sha256": "d5be1c2c8845fe9ef89f62b2440ded456f90bf56faf5182e94e5b839393995df",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/高地水晶/audio_render/txtp/death_r1.txtp",
+          "txtp_sha256": "fc3ce79cf4c212e069766a5cac300843b68568d0a659fccc45815a9108066840",
+          "event_ids": [
+            "1874619475"
+          ],
+          "media_ids": [
+            "66990038",
+            "286987808",
+            "620660681",
+            "29445193"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/高地水晶/audio_render/audio.bnk",
+              "sha256": "42597ed80c7e6d6391b9bfb512ecb5551183e0c061227eb6393371528eb95f25"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "原版高地水晶事件增益，建筑死亡保留完整尾音；固定随机分支",
+      "peak": 0.4125436246395111
+    },
+    {
+      "file": "assets/audio/units/inhibitor/death_r2.wav",
+      "sha256": "6e81e765371448f19f15beb5ebfcddb70e310a99f47e0ed7a944a0a1adda66a3",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/高地水晶/audio_render/txtp/death_r2.txtp",
+          "txtp_sha256": "62eeaa8013a05876cb275e140f3d08efdb09426a6678ef4714f538a75150ffe0",
+          "event_ids": [
+            "1874619475"
+          ],
+          "media_ids": [
+            "66990038",
+            "286987808",
+            "620660681",
+            "29445193"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/高地水晶/audio_render/audio.bnk",
+              "sha256": "42597ed80c7e6d6391b9bfb512ecb5551183e0c061227eb6393371528eb95f25"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "原版高地水晶事件增益，建筑死亡保留完整尾音；固定随机分支",
+      "peak": 0.4036201238632202
+    },
+    {
+      "file": "assets/audio/units/inhibitor/death_r3.wav",
+      "sha256": "4f15b69fdb7dfec62da02293f84f8a5357d6a516e19677acf9f64cc8a1da4795",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/高地水晶/audio_render/txtp/death_r3.txtp",
+          "txtp_sha256": "ed7075865a8ab18b4c1a5998c9f4872563adaabf34bae8eda8bb6bf64a000675",
+          "event_ids": [
+            "1874619475"
+          ],
+          "media_ids": [
+            "66990038",
+            "286987808",
+            "620660681",
+            "29445193"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/高地水晶/audio_render/audio.bnk",
+              "sha256": "42597ed80c7e6d6391b9bfb512ecb5551183e0c061227eb6393371528eb95f25"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0.0,
+        "wwiser_master_gain_db": 0.0
+      },
+      "note": "原版高地水晶事件增益，建筑死亡保留完整尾音；固定随机分支",
+      "peak": 0.4003172814846039
     }
   ]
 }
