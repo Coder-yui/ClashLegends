@@ -71023,6 +71023,811 @@
         "wwiser_master_gain_db": 0.0
       },
       "note": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
+    },
+    {
+      "file": "assets/audio/units/gold_ward/stasis.wav",
+      "sha256": "dd5dc6d6b4aa1088dd92f23478c8dd2fc34ae4f53d6c67636e43ad90df71a9d3",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/金币守卫/txtp/Play_sfx_ZhonyasHourglass_OnCast.txtp",
+          "txtp_sha256": "e0383400015b218efe4a0d94f928925430f902cf6dc4d6b36109d018e391e4a0",
+          "media_ids": [
+            "200504484"
+          ],
+          "event_ids": [
+            "2304176971"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/金币守卫/audio-source/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 3.0,
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/03-制作中/金币守卫/wav/Play_sfx_ZhonyasHourglass_OnCast.wav",
+          "sha256": "dd5dc6d6b4aa1088dd92f23478c8dd2fc34ae4f53d6c67636e43ad90df71a9d3"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/gold_ward/deploy.wav",
+      "sha256": "1de1857816707717b1df539506f11b5d862f51d291caf92a5e9e53f846100e37",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/金币守卫/txtp/ward_deploy_1.txtp",
+          "txtp_sha256": "e0284516bef234e374d1ea389eb9decb0d4a08b19bcc9397356a6dd5fb8b0ecb",
+          "media_ids": [
+            "302848482",
+            "190339943",
+            "225963420",
+            "519101786"
+          ],
+          "event_ids": [
+            "254376528"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/金币守卫/audio-source/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 3.520090702947846,
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/03-制作中/金币守卫/wav/deploy_1.wav",
+          "sha256": "1de1857816707717b1df539506f11b5d862f51d291caf92a5e9e53f846100e37"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/gold_ward/deploy_3.wav",
+      "sha256": "a8221ff04b56b5f6de468bdacf00e09536c55c701ae8e8aefe06cebc76aeedc7",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/金币守卫/txtp/ward_deploy_3.txtp",
+          "txtp_sha256": "bbf569cb1b570702c42707c9701349cd10535342877163be47be16a025d5ee18",
+          "media_ids": [
+            "302848482",
+            "190339943",
+            "225963420",
+            "519101786"
+          ],
+          "event_ids": [
+            "254376528"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/金币守卫/audio-source/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 3.520090702947846,
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/03-制作中/金币守卫/wav/deploy_3.wav",
+          "sha256": "a8221ff04b56b5f6de468bdacf00e09536c55c701ae8e8aefe06cebc76aeedc7"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/gold_ward/deploy_2.wav",
+      "sha256": "1246400b37f954cdec314aca3c231a1c9246b75f5f8ae2e137d3c8227194e314",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/金币守卫/txtp/ward_deploy_2.txtp",
+          "txtp_sha256": "5f8a64e8b49a9c5d4880cb13531f70aeb81ad3144fad0bef3bf60e9fc12293cb",
+          "media_ids": [
+            "302848482",
+            "190339943",
+            "225963420",
+            "519101786"
+          ],
+          "event_ids": [
+            "254376528"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/金币守卫/audio-source/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 3.520090702947846,
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/03-制作中/金币守卫/wav/deploy_2.wav",
+          "sha256": "1246400b37f954cdec314aca3c231a1c9246b75f5f8ae2e137d3c8227194e314"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/gold_ward/death.wav",
+      "sha256": "f753b862b748d61e4d83240fb208f63832101b227eb063db5e83201e32857d05",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/金币守卫/txtp/Play_sfx_SightWard_SightWardAudioBuff_OnBuffDeactivate.txtp",
+          "txtp_sha256": "b4443e57ddfcb3b3e2548f395130c4650e4fbad620d582d67124128bc4340bf1",
+          "media_ids": [
+            "869528722"
+          ],
+          "event_ids": [
+            "3637464385"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/金币守卫/audio-source/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 2.6417233560090705,
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/03-制作中/金币守卫/wav/Play_sfx_SightWard_SightWardAudioBuff_OnBuffDeactivate.wav",
+          "sha256": "f753b862b748d61e4d83240fb208f63832101b227eb063db5e83201e32857d05"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shacobox_shacoboxspell_onhit_r1.wav",
+      "sha256": "21bebb7d70560bfb777ad6d4a29471bbbc94041eba023a55255461a1a0caf113",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_ShacoBox_ShacoBoxSpell_OnHit {r1}.txtp",
+          "txtp_sha256": "e43810a34d8f9b534f098c165e5983403539f17dcc4dbf67c0516042a0eb9622",
+          "event_ids": [
+            "3439783472"
+          ],
+          "media_ids": [
+            "98364904",
+            "373614396",
+            "710020875"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_ShacoBox_ShacoBoxSpell_OnHit {r1}.wav",
+          "sha256": "21bebb7d70560bfb777ad6d4a29471bbbc94041eba023a55255461a1a0caf113"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 1.041655328798186
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shacobox_shacoboxspell_onhit_r2.wav",
+      "sha256": "e20f91b25bc12be9bf3f7bf428a61814dfd19af765fca3c63f0f579a26483ba6",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_ShacoBox_ShacoBoxSpell_OnHit {r2}.txtp",
+          "txtp_sha256": "5baf185c5075df49b5cdc697ad9341bafd6d5418a264550cfdabe738eed35406",
+          "event_ids": [
+            "3439783472"
+          ],
+          "media_ids": [
+            "98364904",
+            "373614396",
+            "710020875"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_ShacoBox_ShacoBoxSpell_OnHit {r2}.wav",
+          "sha256": "e20f91b25bc12be9bf3f7bf428a61814dfd19af765fca3c63f0f579a26483ba6"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 1.041655328798186
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shacobox_shacoboxspell_onhit_r3.wav",
+      "sha256": "f1fa1fadad95d3baa878381a1d581b3a3c7b85bead73e32683b8bfe3077ea00d",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_ShacoBox_ShacoBoxSpell_OnHit {r3}.txtp",
+          "txtp_sha256": "7a0d803a99509674634c56422c94520b7a92c28a8a00cdd297eb05e72ad1a9b0",
+          "event_ids": [
+            "3439783472"
+          ],
+          "media_ids": [
+            "98364904",
+            "373614396",
+            "710020875"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_ShacoBox_ShacoBoxSpell_OnHit {r3}.wav",
+          "sha256": "f1fa1fadad95d3baa878381a1d581b3a3c7b85bead73e32683b8bfe3077ea00d"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 1.041655328798186
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shaco_jackinthebox_oncast_r1.wav",
+      "sha256": "22ed9c0d13185864ef72e2ecb3627e7396ef63597abdfcec67432bc88fbd4f0d",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_OnCast {r1}.txtp",
+          "txtp_sha256": "fdd94f333c0f394c21251b2d0140acaa8a6ba5c774b81b6b7c9bf6e84059dd43",
+          "event_ids": [
+            "2977094798"
+          ],
+          "media_ids": [
+            "31294020",
+            "766431504",
+            "853466400"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_OnCast {r1}.wav",
+          "sha256": "22ed9c0d13185864ef72e2ecb3627e7396ef63597abdfcec67432bc88fbd4f0d"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 0.6828117913832199
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shaco_jackinthebox_oncast_r2.wav",
+      "sha256": "449131bd2809fc1568f84f881e5613bf95f0f1b4c8d60e005f8dc254336a3817",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_OnCast {r2}.txtp",
+          "txtp_sha256": "a3eb3a50eafd44e5e7f1d120f793cc9519fcb04b708499d1b057e803cc3b6c47",
+          "event_ids": [
+            "2977094798"
+          ],
+          "media_ids": [
+            "31294020",
+            "766431504",
+            "853466400"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_OnCast {r2}.wav",
+          "sha256": "449131bd2809fc1568f84f881e5613bf95f0f1b4c8d60e005f8dc254336a3817"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 0.6207482993197279
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shaco_jackinthebox_oncast_r3.wav",
+      "sha256": "13610d0ece8ecfd5d0a0ef50fc7c3134297317568bdb1dd192e29da952b1adb1",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_OnCast {r3}.txtp",
+          "txtp_sha256": "8d85f6f1b93d867c5efb66b1244e20d234fca2e18703906c9e3c268ad1780375",
+          "event_ids": [
+            "2977094798"
+          ],
+          "media_ids": [
+            "31294020",
+            "766431504",
+            "853466400"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_OnCast {r3}.wav",
+          "sha256": "13610d0ece8ecfd5d0a0ef50fc7c3134297317568bdb1dd192e29da952b1adb1"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 0.8664852607709751
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shaco_jackinthebox_buffactivate_r1.wav",
+      "sha256": "9727625bbc4d43481c95b865722270c290dda254e708e1750bfb8c138ebc9e07",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_BuffActivate {r1}.txtp",
+          "txtp_sha256": "fe519bfc6b0e1f4724aca97f8dc3fdc386d6993363e0cee8f3c669934818032d",
+          "event_ids": [
+            "379600692"
+          ],
+          "media_ids": [
+            "458841899",
+            "560916098",
+            "691698175"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_BuffActivate {r1}.wav",
+          "sha256": "9727625bbc4d43481c95b865722270c290dda254e708e1750bfb8c138ebc9e07"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 1.4907709750566893
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shaco_jackinthebox_buffactivate_r2.wav",
+      "sha256": "55d180e899a456f91cb37f90d85b9bd669758999d3898048e253fc37961ff92b",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_BuffActivate {r2}.txtp",
+          "txtp_sha256": "39b92cb00711b56093770d5d5184509f34a8454f95ee675f3566d18697631dd7",
+          "event_ids": [
+            "379600692"
+          ],
+          "media_ids": [
+            "458841899",
+            "560916098",
+            "691698175"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_BuffActivate {r2}.wav",
+          "sha256": "55d180e899a456f91cb37f90d85b9bd669758999d3898048e253fc37961ff92b"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 1.7930612244897959
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shaco_jackinthebox_buffactivate_r3.wav",
+      "sha256": "27fc8c8e9b9b239c3a69ac90d8d759342581f9496949c18d28e7364d1e12d0e9",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_BuffActivate {r3}.txtp",
+          "txtp_sha256": "9c1c9ddb52714b7878b95f03d0c3c2bceca0794519393f36016779f544c45274",
+          "event_ids": [
+            "379600692"
+          ],
+          "media_ids": [
+            "458841899",
+            "560916098",
+            "691698175"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_BuffActivate {r3}.wav",
+          "sha256": "27fc8c8e9b9b239c3a69ac90d8d759342581f9496949c18d28e7364d1e12d0e9"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 1.9699319727891156
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shaco_jackinthebox_onbuffdeactivate_r1.wav",
+      "sha256": "28c30a698ef0abf8fec857130d131100e2425772a45f7f39bc0e8a34fd7558cd",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate {r1}.txtp",
+          "txtp_sha256": "a919cf925eb6df95bcbb11da0107307fd2db7e798b6014c6c0fd47751f430dd5",
+          "event_ids": [
+            "3989638618"
+          ],
+          "media_ids": [
+            "11605227",
+            "443038888",
+            "796331800"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate {r1}.wav",
+          "sha256": "28c30a698ef0abf8fec857130d131100e2425772a45f7f39bc0e8a34fd7558cd"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 1.6283673469387756
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shaco_jackinthebox_onbuffdeactivate_r2.wav",
+      "sha256": "cce33683b871e3174199dd4f1d1708ce2e6050fd2040a755174850a9998b0b9e",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate {r2}.txtp",
+          "txtp_sha256": "569723c38f007f6e63b7565efe0379f9df219c42e079d85b6182681874e9ce1f",
+          "event_ids": [
+            "3989638618"
+          ],
+          "media_ids": [
+            "11605227",
+            "443038888",
+            "796331800"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate {r2}.wav",
+          "sha256": "cce33683b871e3174199dd4f1d1708ce2e6050fd2040a755174850a9998b0b9e"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 1.9708390022675737
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shaco_jackinthebox_onbuffdeactivate_r3.wav",
+      "sha256": "06d318516e23b9de9891540f1f1dd1ef9955f5969fd7477008f6111e70de1c16",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate {r3}.txtp",
+          "txtp_sha256": "b42273e3b89fa69a7d3cd342a993182d8d30962d00e8ff981b963e8c853ffb6f",
+          "event_ids": [
+            "3989638618"
+          ],
+          "media_ids": [
+            "11605227",
+            "443038888",
+            "796331800"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate {r3}.wav",
+          "sha256": "06d318516e23b9de9891540f1f1dd1ef9955f5969fd7477008f6111e70de1c16"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 1.8875510204081634
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shacobox_shacoboxspell_onmissilelaunch_r1.wav",
+      "sha256": "09b1f8fb446fe450da97e7200a7401d628872d81c9572b7f293d460ed1999e02",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch {r1}.txtp",
+          "txtp_sha256": "9d1207852a8b38655e50ab13afff77502e330eae7f95151a98932d881194dc59",
+          "event_ids": [
+            "2107315358"
+          ],
+          "media_ids": [
+            "304116173",
+            "433214823",
+            "886784440"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch {r1}.wav",
+          "sha256": "09b1f8fb446fe450da97e7200a7401d628872d81c9572b7f293d460ed1999e02"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 0.9645804988662131
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shacobox_shacoboxspell_onmissilelaunch_r2.wav",
+      "sha256": "c40c563a2b5c357a71ef99dc0e184865c5294b6cf571c47f79212b2845874e26",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch {r2}.txtp",
+          "txtp_sha256": "a7b875055b7a40ece08d63ba673cc76d5bdc65cc76461be31e1ea1c6ad1e1e90",
+          "event_ids": [
+            "2107315358"
+          ],
+          "media_ids": [
+            "304116173",
+            "433214823",
+            "886784440"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch {r2}.wav",
+          "sha256": "c40c563a2b5c357a71ef99dc0e184865c5294b6cf571c47f79212b2845874e26"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 0.9645804988662131
+    },
+    {
+      "file": "assets/audio/units/jack_in_the_box/play_sfx_shacobox_shacoboxspell_onmissilelaunch_r3.wav",
+      "sha256": "e6b29e91c97a1af7cd5e0f83e633bfcebe38a5edad32e61c94d4d4da1a318d4b",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch {r3}.txtp",
+          "txtp_sha256": "5808e5fb29c33f6a1155561b30da7fbf53e4dc6b6a040e2bf7f668578fed336c",
+          "event_ids": [
+            "2107315358"
+          ],
+          "media_ids": [
+            "304116173",
+            "433214823",
+            "886784440"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch {r3}.wav",
+          "sha256": "e6b29e91c97a1af7cd5e0f83e633bfcebe38a5edad32e61c94d4d4da1a318d4b"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null
+      },
+      "gain_db": 0.0,
+      "output_duration": 0.9645804988662131
+    },
+    {
+      "file": "assets/audio/units/stellar_convergence/play_sfx_aurelionsol_aurelionsole_oncast.wav",
+      "sha256": "dde974f0fa69fddcba76f91b3c7cd843cbf970f368ecf6fb2d5f5150bfedf89d",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolE_OnCast.txtp",
+          "txtp_sha256": "645ed103e8a47c2eb4c4e9fb6ad1a371a08fe18f08f5afe566d934a6ae2b4e13",
+          "event_ids": [
+            "1126952813"
+          ],
+          "media_ids": [
+            "60767327"
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0,
+        "description": "Fresh original TXTP decode; source event gain retained; no normalization."
+      },
+      "duration": 1.1587
+    },
+    {
+      "file": "assets/audio/units/stellar_convergence/play_sfx_aurelionsol_aurelionsole_buffactivate_aoe_other.wav",
+      "sha256": "0609b6f0f7931d8a93545184f4d36e4c9ab23a8944908db6c826041287490bb2",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolE_buffactivate_aoe_other.txtp",
+          "txtp_sha256": "d76b36c26ede7a60a2d70c620b94bdad3d19f938afe6e24eec1c237f9bf41d3d",
+          "event_ids": [
+            "1243656528"
+          ],
+          "media_ids": [
+            "670523600"
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0,
+        "description": "Fresh original TXTP decode; source event gain retained; no normalization."
+      },
+      "duration": 6.28
+    },
+    {
+      "file": "assets/audio/units/stellar_convergence/play_sfx_aurelionsol_aurelionsole_buffdeactivate.wav",
+      "sha256": "61f2c1022b5c720ee3d02a83e733431c8f0d314c31fa8b8dd2e1b75b55fc9b0b",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolE_buffdeactivate.txtp",
+          "txtp_sha256": "957d948f96eca41e267290f06179bcab2844320d081acda3b4bc6dacb93b5cc9",
+          "event_ids": [
+            "1693519614"
+          ],
+          "media_ids": [
+            "1062067464"
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0,
+        "description": "Fresh original TXTP decode; source event gain retained; no normalization."
+      },
+      "duration": 2.9823
+    },
+    {
+      "file": "assets/audio/units/stellar_convergence/play_sfx_aurelionsol_aurelionsole_hit_start_r1.wav",
+      "sha256": "77e32cc9d03da7d8eb5b2d4acba5b8eb57a501d3d22da3d4e426c56b7b8d29f5",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolE_hit_start {r1}.txtp",
+          "txtp_sha256": "0563a38fc7e7759fc4f29561b9252aa050148df0d661450abbc433fbca8c4580",
+          "event_ids": [
+            "1795705839"
+          ],
+          "media_ids": [
+            "65046876",
+            "182995479",
+            "492470367",
+            "755664176"
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0,
+        "description": "Fresh original TXTP decode; source event gain retained; no normalization."
+      },
+      "duration": 1.582
+    },
+    {
+      "file": "assets/audio/units/stellar_convergence/play_sfx_aurelionsol_aurelionsole_hit_start_r2.wav",
+      "sha256": "e1f03043db9142d17511a518c9e2272ce027f8777a63fe9f5bd9a9c2497b8bc0",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolE_hit_start {r2}.txtp",
+          "txtp_sha256": "ec73705810291123389c6c488be69a9556148ad07cf7254eb7f2a0aec3f2f251",
+          "event_ids": [
+            "1795705839"
+          ],
+          "media_ids": [
+            "65046876",
+            "182995479",
+            "492470367",
+            "755664176"
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0,
+        "description": "Fresh original TXTP decode; source event gain retained; no normalization."
+      },
+      "duration": 1.4167
+    },
+    {
+      "file": "assets/audio/units/stellar_convergence/play_sfx_aurelionsol_aurelionsole_hit_start_r3.wav",
+      "sha256": "40c7760e9cbb3b651b193adc2758834d8b7c3b7792d5eb820f5c31ab5ccc2841",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolE_hit_start {r3}.txtp",
+          "txtp_sha256": "b291c228a095b893d5ef3f8b987a6300426a4da873ce43b97f98cd711469e274",
+          "event_ids": [
+            "1795705839"
+          ],
+          "media_ids": [
+            "65046876",
+            "182995479",
+            "492470367",
+            "755664176"
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0,
+        "description": "Fresh original TXTP decode; source event gain retained; no normalization."
+      },
+      "duration": 1.3207
+    },
+    {
+      "file": "assets/audio/units/stellar_convergence/play_sfx_aurelionsol_aurelionsoledebuff_buffdeactivate.wav",
+      "sha256": "97c71ba160634b25166f8b44bb9a5499321bbd7bbeb7833dffcd66194b918012",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolEDebuff_buffdeactivate.txtp",
+          "txtp_sha256": "3d73241c3537591f50d4573564581393d5b47d57c6bc3be4c739567b0096070b",
+          "event_ids": [
+            "1088726156"
+          ],
+          "media_ids": [
+            "682161547"
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0,
+        "description": "Fresh original TXTP decode; source event gain retained; no normalization."
+      },
+      "duration": 3.8567
     }
   ]
 }

@@ -30,6 +30,8 @@ var pool_zones: Array[Dictionary] = []
 var pool_effects: Array[Dictionary] = []
 var bolt_casts: Array[Dictionary] = []
 var bolt_effects: Array[Dictionary] = []
+var stellar_zones: Array[Dictionary] = []
+var stellar_effects: Array[Dictionary] = []
 var horizon_zones: Array[Dictionary] = []
 var dark_matters: Array[Dictionary] = []
 var horizon_effects: Array[Dictionary] = []
@@ -70,6 +72,9 @@ func _resolve_cast(team: int, stats: Dictionary, position: Vector2, active_enabl
 			return true
 		&"final_spark":
 			_start_final_spark(team, stats, position, active_enabled, active_skill_index)
+			return true
+		&"stellar_convergence":
+			_start_stellar_convergence(team, stats, position, active_enabled, active_skill_index)
 			return true
 		&"convergent_pulse":
 			_start_convergent_pulse(team, stats, position, active_enabled, active_skill_index)
@@ -210,6 +215,7 @@ func tick(dt: float) -> void:
 	_tick_pool()
 	_tick_final_spark()
 	_tick_convergent_pulse()
+	_tick_stellar_convergence()
 	_tick_solar_flare()
 	_tick_severing_bolt()
 	_tick_event_horizon()
@@ -261,6 +267,8 @@ func tick_visuals(delta: float) -> void:
 	solar_effects.assign(solar_effects.filter(func(effect): return visual_tick < float(effect.end_tick) + 100.0))
 	for effect in bolt_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
 	bolt_effects.assign(bolt_effects.filter(func(effect): return visual_tick < float(effect.end_tick) + 100.0))
+	for effect in stellar_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
+	stellar_effects.assign(stellar_effects.filter(func(effect): return visual_tick < float(effect.end_tick) + 40.0))
 	for effect in horizon_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
 	horizon_effects.assign(horizon_effects.filter(func(effect): return visual_tick < float(effect.end_tick) + (100.0 if effect.kind == "dark_matter" else 40.0)))
 	for effect in tidal_effects:
@@ -317,6 +325,8 @@ func clear() -> void:
 	corrosion_zones.clear()
 	corrosion_effects.clear()
 	spell_flights.clear()
+	stellar_zones.clear()
+	stellar_effects.clear()
 	horizon_zones.clear()
 	dark_matters.clear()
 	spark_casts.clear()
@@ -519,6 +529,9 @@ func show_flight(id: int, kind: String, origin: Vector2, position: Vector2, radi
 		return
 	if kind == "final_spark":
 		spark_effects.append({"id": id, "kind": kind, "origin": origin, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
+		return
+	if kind in ["stellar_convergence", "stellar_execute"]:
+		stellar_effects.append({"id": id, "kind": kind, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
 		return
 	if kind == "convergent_pulse":
 		pulse_effects.append({"id": id, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
@@ -1115,3 +1128,73 @@ func _tick_final_spark() -> void:
 			if resolver.collecting: resolver.defer_effect(finish)
 			else: finish.call()
 	spark_casts.assign(spark_casts.filter(func(cast): return tick < int(cast.impact_tick)))
+
+
+func _start_stellar_convergence(team: int, stats: Dictionary, pos: Vector2, enhanced: bool, skill_index: int) -> void:
+	_effect_serial += 1
+	var tick: int = _controller.get_authoritative_server_tick()
+	var finish := tick + ceili(float(stats.duration) / FixedStepClock.STEP)
+	stellar_zones.append({"id": _effect_serial, "team": team, "pos": pos, "stats": stats,
+		"skill": _active_heal_skill(stats, skill_index) if enhanced else {},
+		"start_tick": tick, "end_tick": finish, "last_tick": tick - 1,
+		"hit_audio_targets": {},
+		"next_damage_tick": tick + ceili(float(stats.damage_interval) / FixedStepClock.STEP),
+		"delivery": CombatInteraction.Delivery.new(), "damage_stream": BattleNumbers.DamageStream.new()})
+	_controller.present_spell_flight(_effect_serial, "stellar_convergence", pos, pos, float(stats.radius), tick, finish, team)
+	_controller.present_stellar_zone_audio(pos, float(stats.duration), team)
+
+func _tick_stellar_convergence() -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	var resolver: CombatResolver = _controller.combat_service()
+	for zone in stellar_zones:
+		if tick > int(zone.end_tick) or tick <= int(zone.last_tick): continue
+		zone.last_tick = tick
+		var damage_due := tick >= int(zone.next_damage_tick)
+		if damage_due: zone.next_damage_tick = int(zone.next_damage_tick) + ceili(float(zone.stats.damage_interval) / FixedStepClock.STEP)
+		var interaction := _spell_context(int(zone.team))
+		interaction["delivery"] = zone.delivery
+		for target in _controller.get_tree().get_nodes_in_group("combatants"):
+			if not is_instance_valid(target) or target.hp <= 0 or target.team == int(zone.team): continue
+			if not (target is Unit or target is Tower) or not CombatInteraction.allows_effect(target, interaction): continue
+			if target.global_position.distance_to(zone.pos) > float(zone.stats.radius) + target.body_radius: continue
+			if CombatInteraction.blocks_effect(target, interaction): continue
+			if damage_due:
+				var previous := CombatInteraction.current_delivery
+				CombatInteraction.current_delivery = zone.delivery
+				var receipt: Dictionary = zone.damage_stream.hit(target, float(zone.stats.damage) * (float(zone.stats.tower_damage_multiplier) if target is Tower else 1.0), interaction.get("source"), int(zone.team), interaction.get("position", Vector2.INF))
+				CombatInteraction.current_delivery = previous
+				var target_id := target.get_instance_id()
+				var hit_pos: Vector2 = target.global_position
+				var hit_audio := func():
+					if not receipt.landed or zone.hit_audio_targets.has(target_id): return
+					zone.hit_audio_targets[target_id] = true
+					_controller.runtime.card_event("stellar_convergence", "spell:hit", hit_pos, int(zone.team))
+				if resolver.collecting: resolver.defer_effect(hit_audio)
+				else: hit_audio.call()
+			if zone.skill.is_empty(): continue
+			var execute := func():
+				if not is_instance_valid(target) or target.hp <= 0: return
+				if target.global_position.distance_to(zone.pos) > float(zone.stats.inner_radius) + target.body_radius: return
+				if CombatExecution.try_execute(target, float(zone.skill.execute_health_ratio), interaction, bool(zone.skill.get("execute_buildings", false))):
+					_effect_serial += 1
+					_controller.runtime.card_event("stellar_convergence", "spell:execute", target.global_position, int(zone.team))
+					_controller.present_spell_flight(_effect_serial, "stellar_execute", target.global_position, target.global_position, float(zone.stats.inner_radius), tick, tick + 20, int(zone.team))
+			if resolver.collecting: resolver.defer_effect(execute)
+			else: execute.call()
+	stellar_zones.assign(stellar_zones.filter(func(zone): return tick < int(zone.end_tick)))
+
+## 持续外力不锁攻击；同一中心不越过中心，多区域向量相加。
+func area_pull_velocity(unit: Unit, dt: float) -> Vector2:
+	if dt <= 0 or unit.hp <= 0 or unit.is_building or unit.skill_dash_active or unit.knockback.in_transit or unit.movement_strike.in_transit(): return Vector2.ZERO
+	if not unit.can_receive_knockback(unit.global_position, 1.0, dt, 1.0): return Vector2.ZERO
+	var result := Vector2.ZERO
+	var tick: int = _controller.get_authoritative_server_tick()
+	for zone in stellar_zones:
+		if tick < int(zone.start_tick) or tick >= int(zone.end_tick) or unit.team == int(zone.team): continue
+		var delta: Vector2 = Vector2(zone.pos) - unit.global_position
+		if delta.length() > float(zone.stats.radius) + unit.body_radius or delta.length_squared() < 0.000001: continue
+		var interaction := _spell_context(int(zone.team))
+		interaction["delivery"] = zone.delivery
+		if not CombatInteraction.allows_effect(unit, interaction) or CombatInteraction.blocks_effect(unit, interaction): continue
+		result += delta.normalized() * minf(float(zone.stats.pull_speed), delta.length() / dt)
+	return result

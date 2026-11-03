@@ -13,6 +13,7 @@ func visual_team(team: int) -> int:
 var projectiles: Node2D
 var _blitzcrank_projectiles: Node3D
 var _thorn_projectiles: Node3D
+var _box_projectiles: Node3D
 var _evolution_projectiles: Node3D
 var _jayce_projectiles: Node3D
 var _samira_projectiles: Node3D
@@ -38,6 +39,7 @@ var _summoning_ground: Node3D
 var _corrosion_ground: Node3D
 var _bomb_effect: Node3D
 var _cask_effect: Node3D
+var _stellar_effect: Node3D
 var _horizon_effect: Node3D
 var _spark_effect: Node3D
 var _pulse_effect: Node3D
@@ -76,6 +78,8 @@ func _process(delta: float) -> void:
 		_rewind_effect.sync_effects(skills, _camera)
 	if _blitzcrank_projectiles != null:
 		_blitzcrank_projectiles.sync_effects(projectiles, _camera)
+	if _box_projectiles != null:
+		_box_projectiles.set_sources(projectiles, _camera)
 	if _thorn_projectiles != null:
 		_thorn_projectiles.set_sources(projectiles, _camera)
 	if _evolution_projectiles != null:
@@ -123,6 +127,8 @@ func _process(delta: float) -> void:
 		_pool_effect.sync_effects(spells, _camera, viewer_team)
 	if _bolt_effect != null and spells != null:
 		_bolt_effect.sync_effects(spells, _camera, viewer_team)
+	if _stellar_effect != null and spells != null:
+		_stellar_effect.sync_effects(spells, _camera, viewer_team)
 	if _horizon_effect != null and spells != null:
 		_horizon_effect.sync_effects(spells, _camera, viewer_team)
 	if _tidal_effect != null and spells != null:
@@ -203,6 +209,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_blitzcrank_projectiles)
 	_thorn_projectiles = preload("res://scripts/presentation/thorn_spitter_projectile_3d.gd").new()
 	_world_root.add_child(_thorn_projectiles)
+	_box_projectiles = preload("res://scripts/presentation/jack_in_the_box_projectile_3d.gd").new()
+	_world_root.add_child(_box_projectiles)
 	_evolution_projectiles = preload("res://scripts/presentation/evolution_turret_projectile_3d.gd").new()
 	_world_root.add_child(_evolution_projectiles)
 	_jayce_projectiles = preload("res://scripts/presentation/jayce_projectile_3d.gd").new()
@@ -245,6 +253,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_summoning_ground)
 	_corrosion_ground = preload("res://scripts/presentation/corrosion_ground_3d.gd").new()
 	_world_root.add_child(_corrosion_ground)
+	_stellar_effect = preload("res://scripts/presentation/stellar_convergence_3d.gd").new()
+	_world_root.add_child(_stellar_effect)
 	_horizon_effect = preload("res://scripts/presentation/event_horizon_3d.gd").new()
 	_world_root.add_child(_horizon_effect)
 	_spark_effect = preload("res://scripts/presentation/final_spark_3d.gd").new()

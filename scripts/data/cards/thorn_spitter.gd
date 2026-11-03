@@ -8,7 +8,7 @@ static func definition() -> Dictionary:
 			"hp": 800, "damage": 100, "range": 240.0,
 			"speed": 0.0, "interval": 1.25, "first_hit": 0.08,
 			"radius": 21.0, "size_tier": "slightly_large",
-			"footprint_tiles": Vector2i(3, 3), "is_building": true,
+			"footprint_tiles": Vector2i(2, 2), "is_building": true,
 			"lifespan": 25.0, "lifespan_hp_decay": true,
 			"is_air": false, "building_only": false, "can_attack_air": true,
 			"projectile_speed": 520.0, "projectile_collision_radius": 3.0,

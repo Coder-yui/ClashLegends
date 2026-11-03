@@ -11,7 +11,7 @@ static func definition() -> Dictionary:
 			"is_air": false, "building_only": false, "can_attack_air": false, "is_building": true,
 			"deploy_time": 1.0, "lifespan": 50.0, "lifespan_hp_decay": true,
 			"spawn_side": "map_side", "spawn_sequence_interval": 0.5,
-			"spawn_deploy_time": 0.0, "spawn_interval": 8.0, "spawn_defer_while_controlled": true,
+			"spawn_deploy_time": 0.0, "spawn_interval": 8.0,
 			"spawn_waves": [
 				[{"spawn_id": "melee_minion", "spawn_count": 1}, {"spawn_id": "ranged_minion", "spawn_count": 1}],
 				[{"spawn_id": "melee_minion", "spawn_count": 1}, {"spawn_id": "ranged_minion", "spawn_count": 1}],

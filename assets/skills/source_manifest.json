@@ -985,5 +985,29 @@
     "source_path": "assets/characters/zyra/hud/icons2d/zyrae.dds",
     "source_sha256": "f3b22a9f7f0a387461099355872bbd17b8fb8d21a526b57192d8fb1a1828181e",
     "sha256": "d9b13ec2dc373aba80ddf6e0981ffc6ec433f2f6ec4d2694fa8244d3ff06b2e1"
+  },
+  {
+    "card": "gold_ward",
+    "skill_index": 0,
+    "path": "res://assets/skills/gold_ward_0.png",
+    "source_url": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Inspiration/PerfectTiming/PerfectTiming.png",
+    "sha256": "fb898de69dd7bc84921da80fc233fe377c31b64aca3b4e1ab6ef619cd6b2be88"
+  },
+  {
+    "card": "jack_in_the_box",
+    "skill_index": 0,
+    "path": "res://assets/skills/jack_in_the_box_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Shaco.wad.client",
+    "source_path": "assets/characters/shaco/hud/icons2d/jester_deathward.dds",
+    "source_sha256": "b1de23180796ff39d3c2e3100af3deb68c3dce2e4f8091eb4a59c27743382e4b",
+    "sha256": "d67b8d40e621f9f4b5fe6aac90dcc2318ed4f5bf4bd84332f7a1b1336ad0fd28"
+  },
+  {
+    "card": "stellar_convergence",
+    "skill_index": 0,
+    "path": "res://assets/skills/aurelionsol_e.png",
+    "source": "ClashLegends-开发素材库/03-制作中/星芒凝汇/icon-source/assets/characters/aurelionsol/hud/icons2d/aurelionsole.dds",
+    "sha256": "38f133e4d8a50ce25545d271f751f823f0d7269a4b81a54250ff03aea4eef7ff",
+    "processing": "Pillow原版DDS解码，无改色"
   }
 ]

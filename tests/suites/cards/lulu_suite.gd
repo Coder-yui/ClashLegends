@@ -140,12 +140,12 @@ func run(harness: Object, main: Node2D) -> void:
 		main.runtime._tick_summon_flights(0.25)
 		_expect(_pix().size() == 2, "已发出召唤不受后续控制打断:" + String(family))
 		for pix in _pix(): pix.free()
-		summoner._spawn_timer = 0.05
+		summoner.summon_production.remaining = 0.05
 		summoner._tick_periodic_summons(14.0)
-		_expect(main.runtime._commands.inspect_summons().is_empty() and summoner._spawn_timer == 0.0, "受控跨多个周期只保留待发批次:" + String(family))
+		_expect(main.runtime._commands.inspect_summons().is_empty() and summoner.summon_production.remaining == 0.0, "受控跨多个周期只保留待发批次:" + String(family))
 		summoner.control.hard.clear_family(family)
 		summoner._tick_periodic_summons(0.05)
-		_expect(main.runtime._commands.inspect_summons().size() == 2 and summoner._spawn_timer == 7.0, "解除立即发出且重启周期:" + String(family))
+		_expect(main.runtime._commands.inspect_summons().size() == 2 and summoner.summon_production.remaining == 7.0, "解除立即发出且重启周期:" + String(family))
 		summoner.free()
 		main.runtime._tick_summon_flights(0.25)
 		_expect(_pix().size() == 2, "来源释放不取消在途召唤:" + String(family))
@@ -166,8 +166,8 @@ func run(harness: Object, main: Node2D) -> void:
 	cards.lulu.spawn_flight_duration = 0.0
 	_expect(not CardDB.VALIDATOR.validate_all(cards, false).is_empty(), "飞行召唤拒绝零时长")
 	cards = CardDB.all().duplicate(true)
-	cards.lulu.spawn_defer_while_controlled = 1
-	_expect(not CardDB.VALIDATOR.validate_all(cards, false).is_empty(), "控制延后字段必须为布尔")
+	cards.lulu.spawn_defer_while_controlled = false
+	_expect(not CardDB.VALIDATOR.validate_all(cards, false).is_empty(), "周期产出统一延后，不再接受逐卡关闭开关")
 	main.runtime._deck = old_deck
 	for unit in main.get_tree().get_nodes_in_group("combatants"):
 		if unit is Unit: unit.free()

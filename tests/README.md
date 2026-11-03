@@ -242,3 +242,5 @@ ProjectileSuite 内的 view 子检查覆盖内容代次、同帧前后读取、�
 先运行`python3 tools/dev.py verify --plan --suite ActiveSkillButtonSuite --suite UnitBarLayoutSuite --suite ActiveSkillInputSuite`。Mac有界执行用`python3 tools/demos/active_skill_button_review.py --mode tests --suite ActiveSkillButtonSuite --output <素材库/04-中间产物内的新目录>`；可重复`--suite`选择上述三个套件。`--mode render`保存正式按钮/头顶条对照、CD方向和720×1280、480×720、1280×720布局的五张截图。合成只读状态用于观察组合，不冒充完整对局或三进程联机。
 
 入口复用`safe_probe`的20秒、30FPS、主线程心跳、768MiB绝对RSS及ready后256MiB增长上限；启动normal压力、估算可用至少8GiB/保留6GiB，运行低于4GiB或压力变化即停。允许已有编辑器，拒绝其他游戏进程；只清理自有组，保留watchdog、组件哈希和原日志。实际截图须人工目视，headless不能替代渲染验收。
+
+星芒凝汇专项：`--suite StellarConvergenceSuite`覆盖持续伤害时序、牵引、中心15%临界值、普通盾/法术盾、凝滞、拒绝死亡、建筑开关、小数伤害余量及副本隔离；火药桶共用斩杀同时跑`PowderKegSuite`。`CLASH_TEST_STELLAR_CONVERGENCE=1 CLASH_TEST_TERMINAL_TICK=155 python3 tools/dev.py verify --changed docs/units/stellar_convergence.md --network`执行服务器/两客户端专项。

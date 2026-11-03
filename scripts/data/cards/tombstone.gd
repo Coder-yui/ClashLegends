@@ -17,7 +17,6 @@ static func definition() -> Dictionary:
 			"spawn_id": "imp",
 			"spawn_interval": 5.0,  # 每隔多久生成一批雾行者
 			"spawn_count": 2,
-			"spawn_defer_while_controlled": true,
 			"spawn_side": "map_side",
 			"death_spawn_id": "imp",
 			"death_spawn_count": 2,

@@ -171,5 +171,29 @@
     "prompt": "ClashLegends-开发素材库/05-已完成/扭曲空间/源件与过程记录/ai-card/prompt.txt",
     "sha256": "ce5fe1e79cbf3ce585e240d1c560037f843de0582458ea88713e9a4c3b55d371",
     "processing": "Generated 930x1692 portrait, resized to project 616x1120 PNG with sips; opaque, no text or border"
+  },
+  {
+    "card": "gold_ward",
+    "path": "res://assets/cards/gold_ward_loading.png",
+    "source_path": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/3D摄影棚/shots/金币守卫_20261103_012614.png",
+    "source_sha256": "33e391f9142dd8080d36971d18120e86124b3d2ffa943746d7fa35c1610ebf53",
+    "sha256": "33e391f9142dd8080d36971d18120e86124b3d2ffa943746d7fa35c1610ebf53",
+    "processing": "用户指定摄影棚PNG直接复制，未裁切或改色。"
+  },
+  {
+    "card": "stellar_convergence",
+    "skill_index": 0,
+    "path": "res://assets/cards/stellar_convergence_loading.png",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/星芒凝汇/card_art_source_v4_centered.png",
+    "sha256": "6546021a4218c2382d5f5b034e5c4fa87186c090010f3cecebd6d19c6c1f6969",
+    "processing": "内置imagegen提取黑洞吸引星光概念重新绘制，主体居中；非原版图标复刻；缩至308×560"
+  },
+  {
+    "card": "jack_in_the_box",
+    "path": "res://assets/cards/jack_in_the_box_loading.png",
+    "source_path": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/3D摄影棚/shots/惊吓魔盒_20261103_222417.png",
+    "source_sha256": "77afdd5075509bdbf09ab1f77b7f39bac9bc1b7d3a8d3e423d3ae5d4c6e59f45",
+    "sha256": "77afdd5075509bdbf09ab1f77b7f39bac9bc1b7d3a8d3e423d3ae5d4c6e59f45",
+    "processing": "用户指定摄影棚PNG直接复制，未裁切或改色。"
   }
 ]

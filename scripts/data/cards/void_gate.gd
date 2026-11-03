@@ -11,7 +11,7 @@ static func definition() -> Dictionary:
 			"is_air": false, "building_only": false, "can_attack_air": false, "is_building": true,
 			"lifespan": 60.0, "lifespan_hp_decay": true,
 			"spawn_id": "void_spawn_single", "spawn_interval": 6.0, "spawn_count": 1,
-			"spawn_side": "map_side", "spawn_defer_while_controlled": true,
+			"spawn_side": "map_side",
 			"active_skills": [{"name": "虚空迸发", "kind": "summon", "cost": 1, "max_uses": 1, "cooldown": 10.0,
 				"spawn_id": "void_spawn_single", "spawn_count": 2, "sacrifice_source": true}],
 		},

@@ -2214,7 +2214,10 @@ func _draw_deployment_preview(stats: Dictionary) -> void:
 			if enhanced: spell_radius = float(stats.active_skills[0].radius)
 		draw_circle(_deployment_preview_pos, spell_radius, Color(color.r, color.g, color.b, 0.12))
 		draw_arc(_deployment_preview_pos, spell_radius, 0.0, TAU, 48, color, 2.0, true)
-		if String(stats.get("spell_kind", "")) in ["solar_flare", "mega_inferno_bomb"]:
+		var show_inner := String(stats.get("spell_kind", "")) in ["solar_flare", "mega_inferno_bomb"]
+		if String(stats.get("spell_kind", "")) == "stellar_convergence":
+			show_inner = _workbench.spell_active if _workbench.enabled else runtime._card_has_active_for_team(_deployment_preview_team(), _selected_card)
+		if show_inner:
 			var inner_radius := float(stats.inner_radius)
 			var inner_color := Color("ffe27a") if _deployment_preview_valid else color
 			draw_circle(_deployment_preview_pos, inner_radius, Color(inner_color, 0.18))
@@ -2488,6 +2491,13 @@ func present_pool_zone_audio(pos: Vector2, duration: float, team: int) -> void:
 		_audio_manager.start_zone_audio(_presentation_event_id, "pool_of_reflection", 0, "spell", pos, duration, team)
 	if runtime.mode == "server":
 		_broadcast(_rpc_zone_audio, [network_session_id(), _presentation_event_id, "pool_of_reflection", 0, "spell", pos, duration, team])
+
+func present_stellar_zone_audio(pos: Vector2, duration: float, team: int) -> void:
+	_presentation_event_id += 1
+	if _audio_manager:
+		_audio_manager.start_zone_audio(_presentation_event_id, "stellar_convergence", 0, "spell", pos, duration, team)
+	if runtime.mode == "server":
+		_broadcast(_rpc_zone_audio, [network_session_id(), _presentation_event_id, "stellar_convergence", 0, "spell", pos, duration, team])
 
 func present_horizon_zone_audio(pos: Vector2, duration: float, team: int) -> void:
 	_presentation_event_id += 1

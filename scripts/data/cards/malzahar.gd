@@ -9,7 +9,7 @@ static func definition() -> Dictionary:
 			"mass": 2.0, "sight": 250.0, "is_air": true, "building_only": false, "can_attack_air": true,
 			"projectile_speed": 380.0,
 			"spawn_id": "voidling", "spawn_interval": 8.0, "spawn_initial_delay": 2.0,
-			"spawn_defer_while_controlled": true, "spawn_count": 3, "spawn_sequence_interval": 0.5, "spawn_side": "below", "spawn_deploy_time": 0.0,
+			"spawn_count": 3, "spawn_sequence_interval": 0.5, "spawn_side": "below", "spawn_deploy_time": 0.0,
 			"active_skills": [{"name": "冥府之握", "kind": "channeled_attack", "strike_type": "skill", "cost": 3, "max_uses": 1, "cooldown": 10.0,
 				"duration": 2.5, "radius": 90.0, "zone_duration": 5.0, "zone_damage": 30, "zone_tick_interval": 0.5,
 				"description": "下一次攻击不受致盲影响，命中后引导眩晕2.5秒，自身不能移动或攻击。眩晕、冰冻、凝滞、击退、强制位移、沉默、嘲讽打断引导。命中位置生成半径90的区域，每0.5秒造成30伤害，独立持续5秒。"}, {"name": "虚空虫群", "kind": "summon", "cost": 1, "max_uses": 3, "cooldown": 6.0,

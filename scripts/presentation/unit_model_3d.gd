@@ -545,6 +545,7 @@ func _sync_visual(force: bool, delta: float) -> void:
 func _on_presentation_cue(cue: StringName) -> void:
 	if is_instance_valid(_active_buff_visual): _active_buff_visual.on_cue(cue)
 	if cue in [&"stealth:enter", &"stealth:exit"]:
+		if is_instance_valid(_model_root) and _model_root.has_method("handles_stealth_transition") and _model_root.handles_stealth_transition(): return
 		if not _dying and is_instance_valid(_source) and _source.hp > 0.0:
 			var effect := preload("res://scripts/presentation/stealth_transition_3d.gd").new()
 			add_child(effect)

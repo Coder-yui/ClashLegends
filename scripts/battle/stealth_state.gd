@@ -5,11 +5,18 @@ signal changed(hidden: bool)
 var delay := 0.0
 var remaining := 0.0
 var hidden := false
+var proximity_once := false
 
-func setup(seconds: float) -> void:
+func setup(seconds: float, proximity: bool = false) -> void:
 	delay = seconds
 	remaining = 0.0
-	hidden = delay > 0.0
+	proximity_once = proximity
+	hidden = proximity or delay > 0.0
+
+func reveal_proximity() -> void:
+	if not proximity_once or not hidden: return
+	hidden = false
+	changed.emit(false)
 
 func activity(break_hidden: bool = false) -> void:
 	if delay <= 0.0: return

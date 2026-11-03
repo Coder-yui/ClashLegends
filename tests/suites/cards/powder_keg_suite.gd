@@ -113,7 +113,7 @@ func run(harness: Object, main: Node2D) -> void:
 			"undying": target.buffs.apply(&"undying", &"test", 2.0, {"health_floor": 1.0})
 		hp = target.hp
 		main._active_skill_effect_system.apply(keg, stats.active_skills[0])
-		_expect(target.hp == (100.0 if protection in ["undying", "building"] else hp), "主动爆炸尊重保护/建筑边界 " + protection)
+		_expect(target.hp == (0.0 if protection == "shield" else (100.0 if protection in ["undying", "building"] else hp)), "主动爆炸尊重保护/建筑边界 " + protection)
 		_clear()
 	# 非真死亡（冰鸟蛋）不返金币。
 	keg = _spawn_ready_unit("powder_keg", 0, center)

@@ -73,19 +73,19 @@ func _test_channel_summons() -> void:
 	var target := _spawn_ready_unit("target_dummy", 1, Vector2(360, 850))
 	caster.spawn_initial_delay_left = 0.0
 	caster._initial_summons_spawned = true
-	caster._spawn_timer = 0.1 # 定位到既有8秒周期的最后两步。
+	caster.summon_production.remaining = 0.1 # 定位到既有8秒周期的最后两步。
 	_start_channel(caster, target)
 	var action_serial := caster.get_visual_action_serial()
 	_run_main_ticks(1)
-	_expect(is_equal_approx(caster._spawn_timer, 0.05) and _main.runtime._commands.inspect_summons().is_empty(), "引导跨周期前一步计时继续且不提前开门")
+	_expect(is_equal_approx(caster.summon_production.remaining, 0.05) and _main.runtime._commands.inspect_summons().is_empty(), "引导跨周期前一步计时继续且不提前开门")
 	_run_main_ticks(1)
-	_expect(caster.channel_attack.active() and _main.runtime._commands.inspect_summons().size() == 3 and is_equal_approx(caster._spawn_timer, 8.0), "引导中到期照常开门并从实际开门重计8秒")
+	_expect(caster.channel_attack.active() and _main.runtime._commands.inspect_summons().size() == 3 and is_equal_approx(caster.summon_production.remaining, 8.0), "引导中到期照常开门并从实际开门重计8秒")
 	_expect(caster.get_visual_action_serial() == action_serial and target.is_stunned(), "被动召唤不抢引导演出或解除控制")
 	caster.freeze(0.6)
-	caster._spawn_timer = 0.0
+	caster.summon_production.remaining = 0.0
 	_run_main_ticks(5)
 	_expect(not caster.channel_attack.active() and caster.is_frozen() and _units("voidling").size() == 1 and _main.runtime._commands.inspect_summons().size() == 2, "引导受控打断但已发序列仍按0.25秒生成首只")
-	_expect(caster._spawn_timer == 0.0, "受控到期仅保留一批不新增序列")
+	_expect(caster.summon_production.remaining == 0.0, "受控到期仅保留一批不新增序列")
 	caster.take_damage(100000)
 	_run_main_ticks(20)
 	_expect(_units("voidling").size() == 3 and _main.runtime._commands.inspect_summons().is_empty(), "来源死亡保留已发序列，不补发受控待发批次")
@@ -95,16 +95,16 @@ func _test_channel_summons() -> void:
 		target = _spawn_ready_unit("target_dummy", 1, Vector2(360, 850))
 		caster.spawn_initial_delay_left = 0.0
 		caster._initial_summons_spawned = true
-		caster._spawn_timer = 0.05
+		caster.summon_production.remaining = 0.05
 		_start_channel(caster, target)
 		match kind:
 			"stun": caster.stun(0.15)
 			"freeze": caster.freeze(0.15)
 			"stasis": caster.apply_stasis(0.15)
 		_run_main_ticks(2)
-		_expect(not caster.channel_attack.active() and caster._spawn_timer == 0.0 and _main.runtime._commands.inspect_summons().is_empty(), "引导中受控沿用计时到期待发:" + kind)
+		_expect(not caster.channel_attack.active() and caster.summon_production.remaining == 0.0 and _main.runtime._commands.inspect_summons().is_empty(), "引导中受控沿用计时到期待发:" + kind)
 		_run_main_ticks(1)
-		_expect(_main.runtime._commands.inspect_summons().size() == 3 and is_equal_approx(caster._spawn_timer, 8.0), "解控立即释放一批并重计周期:" + kind)
+		_expect(_main.runtime._commands.inspect_summons().size() == 3 and is_equal_approx(caster.summon_production.remaining, 8.0), "解控立即释放一批并重计周期:" + kind)
 		_clear()
 	caster = _spawn_ready_unit("malzahar", 0, Vector2(360, 960))
 	caster._deploy_timer = 0.1

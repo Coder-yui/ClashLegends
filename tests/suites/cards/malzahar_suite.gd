@@ -245,7 +245,7 @@ func _check_independent_summons() -> void:
 	for control_kind in ["stun", "freeze", "stasis"]:
 		var caster := _spawn_ready_unit("malzahar", 0, Vector2(320, 1000))
 		caster._initial_summons_spawned = true
-		caster._spawn_timer = 0.05
+		caster.summon_production.remaining = 0.05
 		match control_kind:
 			"stun": caster.stun(1.0)
 			"freeze": caster.freeze(1.0)
@@ -254,7 +254,7 @@ func _check_independent_summons() -> void:
 		_expect(_main.runtime._commands.inspect_summons().is_empty(), control_kind + "到期等待，不提前开门")
 		caster._tick_active_statuses(1.0)
 		caster._tick_periodic_summons(0.05)
-		_expect(_main.runtime._commands.inspect_summons().size() == 3 and is_equal_approx(caster._spawn_timer, 8.0), control_kind + "解除仅补一批，从开门重新计周期")
+		_expect(_main.runtime._commands.inspect_summons().size() == 3 and is_equal_approx(caster.summon_production.remaining, 8.0), control_kind + "解除仅补一批，从开门重新计周期")
 		var before := _children().size()
 		caster.free()
 		for i in 25: _main.runtime._tick_summon_flights(0.05)

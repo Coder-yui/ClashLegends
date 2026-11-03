@@ -95,10 +95,10 @@ const SIZE_RADII := {
 	SIZE_LARGE: RADIUS_LARGE,
 	SIZE_EXTREMELY_LARGE: RADIUS_EXTREMELY_LARGE,
 }
-const PROJECTILE_VISUALS := [&"thorn_spitter_bullet", &"evolution_turret_bullet", &"jayce_bullet", &"samira_bullet", &"malzahar_missile", &"voidfish_missile", &"tristana_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
+const PROJECTILE_VISUALS := [&"jack_in_the_box_bullet", &"thorn_spitter_bullet", &"evolution_turret_bullet", &"jayce_bullet", &"samira_bullet", &"malzahar_missile", &"voidfish_missile", &"tristana_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
-const SPELL_KINDS := [&"final_spark", &"convergent_pulse", &"mega_inferno_bomb", &"pool_of_reflection", &"solar_flare", &"severing_bolt", &"medium_lightning", &"event_horizon", &"tidal_wave", &"void_summoning", &"explosive_cask", &"corrosion", &"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
-const ACTIVE_SKILL_KINDS := [&"spell_final_spark", &"spell_convergent_pulse", &"spell_mega_inferno_bomb", &"spell_pool_of_reflection", &"spell_solar_flare", &"spell_severing_bolt", &"spell_medium_lightning", &"spell_event_horizon", &"detonate", &"spell_tidal_wave", &"attack_burst", &"rewind_nova", &"movement_strike", &"counter_strike", &"spell_void_summoning", &"self_sacrifice", &"blink_nova", &"channeled_attack", &"death_spawn", &"sacrifice_empower", &"spell_explosive_cask", &"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
+const SPELL_KINDS := [&"stellar_convergence", &"final_spark", &"convergent_pulse", &"mega_inferno_bomb", &"pool_of_reflection", &"solar_flare", &"severing_bolt", &"medium_lightning", &"event_horizon", &"tidal_wave", &"void_summoning", &"explosive_cask", &"corrosion", &"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
+const ACTIVE_SKILL_KINDS := [&"spell_stellar_convergence", &"self_stasis", &"spell_final_spark", &"spell_convergent_pulse", &"spell_mega_inferno_bomb", &"spell_pool_of_reflection", &"spell_solar_flare", &"spell_severing_bolt", &"spell_medium_lightning", &"spell_event_horizon", &"detonate", &"spell_tidal_wave", &"attack_burst", &"rewind_nova", &"movement_strike", &"counter_strike", &"spell_void_summoning", &"self_sacrifice", &"blink_nova", &"channeled_attack", &"death_spawn", &"sacrifice_empower", &"spell_explosive_cask", &"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -109,7 +109,7 @@ const TRANSITION_BLEND_FIELDS := [&"default", &"locomotion", &"action_in", &"act
 ## Validator 会检测未知或未登记字段。新增字段必须同时实现运行时读取逻辑、
 ## validator 登记和对应机制测试，防止只把配置写进 CardDB、却忘记接入权威模拟或表现层。
 const CARD_FIELDS := [&"inner_damage", &"shield_per_second", &"shield_duration", &"inner_radius", &"slow_multiplier", &"isolated_damage_multiplier", &"controlled_damage_multiplier",
-	&"spell_windup", &"pull_distance", &"wave_width", &"deploy_half_only",
+	&"pull_speed", &"damage_interval", &"spell_windup", &"pull_distance", &"wave_width", &"deploy_half_only",
 	&"form_cycle_interval", &"form_first_attack_damage", &"form_first_attack_health_ratio", &"form_first_attack_tower_damage",
 	&"repeat_hit_count", &"repeat_hit_multiplier", &"repeat_hit_haste_duration", &"repeat_hit_speed_multiplier", &"position_history_duration",
 	&"close_attack_range", &"close_attack_damage_multiplier", &"close_attack_speed_multiplier", &"close_attack_hit_gain", &"skill_resource_block_during_cast",
@@ -117,11 +117,11 @@ const CARD_FIELDS := [&"inner_damage", &"shield_per_second", &"shield_duration",
 	&"assist_conversion_window", &"assist_conversion_unit_id", &"assist_conversion_building_id",
 	&"resource_dependencies",
 	&"icon_path",
-	&"death_burst_radius", &"death_burst_damage", &"death_burst_reward", &"death_enemy_elixir", &"structure_mend_per_second", &"death_transition_delay", &"death_shrine_delay", &"death_heal_delay", &"death_heal_radius", &"death_heal_duration", &"death_heal_per_second",
+	&"death_burst_radius", &"death_burst_damage", &"death_burst_reward", &"death_enemy_elixir", &"death_owner_elixir", &"elixir_interval", &"elixir_amount", &"structure_mend_per_second", &"death_transition_delay", &"death_shrine_delay", &"death_heal_delay", &"death_heal_radius", &"death_heal_duration", &"death_heal_per_second",
 	&"sacrifice_damage", &"sacrifice_delay",
 	&"can_attack",
 	&"rage_crit_multiplier",
-	&"stealth_delay",
+	&"stealth_delay", &"proximity_reveal_stun", &"attack_all_in_range", &"isolated_attack_multiplier",
 	&"strike_count", &"strike_interval", &"stun_duration", &"tower_damage_multiplier",
 	&"heal_on_hit_name", &"on_hit_passive_name", &"team_attack_boost_first_delay", &"team_attack_boost_interval", &"team_attack_boost_multiplier", &"team_attack_boost_forge_duration", &"team_attack_boost_release_time",
 	&"river_traversal", &"permanent_unit_phasing", &"terrain_traversal", &"terrain_entry_heal", &"terrain_entry_speed_multiplier", &"growth_ranged_id", &"growth_melee_id", &"growth_ranged_hits", &"growth_melee_hits",
@@ -138,7 +138,7 @@ const CARD_FIELDS := [&"inner_damage", &"shield_per_second", &"shield_duration",
 	&"pre_deploy_sweep_flat_rear", &"pre_deploy_sweep_start", &"pre_deploy_sweep_distance", &"pre_deploy_sweep_radius", &"pre_deploy_sweep_damage",
 	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_pocket_requires_both_towers", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan", &"lifespan_hp_decay", &"dormant_without_targets", &"tower_ruin_foundation",
 	&"deployment_count", &"deployment_spacing", &"deployment_formation", &"spawn_plan", &"deploy_formation_requires_in_bounds",
-	&"spawn_waves", &"spawn_initial_delay", &"spawn_sequence_interval", &"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"spawn_distance", &"spawn_deploy_time", &"spawn_flight_duration", &"spawn_defer_while_controlled", &"death_spawn_side", &"death_spawn_id", &"death_spawn_count", &"death_spawn_deploy_time", &"death_spawn_spread", &"death_spawn_duration",
+	&"spawn_waves", &"spawn_initial_delay", &"spawn_sequence_interval", &"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"spawn_distance", &"spawn_deploy_time", &"spawn_flight_duration", &"death_spawn_side", &"death_spawn_id", &"death_spawn_count", &"death_spawn_deploy_time", &"death_spawn_spread", &"death_spawn_duration",
 	&"death_replacement_id", &"death_replacement_charges", &"death_replacement_visual_transition", &"timed_revival_id", &"timed_revival_delay", &"timed_revival_death_replacement_charges", &"timed_revival_visual_transition",
 	&"attack_wave_damage", &"attack_wave_delay", &"attack_wave_tail_distance", &"attack_wave_near_width", &"attack_wave_max_scale", &"attack_wave_speed", &"attack_wave_visual", &"attack_wave_visual_height",
 	&"projectile_spawn_at_edge", &"projectile_spawn_offset", &"projectile_collision_radius",
@@ -177,7 +177,7 @@ const VISUAL_ANIMATION_FIELDS := [
 	&"death_followup_immediate", &"death_followup_scene_path", &"death_followup_animation", &"death_followup_duration", &"visual_actions",
 	&"visual_action_durations", &"transitions", &"transition_blends", &"clip_blends",
 ]
-const ACTIVE_SKILL_FIELDS := [&"isolated_damage_multiplier", &"controlled_damage_multiplier", &"form_icon_paths", &"form_kinds", &"persistent_area", &"execute_health_ratio", &"attack_count",
+const ACTIVE_SKILL_FIELDS := [&"execute_buildings", &"radius_from_attack_range", &"isolated_damage_multiplier", &"controlled_damage_multiplier", &"form_icon_paths", &"form_kinds", &"persistent_area", &"execute_health_ratio", &"attack_count",
 	&"rewind_seconds",
 	&"requires_full_resource",
 	&"charge_attack_range", &"charge_dash_speed", &"charge_landing_side", &"charge_impact_radius", &"charge_visual_duration", &"ignore_blind",

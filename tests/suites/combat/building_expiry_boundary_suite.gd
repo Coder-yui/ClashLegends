@@ -8,6 +8,7 @@ func run(harness: Object, main: Node2D) -> void:
 		_check_due_attack(permutation)
 	_check_stale_acceptance()
 	_check_lifecycle_edges()
+	_check_stasis_pauses_all_buildings()
 	_check_tombstone_death_summons()
 
 func _building(team: int) -> Unit:
@@ -104,7 +105,7 @@ func _check_lifecycle_edges() -> void:
 	for deploying in [false, true]:
 		building = _building(1)
 		building.spawn_interval = 1
-		building._spawn_timer = 0.05
+		building.summon_production.remaining = 0.05
 		building._initial_summons_spawned = not deploying
 		building._lifespan_left = 0.05
 		building.hp = 1
@@ -147,7 +148,7 @@ func _check_tombstone_death_summons() -> void:
 					_run_main_ticks(99)
 					_expect(building.hp == 1, "超过标称时间持续自然衰血")
 				building.spawn_interval = 5.0
-				building._spawn_timer = Unit.SIM_DT
+				building.summon_production.remaining = Unit.SIM_DT
 				building._initial_summons_spawned = team == 0
 			elif cause == "decay":
 				building.hp = 1
@@ -170,3 +171,22 @@ func _check_tombstone_death_summons() -> void:
 			_expect(_main.get_tree().get_nodes_in_group("combatants").filter(func(c): return c is Unit and c.card_id == "imp" and not before.has(c)).size() == 2, "墓碑重复死亡通知不重复生成")
 			building.free()
 			for summoned in summons: summoned.free()
+
+func _check_stasis_pauses_all_buildings() -> void:
+	for card_id in CardDB.all():
+		var stats: Dictionary = CardDB.get_card(card_id)
+		if not bool(stats.get("is_building", false)) or float(stats.get("lifespan", 0.0)) <= 0.0: continue
+		var building := _spawn_ready_unit(card_id, 0, Vector2(360, 850))
+		building.apply_stasis(0.15)
+		building.hp = 1
+		var life := building._lifespan_left
+		var remainder := building._lifespan_decay_remainder
+		_main._sim_step(0.05)
+		_expect(building.hp == 1 and building._lifespan_left == life and building._lifespan_decay_remainder == remainder, card_id + "：凝滞暂停寿命和衰血，不因1血自然死亡")
+		_main._sim_step(0.05)
+		_expect(building.hp == 1 and building._lifespan_left == life, card_id + "：凝滞尚未到期的Tick也不衰血")
+		_main._sim_step(0.05)
+		_expect(building.hp == 0, card_id + "：解除后恢复自然衰血及死亡")
+		for actor in _main.get_tree().get_nodes_in_group("combatants"):
+			if actor is Unit: actor.free()
+		if is_instance_valid(building): building.free()

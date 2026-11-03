@@ -25,7 +25,7 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 		result.append({"name": "类型", "value": type_name(card_type, stats)})
 		var target := "友方单位" if StringName(stats.get("spell_kind", "")) == &"heal" else "敌方单位"
 		if String(stats.get("spell_kind", "")) == "pool_of_reflection": target = "友方地面 / 空中单位（不含建筑）"
-		if String(stats.get("spell_kind", "")) in ["final_spark", "convergent_pulse", "severing_bolt", "mega_inferno_bomb"]: target = "敌方地面 / 空中 / 建筑"
+		if String(stats.get("spell_kind", "")) in ["stellar_convergence", "final_spark", "convergent_pulse", "severing_bolt", "mega_inferno_bomb"]: target = "敌方地面 / 空中 / 建筑"
 		if String(stats.get("spell_kind", "")) == "void_summoning": target = "区域召唤己方虚空鱼"
 		if String(stats.get("spell_kind", "")) == "stasis": target = "双方单位（含空军、建筑卡）"
 		if String(stats.get("spell_kind", "")) == "final_spark":
@@ -67,6 +67,10 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 			result.append({"name": "中心半径", "value": "%s格" % format_number(float(stats.inner_radius) / TILE_SIZE)})
 			result.append({"name": "塔 / 水晶伤害", "value": "%s%%" % format_number(float(stats.tower_damage_multiplier) * 100.0)})
 			return result
+		if String(stats.get("spell_kind", "")) == "stellar_convergence":
+			result.append({"name": "持续伤害", "value": "每%s秒%s" % [format_number(float(stats.damage_interval)), format_number(float(stats.damage))]})
+			result.append({"name": "牵引速度", "value": "%s格/秒" % format_number(float(stats.pull_speed) / 40.0)})
+			result.append({"name": "黑洞中心", "value": "半径%s格" % format_number(float(stats.inner_radius) / 40.0)})
 		if String(stats.get("spell_kind", "")) == "convergent_pulse":
 			result.append({"name": "强制拉拢", "value": "%s格（可越过中心）" % format_number(float(stats.pull_distance) / TILE_SIZE)})
 			result.append({"name": "伤害 / 塔伤害", "value": "%s / %s" % [format_number(float(stats.damage)), format_number(float(stats.damage) * float(stats.tower_damage_multiplier))]})
@@ -337,8 +341,7 @@ static func passives(stats: Dictionary) -> Array[Dictionary]:
 			description = "部署完成立即召唤，每%s秒一波，依次循环：%s。" % [format_number(float(stats.spawn_interval)), " → ".join(waves)]
 		if float(stats.get("spawn_flight_duration", 0.0)) > 0.0:
 			description = "部署完成发出紫光，%s秒后生成%d只%s，之后每%s秒再次发出。" % [format_number(float(stats.spawn_flight_duration)), int(stats.get("spawn_count", 0)), spawn_name, format_number(float(stats.spawn_interval))]
-		if bool(stats.get("spawn_defer_while_controlled", false)):
-			description += "眩晕、冰冻、凝滞期间到期延后，解除后发出；已发出不被打断。"
+		description += "眩晕、冰冻、凝滞期间到期延后，解除后发出并重计周期；已发出不被打断。"
 		result.append({"name": "仙灵伙伴" if stats.get("spawn_side", "") == "bilateral" else "周期召唤", "description": description})
 	if int(stats.get("death_spawn_count", 0)) > 0 and not String(stats.get("death_spawn_id", "")).is_empty():
 		var death_spawn_id := String(stats.get("death_spawn_id", ""))

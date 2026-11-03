@@ -13,7 +13,7 @@ static func definition() -> Dictionary:
 			"projectile_spawn_offset": 7.5, "projectile_collision_radius": 4.0,
 			"is_air": false, "building_only": false, "can_attack_air": true,
 			"spawn_id": "pix", "spawn_interval": 7.0, "spawn_count": 2,
-			"spawn_side": "bilateral", "spawn_distance": 60.0, "spawn_deploy_time": 0.0, "spawn_flight_duration": 0.25, "spawn_defer_while_controlled": true,
+			"spawn_side": "bilateral", "spawn_distance": 60.0, "spawn_deploy_time": 0.0, "spawn_flight_duration": 0.25,
 			"active_skills": [{
 				"name": "狂野生长", "kind": "permanent_growth", "cost": 2, "max_uses": 2, "cooldown": 7.0,
 				"radius": 180.0, "health_bonus_ratio": 0.3, "body_scale_multiplier": 1.3,

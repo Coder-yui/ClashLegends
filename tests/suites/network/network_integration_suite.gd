@@ -53,6 +53,8 @@ func run(harness: SceneTree) -> void:
 	var tentacle_case = preload("res://tests/fixtures/soul_tentacle_network_case.gd").new() if OS.get_environment("CLASH_TEST_SOUL_TENTACLE") == "1" else null
 	if tentacle_case != null: terminal_not_before = maxi(terminal_not_before, 225)
 	var spark_case = preload("res://tests/fixtures/final_spark_network_case.gd").new() if OS.get_environment("CLASH_TEST_FINAL_SPARK") == "1" else null
+	var stellar_case = preload("res://tests/fixtures/stellar_convergence_network_case.gd").new() if OS.get_environment("CLASH_TEST_STELLAR_CONVERGENCE") == "1" else null
+	if stellar_case != null: terminal_not_before = maxi(terminal_not_before, 155)
 	var pulse_case = preload("res://tests/fixtures/convergent_pulse_network_case.gd").new() if OS.get_environment("CLASH_TEST_CONVERGENT_PULSE") == "1" else null
 	var solar_case = preload("res://tests/fixtures/solar_flare_network_case.gd").new() if OS.get_environment("CLASH_TEST_SOLAR_FLARE") == "1" else null
 	var pool_case = preload("res://tests/fixtures/pool_of_reflection_network_case.gd").new() if OS.get_environment("CLASH_TEST_POOL_OF_REFLECTION") == "1" else null
@@ -90,6 +92,7 @@ func run(harness: SceneTree) -> void:
 		if evolution_case != null: evolution_case.poll(main)
 		if tentacle_case != null: tentacle_case.poll(main)
 		if spark_case != null: spark_case.poll(main)
+		if stellar_case != null: stellar_case.poll(main)
 		if pulse_case != null: pulse_case.poll(main)
 		if solar_case != null: solar_case.poll(main)
 		if pool_case != null: pool_case.poll(main)
@@ -300,6 +303,9 @@ func run(harness: SceneTree) -> void:
 		if spark_case != null:
 			result["final_spark"] = spark_case.result()
 			result["passed"] = result.passed and result.final_spark.passed
+		if stellar_case != null:
+			result["stellar_convergence"] = stellar_case.result()
+			result["passed"] = result.passed and result.stellar_convergence.passed
 		if pulse_case != null:
 			result["convergent_pulse"] = pulse_case.result()
 			result["passed"] = result.passed and result.convergent_pulse.passed

@@ -69,7 +69,12 @@ func _apply_unit_movement(dt: float, units: Array[Unit]) -> void:
 			unit.cancel_charge()
 			unit.on_movement_applied(0.0, dt)
 
+	# 持续区域外力独立于自主行动；保留碰撞与地形，不积累冲锋距离。
 	for unit in units:
+		if unit.battle_context != null:
+			var external := unit.battle_context.area_pull_velocity(unit, dt)
+			if external.length_squared() > 0.000001:
+				if not _try_apply_velocity(unit, external, dt): _try_slide_velocity(unit, external, dt)
 		unit.terrain_traversal.update(unit)
 		unit._just_deployed = false
 

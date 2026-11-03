@@ -346,7 +346,6 @@ var spawn_count := 1
 var spawn_distance := 0.0
 var spawn_deploy_time := -1.0
 var spawn_flight_duration := 0.0
-var spawn_defer_while_controlled := false
 var spawn_side := ""
 var active_death_spawn_id := ""
 var death_spawn_side := ""
@@ -398,7 +397,9 @@ var _hit_flash_event_cooldown := 0.0
 var _death_visual_emitted := false
 var _deploy_timer := 0.0
 var _lifespan_left := 0.0
-var _spawn_timer := 0.0
+var elixir_production := PeriodicProduction.new()
+var _elixir_started := false
+var summon_production := PeriodicProduction.new()
 var _spawn_counter := 0
 var _initial_summons_spawned := false
 
@@ -491,6 +492,8 @@ func set_battle_context(context: BattleContext) -> void:
 
 func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	_base_form_stats = stats.duplicate(true)
+	elixir_production.reset(float(stats.get("elixir_interval", 0.0)))
+	_elixir_started = false
 	attack_wave.clear()
 	if stats.has("attack_wave_damage"):
 		for field in ["damage", "delay", "tail_distance", "near_width", "max_scale", "speed", "visual", "visual_height"]:
@@ -518,7 +521,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	attack_range = stats.range
 	if not stealth.changed.is_connected(_on_stealth_changed):
 		stealth.changed.connect(_on_stealth_changed)
-	stealth.setup(float(stats.get("stealth_delay", 0.0)))
+	stealth.setup(float(stats.get("stealth_delay", 0.0)), float(stats.get("proximity_reveal_stun", 0.0)) > 0.0)
 	net_stealth_hidden = stealth.hidden
 	attack_interval = snappedf(stats.interval, 0.01)
 	move_speed = snappedf(stats.speed, 0.01)
@@ -658,7 +661,6 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	spawn_distance = float(stats.get("spawn_distance", 0.0))
 	spawn_deploy_time = float(stats.get("spawn_deploy_time", -1.0))
 	spawn_flight_duration = float(stats.get("spawn_flight_duration", 0.0))
-	spawn_defer_while_controlled = bool(stats.get("spawn_defer_while_controlled", false))
 	spawn_side = String(stats.get("spawn_side", ""))
 	death_spawn_deploy_time = float(stats.get("death_spawn_deploy_time", -1.0))
 	death_spawn_side = String(stats.get("death_spawn_side", ""))
@@ -675,7 +677,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	timed_revival_visual_transition = String(stats.get("timed_revival_visual_transition", ""))
 	_timed_revival_left = timed_revival_delay
 	_lifespan_left = lifespan
-	_spawn_timer = spawn_interval
+	summon_production.reset(spawn_interval)
 	_deploy_timer = deploy_time
 	net_target_pos = global_position
 	_prev_pos = global_position
@@ -1729,6 +1731,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 			queue_redraw()
 		cancel_charge()
 		return
+	_try_proximity_reveal()
 	if not can_attack and float(_base_form_stats.get("sacrifice_damage", 0.0)) <= 0.0 and float(_base_form_stats.get("structure_mend_per_second", 0.0)) <= 0.0:
 		_target = null
 		_attacking = false
@@ -2085,7 +2088,7 @@ func prepare_natural_lifecycle(dt: float) -> void:
 	_tick_building_lifetime(dt)
 
 func _tick_building_lifetime(dt: float) -> void:
-	if control.hard.any_flag(&"untargetable", &"pause_lifespan"): return
+	if CombatInteraction.in_stasis(self) or control.hard.any_flag(&"untargetable", &"pause_lifespan"): return
 	if lifespan > 0.0:
 		var lifetime_step := dt
 		# 存在时间仅定义衰血速率；治疗后的建筑跨过标称时间仍持续衰血。
@@ -2115,10 +2118,21 @@ func _update_dormancy() -> void:
 		attack_timeline.cancel(true)
 		_attack_visual_pending = true
 
+## 到期受控只保留一次收益；解除后重新开始周期，不补发受控期间的多轮产出。
+func _tick_elixir_production(dt: float) -> void:
+	var interval := float(_base_form_stats.get("elixir_interval", 0.0))
+	if interval <= 0.0 or _in_client_mode() or battle_context == null: return
+	if not _elixir_started:
+		_elixir_started = true
+		return # 部署完成当帧不预扣首个周期。
+	if not elixir_production.tick(dt, interval, PeriodicProduction.blocked(self)): return
+	battle_context.grant_team_elixir(team, float(_base_form_stats.get("elixir_amount", 0.0)), self)
+
 func _building_tick(dt: float, natural_lifecycle_prepared: bool = false, summons_started: bool = false) -> void:
 	if not natural_lifecycle_prepared:
 		_tick_building_lifetime(dt)
 	if hp <= 0.0 or is_queued_for_deletion(): return
+	_tick_elixir_production(dt)
 	if summons_started: return
 	_tick_wave_members(dt)
 	if not _initial_summons_spawned:
@@ -2127,29 +2141,17 @@ func _building_tick(dt: float, natural_lifecycle_prepared: bool = false, summons
 	if spawn_interval > 0.0:
 		_tick_periodic_summons(dt)
 
-func _summon_controlled() -> bool:
-	return is_frozen() or is_stunned() or CombatInteraction.in_stasis(self)
-
 func _tick_periodic_summons(dt: float) -> void:
-	_spawn_timer -= dt
-	if _spawn_timer > 0.000001: return
-	if spawn_defer_while_controlled:
-		_spawn_timer = 0.0
-		if _summon_controlled(): return
-		_spawn_timer = spawn_interval
+	if summon_production.tick(dt, spawn_interval, PeriodicProduction.blocked(self)):
 		_spawn_batch()
-	else:
-		_spawn_timer += spawn_interval
-		if not is_frozen() and not is_stunned(): _spawn_batch()
 
 func _spawn_initial_summons() -> void:
 	if _initial_summons_spawned or spawn_interval <= 0.0 or spawn_initial_delay_left > 0.000001:
 		return
-	if spawn_defer_while_controlled and _summon_controlled(): return
+	if PeriodicProduction.blocked(self): return
 	_initial_summons_spawned = true
-	_spawn_timer = spawn_interval
-	if not is_frozen() and not is_stunned():
-		_spawn_batch()
+	summon_production.reset(spawn_interval)
+	_spawn_batch()
 
 ## 被动与主动共用；每批独立计时，重叠释放不会覆盖尚未出生的虚灵。
 func begin_summon_sequence(id: String, count: int, interval: float, deploy_override: float) -> void:
@@ -2176,7 +2178,7 @@ func _spawn_batch() -> void:
 
 ## 同批成员由权威Tick逐个发出；控制期间暂停，死亡/清场不再推进。
 func _tick_wave_members(dt: float) -> void:
-	if _pending_wave_members.is_empty() or (spawn_defer_while_controlled and _summon_controlled()): return
+	if _pending_wave_members.is_empty() or PeriodicProduction.blocked(self): return
 	var waiting: Array[Dictionary] = []
 	for member in _pending_wave_members:
 		member.remaining = float(member.remaining) - dt
@@ -2322,6 +2324,17 @@ func _find_nearest_attackable_in_range() -> Node2D:
 			best = candidate_node
 			best_gap = gap
 	return best
+
+## 埋伏建筑仅部署完成、可行动且发现合法目标时触发一次；受伤不破隐。
+func _try_proximity_reveal() -> void:
+	if not stealth.proximity_once or not stealth.hidden or _find_nearest_attackable_in_range() == null: return
+	stealth.reveal_proximity()
+	var duration := float(_base_form_stats.get("proximity_reveal_stun", 0.0))
+	for candidate in get_tree().get_nodes_in_group("combatants"):
+		if not candidate is Unit or candidate.team == team or candidate.hp <= 0.0: continue
+		if _target_gap(candidate) > attack_range: continue
+		if not CombatInteraction.allows(candidate, self): continue
+		candidate.stun(duration, status_source("proximity_reveal"), CombatInteraction.effect_context(self))
 
 func _is_struct(c: Node) -> bool:
 	return c is Tower or (c is Unit and (c as Unit).is_building)
@@ -2864,6 +2877,17 @@ func _consume_blind_for_strike(effects: Dictionary) -> bool:
 func _perform_attack_strike(target: Node2D, amount: float, effects: Dictionary = {}) -> bool:
 	record_combat_activity()
 	if _consume_blind_for_strike(effects): return true
+	# 同次齐射在发射前固化目标集合及单目标倍率，致盲只消费一次。
+	if bool(_base_form_stats.get("attack_all_in_range", false)):
+		var targets: Array[Node2D] = []
+		for candidate in get_tree().get_nodes_in_group("combatants"):
+			if candidate is Node2D and _target_is_attackable(candidate) and _target_gap(candidate) <= attack_range:
+				targets.append(candidate)
+		var multiplier := float(_base_form_stats.get("isolated_attack_multiplier", 1.0)) if targets.size() == 1 else 1.0
+		var delivered := false
+		for candidate in targets:
+			delivered = _deal_attack_damage_to(candidate, amount * multiplier, effects) or delivered
+		return delivered
 	# 远程单位在这里进入 BattleContext.launch_attack，弹体与出手 tick 同步；命中由弹体抵达后结算。
 	return _deal_attack_damage_to(target, amount, effects)
 
@@ -3581,6 +3605,7 @@ func _die(trigger_death_effect: bool = false) -> void:
 		_death_reward_paid = true
 		if not _death_reward_suppressed:
 			battle_context.grant_team_elixir(1 - team, float(_base_form_stats.get("death_enemy_elixir", 0.0)), self)
+		battle_context.grant_team_elixir(team, float(_base_form_stats.get("death_owner_elixir", 0.0)), self)
 	if is_true_death() and not _in_client_mode() and battle_context != null and not _death_burst_done and float(_base_form_stats.get("death_burst_radius", 0.0)) > 0.0:
 		_death_burst_done = true
 		battle_context.burst_on_death(self)

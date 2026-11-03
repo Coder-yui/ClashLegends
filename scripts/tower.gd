@@ -309,6 +309,21 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 	return true
 
 
+## 通用斩杀专用死亡入口，绕过护盾并保持摧毁信号。
+func execute_death() -> void:
+	if hp <= 0.0: return
+	hp = 0.0
+	clear_shields()
+	bleeding.clear()
+	sunlight_marks.clear_family(&"sunlight")
+	net_sunlight = 0.0
+	assist_conversion.consume(self)
+	defeated.emit()
+	if battle_context != null and battle_context.damage_batch().committing:
+		battle_context.damage_batch().defer_effect(notify_visual_destroyed)
+	else: notify_visual_destroyed()
+	queue_redraw()
+
 func add_shield(amount: float, duration: float, decays: bool = false, source: StringName = &"legacy") -> void:
 	if CombatInteraction.in_stasis(self): return
 	if battle_context != null and battle_context.damage_batch().collecting:

@@ -68,6 +68,9 @@ func record_growth_hit(unit: Unit, target: Node2D) -> void:
 func is_net_client() -> bool:
 	return _controller.is_net_client()
 
+func area_pull_velocity(unit: Unit, dt: float) -> Vector2:
+	return _controller._spell_system.area_pull_velocity(unit, dt)
+
 func simulation_tick() -> int:
 	return _controller.get_authoritative_server_tick()
 

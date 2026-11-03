@@ -88,6 +88,11 @@ func _skill_useful(unit: Unit, skill: Dictionary) -> bool:
 			if enemy.global_position.distance_to(unit.global_position) > float(unit._base_form_stats.death_burst_radius) + enemy.body_radius: continue
 			if unit.hp < unit.max_hp * 0.35 or enemy.hp <= float(unit._base_form_stats.death_burst_damage) + enemy.max_hp * float(skill.execute_health_ratio): return true
 		return false
+	if skill.get("kind", "") == "self_stasis":
+		for enemy in get_tree().get_nodes_in_group("combatants"):
+			if enemy is Unit and enemy.team != unit.team and enemy.hp > 0.0 and enemy._target == unit:
+				return true
+		return false
 	if skill.get("kind", "") == "self_sacrifice" and unit.hp > unit.max_hp * 0.25: return false
 	if float(skill.get("heal_amount", 0.0)) > 0.0:
 		return unit.max_hp - unit.hp >= minf(float(skill.heal_amount) * 0.6, unit.max_hp * 0.25)

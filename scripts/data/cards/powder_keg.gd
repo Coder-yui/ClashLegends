@@ -12,7 +12,7 @@ static func definition() -> Dictionary:
 			"death_burst_radius": 140.0, "death_burst_damage": 300.0, "death_burst_reward": 1.0,
 			"active_skills": [{"name": "烈性火药", "kind": "detonate", "cost": 0, "max_uses": 1,
 				"cooldown": 10.0, "cast_duration": 0.0, "cast_locks": [], "execute_health_ratio": 0.15,
-				"description": "立即引爆。爆炸造成生命伤害后，生命低于15%的敌方单位被斩杀；不斩杀建筑，无法突破拒绝死亡。"}]
+				"description": "立即引爆。爆炸命中后，生命低于15%的敌方单位被斩杀（无视护盾）；不斩杀建筑，无法突破拒绝死亡。"}]
 		},
 		"visual": {
 			"visual_radius": 34.5, "visual_scene_path": "res://assets/units/powder_keg/view.tscn",

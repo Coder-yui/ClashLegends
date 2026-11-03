@@ -153,6 +153,8 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 
 func _apply(source: Unit, skill: Dictionary) -> bool:
 	match StringName(skill.get("kind", "")):
+		&"self_stasis":
+			source.apply_stasis(float(skill.duration), source.status_source("self_stasis"))
 		&"movement_strike":
 			source.movement_strike.arm(skill)
 		&"detonate":
@@ -381,6 +383,7 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 	if displacement_order.is_empty():
 		displacement_order = _controller.combat_service().next_displacement_order(source)
 	var radius := float(skill.get("radius", 0.0))
+	if bool(skill.get("radius_from_attack_range", false)): radius = source.attack_range + source.body_radius
 	var amount := float(skill.get("damage", 0.0))
 	var knockback := float(skill.get("knockback", 0.0))
 	var knockback_duration := float(skill.get("knockback_duration", 0.2))
@@ -416,8 +419,8 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 					var live_source = hit_source_ref.get_ref()
 					if is_instance_valid(live_source): _controller.notify_unit_audio_event(live_source, &"counter_strike:hit", target_point))
 		if is_instance_valid(combatant) and combatant is Unit and combatant.hp > 0.0:
-			if String(skill.get("kind", "")) == "counter_strike":
-				(combatant as Unit).stun(float(skill.stun_duration), source.status_source("counter_strike"), CombatInteraction.effect_context(source))
+			if float(skill.get("stun_duration", 0.0)) > 0.0:
+				(combatant as Unit).stun(float(skill.stun_duration), source.status_source(String(skill.get("kind", "nova"))), CombatInteraction.effect_context(source))
 			if knockback > 0.0:
 				(combatant as Unit).apply_knockback(source.global_position, knockback, knockback_duration, knockback_mass_factor_max, displacement_order, CombatInteraction.effect_context(source))
 			if slow_duration > 0.0:
@@ -1097,16 +1100,12 @@ func burst_on_death(source: Unit) -> void:
 	resolver.defer_effect(func():
 		for hit in hits:
 			var target = hit.target
-			if not hit.receipt.landed or float(hit.receipt.health_lost) <= 0.0: continue
-			if not target is Unit or target.is_building or target.hp <= 0.0: continue
-			if source.death_burst_execute_ratio <= 0.0 or target.hp >= target.max_hp * source.death_burst_execute_ratio: continue
-			if target.buffs.remaining(&"undying") > 0.0: continue
-			# 斩杀绕过护盾/减伤，但保留死亡替身、复生及死亡召唤规则。
-			target._die(true))
+			if not hit.receipt.landed: continue
+			CombatExecution.try_execute(target, source.death_burst_execute_ratio, CombatInteraction.effect_context(source)))
 	resolver.defer_benefit(func():
 		for hit in hits:
 			var target = hit.target
-			if hit.receipt.landed and float(hit.receipt.health_lost) > 0.0 and target.hp <= 0.0 and (not target is Unit or target.is_true_death()):
+			if hit.receipt.landed and target.hp <= 0.0 and (not target is Unit or target.is_true_death()):
 				source.battle_context.grant_team_elixir(source.team, float(stats.death_burst_reward), source)
 				break)
 	resolver.commit_batch()

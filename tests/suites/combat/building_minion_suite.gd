@@ -1047,17 +1047,22 @@ func _check_tombstone_deferred_summons() -> void:
 		_expect(_imp_units().size() == before, "墓碑部分解控不发出")
 		unit.control.hard.clear_family(&"freeze")
 		unit.sim_tick(0.05)
-		_expect(_imp_units().size() == before + 2 and is_equal_approx(unit._spawn_timer,5.0), "墓碑最终解控仅发一批并完整重计5秒")
-		unit._spawn_timer = 0.05
+		_expect(_imp_units().size() == before + 2 and is_equal_approx(unit.summon_production.remaining,5.0), "墓碑最终解控仅发一批并完整重计5秒")
+		unit.summon_production.remaining = 0.05
 		unit.apply_stasis(7.0)
 		for tick in range(120): unit.sim_tick(0.05)
-		_expect(_imp_units().size() == before + 2 and unit._spawn_timer == 0.0, "墓碑到期周期最多待发一批")
+		_expect(_imp_units().size() == before + 2 and unit.summon_production.remaining == 0.0, "墓碑到期周期最多待发一批")
 		unit.control.hard.clear_family(&"stasis")
 		unit.sim_tick(0.05)
-		_expect(_imp_units().size() == before + 4 and is_equal_approx(unit._spawn_timer,5.0), "墓碑周期解控发出后完整重计")
+		_expect(_imp_units().size() == before + 4 and is_equal_approx(unit.summon_production.remaining,5.0), "墓碑周期解控发出后完整重计")
 		unit.apply_stasis(20.0)
-		unit.sim_tick(unit._lifespan_left)
-		_expect(unit.hp <= 0.0 and _imp_units().size() == before + 6, "墓碑受控自然到期不延寿、不补待发，独立死亡产出恰好两只雾行者")
+		var life_before := unit._lifespan_left
+		unit.sim_tick(life_before)
+		_expect(unit.hp > 0.0 and unit._lifespan_left == life_before and _imp_units().size() == before + 4, "墓碑凝滞暂停衰血且保留待发，不产生死亡召唤")
+		unit.control.hard.clear_family(&"stasis")
+		unit.stun(30.0)
+		unit.sim_tick(life_before)
+		_expect(unit.hp <= 0.0 and _imp_units().size() == before + 6, "眩晕不暂停寿命，死亡不补待发，独立亡语仍生成两只")
 		if not unit.is_queued_for_deletion(): unit.free()
 		for imp in _imp_units(): imp.free()
 

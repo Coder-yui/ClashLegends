@@ -1301,7 +1301,12 @@ func _tick_stasis_audio() -> void:
 		active[id] = true
 		if not _stasis_sources.has(id):
 			_stasis_sources[id] = true
-			_start_sustain(source, {"card_id": "stasis", "audio": _card_audio("stasis", source.team, 0)}, &"stasis_target", &"stasis_target")
+			var status_card: String = source.card_id if source is Unit else "stasis"
+			var status_audio := _card_audio(status_card, source.team, source.form_index if source is Unit else 0)
+			if not status_audio.get("events", {}).has("stasis_target:sustain"):
+				status_card = "stasis"
+				status_audio = _card_audio(status_card, source.team, 0)
+			_start_sustain(source, {"card_id": status_card, "audio": status_audio}, &"stasis_target", &"stasis_target")
 			var exit_callback := _stop_stasis_audio.bind(id)
 			if not source.tree_exiting.is_connected(exit_callback): source.tree_exiting.connect(exit_callback, CONNECT_ONE_SHOT)
 		for layer in [&"stasis_target"]:

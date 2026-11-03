@@ -810,5 +810,26 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "GoldWardSuite",
+    "script": "res://tests/suites/combat/gold_ward_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "combat"
+  },
+  {
+    "id": "JackInTheBoxSuite",
+    "script": "res://tests/suites/combat/jack_in_the_box_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "combat"
+  },
+  {
+    "id": "StellarConvergenceSuite",
+    "script": "res://tests/suites/cards/stellar_convergence_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

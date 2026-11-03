@@ -57,9 +57,11 @@ func _configuration() -> void:
 	_expect(validator.validate_all(registry, false).is_empty(), "已实现nova伤害仍合法：" + "；".join(validator.validate_all(registry, false)))
 	for value in [0.0, 1.0]:
 		registry.garen.active_skills.back().stun_duration = value
-		_expect("nova 未实现眩晕" in "；".join(validator.validate_all(registry, false)), "即使零值也拒绝未消费nova眩晕字段")
+		_expect(validator.validate_all(registry, false).is_empty(), "nova支持非负眩晕时长")
+	registry.garen.active_skills.back().stun_duration = -1.0
+	_expect(not validator.validate_all(registry, false).is_empty(), "nova拒绝负数眩晕时长")
 	registry.garen.active_skills.back().erase("stun_duration")
-	_expect(validator.validate_all(registry, false).is_empty(), "删除未支持字段后nova合法")
+	_expect(validator.validate_all(registry, false).is_empty(), "nova未配置眩晕仍合法")
 	var wave: Dictionary = CardDetails.passives(CardDB.get_card("kayle_ranged")).filter(func(item): return item.name == "焰浪")[0]
 	_expect("空中、地面单位及建筑、塔和水晶" in wave.description and "同类别" not in wave.description, "详情与既有跨空地焰浪规则一致")
 

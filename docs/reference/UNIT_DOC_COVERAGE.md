@@ -51,6 +51,7 @@
 | `aurelionsol` · [龙王](../units/aurelionsol.md) | 持续吐息免致盲；星辰创建即独立 | [动作](../units/animations/aurelionsol.md) · [声音](../units/audio/aurelionsol.md) |
 | `belveth` · [虚空女皇](../units/belveth.md) | 空军攻城；空中突进受控取消、死亡8鱼 | [动作](../units/animations/belveth.md) · [声音](../units/audio/belveth.md) |
 | `corki` · [库奇](../units/corki.md) | 三枚导弹首碰爆炸、第三枚1.8倍；空地溅射不重复直接命中 | [动作](../units/animations/corki.md) · [声音](../units/audio/corki.md) |
+| `stellar_convergence` · [星芒凝汇](../units/stellar_convergence.md) | 3费，5秒持续牵引，强化中心斩杀 | [动画](../units/animations/stellar_convergence.md) · [声音](../units/audio/stellar_convergence.md) · [特效](../units/effects/stellar_convergence.md) |
 | `convergent_pulse` · [聚合脉冲](../units/convergent_pulse.md) | 3费，180伤害，105像素半径，向心拉拢 | [动画](../units/animations/convergent_pulse.md) · [声音](../units/audio/convergent_pulse.md) · [特效](../units/effects/convergent_pulse.md) |
 | `final_spark` · [终极闪光](../units/final_spark.md) | 1秒预警直线结算、一次攻击致盲、己方半区部署 | [时序](../units/animations/final_spark.md) · [声音](../units/audio/final_spark.md) · [特效](../units/effects/final_spark.md) |
 | `soul_tentacle` · [灵魂触手](../units/soul_tentacle.md) | 固定矩形拍击、暂停寿命、先锋不可选取目标边界 | [动画](../units/animations/soul_tentacle.md) · [声音](../units/audio/soul_tentacle.md) · [特效](../units/effects/soul_tentacle.md) |
@@ -103,6 +104,8 @@
 | `evolution_turret` · [H-28G进化炮台](../units/evolution_turret.md) | 24秒衰血；射程无目标时敌方不可选取，主动修复 | [动作](../units/animations/evolution_turret.md) · [声音](../units/audio/evolution_turret.md) |
 | `thorn_spitter` · [荆棘喷射者](../units/thorn_spitter.md) | 25秒衰血；原版尖刺，6秒生命/体型强化与150%伤害 | [动作](../units/animations/thorn_spitter.md) · [声音](../units/audio/thorn_spitter.md) · [特效](../units/effects/thorn_spitter.md) |
 | `vine_lasher` · [藤蔓鞭击者](../units/vine_lasher.md) | 24秒衰血，近战减速30%，强化攻速60% | [动作](../units/animations/vine_lasher.md) · [声音](../units/audio/vine_lasher.md) · [特效](../units/effects/vine_lasher.md) |
+| `jack_in_the_box` · [惊吓魔盒](../units/jack_in_the_box.md) | 一次性埋伏、全目标齐射及群体眩晕 | [动作](../units/animations/jack_in_the_box.md) · [声音](../units/audio/jack_in_the_box.md) |
+| `gold_ward` · [金币守卫](../units/gold_ward.md) | 周期产金币、死亡收益及自身凝滞 | [动作](../units/animations/gold_ward.md) · [声音](../units/audio/gold_ward.md) |
 | `target_dummy` · [训练木桩（建筑卡）](../units/target_dummy.md) | 15秒衰血、不可普攻；余震减伤及到期爆炸，与工作台木桩独立 | [动作](../units/animations/target_dummy.md) · [声音](../units/audio/target_dummy.md) |
 | `teemo` · [提莫](../units/teemo.md) | 强化致盲两次；无持续毒伤 | [动作](../units/animations/teemo.md) · [声音](../units/audio/teemo.md) |
 | `tombstone` · [墓碑](../units/tombstone.md) | 20秒寿命；受控最多保留一批、被击杀或自然死亡额外召唤两只 | [动作](../units/animations/tombstone.md) · [声音](../units/audio/tombstone.md) |

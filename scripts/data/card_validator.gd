@@ -44,7 +44,7 @@ static func _validate_card_id(card_id: String, errors: PackedStringArray) -> voi
 		errors.append("%s: card_id 必须是非空英文 snake_case" % card_id)
 
 static func _validate_periodic_summons(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
-	for field in ["spawn_flight_duration", "spawn_defer_while_controlled", "spawn_initial_delay", "spawn_sequence_interval"]:
+	for field in ["spawn_flight_duration", "spawn_initial_delay", "spawn_sequence_interval"]:
 		if stats.has(field) and not stats.has("spawn_interval") and not (field == "spawn_initial_delay" and stats.get("spell_kind", "") == "void_summoning"): errors.append(card_id + "." + field + ": 必须配置周期召唤")
 	for field in ["spawn_initial_delay", "spawn_sequence_interval"]:
 		if stats.has(field) and float(stats[field]) < 0.0: errors.append(card_id + "." + field + ": 必须非负")
@@ -92,6 +92,16 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 	if not stats.has("spawn_plan"): _require_fields(card_id, stats, [&"radius"], errors)
 	if stats.has("stealth_delay") and (float(stats.stealth_delay) <= 0.0 or stats.get("type", "") != "unit" or bool(stats.get("is_building", false)) or bool(stats.get("is_continuous_attack", false))):
 		errors.append(card_id + ".stealth_delay: 仅普通单位支持正数脱战隐身时间")
+	if stats.has("proximity_reveal_stun"):
+		_validate_number_value(card_id + ".proximity_reveal_stun", stats.proximity_reveal_stun, 0.01, errors, true)
+		if not bool(stats.get("is_building", false)) or stats.has("stealth_delay"):
+			errors.append(card_id + ": 一次性埋伏只支持建筑，不与脱战隐身共用")
+	if bool(stats.get("attack_all_in_range", false)):
+		if float(stats.get("projectile_speed", 0.0)) <= 0.0 or bool(stats.get("is_continuous_attack", false)) or float(stats.get("splash_radius", 0.0)) > 0.0:
+			errors.append(card_id + ": 全目标齐射要求无溅射的普通远程普攻")
+	if stats.has("isolated_attack_multiplier"):
+		_validate_number_value(card_id + ".isolated_attack_multiplier", stats.isolated_attack_multiplier, 1.0, errors, true)
+		if not bool(stats.get("attack_all_in_range", false)): errors.append(card_id + ": 单目标倍率需要全目标齐射")
 	for skill in stats.get("active_skills", []):
 		if (skill.has("untargetable") or skill.has("pause_lifespan")) and String(skill.get("kind", "")) != "buff":
 			errors.append(card_id + ".active_skills: 不可选取与暂停寿命只支持buff")
@@ -169,6 +179,12 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 					if not is_equal_approx(float(stats.get("wave_width", 0)), float(stats.get("radius", 0)) * 2): errors.append(card_id + ": 直线宽度须为半径的两倍")
 					var multiplier := float(stats.get("tower_damage_multiplier", -1))
 					if not is_finite(multiplier) or multiplier < 0 or multiplier > 1: errors.append(card_id + ": 塔伤害倍率须在0至1之间")
+				&"stellar_convergence":
+					for field in ["radius", "inner_radius", "duration", "damage", "damage_interval", "pull_speed"]:
+						if not is_finite(float(stats.get(field, 0))) or float(stats.get(field, 0)) <= 0: errors.append(card_id + "." + field + ": 必须为有限正数")
+					if float(stats.get("inner_radius", 0)) >= float(stats.get("radius", 0)): errors.append(card_id + ": 中心须小于外圈")
+					if float(stats.get("damage_interval", 0)) < FixedStepClock.STEP: errors.append(card_id + ": 伤害间隔至少一Tick")
+					if float(stats.get("tower_damage_multiplier", -1)) < 0 or float(stats.get("tower_damage_multiplier", -1)) > 1: errors.append(card_id + ": 塔伤害倍率须为0至1")
 				&"convergent_pulse":
 					for field in ["radius", "damage", "spell_windup", "duration", "pull_distance"]:
 						if not is_finite(float(stats.get(field, 0))) or float(stats.get(field, 0)) <= 0: errors.append(card_id + "." + field + ": 必须为有限正数")
@@ -490,6 +506,11 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 		if not bool(stats.get("is_building", false)): errors.append(label + ": 死亡爆炸需要建筑")
 	if stats.has("death_enemy_elixir") and (not (stats.death_enemy_elixir is float or stats.death_enemy_elixir is int) or not is_finite(float(stats.death_enemy_elixir)) or float(stats.death_enemy_elixir) <= 0.0):
 		errors.append(label + ".death_enemy_elixir: 必须为正有限数")
+	for field in ["elixir_interval", "elixir_amount", "death_owner_elixir"]:
+		if stats.has(field) and (float(stats[field]) <= 0.0 or not bool(stats.get("is_building", false))):
+			errors.append(label + "." + field + ": 要求建筑和正数")
+	if stats.has("elixir_interval") != stats.has("elixir_amount"):
+		errors.append(label + ": 金币周期与数量必须同时配置")
 	if stats.has("structure_mend_per_second"):
 		if float(stats.structure_mend_per_second) <= 0.0 or bool(stats.get("can_attack", true)) or not bool(stats.get("building_only", false)) or bool(stats.get("is_building", false)) or bool(stats.get("is_air", false)) or stats.has("sacrifice_damage"):
 			errors.append(label + ".structure_mend_per_second: 需要无法普攻的地面建筑索敌单位及正数治疗速率")
@@ -1140,6 +1161,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append(label + ".visual_scale_multiplier: 仅用于牺牲强化表现")
 		if skill.has("sacrifice_source") and (typeof(skill.sacrifice_source) != TYPE_BOOL or kind != &"summon"):
 			errors.append(label + ".sacrifice_source: 仅召唤技能支持布尔值")
+		if skill.has("radius_from_attack_range") and kind != &"nova":
+			errors.append(label + ".radius_from_attack_range: 仅范围nova支持动态攻击范围")
 		if skill.has("attack_slow_multiplier") and (kind != &"nova" or float(skill.get("slow_duration", 0.0)) <= 0.0 or float(skill.attack_slow_multiplier) < 0.1 or float(skill.attack_slow_multiplier) >= 1.0):
 			errors.append(label + ".attack_slow_multiplier: 需要nova、正数持续时间及[0.1,1)倍率")
 		match kind:
@@ -1212,7 +1235,7 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			&"nova":
 				_require_fields(label, skill, [&"radius", &"damage"], errors)
 				if skill.has("stun_duration"):
-					errors.append(label + ".stun_duration: nova 未实现眩晕；请移除此字段，眩晕能力须使用已支持的技能类型")
+					_validate_number_value(label + ".stun_duration", skill.stun_duration, 0.0, errors, true)
 			&"timed_form":
 				if stats.get("transformed_stats", {}).is_empty() or float(stats.get("form_lifetime", 0.0)) <= 0.0:
 					errors.append("%s: 限时变形需要 transformed_stats 与正数 form_lifetime" % label)
@@ -1319,6 +1342,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				if float(skill.get("max_dodges", 0.0)) != floorf(float(skill.get("max_dodges", 0.0))): errors.append(label + ".max_dodges: 必须是整数")
 				if float(skill.get("cast_duration", 0.0)) != 0.0 or float(skill.get("impact_delay", 0.0)) != 0.0 or skill.has("visual_action"):
 					errors.append(label + ": 反击风暴必须瞬时建立独立状态")
+			&"self_stasis":
+				if float(skill.get("duration", 0.0)) <= 0.0: errors.append(label + ".duration: 凝滞需要正时长")
 			&"aftershock":
 				_require_fields(label, skill, [&"duration", &"damage_reduction", &"radius", &"damage"], errors)
 				if float(skill.get("duration", 0.0)) <= 0.0 or float(skill.get("radius", 0.0)) <= 0.0 or float(skill.get("damage", -1.0)) < 0.0:
@@ -1390,6 +1415,10 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				if skill.has("duration"): errors.append(label + ": 地狱火炮重伤无持续时间，不得配置duration")
 			&"spell_final_spark":
 				if String(stats.get("spell_kind", "")) != "final_spark" or int(skill.get("blind_charges", 0)) != 1: errors.append(label + ": 夺目光辉仅用于终极闪光且致盲一次攻击")
+			&"spell_stellar_convergence":
+				if String(stats.get("spell_kind", "")) != "stellar_convergence": errors.append(label + ": 黑洞吞噬只用于星芒凝汇")
+				var ratio := float(skill.get("execute_health_ratio", 0))
+				if not is_finite(ratio) or ratio <= 0 or ratio > 1: errors.append(label + ": 斩杀比例须在0至1之间")
 			&"spell_convergent_pulse":
 				if String(stats.get("spell_kind", "")) != "convergent_pulse": errors.append(label + ": 强化脉冲只用于聚合脉冲")
 				for field in ["damage", "radius", "pull_distance", "duration"]:
@@ -1460,8 +1489,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 		if String(skill.get("kind", "")) == "detonate":
 			if float(skill.get("impact_delay", 0.0)) > 0.0 or float(skill.get("cast_duration", 0.0)) > 0.0 or float(stats.get("death_burst_radius", 0.0)) <= 0.0 or float(skill.get("execute_health_ratio", 0.0)) <= 0.0 or float(skill.get("execute_health_ratio", 0.0)) >= 1.0:
 				errors.append(label + ": 引爆需要死亡爆炸及(0,1)内的斩杀阈值")
-		elif skill.has("execute_health_ratio"):
-			errors.append(label + ": 斩杀阈值仅用于引爆")
+		elif skill.has("execute_health_ratio") and String(skill.get("kind", "")) != "spell_stellar_convergence":
+			errors.append(label + ": 斩杀阈值仅用于支持通用斩杀的技能")
 		if skill.has("impact_visual_shape"):
 			if String(skill.get("kind", "")) not in ["frontal", "dual_form", "nova", "continuous_area"] and not skill.get("form_kinds", []).has("continuous_area"): errors.append("%s.impact_visual_shape: 仅适用于范围命中" % label)
 			if not skill.impact_visual_shape is String or String(skill.impact_visual_shape).is_empty(): errors.append("%s.impact_visual_shape: 必须为非空 String" % label)
