@@ -1,0 +1,740 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/AurelionSol.wad.client",
+  "source_entry": "data/characters/aurelionsol/skins/skin0.bin",
+  "source_sha256": "5b86367b33f76fffb06c55d5756c80ff64a1e92a7b062502eb29a8182e713dd2",
+  "processing": "Original E child systems sampled at 120Hz, stopAt 5 seconds, 2 second tail, native XYZ ratios; viewer-relative enemy variants",
+  "layers": [
+    {
+      "kind": "core",
+      "layer": "Ring_Alpha1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarSpiral_1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarSpiral_2",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarSpiral_3",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Glow1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "BlackHole_center",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "BG_BrighterInterior1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "DistortFAST1",
+      "miscRenderFlags": 1,
+      "shader": "warp_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "AOE_Light",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Praxis",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Star1_ChildParticle",
+      "miscRenderFlags": 0,
+      "shader": "mix.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Star2_ChildParticle",
+      "miscRenderFlags": 0,
+      "shader": "mix.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Star4",
+      "miscRenderFlags": 0,
+      "shader": "mix.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Ring_Alpha6",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarBG_1_Top",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "BlackHole_center10",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarBg_2",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarBG_3",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarBG_4",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarBg_5",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarBG_6",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarBG_7",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "BG_BrighterInterior3",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "BlackHole_center11",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "BlackHole_center12",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "BlackHole_center13",
+      "miscRenderFlags": 0,
+      "shader": "mix.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarBg_1_Core",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarBG_8",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "groundcrack",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "BG_BrighterInterior4",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarSpiral_",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Trail_dark_large_SHORT1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Sparkles_up",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarSpiral_",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Trail_dark_large_SHORT1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Sparkles_up",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "StarSpiral_",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Trail_dark_large_SHORT1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Sparkles_up",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Star_Core",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Spawn_Star",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Spawn_Star2",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Star_Core",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Spawn_Star",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Spawn_Star2",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Star_Core",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Spawn_Star",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core",
+      "layer": "Spawn_Star2",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "zone",
+      "layer": "StarBits",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "zone",
+      "layer": "InteriorNoise_Minor",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "zone",
+      "layer": "InteriorNoise_Large",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "zone",
+      "layer": "Glow",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "zone",
+      "layer": "Spawn_Glow",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "zone",
+      "layer": "Edge_Streaks",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "zone",
+      "layer": "LargerNoiseTendrils_ToCenter",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "zone",
+      "layer": "Overall_SpaceNoise",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "zone",
+      "layer": "Edge_Dark",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "zone_red",
+      "layer": "StarBits",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "zone_red",
+      "layer": "InteriorNoise_Minor",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "zone_red",
+      "layer": "InteriorNoise_Large",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "zone_red",
+      "layer": "Glow",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "zone_red",
+      "layer": "Spawn_Glow",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "zone_red",
+      "layer": "Edge_Streaks",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "zone_red",
+      "layer": "LargerNoiseTendrils_ToCenter",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "zone_red",
+      "layer": "Overall_SpaceNoise",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "zone_red",
+      "layer": "Edge_Dark",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "execute",
+      "layer": "Implode",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "execute",
+      "layer": "Glyph_Star_1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "execute",
+      "layer": "Noise_",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "execute",
+      "layer": "Noise_1",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "execute",
+      "layer": "Ground_Scorch",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "execute",
+      "layer": "Glow",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "execute",
+      "layer": "onKill_supportingFlash",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "execute",
+      "layer": "StarBits_AoE_Fast",
+      "miscRenderFlags": 0,
+      "shader": "pure_add.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Ring_Alpha1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarSpiral_1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarSpiral_2",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarSpiral_3",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Glow1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "BlackHole_center",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "BG_BrighterInterior1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "DistortFAST1",
+      "miscRenderFlags": 1,
+      "shader": "warp_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "AOE_Light",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Praxis",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Star1_ChildParticle",
+      "miscRenderFlags": 0,
+      "shader": "mix.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Star2_ChildParticle",
+      "miscRenderFlags": 0,
+      "shader": "mix.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Star4",
+      "miscRenderFlags": 0,
+      "shader": "mix.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Ring_Alpha6",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarBG_1_Top",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "BlackHole_center10",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarBg_2",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarBG_3",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarBG_4",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarBg_5",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarBG_6",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarBG_7",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "BG_BrighterInterior3",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "BlackHole_center11",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "BlackHole_center12",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "BlackHole_center13",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarBg_1_Core",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarBG_8",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "groundcrack",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "BG_BrighterInterior4",
+      "miscRenderFlags": 1,
+      "shader": "mix_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarSpiral_",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Trail_dark_large_SHORT1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Sparkles_up",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarSpiral_",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Trail_dark_large_SHORT1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Sparkles_up",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "StarSpiral_",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Trail_dark_large_SHORT1",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Sparkles_up",
+      "miscRenderFlags": 1,
+      "shader": "add_no_depth.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Star_Core",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Spawn_Star",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Spawn_Star2",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Star_Core",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Spawn_Star",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Spawn_Star2",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Star_Core",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Spawn_Star",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    },
+    {
+      "kind": "core_red",
+      "layer": "Spawn_Star2",
+      "miscRenderFlags": 0,
+      "shader": "add.gdshader"
+    }
+  ]
+}

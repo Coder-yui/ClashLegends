@@ -1,0 +1,109 @@
+[
+  {
+    "file": "play_sfx_aurelionsol_aurelionsole_oncast.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolE_OnCast",
+    "event_id": 1126952813,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolE_OnCast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolE_OnCast.txtp",
+    "media_ids": [
+      60767327
+    ],
+    "duration": 1.1587,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "dde974f0fa69fddcba76f91b3c7cd843cbf970f368ecf6fb2d5f5150bfedf89d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsole_buffactivate_aoe_other.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolE_buffactivate_aoe_other",
+    "event_id": 1243656528,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolE_buffactivate_aoe_other.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolE_buffactivate_aoe_other.txtp",
+    "media_ids": [
+      670523600
+    ],
+    "duration": 6.28,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0609b6f0f7931d8a93545184f4d36e4c9ab23a8944908db6c826041287490bb2",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsole_buffdeactivate.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolE_buffdeactivate",
+    "event_id": 1693519614,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolE_buffdeactivate.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolE_buffdeactivate.txtp",
+    "media_ids": [
+      1062067464
+    ],
+    "duration": 2.9823,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "61f2c1022b5c720ee3d02a83e733431c8f0d314c31fa8b8dd2e1b75b55fc9b0b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsole_hit_start_r1.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolE_hit_start",
+    "event_id": 1795705839,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolE_hit_start {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolE_hit_start {r1}.txtp",
+    "media_ids": [
+      65046876,
+      182995479,
+      492470367,
+      755664176
+    ],
+    "duration": 1.582,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "77e32cc9d03da7d8eb5b2d4acba5b8eb57a501d3d22da3d4e426c56b7b8d29f5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsole_hit_start_r2.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolE_hit_start",
+    "event_id": 1795705839,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolE_hit_start {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolE_hit_start {r2}.txtp",
+    "media_ids": [
+      65046876,
+      182995479,
+      492470367,
+      755664176
+    ],
+    "duration": 1.4167,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e1f03043db9142d17511a518c9e2272ce027f8777a63fe9f5bd9a9c2497b8bc0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsole_hit_start_r3.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolE_hit_start",
+    "event_id": 1795705839,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolE_hit_start {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolE_hit_start {r3}.txtp",
+    "media_ids": [
+      65046876,
+      182995479,
+      492470367,
+      755664176
+    ],
+    "duration": 1.3207,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "40c7760e9cbb3b651b193adc2758834d8b7c3b7792d5eb820f5c31ab5ccc2841",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsoledebuff_buffdeactivate.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolEDebuff_buffdeactivate",
+    "event_id": 1088726156,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolEDebuff_buffdeactivate.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolEDebuff_buffdeactivate.txtp",
+    "media_ids": [
+      682161547
+    ],
+    "duration": 3.8567,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "97c71ba160634b25166f8b44bb9a5499321bbd7bbeb7833dffcd66194b918012",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  }
+]
