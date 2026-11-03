@@ -1,0 +1,266 @@
+[
+  {
+    "file": "play_sfx_shacobox_shacoboxspell_onhit_r1.wav",
+    "event": "Play_sfx_ShacoBox_ShacoBoxSpell_OnHit",
+    "event_id": 3439783472,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_ShacoBox_ShacoBoxSpell_OnHit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_ShacoBox_ShacoBoxSpell_OnHit {r1}.txtp",
+    "media_ids": [
+      98364904,
+      373614396,
+      710020875
+    ],
+    "duration": 1.041655328798186,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "21bebb7d70560bfb777ad6d4a29471bbbc94041eba023a55255461a1a0caf113",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_shacobox_shacoboxspell_onhit_r2.wav",
+    "event": "Play_sfx_ShacoBox_ShacoBoxSpell_OnHit",
+    "event_id": 3439783472,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_ShacoBox_ShacoBoxSpell_OnHit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_ShacoBox_ShacoBoxSpell_OnHit {r2}.txtp",
+    "media_ids": [
+      98364904,
+      373614396,
+      710020875
+    ],
+    "duration": 1.041655328798186,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "e20f91b25bc12be9bf3f7bf428a61814dfd19af765fca3c63f0f579a26483ba6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_shacobox_shacoboxspell_onhit_r3.wav",
+    "event": "Play_sfx_ShacoBox_ShacoBoxSpell_OnHit",
+    "event_id": 3439783472,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_ShacoBox_ShacoBoxSpell_OnHit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_ShacoBox_ShacoBoxSpell_OnHit {r3}.txtp",
+    "media_ids": [
+      98364904,
+      373614396,
+      710020875
+    ],
+    "duration": 1.041655328798186,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "f1fa1fadad95d3baa878381a1d581b3a3c7b85bead73e32683b8bfe3077ea00d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_shaco_jackinthebox_oncast_r1.wav",
+    "event": "Play_sfx_Shaco_JackInTheBox_OnCast",
+    "event_id": 2977094798,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_OnCast {r1}.txtp",
+    "media_ids": [
+      31294020,
+      766431504,
+      853466400
+    ],
+    "duration": 0.6828117913832199,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "22ed9c0d13185864ef72e2ecb3627e7396ef63597abdfcec67432bc88fbd4f0d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_shaco_jackinthebox_oncast_r2.wav",
+    "event": "Play_sfx_Shaco_JackInTheBox_OnCast",
+    "event_id": 2977094798,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_OnCast {r2}.txtp",
+    "media_ids": [
+      31294020,
+      766431504,
+      853466400
+    ],
+    "duration": 0.6207482993197279,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "449131bd2809fc1568f84f881e5613bf95f0f1b4c8d60e005f8dc254336a3817",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_shaco_jackinthebox_oncast_r3.wav",
+    "event": "Play_sfx_Shaco_JackInTheBox_OnCast",
+    "event_id": 2977094798,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_OnCast {r3}.txtp",
+    "media_ids": [
+      31294020,
+      766431504,
+      853466400
+    ],
+    "duration": 0.8664852607709751,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "13610d0ece8ecfd5d0a0ef50fc7c3134297317568bdb1dd192e29da952b1adb1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_shaco_jackinthebox_buffactivate_r1.wav",
+    "event": "Play_sfx_Shaco_JackInTheBox_BuffActivate",
+    "event_id": 379600692,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_BuffActivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_BuffActivate {r1}.txtp",
+    "media_ids": [
+      458841899,
+      560916098,
+      691698175
+    ],
+    "duration": 1.4907709750566893,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "9727625bbc4d43481c95b865722270c290dda254e708e1750bfb8c138ebc9e07",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_shaco_jackinthebox_buffactivate_r2.wav",
+    "event": "Play_sfx_Shaco_JackInTheBox_BuffActivate",
+    "event_id": 379600692,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_BuffActivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_BuffActivate {r2}.txtp",
+    "media_ids": [
+      458841899,
+      560916098,
+      691698175
+    ],
+    "duration": 1.7930612244897959,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "55d180e899a456f91cb37f90d85b9bd669758999d3898048e253fc37961ff92b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_shaco_jackinthebox_buffactivate_r3.wav",
+    "event": "Play_sfx_Shaco_JackInTheBox_BuffActivate",
+    "event_id": 379600692,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_BuffActivate {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_BuffActivate {r3}.txtp",
+    "media_ids": [
+      458841899,
+      560916098,
+      691698175
+    ],
+    "duration": 1.9699319727891156,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "27fc8c8e9b9b239c3a69ac90d8d759342581f9496949c18d28e7364d1e12d0e9",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_shaco_jackinthebox_onbuffdeactivate_r1.wav",
+    "event": "Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate",
+    "event_id": 3989638618,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate {r1}.txtp",
+    "media_ids": [
+      11605227,
+      443038888,
+      796331800
+    ],
+    "duration": 1.6283673469387756,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "28c30a698ef0abf8fec857130d131100e2425772a45f7f39bc0e8a34fd7558cd",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 1.6283673469387756,
+      "source_sha256": "28c30a698ef0abf8fec857130d131100e2425772a45f7f39bc0e8a34fd7558cd",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_shaco_jackinthebox_onbuffdeactivate_r2.wav",
+    "event": "Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate",
+    "event_id": 3989638618,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate {r2}.txtp",
+    "media_ids": [
+      11605227,
+      443038888,
+      796331800
+    ],
+    "duration": 1.9708390022675737,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "cce33683b871e3174199dd4f1d1708ce2e6050fd2040a755174850a9998b0b9e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 1.9708390022675737,
+      "source_sha256": "cce33683b871e3174199dd4f1d1708ce2e6050fd2040a755174850a9998b0b9e",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_shaco_jackinthebox_onbuffdeactivate_r3.wav",
+    "event": "Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate",
+    "event_id": 3989638618,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_Shaco_JackInTheBox_OnBuffDeactivate {r3}.txtp",
+    "media_ids": [
+      11605227,
+      443038888,
+      796331800
+    ],
+    "duration": 1.8875510204081634,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "06d318516e23b9de9891540f1f1dd1ef9955f5969fd7477008f6111e70de1c16",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 1.8875510204081634,
+      "source_sha256": "06d318516e23b9de9891540f1f1dd1ef9955f5969fd7477008f6111e70de1c16",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_shacobox_shacoboxspell_onmissilelaunch_r1.wav",
+    "event": "Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch",
+    "event_id": 2107315358,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch {r1}.txtp",
+    "media_ids": [
+      304116173,
+      433214823,
+      886784440
+    ],
+    "duration": 0.9645804988662131,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "09b1f8fb446fe450da97e7200a7401d628872d81c9572b7f293d460ed1999e02",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_shacobox_shacoboxspell_onmissilelaunch_r2.wav",
+    "event": "Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch",
+    "event_id": 2107315358,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch {r2}.txtp",
+    "media_ids": [
+      304116173,
+      433214823,
+      886784440
+    ],
+    "duration": 0.9645804988662131,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "c40c563a2b5c357a71ef99dc0e184865c5294b6cf571c47f79212b2845874e26",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_shacobox_shacoboxspell_onmissilelaunch_r3.wav",
+    "event": "Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch",
+    "event_id": 2107315358,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/event_wav/Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/惊吓魔盒/audio/shaco/txtp/Play_sfx_ShacoBox_ShacoBoxSpell_OnMissileLaunch {r3}.txtp",
+    "media_ids": [
+      304116173,
+      433214823,
+      886784440
+    ],
+    "duration": 0.9645804988662131,
+    "processing": "vgmstream-cli -i; source event gain retained; building disappearance untrimmed",
+    "sha256": "e6b29e91c97a1af7cd5e0f83e633bfcebe38a5edad32e61c94d4d4da1a318d4b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  }
+]
