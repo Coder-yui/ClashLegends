@@ -1,0 +1,210 @@
+{
+  "source_package": "Common.wad.client",
+  "source_definition": "data/maps/shipping/common/common.bin",
+  "events": {
+    "deploy:start": "Play_sfx_SightWard_SightWardAudioBuff_OnBuffActivate (three random branches)",
+    "death": "Play_sfx_SightWard_SightWardAudioBuff_OnBuffDeactivate",
+    "stasis_target:sustain": "Play_sfx_ZhonyasHourglass_OnCast"
+  },
+  "entries": [
+    {
+      "file": "assets/audio/units/gold_ward/stasis.wav",
+      "sha256": "dd5dc6d6b4aa1088dd92f23478c8dd2fc34ae4f53d6c67636e43ad90df71a9d3",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/金币守卫/txtp/Play_sfx_ZhonyasHourglass_OnCast.txtp",
+          "txtp_sha256": "e0383400015b218efe4a0d94f928925430f902cf6dc4d6b36109d018e391e4a0",
+          "media_ids": [
+            "200504484"
+          ],
+          "event_ids": [
+            "2304176971"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/金币守卫/audio-source/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 3.0,
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/03-制作中/金币守卫/wav/Play_sfx_ZhonyasHourglass_OnCast.wav",
+          "sha256": "dd5dc6d6b4aa1088dd92f23478c8dd2fc34ae4f53d6c67636e43ad90df71a9d3"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/gold_ward/deploy.wav",
+      "sha256": "1de1857816707717b1df539506f11b5d862f51d291caf92a5e9e53f846100e37",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/金币守卫/txtp/ward_deploy_1.txtp",
+          "txtp_sha256": "e0284516bef234e374d1ea389eb9decb0d4a08b19bcc9397356a6dd5fb8b0ecb",
+          "media_ids": [
+            "302848482",
+            "190339943",
+            "225963420",
+            "519101786"
+          ],
+          "event_ids": [
+            "254376528"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/金币守卫/audio-source/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 3.520090702947846,
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/03-制作中/金币守卫/wav/deploy_1.wav",
+          "sha256": "1de1857816707717b1df539506f11b5d862f51d291caf92a5e9e53f846100e37"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/gold_ward/deploy_3.wav",
+      "sha256": "a8221ff04b56b5f6de468bdacf00e09536c55c701ae8e8aefe06cebc76aeedc7",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/金币守卫/txtp/ward_deploy_3.txtp",
+          "txtp_sha256": "bbf569cb1b570702c42707c9701349cd10535342877163be47be16a025d5ee18",
+          "media_ids": [
+            "302848482",
+            "190339943",
+            "225963420",
+            "519101786"
+          ],
+          "event_ids": [
+            "254376528"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/金币守卫/audio-source/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 3.520090702947846,
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/03-制作中/金币守卫/wav/deploy_3.wav",
+          "sha256": "a8221ff04b56b5f6de468bdacf00e09536c55c701ae8e8aefe06cebc76aeedc7"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/gold_ward/deploy_2.wav",
+      "sha256": "1246400b37f954cdec314aca3c231a1c9246b75f5f8ae2e137d3c8227194e314",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/金币守卫/txtp/ward_deploy_2.txtp",
+          "txtp_sha256": "5f8a64e8b49a9c5d4880cb13531f70aeb81ad3144fad0bef3bf60e9fc12293cb",
+          "media_ids": [
+            "302848482",
+            "190339943",
+            "225963420",
+            "519101786"
+          ],
+          "event_ids": [
+            "254376528"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/金币守卫/audio-source/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 3.520090702947846,
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/03-制作中/金币守卫/wav/deploy_2.wav",
+          "sha256": "1246400b37f954cdec314aca3c231a1c9246b75f5f8ae2e137d3c8227194e314"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/gold_ward/death.wav",
+      "sha256": "f753b862b748d61e4d83240fb208f63832101b227eb063db5e83201e32857d05",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/金币守卫/txtp/Play_sfx_SightWard_SightWardAudioBuff_OnBuffDeactivate.txtp",
+          "txtp_sha256": "b4443e57ddfcb3b3e2548f395130c4650e4fbad620d582d67124128bc4340bf1",
+          "media_ids": [
+            "869528722"
+          ],
+          "event_ids": [
+            "3637464385"
+          ],
+          "dependencies": [
+            {
+              "file": "ClashLegends-开发素材库/03-制作中/金币守卫/audio-source/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+            }
+          ]
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 2.6417233560090705,
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/03-制作中/金币守卫/wav/Play_sfx_SightWard_SightWardAudioBuff_OnBuffDeactivate.wav",
+          "sha256": "f753b862b748d61e4d83240fb208f63832101b227eb063db5e83201e32857d05"
+        }
+      ]
+    }
+  ]
+}
