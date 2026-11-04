@@ -1009,5 +1009,14 @@
     "source": "ClashLegends-开发素材库/03-制作中/星芒凝汇/icon-source/assets/characters/aurelionsol/hud/icons2d/aurelionsole.dds",
     "sha256": "38f133e4d8a50ce25545d271f751f823f0d7269a4b81a54250ff03aea4eef7ff",
     "processing": "Pillow原版DDS解码，无改色"
+  },
+  {
+    "card": "scarecrow",
+    "skill_index": 0,
+    "path": "res://assets/skills/scarecrow_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/FiddleSticks.wad.client",
+    "source_path": "assets/characters/fiddlesticks/hud/icons2d/fiddlesticksp.dds",
+    "source_sha256": "bd0f7e68eb00e8078e83ba64fe588b57da05fbfd294a6f8224abe78115b9df9d",
+    "sha256": "906f25ca2e1c75a651309faa4b1b1234f5b05edb2793a7539e70102cf0eeee4c"
   }
 ]

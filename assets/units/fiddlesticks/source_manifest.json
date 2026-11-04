@@ -1,0 +1,58 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/FiddleSticks.wad.client",
+  "source_library": "ClashLegends-开发素材库/03-制作中/草间人",
+  "source_files": {
+    "source/assets/characters/fiddlesticks/skins/base/fiddlesticks_base.skn": "9457a69e1cd0ee87507e0f6751af0d0c64624c1889cd7f09c4020237253bc3c9",
+    "source/assets/characters/fiddlesticks/skins/base/fiddlesticks_base.skl": "96505c12eb0424a26b7a9014cd480b4dfab65c2f23b9806b5d56e1b08ce2c22a",
+    "source/assets/characters/fiddlesticks/skins/base/fiddlesticks_base_body_tx_cm.tex": "035071903ce2782807af471c0c800db387ac5111dd8d74ed6471eff532957876",
+    "source/assets/characters/fiddlesticks/skins/base/fiddlesticks_base_weapon_tx_cm.tex": "73091363e5508d2dab9eb0bf8284adc3588effb70b5e6f906c04b04a0528c30a",
+    "source/assets/characters/fiddlesticks/skins/base/fiddlesticksloadscreen.tex": "89437103de2a60dfd3c4ee12083c29035148d511b1843696a5795a4171dbc933",
+    "animation-organization/data/characters/fiddlesticks/animations/skin0.bin": "73550f5353180fdbd7e1b1428cb57c23fc596add69a9e76d4e9c5c8585bf283a"
+  },
+  "runtime_model_sha256": "1c488f21035c9f7151691e91f93482f815fdc77f44ae0280413ddc57d6865dad",
+  "processing": "lol2gltf with 5 selected animations; all 6 native submeshes retained; native material mapping; optional surfaces split at runtime with shared skin/skeleton; discrete visibility tracks follow skin0 AnimationGraphData at 30 fps; uniform scene scale 0.012",
+  "animations": [
+    "fiddlesticks_idle1",
+    "fiddlesticks_run",
+    "fiddlesticks_spell2",
+    "fiddlesticks_spell2_channel",
+    "fiddlesticks_death_v2"
+  ],
+  "card_art": "Original fiddlesticksloadscreen.tex decoded without crop or repaint.",
+  "initial_hidden_submeshes": [
+    "Lantern",
+    "Tongue",
+    "L_Demon_Arm",
+    "R_Demon_Arm"
+  ],
+  "visibility_events": {
+    "frame_rate": 30,
+    "idle1": {
+      "Lantern": [
+        0,
+        null
+      ],
+      "R_Demon_Arm": [
+        0,
+        null
+      ],
+      "Tongue": [
+        64,
+        91
+      ]
+    },
+    "death_v2": {
+      "L_Demon_Arm": [
+        0,
+        77
+      ],
+      "R_Demon_Arm": [
+        0,
+        77
+      ]
+    },
+    "run": {},
+    "spell2": {},
+    "spell2_channel": {}
+  }
+}

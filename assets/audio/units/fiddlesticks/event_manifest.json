@@ -1,0 +1,180 @@
+[
+  {
+    "file": "play_sfx_fiddlesticks_fiddlesticksw_oncast_r1.wav",
+    "event": "Play_sfx_Fiddlesticks_FiddlesticksW_OnCast",
+    "event_id": 1864580443,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/event_wav/Play_sfx_Fiddlesticks_FiddlesticksW_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/txtp/Play_sfx_Fiddlesticks_FiddlesticksW_OnCast {r1}.txtp",
+    "media_ids": [
+      149813948,
+      520232080,
+      722432105
+    ],
+    "duration": 0.9988,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a71e9a67b7477c15f96c73d74d0e792d391dd3b54292979eda282d2140cb3988",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_fiddlesticks_fiddlesticksw_oncast_r2.wav",
+    "event": "Play_sfx_Fiddlesticks_FiddlesticksW_OnCast",
+    "event_id": 1864580443,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/event_wav/Play_sfx_Fiddlesticks_FiddlesticksW_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/txtp/Play_sfx_Fiddlesticks_FiddlesticksW_OnCast {r2}.txtp",
+    "media_ids": [
+      149813948,
+      520232080,
+      722432105
+    ],
+    "duration": 0.9863,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c3dfa17cbe05fff9913b1b1c6466512cbb3a74c0fa24450fef942ae7ab164916",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_fiddlesticks_fiddlesticksw_oncast_r3.wav",
+    "event": "Play_sfx_Fiddlesticks_FiddlesticksW_OnCast",
+    "event_id": 1864580443,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/event_wav/Play_sfx_Fiddlesticks_FiddlesticksW_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/txtp/Play_sfx_Fiddlesticks_FiddlesticksW_OnCast {r3}.txtp",
+    "media_ids": [
+      149813948,
+      520232080,
+      722432105
+    ],
+    "duration": 1.0062,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9b8bef7de4e36b03c7aaf5c1c750346f671bd2075dd0d64679a66141c3a9a746",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_fiddlesticks_fiddlestickswdrain_onbuffactivate_r1.wav",
+    "event": "Play_sfx_Fiddlesticks_FiddlesticksWdrain_OnBuffActivate",
+    "event_id": 3692113436,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/event_wav/Play_sfx_Fiddlesticks_FiddlesticksWdrain_OnBuffActivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/txtp/Play_sfx_Fiddlesticks_FiddlesticksWdrain_OnBuffActivate {r1}.txtp",
+    "media_ids": [
+      593282181,
+      798735949
+    ],
+    "duration": 3.4802,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b46073a8aab901f4b774f5c11dc41738178e561315bae7f0d4c74300da181f86",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_fiddlesticks_fiddlestickswdrain_onbuffactivate_r2.wav",
+    "event": "Play_sfx_Fiddlesticks_FiddlesticksWdrain_OnBuffActivate",
+    "event_id": 3692113436,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/event_wav/Play_sfx_Fiddlesticks_FiddlesticksWdrain_OnBuffActivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/txtp/Play_sfx_Fiddlesticks_FiddlesticksWdrain_OnBuffActivate {r2}.txtp",
+    "media_ids": [
+      593282181,
+      798735949
+    ],
+    "duration": 3.5825,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "27991f280a5239966b26bfc92e52c411341cea8dd18d1017860e5c53ce29042c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_fiddlesticks_death3d_buffactivate.wav",
+    "event": "Play_sfx_Fiddlesticks_Death3D_buffactivate",
+    "event_id": 3187054192,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/event_wav/Play_sfx_Fiddlesticks_Death3D_buffactivate.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/txtp/Play_sfx_Fiddlesticks_Death3D_buffactivate.txtp",
+    "media_ids": [
+      243469657
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "4fbae1cbdd6fc2ceadadfc3054a9eb59e2f35d4b92ca2c6530ccfd9cc25e7fd8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 6.12265306122449,
+      "source_sha256": "1ae1a8e6ab623b05db3f9b28a8ef846b92c318d50fe50cd5560167d6db34a164",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_fiddlesticks_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Fiddlesticks_Death3D",
+    "event_id": 884653773,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks_vo/event_wav/Play_vo_Fiddlesticks_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks_vo/txtp/Play_vo_Fiddlesticks_Death3D {r1}.txtp",
+    "media_ids": [
+      221945662,
+      425696113,
+      985924680,
+      1184167273,
+      1624062724
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "ad70c43e1e5c4facbfb93868719e6a15eeb701eb43e33e39f362c3a98811f325",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.9653968253968253,
+      "source_sha256": "af0c0090209778996d424bdfca7f99ec33acb3ae75d77442b29fcd4bff9db3a0",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_fiddlesticks_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Fiddlesticks_Death3D",
+    "event_id": 884653773,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks_vo/event_wav/Play_vo_Fiddlesticks_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks_vo/txtp/Play_vo_Fiddlesticks_Death3D {r2}.txtp",
+    "media_ids": [
+      221945662,
+      425696113,
+      985924680,
+      1184167273,
+      1624062724
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "81a0acccf529c39edbad970d92666e737116a24dd9c79c68a920b51a1497a44d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.9172562358276646,
+      "source_sha256": "2c9a5cafaab8bed32a43ae2bab63975107f73873cece42955fef61aa524ee603",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_fiddlesticks_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Fiddlesticks_Death3D",
+    "event_id": 884653773,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks_vo/event_wav/Play_vo_Fiddlesticks_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks_vo/txtp/Play_vo_Fiddlesticks_Death3D {r3}.txtp",
+    "media_ids": [
+      221945662,
+      425696113,
+      985924680,
+      1184167273,
+      1624062724
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "e1af992841e6a13544106be522450847cab0553f36ae037af1bffb521719d554",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 4.24671201814059,
+      "source_sha256": "10caca856135e17438ba7c2a146b3cd2606fb8d43e5d80955d83645e53623f74",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  }
+]
