@@ -2,6 +2,9 @@ class_name PresentationEvents
 extends RefCounted
 ## 当前实际派发能力表；新增 cue 必须同时实现权威派发与消费者。
 static func supports(stats: Dictionary, cue: String) -> bool:
+	if cue in ["bomb:basic_impact", "bomb:impact", "bomb:second_launch", "bomb:third_launch"]: return bool(stats.get("ballistic_attack", false))
+	if cue in ["reload:start", "reload:end"]: return int(stats.get("magazine_size", 0)) > 0
+	if cue in ["attack:return", "attack_return:launch"]: return float(stats.get("returning_attack_distance", 0.0)) > 0.0
 	if cue in ["dormant:enter", "dormant:exit"]: return bool(stats.get("dormant_without_targets", false))
 	if cue == "attack:ground": return float(stats.get("fixed_attack_length", 0.0)) > 0.0
 	if cue in ["burst:start", "burst:end"]: return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "attack_burst")
@@ -45,6 +48,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "terrain_charge")
 	var spell := String(stats.get("type", "")) == "spell"
 	if spell:
+		if String(stats.get("spell_kind", "")) == "airdrop_bear" and cue in ["spell:impact", "spell:enraged"]: return true
 		if String(stats.get("spell_kind", "")) == "stellar_convergence" and cue in ["spell:zone_sustain", "spell:zone_end", "spell:hit", "spell:execute"]: return true
 		if String(stats.get("spell_kind", "")) == "pool_of_reflection" and cue in ["spell:zone_sustain", "spell:zone_end", "pool_shield:sustain", "spell:shield_end"]: return true
 		if String(stats.get("spell_kind", "")) == "medium_lightning" and cue in ["spell:strike", "spell:tower_disable", "spell:cast", "spell:warning", "spell:warning_enemy", "spell:hit", "spell:zone_sustain"]: return true
@@ -76,6 +80,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		return not spell
 	if cue in ["shield:cast", "shield:applied"]:
 		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "area_shield")
+	if cue == "burning_aura:sustain": return not spell
 	if cue == "idle:sustain":
 		return not spell
 	if cue in ["death", "death:voice"]:

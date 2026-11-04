@@ -30,6 +30,13 @@ func _draw() -> void:
 		draw_circle(area.pos, area.radius, Color(color, 0.08 * alpha))
 		draw_arc(area.pos, area.radius, 0.0, TAU, 80, Color(color, 0.95 * alpha), 2.5, true)
 		draw_arc(area.pos, maxf(float(area.radius) - 4.0, 0.0), 0.0, TAU, 80, Color(color, 0.25 * alpha), 1.0, true)
+	# 空投熊：预警与下落期间都标出权威范围，落地立即撤去。
+	for effect in spells.bear_effects:
+		var impact_time := float(int(effect.end_tick) - int(effect.start_tick)) * FixedStepClock.STEP
+		if float(effect.age) >= impact_time: continue
+		var color := Color(0.28, 0.68, 1.0) if int(effect.team) == 0 else Color(1.0, 0.34, 0.24)
+		draw_circle(effect.pos, effect.radius, Color(color, 0.08))
+		draw_arc(effect.pos, effect.radius, 0.0, TAU, 96, Color(color, 0.85), 1.8, true)
 	# 治疗术区域效果：阵营色外圈 + 淡黄内光和上升的十字；过量治疗额外强调同一范围。
 	for effect in spells.heal_effects:
 		var heal_progress := 1.0 - clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)

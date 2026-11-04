@@ -435,6 +435,10 @@ func _check_payload_contract() -> void:
 		var malformed := packet.duplicate(true)
 		malformed[SNAP.S_UNITS][0][SNAP.U_RESTORATION_SHIELD_STATE] = invalid
 		_expect(not _system.apply_decoded(_system.decode_validated(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE))), "黄沙盾拒绝非法表现状态")
+	for invalid in [Vector3(INF, 0, 0), Vector3(-1, 0, 0), Vector3(0, -1, 0), Vector3(0, 0, -1), Vector3(0.5, 0, 0), Vector3(0, 0, 0.5), Vector3(1, 0, 0), Vector3(0, 0.1, 0), "bad"]:
+		var malformed := packet.duplicate(true)
+		malformed[SNAP.S_UNITS][0][SNAP.U_MAGAZINE] = invalid
+		_expect(_system.decode_validated(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE)) == null, "弹匣拒绝非法、分数弹量及非弹匣单位状态")
 	var invalid_stealth := packet.duplicate(true)
 	invalid_stealth[SNAP.S_UNITS][0][SNAP.U_STEALTH] = 1
 	_expect(not _system.apply_decoded(_system.decode_validated(var_to_bytes(invalid_stealth).compress(FileAccess.COMPRESSION_DEFLATE))), "隐身载荷拒绝非布尔值")

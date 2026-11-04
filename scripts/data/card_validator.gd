@@ -27,6 +27,14 @@ static func validate_all(cards: Dictionary, inspect_resources: bool = true) -> P
 			errors.append(card_id + ".icon_path: 必须指向 assets 内有效的 Texture2D")
 		_validate_card_id(card_id, errors)
 		_validate_known_fields(card_id, stats, CARD_FIELDS, errors)
+		if stats.has("magazine_size") or stats.has("reload_duration"):
+			if int(stats.get("magazine_size", 0)) <= 0 or float(stats.get("reload_duration", 0.0)) <= 0.0 or float(stats.get("projectile_speed", 0.0)) <= 0.0:
+				errors.append(card_id + ": 弹匣需要正数容量、换弹时间与远程弹体")
+		if stats.has("attack_pellets"):
+			if int(stats.attack_pellets) < 2 or int(stats.attack_pellets) > 32 or float(stats.get("attack_pellet_distance", 0.0)) <= 0.0 or float(stats.get("attack_pellet_arc", 0.0)) <= 0.0 or float(stats.get("attack_pellet_arc", 0.0)) > 180.0:
+				errors.append(card_id + ": 散射弹数量、距离或角度非法")
+		elif stats.has("attack_pellet_distance") or stats.has("attack_pellet_arc") or stats.has("attack_knockback_max_mass"):
+			errors.append(card_id + ": 散射参数缺少 attack_pellets")
 		_validate_numbers(card_id, stats, errors)
 		_validate_card(card_id, stats, errors, inspect_resources)
 		_validate_references(card_id, stats, cards, errors)
@@ -55,7 +63,7 @@ static func _validate_periodic_summons(card_id: String, stats: Dictionary, error
 		if float(stats.spawn_flight_duration) <= 0.0 or stats.get("spawn_side", "") != "bilateral": errors.append(card_id + ".spawn_flight_duration: 要求正时长和左右召唤")
 	if stats.has("spawn_deploy_time") and float(stats.spawn_deploy_time) < 0.0: errors.append(card_id + ".spawn_deploy_time: 必须非负")
 	if not stats.has("spawn_interval"):
-		if stats.has("spawn_deploy_time") and stats.get("spell_kind", "") != "void_summoning": errors.append(card_id + ".spawn_deploy_time: 必须配置周期召唤或召唤法术")
+		if stats.has("spawn_deploy_time") and stats.get("spell_kind", "") not in ["void_summoning", "airdrop_bear"]: errors.append(card_id + ".spawn_deploy_time: 必须配置周期召唤或召唤法术")
 		if stats.has("spawn_distance"): errors.append(card_id + ".spawn_distance: 必须配置周期召唤")
 		return
 	if String(stats.get("type", "")) not in ["unit", "building"]: errors.append(card_id + ".spawn_interval: 仅单位或建筑支持周期召唤")
@@ -96,9 +104,6 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		_validate_number_value(card_id + ".proximity_reveal_stun", stats.proximity_reveal_stun, 0.01, errors, true)
 		if not bool(stats.get("is_building", false)) or stats.has("stealth_delay"):
 			errors.append(card_id + ": 一次性埋伏只支持建筑，不与脱战隐身共用")
-	if bool(stats.get("attack_all_in_range", false)):
-		if float(stats.get("projectile_speed", 0.0)) <= 0.0 or bool(stats.get("is_continuous_attack", false)) or float(stats.get("splash_radius", 0.0)) > 0.0:
-			errors.append(card_id + ": 全目标齐射要求无溅射的普通远程普攻")
 	if stats.has("isolated_attack_multiplier"):
 		_validate_number_value(card_id + ".isolated_attack_multiplier", stats.isolated_attack_multiplier, 1.0, errors, true)
 		if not bool(stats.get("attack_all_in_range", false)): errors.append(card_id + ": 单目标倍率需要全目标齐射")
@@ -163,6 +168,12 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			elif float(stats.get("duration", 0.0)) <= 0.0:
 				errors.append("%s.duration: 法术持续时间必须 > 0" % card_id)
 			match spell_kind:
+				&"airdrop_bear":
+					_require_fields(card_id, stats, [&"spawn_id", &"spawn_deploy_time", &"spell_windup", &"damage", &"tower_damage_multiplier"], errors)
+					for field in ["spell_windup", "duration", "damage"]:
+						if not is_finite(float(stats.get(field, 0))) or float(stats.get(field, 0)) <= 0: errors.append(card_id + "." + field + ": 必须为有限正数")
+					if not is_finite(float(stats.get("spawn_deploy_time", -1))) or float(stats.get("spawn_deploy_time", -1)) < 0: errors.append(card_id + ".spawn_deploy_time: 必须为有限非负数")
+					if float(stats.get("tower_damage_multiplier", -1)) < 0 or float(stats.get("tower_damage_multiplier", -1)) > 1: errors.append(card_id + ": 塔伤害倍率须为0至1")
 				&"mega_inferno_bomb":
 					for field in ["radius", "inner_radius", "damage", "inner_damage", "flight_speed", "flight_min_duration"]:
 						if not is_finite(float(stats.get(field, 0))) or float(stats.get(field, 0)) <= 0: errors.append(card_id + "." + field + ": 必须为有限正数")
@@ -461,6 +472,11 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 	if float(stats.get("form_first_attack_health_ratio", 0.0)) > 1.0: errors.append(label + ": 最大生命值比例不得超过1")
 	if not SHAPES.validate(label, stats, errors):
 		return
+	if bool(stats.get("attack_all_in_range", false)):
+		if (float(stats.get("projectile_speed", 0.0)) <= 0.0 and not bool(stats.get("is_continuous_attack", false))) or float(stats.get("splash_radius", 0.0)) > 0.0:
+			errors.append(label + ": 全目标攻击要求无溅射的远程或持续普攻")
+	if stats.has("innate_lifesteal_ratio"):
+		_validate_number_value(label + ".innate_lifesteal_ratio", stats.innate_lifesteal_ratio, 0.0, errors, true)
 	for field in ["attack_passive_multipliers", "attack_lifesteal_ratios"]:
 		if not stats.has(field):
 			continue
@@ -473,6 +489,11 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 		var window := float(stats.attack_recovery_cancel_window)
 		if window <= 0.0 or window >= float(stats.get("interval", 0.0)) - float(stats.get("first_hit", 0.0)) or int(stats.get("attack_recovery_cancel_every_hits", 0)) <= 0:
 			errors.append("%s.attack_recovery_cancel_window: 需要可取消后摇，且窗口必须在命中后收招段内" % label)
+	for field in ["structure_execute_ratio", "tower_execute_ratio"]:
+		if stats.has(field) and (not is_finite(float(stats[field])) or float(stats[field]) <= 0.0 or float(stats[field]) > 1.0): errors.append(label + "." + field + ": 比例须在(0,1]内")
+	if stats.has("ballistic_attack"):
+		if not stats.ballistic_attack is bool or float(stats.get("projectile_speed", 0.0)) <= 0.0 or float(stats.get("splash_radius", 0.0)) <= 0.0 or bool(stats.get("can_attack_air", false)) or bool(stats.get("is_continuous_attack", false)):
+			errors.append(label + ": 固定落点攻击需要离散对地范围弹体")
 	if stats.has("empowered_first_hit"):
 		if float(stats.empowered_first_hit) <= 0.0 or float(stats.empowered_first_hit) >= float(stats.get("interval", 0.0)) or not stats.get("visual_animations", {}).has("empowered_attack"):
 			errors.append("%s.empowered_first_hit: 需要强化攻击动画及 0 < 前摇 < 攻击间隔" % label)
@@ -669,6 +690,11 @@ static func _validate_projectile(label: String, stats: Dictionary, errors: Packe
 		return
 	if stats.has("projectile_spawn_at_edge") and not stats.projectile_spawn_at_edge is bool:
 		errors.append("%s.projectile_spawn_at_edge: 必须是 bool" % label)
+	if stats.has("returning_attack_distance"):
+		_validate_number_value(label + ".returning_attack_distance", stats.returning_attack_distance, 0.01, errors, true)
+		if float(stats.returning_attack_distance) <= 0.0: errors.append(label + ": 往返距离必须为正数")
+		if float(stats.get("projectile_speed", 0.0)) <= 0.0 or bool(stats.get("is_continuous_attack", false)) or bool(stats.get("attack_all_in_range", false)) or float(stats.get("splash_radius", 0.0)) > 0.0:
+			errors.append(label + ": 往返普攻仅支持单枚离散远程穿透弹体")
 	for field in ["projectile_spawn_offset", "projectile_collision_radius", "projectile_speed"]:
 		if not stats.has(field):
 			continue
@@ -695,8 +721,8 @@ static func _validate_projectile(label: String, stats: Dictionary, errors: Packe
 		errors.append("%s: 弹体表现高度和前向偏移必须 >= 0" % label)
 	if float(stats.get("projectile_visual_scale", 1.0)) <= 0.0:
 		errors.append("%s.projectile_visual_scale: 必须 > 0" % label)
-	if StringName(stats.get("projectile_impact_visual", "")) not in [&"", &"splash_wave", &"fire_area", &"jinx_explosion"]:
-		errors.append("%s.projectile_impact_visual: 只支持 splash_wave/fire_area/jinx_explosion" % label)
+	if StringName(stats.get("projectile_impact_visual", "")) not in [&"", &"splash_wave", &"fire_area", &"jinx_explosion", &"ziggs_explosion"]:
+		errors.append("%s.projectile_impact_visual: 只支持 splash_wave/fire_area/jinx_explosion/ziggs_explosion" % label)
 	if stats.has("projectile_colors"):
 		var colors = stats.projectile_colors
 		if not colors is Array or colors.size() != 2 or not colors[0] is Color or not colors[1] is Color:
@@ -1092,6 +1118,13 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s: 必须是 Dictionary" % label)
 			continue
 		_validate_known_fields(label, skill, ACTIVE_SKILL_FIELDS, errors)
+		if String(skill.get("kind", "")) == "dash":
+			if float(skill.get("length", 0.0)) <= 0.0 or float(skill.get("cast_duration", 0.0)) <= 0.0 or float(skill.get("impact_delay", 0.0)) != 0.0:
+				errors.append(label + ": 普通位移需要正距离/时长且立即开始")
+			if int(skill.get("ammo_restore", 0)) < 0 or (int(skill.get("ammo_restore", 0)) > 0 and int(stats.get("magazine_size", 0)) <= 0):
+				errors.append(label + ": 补弹需要弹匣")
+		elif skill.has("dash_backward") or skill.has("ammo_restore"):
+			errors.append(label + ": 位移参数只能用于 dash")
 		if skill.has("spawn_deploy_time") and (float(skill.spawn_deploy_time) < 0.0 or skill.get("kind", "") != "summon" or skill.get("spawn_side", "") == "below"):
 			errors.append(label + ".spawn_deploy_time: 需要非负时长与普通召唤技能")
 		if skill.has("form_kinds"):
@@ -1211,6 +1244,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				if not stats.has("bleed_max_stacks"):
 					errors.append("%s: 断头台需要流血被动" % label)
 			&"effect_shield":
+				if skill.has("block_heal"):
+					_validate_number_value(label + ".block_heal", skill.block_heal, 1.0, errors, true)
+					if float(skill.block_heal) <= 0.0: errors.append(label + ": 抵挡治疗必须为正数")
 				if float(skill.get("duration", 0.0)) <= 0.0: errors.append(label + ": 抵挡护盾需要正持续时间")
 				if skill.has("block_haste_duration") or skill.has("block_attack_speed_multiplier"):
 					if float(skill.get("block_haste_duration", 0.0)) <= 0.0 or float(skill.get("block_attack_speed_multiplier", 1.0)) <= 1.0:
@@ -1372,6 +1408,12 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append(label + ": 突进攻击需要离散近战和至少1倍攻速")
 				if skill.has("ignore_blind") and not skill.ignore_blind is bool: errors.append(label + ".ignore_blind: 必须为布尔值")
 			&"empowered_attack":
+				if skill.has("radius") and (not is_finite(float(skill.radius)) or float(skill.radius) <= 0.0 or not bool(stats.get("ballistic_attack", false))):
+					errors.append(label + ".radius: 强化爆炸半径需要固定落点攻击及正半径")
+				if skill.has("attack_count") and (not skill.attack_count is int or int(skill.attack_count) < 1): errors.append(label + ": 强化次数必须为正整数")
+				if skill.has("bounce_count") or skill.has("bounce_distance"):
+					if not skill.get("bounce_count") is int or int(skill.get("bounce_count", 0)) < 2 or not is_finite(float(skill.get("bounce_distance", 0.0))) or float(skill.get("bounce_distance", 0.0)) <= 0.0 or not bool(stats.get("ballistic_attack", false)):
+						errors.append(label + ": 弹跳需要固定落点攻击、至少两次落地和正延伸距离")
 				if skill.has("stun_duration") and (not is_finite(float(skill.stun_duration)) or float(skill.stun_duration) <= 0.0):
 					errors.append(label + ".stun_duration: 强化眩晕必须为正数")
 				if skill.has("hit_heal") and float(skill.hit_heal) <= 0.0:
@@ -1423,6 +1465,12 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				if String(stats.get("spell_kind", "")) != "convergent_pulse": errors.append(label + ": 强化脉冲只用于聚合脉冲")
 				for field in ["damage", "radius", "pull_distance", "duration"]:
 					if not is_finite(float(skill.get(field, 0))) or float(skill.get(field, 0)) <= float(stats.get(field, 0)): errors.append(label + "." + field + ": 强化数值须高于基础值")
+			&"spell_airdrop_bear":
+				if String(stats.get("spell_kind", "")) != "airdrop_bear": errors.append(label + ": 仅用于空投熊")
+				for field in ["stun_duration", "radius", "damage", "tick_interval", "duration"]:
+					if not is_finite(float(skill.get(field, 0))) or float(skill.get(field, 0)) <= 0: errors.append(label + "." + field + ": 必须为有限正数")
+				if float(skill.get("tick_interval", 0)) < FixedStepClock.STEP: errors.append(label + ": 灼烧间隔至少一Tick")
+				if float(skill.get("attack_speed_multiplier", 0)) <= 1: errors.append(label + ": 攻速倍率须大于1")
 			&"spell_solar_flare":
 				if String(stats.get("spell_kind", "")) != "solar_flare": errors.append(label + ": 日光只用于太阳耀斑")
 				for field in ["duration", "damage"]:

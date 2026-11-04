@@ -151,7 +151,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 	receipt["hits"] = []
 	var own_batch := not collecting
 	if own_batch: begin_batch(0, "immediate_attack")
-	if not is_instance_valid(primary) or primary.hp <= 0.0:
+	if not effects.has("impact_center") and (not is_instance_valid(primary) or primary.hp <= 0.0):
 		if own_batch: commit_batch()
 		return receipt
 	effects = effects.duplicate(true)
@@ -168,7 +168,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 	var targets: Array = [primary] if impact_radius <= 0.0 and cleave_radius <= 0.0 and self_radius <= 0.0 else get_tree().get_nodes_in_group("combatants")
 	var landed := false
 	var hit_results: Array = receipt.hits
-	var impact := primary.global_position
+	var impact: Vector2 = effects.get("impact_center", primary.global_position if is_instance_valid(primary) else origin)
 	var swing: int = from._attack_swing_count if from is Unit else 0
 	var source_ref: WeakRef = weakref(from) if is_instance_valid(from) else null
 	for target in targets:
@@ -200,11 +200,14 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 			var landed_source = _node_from(source_ref)
 			if not result.landed or not is_instance_valid(landed_target): return
 			_apply_attack_hit_effects(landed_target, effects, landed_source)
+			if landed_target is Tower or (landed_target is Unit and landed_target.is_building):
+				var ratio := float(effects.get("tower_execute_ratio" if landed_target is Tower else "structure_execute_ratio", 0.0))
+				CombatExecution.try_execute(landed_target, ratio, CombatInteraction.effect_context(landed_source, p_team, source_position), true)
 			if counts_as_attack and (movement_radius <= 0.0 or primary_hit) and radius <= 0.0 and (cleave_radius <= 0.0 or primary_hit) and landed_source is Unit:
 				landed_source.record_repeat_hit(landed_target)
 				_settle_bleeding_attack(landed_target, landed_source, effects, result)
 				if landed_source.battle_context != null: landed_source.battle_context.record_growth_hit(landed_source, landed_target))
-		if knockback > 0.0 and target is Unit:
+		if knockback > 0.0 and target is Unit and (float(effects.get("knockback_max_mass", 0.0)) <= 0.0 or target.mass < float(effects.knockback_max_mass)):
 			submit_knockback(target, effects.get("movement_strike_knockback_origin", origin), knockback, float(effects.get("knockback_duration", 0.2)), 1.4, displacement_order, result, CombatInteraction.effect_context(from, p_team, source_position))
 		defer_benefit(func():
 			var landed_source = _node_from(source_ref)

@@ -14,6 +14,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_finished_source_idle_transition()
 	_check_cast_policies_and_snapshot()
 	_check_control_interruptions()
+	_check_control_idle_playback_rate()
 	_check_control_pose_generation()
 	_check_idle_tail_deploy()
 	_check_deploy_control_priority()
@@ -859,3 +860,35 @@ func _check_samira_stances() -> void:
 	_main.runtime.mode = previous_mode
 	view.free()
 	unit.free()
+
+func _check_control_idle_playback_rate() -> void:
+	for multiplier in [1.5, 0.5]:
+		var stats: Dictionary = CardDB.get_card("tibbers")
+		var unit := Unit.new()
+		unit.setup(0, stats, stats.name)
+		_main.add_child(unit)
+		unit._attacking = true
+		unit._attack_visual_serial = 1
+		if multiplier > 1.0: unit.apply_active_buff(5.0, 1.0, 1.0, multiplier, false, false, &"test")
+		else: unit.apply_attack_speed_slow(5.0, multiplier, &"test")
+		_main._battle_presentation.attach_unit(unit, stats)
+		var view := _view_for(unit)
+		_expect(view != null, "提伯斯受控动画测试创建真实模型")
+		if view != null:
+			view._process(0.0)
+			var player := view._animation_player
+			_expect(is_equal_approx(player.speed_scale, multiplier), "提伯斯攻击使用当前攻速倍率")
+			unit.stun(0.5)
+			view._process(0.0)
+			player.advance(0.1)
+			_expect(player.assigned_animation == "annietibbers_idle1" and is_equal_approx(player.get_playing_speed(), 1.0), "眩晕切待机不继承普攻加速或减速")
+			view._process(0.0)
+			_expect(is_equal_approx(player.get_playing_speed(), 1.0), "持续眩晕待机保持原速")
+			unit.freeze(0.2)
+			view._process(0.0)
+			_expect(player.speed_scale == 0.0, "叠加冰冻仍暂停姿态")
+			SuiteUtils.set_control_window(unit.control, &"freeze", 0.0)
+			view._process(0.0)
+			_expect(player.assigned_animation == "annietibbers_idle1" and is_equal_approx(player.get_playing_speed(), 1.0), "冰冻解除但仍眩晕时回到原速待机")
+			view.free()
+		unit.free()

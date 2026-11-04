@@ -23,6 +23,9 @@ var spark_casts: Array[Dictionary] = []
 var spark_effects: Array[Dictionary] = []
 var pulse_casts: Array[Dictionary] = []
 var pulse_effects: Array[Dictionary] = []
+var bear_casts: Array[Dictionary] = []
+var bear_effects: Array[Dictionary] = []
+var bear_auras: Array[Dictionary] = []
 var solar_casts: Array[Dictionary] = []
 var solar_effects: Array[Dictionary] = []
 var pool_visual_time := 0.0
@@ -78,6 +81,9 @@ func _resolve_cast(team: int, stats: Dictionary, position: Vector2, active_enabl
 			return true
 		&"convergent_pulse":
 			_start_convergent_pulse(team, stats, position, active_enabled, active_skill_index)
+			return true
+		&"airdrop_bear":
+			_start_airdrop_bear(team, stats, position, active_enabled, active_skill_index)
 			return true
 		&"solar_flare":
 			_start_solar_flare(team, stats, position, active_enabled, active_skill_index)
@@ -216,6 +222,7 @@ func tick(dt: float) -> void:
 	_tick_final_spark()
 	_tick_convergent_pulse()
 	_tick_stellar_convergence()
+	_tick_airdrop_bear()
 	_tick_solar_flare()
 	_tick_severing_bolt()
 	_tick_event_horizon()
@@ -263,6 +270,8 @@ func tick_visuals(delta: float) -> void:
 	spark_effects.assign(spark_effects.filter(func(effect): return float(effect.age) < 2.5))
 	for effect in pulse_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
 	pulse_effects.assign(pulse_effects.filter(func(effect): return visual_tick < float(effect.start_tick) + 50.0))
+	for effect in bear_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
+	bear_effects.assign(bear_effects.filter(func(effect): return visual_tick < float(effect.end_tick) + 60.0))
 	for effect in solar_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
 	solar_effects.assign(solar_effects.filter(func(effect): return visual_tick < float(effect.end_tick) + 100.0))
 	for effect in bolt_effects: effect.age = maxf(0.0, visual_tick - float(effect.start_tick)) * FixedStepClock.STEP
@@ -318,6 +327,12 @@ func tick_visuals(delta: float) -> void:
 
 
 func clear() -> void:
+	for aura in bear_auras:
+		var source = aura.source.get_ref()
+		if is_instance_valid(source): source.burning_aura = false
+	bear_auras.clear()
+	bear_casts.clear()
+	bear_effects.clear()
 	pool_zones.clear()
 	pool_effects.clear()
 	summon_zones.clear()
@@ -535,6 +550,9 @@ func show_flight(id: int, kind: String, origin: Vector2, position: Vector2, radi
 		return
 	if kind == "convergent_pulse":
 		pulse_effects.append({"id": id, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
+		return
+	if kind == "airdrop_bear":
+		bear_effects.append({"id": id, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
 		return
 	if kind in ["solar_flare", "sunlight_consume"]:
 		solar_effects.append({"id": id, "kind": kind, "pos": position, "radius": radius, "start_tick": start_tick, "end_tick": impact_tick, "age": 0.0, "team": team})
@@ -933,6 +951,7 @@ func _start_solar_flare(team: int, stats: Dictionary, pos: Vector2, enhanced: bo
 	var tick: int = _controller.get_authoritative_server_tick()
 	var impact := tick + ceili(float(stats.spell_windup) / FixedStepClock.STEP)
 	solar_casts.append({"team": team, "pos": pos, "stats": stats, "impact_tick": impact,
+		"descent_tick": tick + ceili(float(stats.spell_windup) / FixedStepClock.STEP), "cast_audio_sent": false,
 		"skill": _active_heal_skill(stats, skill_index) if enhanced else {}, "delivery": CombatInteraction.Delivery.new()})
 	_controller.present_spell_flight(_effect_serial, "solar_flare", pos, pos, float(stats.radius), tick, impact, team)
 
@@ -1198,3 +1217,59 @@ func area_pull_velocity(unit: Unit, dt: float) -> Vector2:
 		if not CombatInteraction.allows_effect(unit, interaction) or CombatInteraction.blocks_effect(unit, interaction): continue
 		result += delta.normalized() * minf(float(zone.stats.pull_speed), delta.length() / dt)
 	return result
+
+
+func _start_airdrop_bear(team: int, stats: Dictionary, pos: Vector2, enhanced: bool, skill_index: int) -> void:
+	_effect_serial += 1
+	var tick: int = _controller.get_authoritative_server_tick()
+	# 预警与下落分别量化，命令缓冲由通用出牌排程负责。
+	var impact := tick + ceili(float(stats.spell_windup) / FixedStepClock.STEP) + ceili(float(stats.duration) / FixedStepClock.STEP)
+	bear_casts.append({"team": team, "pos": pos, "stats": stats, "impact_tick": impact,
+		"descent_tick": tick + ceili(float(stats.spell_windup) / FixedStepClock.STEP), "cast_audio_sent": false,
+		"skill": _active_heal_skill(stats, skill_index) if enhanced else {}, "delivery": CombatInteraction.Delivery.new()})
+	_controller.present_spell_flight(_effect_serial, "airdrop_bear", pos, pos, float(stats.radius), tick, impact, team)
+
+func _tick_airdrop_bear() -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	for cast in bear_casts:
+		# A方案：下降开始播放召唤声，预警阶段不播放；可靠事件只派发一次。
+		if not cast.cast_audio_sent and tick >= int(cast.descent_tick):
+			cast.cast_audio_sent = true
+			_controller.runtime.card_event("airdrop_bear", "spell:cast", cast.pos, int(cast.team))
+		if tick < int(cast.impact_tick): continue
+		var interaction := _spell_context(int(cast.team))
+		interaction["delivery"] = cast.delivery
+		var previous := CombatInteraction.current_delivery
+		CombatInteraction.current_delivery = cast.delivery
+		for target in _controller.get_tree().get_nodes_in_group("combatants"):
+			if not is_instance_valid(target) or not (target is Unit or target is Tower) or target.hp <= 0 or target.team == int(cast.team): continue
+			if target.global_position.distance_to(cast.pos) > float(cast.stats.radius) + target.body_radius: continue
+			if not CombatInteraction.allows_effect(target, interaction) or CombatInteraction.blocks_effect(target, interaction): continue
+			var damage := float(cast.stats.damage) * (float(cast.stats.tower_damage_multiplier) if target is Tower else 1.0)
+			BattleNumbers.hit(target, damage, interaction.get("source"), int(cast.team), interaction.get("position", Vector2.INF))
+			if not cast.skill.is_empty(): target.stun(float(cast.skill.stun_duration), &"airdrop_bear", interaction)
+		CombatInteraction.current_delivery = previous
+		var bear: Unit = _controller.spawn_summoned(int(cast.team), String(cast.stats.spawn_id), cast.pos, float(cast.stats.spawn_deploy_time))
+		if bear != null and not cast.skill.is_empty():
+			bear.burning_aura = true
+			bear.apply_active_buff(float(cast.skill.duration), 1.0, 1.0, float(cast.skill.attack_speed_multiplier), false, false, &"airdrop_bear")
+			# 强化落地获得狂暴时派发一次；可靠卡牌事件不依赖客户端出生快照的到达顺序。
+			_controller.runtime.card_event("airdrop_bear", "spell:enraged", cast.pos, int(cast.team))
+			bear_auras.append({"source": weakref(bear), "skill": cast.skill, "next_tick": tick + ceili(float(cast.skill.tick_interval) / FixedStepClock.STEP)})
+		_controller.runtime.card_event("airdrop_bear", "spell:impact", cast.pos, int(cast.team))
+	bear_casts.assign(bear_casts.filter(func(cast): return tick < int(cast.impact_tick)))
+	var alive: Array[Dictionary] = []
+	for aura in bear_auras:
+		var source = aura.source.get_ref()
+		if not is_instance_valid(source) or source.is_queued_for_deletion() or source.hp <= 0: continue
+		alive.append(aura)
+		if tick < int(aura.next_tick): continue
+		aura.next_tick = tick + ceili(float(aura.skill.tick_interval) / FixedStepClock.STEP)
+		# 凝滞抑制脉冲，不补发；眩晕、冰冻不取消独立持续灼烧。
+		if CombatInteraction.in_stasis(source): continue
+		for target in _controller.get_tree().get_nodes_in_group("combatants"):
+			if not is_instance_valid(target) or not (target is Unit or target is Tower) or target.hp <= 0 or target.team == source.team: continue
+			if target.global_position.distance_to(source.global_position) > float(aura.skill.radius) + target.body_radius: continue
+			if CombatInteraction.allows(target, source, source.team, source.global_position):
+				BattleNumbers.hit(target, float(aura.skill.damage), source, source.team, source.global_position)
+	bear_auras.assign(alive)

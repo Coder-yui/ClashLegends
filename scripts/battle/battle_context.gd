@@ -175,3 +175,12 @@ func launch_pull(source: Unit, target: Unit) -> int:
 
 func pull_projectile_active(id: int) -> bool:
 	return _controller.projectile_service().projectiles.has(id)
+
+## 只读弹体表现投影，主客端按快照来源身份查询，不泄露权威字典。
+func has_owned_projectile_visual(unit: Unit, visual: StringName) -> bool:
+	for projectile in _controller.projectile_service().visible_view().values():
+		if StringName(projectile.get("visual", "")) != visual: continue
+		var source: Dictionary = projectile.get("visual_path", {}).get("source", {})
+		if int(source.get("id", -1)) >= 0 and int(source.id) == unit.net_id: return true
+		if int(source.get("id", -1)) < 0 and int(source.get("local_id", 0)) == unit.get_instance_id(): return true
+	return false

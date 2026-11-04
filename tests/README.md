@@ -244,3 +244,9 @@ ProjectileSuite 内的 view 子检查覆盖内容代次、同帧前后读取、�
 入口复用`safe_probe`的20秒、30FPS、主线程心跳、768MiB绝对RSS及ready后256MiB增长上限；启动normal压力、估算可用至少8GiB/保留6GiB，运行低于4GiB或压力变化即停。允许已有编辑器，拒绝其他游戏进程；只清理自有组，保留watchdog、组件哈希和原日志。实际截图须人工目视，headless不能替代渲染验收。
 
 星芒凝汇专项：`--suite StellarConvergenceSuite`覆盖持续伤害时序、牵引、中心15%临界值、普通盾/法术盾、凝滞、拒绝死亡、建筑开关、小数伤害余量及副本隔离；火药桶共用斩杀同时跑`PowderKegSuite`。`CLASH_TEST_STELLAR_CONVERGENCE=1 CLASH_TEST_TERMINAL_TICK=155 python3 tools/dev.py verify --changed docs/units/stellar_convergence.md --network`执行服务器/两客户端专项。
+
+法外狂徒专项：`--suite GravesSuite`覆盖弹仓时序、六弹独立碰撞、空气目标、轻重质量、有限预算后撤、正式技能费用次数冷却；`CLASH_TEST_GRAVES=1 CLASH_TEST_TERMINAL_TICK=145 python3 tools/dev.py verify --suite GravesSuite --network`追加服务器与双客户端换弹、弹丸和技能表现。
+
+空投熊专项：`--suite AirdropBearSuite`覆盖己方半场、延迟落地、对空地/塔伤害、召唤、效果盾、眩晕、常驻火圈、凝滞/冰冻边界、死亡清理与快照类型。`CLASH_TEST_AIRDROP_BEAR=1 CLASH_TEST_TERMINAL_TICK=160 python3 tools/dev.py verify --suite AirdropBearSuite --network`验证服务器和两客户端火圈建立、5秒攻速到期与权威隔离。
+
+爆破鬼才专项：`--suite ZiggsSuite`覆盖固定落点、普通30/强化40边界、三次落地、三次强化、建筑斩杀、单次爆炸音及粒子尾段。`CLASH_TEST_ZIGGS=1 CLASH_TEST_TERMINAL_TICK=260 python3 tools/dev.py verify --suite ZiggsSuite --network`检查服务器与两客户端三段外观、待发建立/耗尽及真实伤害；测试终局覆盖可设85–300Tick，默认85不变。

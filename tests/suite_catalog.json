@@ -831,5 +831,40 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "ScarecrowSuite",
+    "script": "res://tests/suites/combat/scarecrow_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "combat"
+  },
+  {
+    "id": "ZiggsSuite",
+    "script": "res://tests/suites/combat/ziggs_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "combat"
+  },
+  {
+    "id": "GravesSuite",
+    "script": "res://tests/suites/cards/graves_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "cards"
+  },
+  {
+    "id": "SivirSuite",
+    "script": "res://tests/suites/cards/sivir_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
+    "id": "AirdropBearSuite",
+    "script": "res://tests/suites/cards/airdrop_bear_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

@@ -123,6 +123,9 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 	if attacker is Unit:
 		effects["source_generation"] = attacker.form_change_serial
 		effects.merge(attacker.on_hit_passive_effects())
+		var stats := CardDB.get_card(attacker.card_id)
+		for key in ["structure_execute_ratio", "tower_execute_ratio"]:
+			if stats.has(key): effects[key] = stats[key]
 	if knockback > 0.0 and not effects.has("displacement_order"):
 		effects.displacement_order = _context.damage_batch().next_displacement_order(attacker)
 	if (attacker is Unit or attacker is Tower) and not effects.has("presentation_source"):
@@ -195,6 +198,14 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 			"cast": {"targets": {}, "sound_played": false},
 			"remaining": attacker.piercing_attack_distance(),
 			"presentation_source": effects.get("presentation_source", {}), "status_source": attacker.status_source("piercing_attack")})
+	if attacker is Unit and attacker.returning_attack_distance() > 0.0:
+		projectiles[id].merge({"skill_fan": true, "basic_piercing": true, "returning_attack": true,
+			"returning": false, "return_origin": start_position, "return_age": 0.0,
+			"skill": {"projectile_piercing": true, "ground_only": not attacker.can_attack_air},
+			"cast": {"targets": {}, "sound_played": false},
+			"remaining": attacker.returning_attack_distance(),
+			"presentation_source": effects.get("presentation_source", {}), "status_source": attacker.status_source("returning_attack")})
+		attacker.returning_projectile_id = id
 	# 普通弹体沿模型投影的起点和目标锚点绘制；权威位置、碰撞与速度不变。
 	var source_fallback := visual_offset + Vector2(0.0, -projectile_visual_height)
 	projectiles[id]["visual_path"] = {
@@ -210,6 +221,26 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		# 固定保存炮口偏移，后续沿权威方向直行，不追踪目标或武器。
 		projectiles[id].visual_path["wave"] = true
 		projectiles[id].visual_path["fixed_muzzle"] = true
+	if attacker is Unit and bool(CardDB.get_card(attacker.card_id).get("ballistic_attack", false)):
+		BallisticAttack.initialize(projectiles[id], target.global_position, effects)
+	if attacker is Unit and int(attacker._base_form_stats.get("attack_pellets", 0)) > 0:
+		var stats: Dictionary = attacker._base_form_stats
+		var template: Dictionary = projectiles[id].duplicate(true)
+		for index in int(stats.attack_pellets):
+			var pellet_id := id if index == 0 else _next_id
+			if index > 0: _next_id += 1
+			var pellet := template.duplicate(true)
+			pellet.merge({"visual_id": pellet_id, "skill_fan": true, "basic_piercing": true,
+				"skill": {"ground_only": not attacker.can_attack_air},
+				"cast": {"targets": {}, "sound_played": false},
+				"remaining": float(stats.attack_pellet_distance),
+				"direction": skill_fan_direction(direction, float(stats.attack_pellet_arc), int(stats.attack_pellets), index),
+				"presentation_source": effects.get("presentation_source", {}), "status_source": attacker.status_source("pellet")}, true)
+			pellet.visual_path["wave"] = true
+			pellet.visual_path["fixed_muzzle"] = true
+			pellet.visual_path["end"] = start_position + pellet.direction * float(stats.attack_pellet_distance)
+			pellet.effects["knockback_max_mass"] = float(stats.get("attack_knockback_max_mass", 0.0))
+			projectiles[pellet_id] = pellet
 	_invalidate_visible_view()
 	if projectile_visual in [&"baron_siege", &"baron_ranged"]:
 		_context.show_projectile_impact(start_position + visual_offset - Vector2(0, projectile_visual_height), 1.0, projectile_color, StringName(String(projectile_visual) + "_cast"))
@@ -282,7 +313,7 @@ func invalidate_target_locks(target: Node2D) -> void:
 	var changed := false
 	for id in projectiles.keys():
 		var projectile: Dictionary = projectiles[id]
-		if bool(projectile.get("skill_fan", false)) or projectile.get("target") != target: continue
+		if bool(projectile.get("ballistic", false)) or bool(projectile.get("skill_fan", false)) or projectile.get("target") != target: continue
 		var source = null if bool(projectile.get("pull", false)) else projectile.get("attacker")
 		if CombatInteraction.allows(target, source if is_instance_valid(source) else null, int(projectile.team), projectile.source_pos): continue
 		if bool(projectile.get("owned_launch_audio", false)): launch_audio_stopped.emit(id)
@@ -308,8 +339,14 @@ func tick(dt: float) -> void:
 			break
 	for id in projectiles:
 		var projectile: Dictionary = projectiles[id]
+		if bool(projectile.get("ballistic", false)):
+			if BallisticAttack.tick(projectile, dt, _context, self): finished.append(id)
+			continue
 		if bool(projectile.get("pull", false)):
 			if PullProjectile.tick(projectile, dt, self): finished.append(id)
+			continue
+		if bool(projectile.get("returning_attack", false)):
+			if _tick_returning_attack(projectile, dt, fan_colliders): finished.append(id)
 			continue
 		if projectile.get("skill_fan", false):
 			if _tick_skill_arrow(projectile, dt, fan_colliders):
@@ -351,12 +388,38 @@ func tick(dt: float) -> void:
 			_context.resolve_attack_hit(projectile.team, pos, target, projectile.damage, projectile.splash, projectile.knockback, hit_from, projectile.source_pos, int(projectile.get("source_form_index", -1)), projectile.get("effects", {}))
 			finished.append(id)
 	for id in finished:
+		_release_returning_attack(projectiles[id], true)
 		if bool(projectiles[id].get("owned_launch_audio", false)):
 			launch_audio_stopped.emit(id)
 		projectiles.erase(id)
 	_tick_pending_waves(dt)
 	if had_projectiles: _invalidate_visible_view()
 	queue_redraw()
+
+## 去程锁定方向；回程追赶来源而非敌人。每一程分别去重，独立结果不受来源硬控取消。
+func _tick_returning_attack(projectile: Dictionary, dt: float, colliders: Array) -> bool:
+	projectile.return_age += dt
+	if float(projectile.return_age) >= 8.0: return true
+	var source: Unit = projectile.attacker if is_instance_valid(projectile.attacker) else null
+	if source != null: projectile.source_pos = source.global_position
+	if bool(projectile.returning):
+		var destination: Vector2 = source.global_position if source != null and source.hp > 0.0 else projectile.return_origin
+		projectile.direction = (projectile.pos as Vector2).direction_to(destination)
+		projectile.remaining = (projectile.pos as Vector2).distance_to(destination)
+		return _tick_skill_arrow(projectile, dt, colliders)
+	if _tick_skill_arrow(projectile, dt, colliders):
+		projectile.returning = true
+		wave_audio.emit(projectile.presentation_source, "attack_return", projectile.pos, "launch")
+		projectile.cast = {"targets": {}, "sound_played": false}
+	return false
+
+func _release_returning_attack(projectile: Dictionary, caught: bool) -> void:
+	if not bool(projectile.get("returning_attack", false)): return
+	var source: Unit = projectile.attacker if is_instance_valid(projectile.attacker) else null
+	if source == null or source.returning_projectile_id != int(projectile.visual_id): return
+	source.returning_projectile_id = -1
+	if caught and source.hp > 0.0 and float(projectile.return_age) < 8.0:
+		_context.notify_unit_audio_event(source, &"attack:return", source.global_position)
 
 ## 扇形直线技能弹体；阻挡/穿透由数据决定，同次施法共享目标去重。
 static func skill_fan_direction(forward: Vector2, arc_degrees: float, count: int, index: int) -> Vector2:
@@ -454,7 +517,7 @@ func _tick_skill_delivery(projectile: Dictionary, dt: float, colliders: Array) -
 			if CombatInteraction.blocks_effect(target, CombatInteraction.effect_context(source, projectile.team, projectile.source_pos)):
 				if not piercing: return true
 				continue
-			var receipt := _context.resolve_attack_hit(projectile.team, origin, target, projectile.damage, 0.0, 0.0, source, projectile.source_pos, projectile.source_form_index, projectile.get("effects", {}), bool(projectile.get("basic_piercing", false)))
+			var receipt := _context.resolve_attack_hit(projectile.team, origin, target, projectile.damage, 0.0, float(projectile.get("knockback", 0.0)), source, projectile.source_pos, projectile.source_form_index, projectile.get("effects", {}), bool(projectile.get("basic_piercing", false)))
 			var target_ref: WeakRef = weakref(target)
 			var interaction := CombatInteraction.effect_context(source, projectile.team, projectile.source_pos)
 			var hit_position: Vector2 = projectile.pos
@@ -570,6 +633,7 @@ func clear_all() -> void:
 	for id in projectiles:
 		if bool(projectiles[id].get("owned_launch_audio", false)):
 			launch_audio_stopped.emit(id)
+	for projectile in projectiles.values(): _release_returning_attack(projectile, false)
 	projectiles.clear()
 	_client_projectiles.clear()
 	_invalidate_visible_view()
@@ -584,7 +648,7 @@ func _draw() -> void:
 		match StringName(projectile.get("visual", &"orb")):
 			&"corki_missile", &"corki_missile_big": load("res://scripts/presentation/corki_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), StringName(projectile.visual) == &"corki_missile_big")
 			&"baron_siege", &"baron_ranged": preload("res://scripts/presentation/baron_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)), projectile.color)
-			&"blitzcrank_hook", &"jack_in_the_box_bullet", &"thorn_spitter_bullet", &"evolution_turret_bullet", &"jayce_bullet", &"samira_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
+			&"ziggs_bomb", &"ziggs_bounce", &"ziggs_bounce_2", &"ziggs_bounce_3", &"blitzcrank_hook", &"jack_in_the_box_bullet", &"thorn_spitter_bullet", &"evolution_turret_bullet", &"jayce_bullet", &"samira_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
 			&"fireball": preload("res://scripts/presentation/fireball_effect_2d.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)))
 			&"magic_orb": _draw_magic_orb(projectile)
 			&"tower_orb": _draw_tower_orb(projectile)
@@ -593,6 +657,7 @@ func _draw() -> void:
 			&"card": _draw_card(projectile)
 			&"electromagnetic_wave": preload("res://scripts/presentation/electromagnetic_projectile_2d.gd").draw_effect(self, _visual_position(projectile), _direction(projectile), {"projectile_visual_width": float(projectile.radius) * 2.0 * float(projectile.get("visual_scale", 1.0))})
 			&"needle", &"blind_needle": _draw_needle(projectile)
+			&"sivir_blade": _draw_returning_blade(projectile)
 			&"boomerang": _draw_boomerang(projectile)
 			&"tristana_bullet": pass # 原版炮弹读取相同可见快照。
 			&"voidfish_missile": pass # 原版远程虚空鱼弹体使用相同只读快照。
@@ -787,3 +852,12 @@ func _draw_magic_orb(projectile: Dictionary) -> void:
 	draw_circle(pos, radius * 1.5, Color(color, 0.18))
 	draw_circle(pos, radius, color)
 	draw_circle(pos - direction * radius * 0.25, radius * 0.32, Color(0.84, 0.64, 1.0, 0.9))
+
+func _draw_returning_blade(projectile: Dictionary) -> void:
+	var texture: Texture2D = load("res://assets/effects/sivir/blade.png")
+	var center := _visual_position(projectile)
+	var angle := float(Time.get_ticks_msec()) * 0.018
+	var vertices := PackedVector3Array([Vector3(-30, 0, -30), Vector3(30, 0, -30), Vector3(30, 0, 30), Vector3(-30, 0, 30)])
+	var points := BattleGroundProjection.native_canvas_face(vertices, angle, 1.0)
+	for index in points.size(): points[index] += center
+	draw_polygon(points, PackedColorArray([Color.WHITE]), PackedVector2Array([Vector2.ZERO, Vector2.RIGHT, Vector2.ONE, Vector2.DOWN]), texture)

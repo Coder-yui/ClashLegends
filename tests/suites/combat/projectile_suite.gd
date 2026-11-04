@@ -258,7 +258,10 @@ func _attack_trace(card_id: String, configured: Dictionary, team: int, lethal: b
 	var legacy_edge := card_id in ["ashe", "teemo", "gnar", "anivia", "kayle_ranged", "lulu", "twitch", "tristana", "corki", "jinx"]
 	var expected_start := attacker.position + Vector2(attacker.body_radius + 7.5, 0) if legacy_edge else attacker.position
 	if card_id == "jayce": expected_start = attacker.position + Vector2(attacker.body_radius, 0)
+	var pellet_attack := int(stats.get("attack_pellets", 0)) > 0
 	var expected_radius := 7.0 if card_id == "tower" else (3.0 if card_id in ["ashe", "evolution_turret", "thorn_spitter"] else 4.0)
+	if pellet_attack: expected_radius = float(stats.projectile_collision_radius)
+	if float(stats.get("returning_attack_distance", 0.0)) > 0.0: expected_radius = float(stats.projectile_collision_radius)
 	if not change_visual:
 		_expect(shot.pos == expected_start and shot.radius == expected_radius, "%s：保持迁移前权威出生点与碰撞半径" % card_id)
 	var trace: Array = [[shot.pos, shot.radius, target.hp]]
@@ -274,8 +277,8 @@ func _attack_trace(card_id: String, configured: Dictionary, team: int, lethal: b
 				reference_alive = false
 		_main._tick_projectiles(_main.SIM_DT)
 		var alive: bool = not _main._projectile_system.projectiles.is_empty()
-		trace.append([tick, target.hp, target.hp <= 0.0, _main._projectile_system.projectiles.values()[0].pos if alive else Vector2.ZERO])
-		if not change_visual and not include_wave:
+		trace.append([tick, target.hp, target.hp <= 0.0, _main._projectile_system.projectiles.values().map(func(p): return p.pos) if pellet_attack else (_main._projectile_system.projectiles.values()[0].pos if alive else Vector2.ZERO)])
+		if not change_visual and not include_wave and not pellet_attack and float(stats.get("returning_attack_distance", 0.0)) <= 0.0:
 			_expect(target.hp == expected_hp and alive == reference_alive, "%s Tick%d：原始几何重放的命中/伤亡保持不变" % [card_id, tick])
 	_main._projectile_system.clear_all()
 	attacker.free()

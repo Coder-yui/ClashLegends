@@ -123,3 +123,11 @@ python3 tools/demos/pantheon_review_media.py --input /本次输出/pantheon-revi
 `python3 tools/demos/active_skill_button_review.py --mode tests --output <素材库/04-中间产物内的新目录>`默认仅运行`ActiveSkillButtonSuite`，可显式`--suite UnitBarLayoutSuite`或`--suite ActiveSkillInputSuite`选择直接消费者；先按[测试手册](../../tests/README.md#主动技能按钮专项)查看验证计划。`--mode render`只加载正式按钮、配置图标和Unit头顶条，输出状态对照、冷却方向及三个窗口布局共五张截图和`render-inputs.json`。无完整比赛、模型预热或音频，合成状态不代表自动完成玩法/联机验收。
 
 执行复用现有监督器：20秒、30FPS、768MiB RSS、ready后256MiB增长、主线程心跳；保留6GiB系统预算和8GiB启动余量、4GiB运行停止线，允许编辑器共存，拒绝其他游戏，只回收自有进程组。原日志、watchdog及组件身份均写到新输出目录。
+
+### 法外狂徒实战复查
+
+`godot --path . --script res://tools/demos/graves_review.gd`打开正式工作台，双阵营验证连续霰弹、移动换弹、后撤、横向对空、控制与死亡，同时保存枪口状态日志、截图和实际混音到素材库`04-中间产物/法外狂徒/验收2/`。素材试听仍用通用音频入口；工作台不保存验收结论。
+
+`airdrop_bear_review.gd`：正式工作台双方空投、原生火圈、凝滞恢复、攻速到期、死亡清理和卡面/衍生占位，输出截图与运行录音。追加`-- --vfx-loop`可延长到两个循环以上，并逐帧拍摄9.7–10.3秒接缝、统计身体挂点与死亡清理。追加`-- --range-review`固定提伯斯位置，并把真实100像素伤害圆逐点投影为青色边线，便于检查特效可见范围；不向正式玩法增加边线。
+
+空投熊检查可追加 `-- --animation-audio-review`：蓝方普通、红方强化，以高血量木桩覆盖移动、两套普攻、凝滞/冰冻/眩晕、攻速到期、待机和死亡；输出逐Tick动画片段/倍率记录与实际混音。仅用于复现与检查，不驱动正式战斗规则。

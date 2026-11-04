@@ -14,6 +14,8 @@ var projectiles: Node2D
 var _blitzcrank_projectiles: Node3D
 var _thorn_projectiles: Node3D
 var _box_projectiles: Node3D
+var _ziggs_projectiles: Node3D
+var _graves_projectiles: Node3D
 var _evolution_projectiles: Node3D
 var _jayce_projectiles: Node3D
 var _samira_projectiles: Node3D
@@ -43,6 +45,7 @@ var _stellar_effect: Node3D
 var _horizon_effect: Node3D
 var _spark_effect: Node3D
 var _pulse_effect: Node3D
+var _bear_effect: Node3D
 var _solar_effect: Node3D
 var _pool_effect: Node3D
 var _bolt_effect: Node3D
@@ -78,6 +81,10 @@ func _process(delta: float) -> void:
 		_rewind_effect.sync_effects(skills, _camera)
 	if _blitzcrank_projectiles != null:
 		_blitzcrank_projectiles.sync_effects(projectiles, _camera)
+	if _ziggs_projectiles != null:
+		_ziggs_projectiles.set_sources(projectiles, _camera)
+	if _graves_projectiles != null:
+		_graves_projectiles.set_sources(projectiles, _camera)
 	if _box_projectiles != null:
 		_box_projectiles.set_sources(projectiles, _camera)
 	if _thorn_projectiles != null:
@@ -121,6 +128,8 @@ func _process(delta: float) -> void:
 		_spark_effect.sync_effects(spells, _camera)
 	if _pulse_effect != null and spells != null:
 		_pulse_effect.sync_effects(spells, _camera, viewer_team)
+	if _bear_effect != null and spells != null:
+		_bear_effect.sync_effects(spells, _camera, delta)
 	if _solar_effect != null and spells != null:
 		_solar_effect.sync_effects(spells, _camera, viewer_team)
 	if _pool_effect != null and spells != null:
@@ -209,6 +218,10 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_blitzcrank_projectiles)
 	_thorn_projectiles = preload("res://scripts/presentation/thorn_spitter_projectile_3d.gd").new()
 	_world_root.add_child(_thorn_projectiles)
+	_ziggs_projectiles = preload("res://scripts/presentation/ziggs_projectile_3d.gd").new()
+	_world_root.add_child(_ziggs_projectiles)
+	_graves_projectiles = preload("res://scripts/presentation/graves_projectile_3d.gd").new()
+	_world_root.add_child(_graves_projectiles)
 	_box_projectiles = preload("res://scripts/presentation/jack_in_the_box_projectile_3d.gd").new()
 	_world_root.add_child(_box_projectiles)
 	_evolution_projectiles = preload("res://scripts/presentation/evolution_turret_projectile_3d.gd").new()
@@ -261,6 +274,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_spark_effect)
 	_pulse_effect = preload("res://scripts/presentation/convergent_pulse_3d.gd").new()
 	_world_root.add_child(_pulse_effect)
+	_bear_effect = preload("res://scripts/presentation/airdrop_bear_3d.gd").new()
+	_world_root.add_child(_bear_effect)
 	_solar_effect = preload("res://scripts/presentation/solar_flare_3d.gd").new()
 	_world_root.add_child(_solar_effect)
 	_pool_effect = preload("res://scripts/presentation/pool_of_reflection_3d.gd").new()

@@ -15,6 +15,7 @@ const WORLD_PANNING_STRENGTH := 0.35
 
 ## 同一层表负责位置跟随、清理与循环策略；空cue保留原始单段音轨。
 const UNIT_SUSTAIN_LAYERS := {
+	&"burning_aura": &"burning_aura:sustain",
 	&"pool_shield": &"pool_shield:sustain",
 	&"persistent_area": &"persistent_area:sustain",
 	&"mend": &"mend:sustain", &"empowered": &"empowered_buff:sustain",
@@ -453,6 +454,10 @@ func _tick_attached_units() -> void:
 				if due > float(entry.action_audio_elapsed) and due <= elapsed + 0.00001:
 					play_event(unit, StringName(cue), unit.get_visual_screen_position(), -1, true)
 			entry.action_audio_elapsed = maxf(float(entry.action_audio_elapsed), elapsed)
+		var burning: bool = unit.burning_aura and not state.dead and not CombatInteraction.in_stasis(unit)
+		if burning and not bool(entry.get("burning_aura", false)): _start_sustain(unit, entry, &"burning_aura", &"burning_aura")
+		elif not burning and bool(entry.get("burning_aura", false)): _stop_sustain(instance_id, &"burning_aura")
+		entry.burning_aura = burning
 		var area_clock: Vector2 = unit.active_buff_clock_visual()
 		var area_active: bool = area_clock.y > 0.0 and area_clock.x < area_clock.y and not state.dead and entry.audio.get("events", {}).has("persistent_area:sustain")
 		if area_active and not bool(entry.get("persistent_area", false)): _start_sustain(unit, entry, &"persistent_area", &"persistent_area")

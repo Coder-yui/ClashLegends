@@ -4,6 +4,7 @@ extends RefCounted
 ## 资格归 ActiveSkillRoster，施法协调归 ActiveSkillLifecycle；这里只执行权威效果。
 
 var dash_strikes: Array[DashStrikeState] = []
+var bounded_dashes: Array[BoundedDashState] = []
 var ornn_charges: Array[OrnnChargeState] = []
 var death_heal_zones: Array[Dictionary] = []
 var sacrifice_results: Array[Dictionary] = []
@@ -163,7 +164,7 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 		&"self_sacrifice":
 			source.sacrifice_without_reward()
 		&"effect_shield":
-			source.apply_effect_shield(float(skill.duration), float(skill.get("block_haste_duration", 0.0)), float(skill.get("block_attack_speed_multiplier", 1.0)), source.status_source("effect_shield"))
+			source.apply_effect_shield(float(skill.duration), float(skill.get("block_haste_duration", 0.0)), float(skill.get("block_attack_speed_multiplier", 1.0)), source.status_source("effect_shield"), float(skill.get("block_heal", 0.0)))
 			source.battle_context.notify_unit_audio_event(source, &"effect_shield:start", source.get_visual_screen_position())
 		&"counter_strike", &"aftershock", &"undying_rage":
 			pass # 效果在 Cast Start 原子生效，受控不取消已施加的独立状态。
@@ -180,6 +181,8 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 		&"terrain_charge":
 			ornn_charges.append(OrnnChargeState.new(source, skill))
 			_controller.notify_unit_audio_event(source, &"charge:start", source.global_position)
+		&"dash":
+			bounded_dashes.append(BoundedDashState.new(source, skill))
 		&"dash_strike":
 			dash_strikes.append(DashStrikeState.new(source, skill))
 		&"bleeding_execute":
@@ -269,7 +272,7 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 				float(skill.get("empowered_damage_multiplier", 1.0)),
 				float(skill.get("empowered_speed_multiplier", 1.0)),
 				int(skill.get("blind_charges", 0)),
-				{"stun_duration": float(skill.get("stun_duration", 0.0)), "hit_heal": float(skill.get("hit_heal", 0.0)), "strike_type": skill.get("strike_type", "basic_attack"), "cleave_damage": float(skill.get("cleave_damage", 0.0)), "cleave_radius": float(skill.get("cleave_radius", 0.0)), "cleave_heal_ratio": float(skill.get("heal_ratio", 0.0))}
+				{"splash_radius": float(skill.get("radius", 0.0)), "attack_count": int(skill.get("attack_count", 1)), "bounce_count": int(skill.get("bounce_count", 1)), "bounce_distance": float(skill.get("bounce_distance", 0.0)), "stun_duration": float(skill.get("stun_duration", 0.0)), "hit_heal": float(skill.get("hit_heal", 0.0)), "strike_type": skill.get("strike_type", "basic_attack"), "cleave_damage": float(skill.get("cleave_damage", 0.0)), "cleave_radius": float(skill.get("cleave_radius", 0.0)), "cleave_heal_ratio": float(skill.get("heal_ratio", 0.0))}
 			)
 		&"attack_lifesteal":
 			for target in _skill_target_units(source, skill):
@@ -922,6 +925,10 @@ func _tick_death_heal(dt: float) -> void:
 	death_heal_zones.assign(alive)
 
 func tick_effects(dt: float) -> void:
+	var active_dashes: Array[BoundedDashState] = []
+	for dash in bounded_dashes:
+		if dash.tick(dt): active_dashes.append(dash)
+	bounded_dashes = active_dashes
 	_tick_death_heal(dt)
 	_tick_sacrifices(dt)
 	var active_charges: Array[OrnnChargeState] = []
@@ -1077,6 +1084,10 @@ func clear() -> void:
 		var source = dash.source_ref.get_ref()
 		if is_instance_valid(source): dash._finish(source)
 	dash_strikes.clear()
+	for dash in bounded_dashes:
+		var source = dash.source_ref.get_ref()
+		if is_instance_valid(source): dash._finish(source)
+	bounded_dashes.clear()
 	_expiry_explosions.clear()
 	_resolved_results.clear()
 	_next_result_id = 1

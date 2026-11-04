@@ -26,6 +26,7 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 		var target := "友方单位" if StringName(stats.get("spell_kind", "")) == &"heal" else "敌方单位"
 		if String(stats.get("spell_kind", "")) == "pool_of_reflection": target = "友方地面 / 空中单位（不含建筑）"
 		if String(stats.get("spell_kind", "")) in ["stellar_convergence", "final_spark", "convergent_pulse", "severing_bolt", "mega_inferno_bomb"]: target = "敌方地面 / 空中 / 建筑"
+		if String(stats.get("spell_kind", "")) == "airdrop_bear": target = "敌方地面 / 空中 / 建筑；召唤己方提伯斯"
 		if String(stats.get("spell_kind", "")) == "void_summoning": target = "区域召唤己方虚空鱼"
 		if String(stats.get("spell_kind", "")) == "stasis": target = "双方单位（含空军、建筑卡）"
 		if String(stats.get("spell_kind", "")) == "final_spark":
@@ -45,6 +46,12 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 			return result
 		result.append({"name": "目标", "value": target})
 		result.append({"name": "作用范围", "value": "%s（%.2f格）" % [format_number(float(stats.get("radius", 0.0))), float(stats.get("radius", 0.0)) / TILE_SIZE]})
+		if String(stats.get("spell_kind", "")) == "airdrop_bear":
+			result.append({"name": "范围预警", "value": "%s秒" % format_number(float(stats.spell_windup))})
+			result.append({"name": "空中下落", "value": "%s秒（落地立即行动）" % format_number(float(stats.duration))})
+			result.append({"name": "落地伤害 / 塔伤害", "value": "%s / %s" % [format_number(float(stats.damage)), format_number(float(stats.damage) * float(stats.tower_damage_multiplier))]})
+			result.append({"name": "召唤", "value": "1只提伯斯（存活至被击败）"})
+			return result
 		if String(stats.get("spell_kind", "")) == "pool_of_reflection":
 			result.append({"name": "每秒护盾", "value": format_number(float(stats.shield_per_second))})
 			result.append({"name": "清泉 / 离圈护盾", "value": "%s秒 / %s秒" % [format_number(float(stats.duration)), format_number(float(stats.shield_duration))]})
@@ -122,7 +129,7 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 		var building_damage := float(stats.get("damage", 0.0))
 		var building_interval := float(stats.get("interval", 0.0))
 		if building_damage > 0.0:
-			result.append({"name": "单次伤害", "value": format_number(roundf(building_damage))})
+			result.append({"name": "每秒伤害" if bool(stats.get("is_continuous_attack", false)) else "单次伤害", "value": format_number(roundf(building_damage))})
 			if building_interval > 0.0:
 				result.append({"name": "每秒伤害", "value": format_number(roundf(building_damage / building_interval))})
 				result.append({"name": "攻击间隔", "value": "%s秒" % format_number(building_interval)})
@@ -149,10 +156,13 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 	result.append({"name": "数量", "value": quantity})
 	var damage := float(stats.get("damage", 0.0))
 	var continuous := bool(stats.get("is_continuous_attack", false))
+	var returning := float(stats.get("returning_attack_distance", 0.0)) > 0.0
 	var damage_multipliers: Array = stats.get("attack_damage_multipliers", [])
 	if not continuous and damage > 0.0:
-		if damage_multipliers.is_empty():
-			result.append({"name": "单次伤害", "value": format_number(roundf(damage))})
+		if int(stats.get("attack_pellets", 0)) > 0:
+			result.append({"name": "每枪伤害", "value": "%s × %d弹丸" % [format_number(damage), int(stats.attack_pellets)]})
+		elif damage_multipliers.is_empty():
+			result.append({"name": "单程伤害" if returning else "单次伤害", "value": format_number(roundf(damage))})
 		else:
 			var fist_names := ["左拳", "右拳", "左拳", "右拳"]
 			var fist_values: Array[String] = []
@@ -171,14 +181,16 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 			if combo_interval > 0.0:
 				dps = combo_damage / combo_interval
 	if damage > 0.0:
-		result.append({"name": "每秒伤害", "value": format_number(roundf(dps))})
+		result.append({"name": "每秒伤害", "value": "随往返耗时变化" if returning else "随命中弹数与换弹变化" if int(stats.get("magazine_size", 0)) > 0 else format_number(roundf(dps))})
 	if not continuous and interval > 0.0 and float(stats.get("sacrifice_damage", 0.0)) <= 0.0:
 		var display_interval := float(stats.get("attack_interval_display", interval))
-		result.append({"name": "攻击间隔", "value": "%s秒" % format_number(display_interval)})
+		result.append({"name": "攻击间隔", "value": "接回后再次起手" if returning else "%s秒" % format_number(display_interval)})
 	if float(stats.get("sacrifice_damage", 0.0)) > 0.0:
 		result.append({"name": "爆炸伤害", "value": format_number(float(stats.sacrifice_damage))})
 		result.append({"name": "起跳距离", "value": "%s（%.2f格）" % [format_number(float(stats.range)), float(stats.range) / TILE_SIZE]})
 		result.append({"name": "爆炸延迟", "value": "%s秒" % format_number(float(stats.sacrifice_delay))})
+	if int(stats.get("magazine_size", 0)) > 0:
+		result.append({"name": "弹匣", "value": "%d发 / 换弹%s秒" % [int(stats.magazine_size), format_number(float(stats.reload_duration))]})
 	if damage > 0.0 and stats.has("range"):
 		result.append({"name": "攻击距离", "value": "%s（%.2f格）" % [format_number(float(stats.get("range", 0.0))), float(stats.get("range", 0.0)) / TILE_SIZE]})
 	if stats.has("radius"):
@@ -269,10 +281,20 @@ static func passives(stats: Dictionary) -> Array[Dictionary]:
 		result.append({"name": "墨丘利变形", "description": "每%s秒到时打断普攻换形，硬控结束后补换形。部署与切换后的首击获得加成，具体规则见卡牌说明。" % format_number(float(stats.form_cycle_interval))})
 	if float(stats.get("charge_distance", 0.0)) > 0.0:
 		result.append({"name": "毁灭冲锋", "description": "连续自主移动%s格后移速提高%s%%，下一击从%s格内冲到目标面前并眩晕%s秒。蓄势时受阻停下、硬控及击退会重置；突进途中无碰撞，可穿河和建筑，硬控打断后恢复合法落点。" % [format_number(float(stats.charge_distance) / TILE_SIZE), format_number((float(stats.charge_speed_multiplier) - 1.0) * 100.0), format_number(float(stats.charge_attack_range) / TILE_SIZE), format_number(float(stats.charge_stun_duration))]})
+	if float(stats.get("returning_attack_distance", 0.0)) > 0.0:
+		result.append({"name": "回旋之刃", "description": "非追踪穿透回旋镖，去程飞行%s格后返回，每程对每个敌人造成%s伤害；接住后才能再次起手。" % [format_number(float(stats.returning_attack_distance) / TILE_SIZE), format_number(float(stats.damage))]})
+
 	if bool(stats.get("is_continuous_attack", false)):
-		result.append({"name": "龙息", "description": "持续造成每秒%s伤害，并对目标周围%s范围造成伤害。" % [format_number(float(stats.get("damage", 0.0))), format_number(float(stats.get("splash_radius", 0.0)))]})
+		var description := "持续对%s造成每秒%s伤害。" % ["范围内所有敌人" if bool(stats.get("attack_all_in_range", false)) else "当前目标", format_number(float(stats.get("damage", 0.0)))]
+		if float(stats.get("splash_radius", 0.0)) > 0.0: description += "对目标周围%s范围造成伤害。" % format_number(float(stats.splash_radius))
+		if float(stats.get("innate_lifesteal_ratio", 0.0)) > 0.0: description += "回复实际伤害的%s%%。" % format_number(float(stats.innate_lifesteal_ratio) * 100.0)
+		result.append({"name": "生命汲取" if float(stats.get("innate_lifesteal_ratio", 0.0)) > 0.0 else "持续攻击", "description": description})
+	elif bool(stats.get("ballistic_attack", false)):
+		result.append({"name": "定点投弹", "description": "出手时锁定落点，炸弹不追踪目标；落地时对周围%s格内的地面敌人造成伤害。" % format_number(float(stats.splash_radius) / TILE_SIZE)})
 	elif float(stats.get("splash_radius", 0.0)) > 0.0 and float(stats.get("damage", 0.0)) > 0.0:
 		result.append({"name": "范围炮击" if float(stats.get("projectile_speed", 0.0)) > 0.0 else "范围打击", "description": "普通攻击命中后，对目标周围%s（%.2f格）范围造成同等伤害。" % [format_number(float(stats.get("splash_radius", 0.0))), float(stats.get("splash_radius", 0.0)) / TILE_SIZE]})
+	if float(stats.get("structure_execute_ratio", 0.0)) > 0.0:
+		result.append({"name": "爆破专家", "description": "攻击后摧毁生命严格低于%s%%的建筑；防御塔与水晶为%s%%。" % [format_number(float(stats.structure_execute_ratio)*100), format_number(float(stats.get("tower_execute_ratio",0.0))*100)]})
 	if stats.has("pre_deploy_sweep_damage"):
 		result.append({
 			"name": "登场冲击波",

@@ -56,6 +56,13 @@ var terrain_traversal := TerrainTraversalState.new()
 var skill_dash_active := false
 var skill_dash_moved_tick := -1
 var attack_timeline := AttackTimeline.new()
+var magazine := MagazineState.new()
+var net_magazine := Vector3.ZERO
+
+func magazine_visual_state() -> Vector3:
+	return net_magazine if _in_client_mode() else magazine.snapshot()
+
+var returning_projectile_id := -1
 var control := ControlState.new()
 var net_id := -1
 var battle_context: BattleContext
@@ -86,6 +93,7 @@ var form_refresh_on_kill := false
 var on_hit_max_health_ratio := 0.0
 var on_hit_tower_damage := 0.0
 var _lifespan_decay_remainder := 0.0
+var _continuous_lifesteal_remainder := 0.0
 var _continuous_damage_stream := BattleNumbers.DamageStream.new()
 var damage := 10.0
 ## 可移动持续范围施法按中心半径接近目标；只在权威施法窗口内覆盖导航射程。
@@ -218,6 +226,7 @@ var skill_resource_decay_delay := 0.0
 var skill_resource_decay_rate := 0.0
 var skill_resource_full_color := SKILL_RESOURCE_UNFILLED_COLOR
 var skill_resource_enabled := false
+var burning_aura := false # 权威开启；客户端只消费快照，用于跟随火圈。
 var skill_resource_passive := false
 var skill_resource_duration := 0.0
 var skill_resource_time_left := 0.0
@@ -296,6 +305,7 @@ var active_buff_ignores_attack_speed_slow: bool:
 ## 强化下一次普攻不另起攻击计时，只在原本的下一次命中节点消费。
 var empowered_attack_effects: Dictionary = {}
 var empowered_attack_ready := false
+var empowered_attacks_left := 0
 var empowered_attack_damage_multiplier := 1.0
 var empowered_attack_speed_multiplier := 1.0
 var empowered_attack_blind_charges := 0
@@ -463,6 +473,7 @@ var net_attacking_structure := false
 var net_has_continuous_target := false
 var net_continuous_target_pos := Vector2.ZERO
 var net_continuous_target_air_id := -1
+var net_continuous_targets := PackedVector3Array()
 ## 仅由表现代理切换：进入吐息循环后显示，进入动画和退出攻击时隐藏。
 var continuous_beam_visible := false
 var _visual_action_serial := 0
@@ -491,6 +502,7 @@ func set_battle_context(context: BattleContext) -> void:
 	battle_context = context
 
 func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
+	magazine.setup(stats)
 	_base_form_stats = stats.duplicate(true)
 	elixir_production.reset(float(stats.get("elixir_interval", 0.0)))
 	_elixir_started = false
@@ -517,6 +529,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	on_hit_tower_damage = BattleNumbers.quantity(float(stats.get("on_hit_tower_damage", 0.0)))
 	_lifespan_decay_remainder = 0.0
 	_continuous_damage_stream = BattleNumbers.DamageStream.new()
+	_continuous_lifesteal_remainder = 0.0
 	damage = BattleNumbers.quantity(stats.damage)
 	attack_range = stats.range
 	if not stealth.changed.is_connected(_on_stealth_changed):
@@ -777,7 +790,7 @@ func active_skill_start_ready_visual(skill: Dictionary) -> bool:
 func can_start_active_skill(skill: Dictionary) -> bool:
 	if auto_pull.active(): return false
 	if not has_required_skill_resource(skill): return false
-	if control.hard.remaining(&"root") > 0.0 and String(skill.get("kind", "")) in ["dash_strike", "movement_strike", "terrain_charge"]: return false
+	if control.hard.remaining(&"root") > 0.0 and String(skill.get("kind", "")) in ["dash", "dash_strike", "movement_strike", "terrain_charge"]: return false
 	if StringName(skill.get("kind", "")) == &"movement_strike" and movement_strike.is_armed(): return false
 	if StringName(skill.get("kind", "")) == &"undying_rage":
 		return hp > 0.0 and is_deployed() and not CombatInteraction.in_stasis(self) and not death_form.used
@@ -798,16 +811,18 @@ func try_dodge_basic_attack() -> bool:
 func apply_damage_reduction(duration: float, reduction: float, expiry_skill: Dictionary, source: StringName) -> void:
 	buffs.apply(&"damage_reduction", source, duration, {"reduction": reduction, "expiry_skill": expiry_skill})
 
-func apply_effect_shield(duration: float, haste_duration: float, attack_speed: float, source: StringName) -> void:
-	buffs.apply(&"effect_shield", source, duration, {"haste_duration": haste_duration, "attack_speed": attack_speed})
+func apply_effect_shield(duration: float, haste_duration: float, attack_speed: float, source: StringName, block_heal: float = 0.0) -> void:
+	buffs.apply(&"effect_shield", source, duration, {"haste_duration": haste_duration, "attack_speed": attack_speed, "block_heal": block_heal})
 
 ## Delivery判准入后立即预留一次盾；奖励入口自行延迟至提交后。
 func consume_effect_shield() -> bool:
 	if buffs.remaining(&"effect_shield") <= 0.0: return false
 	var duration := buffs.strongest(&"effect_shield", &"haste_duration", 0.0)
 	var speed := buffs.strongest(&"effect_shield", &"attack_speed", 1.0)
+	var block_heal := buffs.strongest(&"effect_shield", &"block_heal", 0.0)
 	buffs.clear_family(&"effect_shield")
 	if duration > 0.0 and speed > 1.0: grant_effect_shield_reward(duration, speed)
+	if block_heal > 0.0: heal(block_heal)
 	if battle_context != null: battle_context.notify_unit_audio_event(self, &"effect_shield:block", global_position)
 	return true
 
@@ -1207,6 +1222,7 @@ func prepare_empowered_attack(damage_multiplier: float, speed_multiplier: float 
 	cancel_basic_attack(ActionCancellation.EMPOWERED_RESET)
 	empowered_attack_effects = effects.duplicate(true)
 	empowered_attack_ready = true
+	empowered_attacks_left = int(effects.get("attack_count", 1))
 	empowered_attack_damage_multiplier = maxf(damage_multiplier, 0.0)
 	# 保留既有移动加速规则：攻击中使用不额外获得追击加速。
 	empowered_attack_speed_multiplier = 1.0 if was_attacking else maxf(speed_multiplier, 1.0)
@@ -1460,10 +1476,13 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool) -> void:
 		return
 	var old_max_hp := max_hp
 	var old_body_radius := body_radius
+	var was_building := is_building
 	var was_air := is_air
 	var next_max := BattleNumbers.quantity(float(next_stats.get("hp", max_hp))) + growth_health_bonus + timed_growth_stats.x
 	_change_max_health(next_max, maxf(next_max - old_max_hp, 0.0) if grant_max_hp_increase else 0.0, true)
 	_load_form_attributes(next_stats)
+	if was_building != is_building and battle_context != null and not _in_client_mode():
+		battle_context.refresh_building_body_obstacle(self)
 	if not attack_passive_multipliers.is_empty():
 		_attack_hit_index = 0
 		_attack_swing_count = 0
@@ -1487,6 +1506,11 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool) -> void:
 
 ## 仅装载定义属性，不操作生命、动作代次、落点或奖励。
 func _load_form_attributes(next_stats: Dictionary) -> void:
+	is_building = bool(next_stats.get("is_building", is_building))
+	continuous_attack = bool(next_stats.get("is_continuous_attack", continuous_attack))
+	if next_stats.has("is_building"):
+		lifespan = float(next_stats.get("lifespan", 0.0))
+		lifespan_hp_decay = bool(next_stats.get("lifespan_hp_decay", false))
 	damage = BattleNumbers.quantity(float(next_stats.get("damage", damage)))
 	attack_passive_multipliers = next_stats.get("attack_passive_multipliers", []).duplicate()
 	attack_lifesteal_ratios = next_stats.get("attack_lifesteal_ratios", []).duplicate()
@@ -1606,6 +1630,34 @@ func get_continuous_beam_endpoint_position() -> Vector2:
 		return target_screen
 	var fallback := Vector2(0.0, -air_target.visual_radius)
 	return air_target.get_visual_screen_position() + air_target.get_meta("projectile_model_offset", fallback)
+
+## 多目标持续攻击的只读表现集合；客户端只使用完整快照中的目标身份与位置。
+func continuous_targets_snapshot() -> PackedVector3Array:
+	if _in_client_mode(): return net_continuous_targets
+	var result := PackedVector3Array()
+	if not has_continuous_visual_target() or not bool(PresentationConfig.for_form(_base_form_stats, form_index).get("attack_all_in_range", false)): return result
+	for candidate in get_tree().get_nodes_in_group("combatants"):
+		if candidate is Node2D and _target_is_attackable(candidate) and _target_gap(candidate) <= attack_range:
+			result.append(Vector3(candidate.global_position.x, candidate.global_position.y, candidate.net_id if candidate is Unit else -1))
+	return result
+
+func continuous_target_endpoints() -> PackedVector2Array:
+	var points := PackedVector2Array()
+	if not _in_client_mode():
+		for target in get_tree().get_nodes_in_group("combatants"):
+			if target is Node2D and _target_is_attackable(target) and _target_gap(target) <= attack_range:
+				points.append(target.get_visual_screen_position() + target.get_meta("projectile_model_offset", Vector2.ZERO) if target is Unit else target.global_position)
+		return points
+	var bodies := {}
+	for body in get_tree().get_nodes_in_group("combatants"):
+		if body is Unit and body.net_id >= 0: bodies[body.net_id] = body
+	for target in continuous_targets_snapshot():
+		var point := Vector2(target.x, target.y)
+		var body: Unit = bodies.get(int(target.z))
+		if is_instance_valid(body):
+			point = body.get_visual_screen_position() + body.get_meta("projectile_model_offset", Vector2.ZERO)
+		points.append(point)
+	return points
 
 func set_continuous_beam_visible(visible: bool) -> void:
 	if continuous_beam_visible == visible:
@@ -1731,6 +1783,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 			queue_redraw()
 		cancel_charge()
 		return
+	magazine.tick(self, dt)
 	_try_proximity_reveal()
 	if not can_attack and float(_base_form_stats.get("sacrifice_damage", 0.0)) <= 0.0 and float(_base_form_stats.get("structure_mend_per_second", 0.0)) <= 0.0:
 		_target = null
@@ -1783,6 +1836,14 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 			_structure_mend_remainder = 0.0
 			_chase(dt)
 		return
+	if magazine.capacity > 0 and magazine.rounds == 0:
+		magazine.start(self)
+		_update_target(false)
+		_attacking = false
+		attack_timeline.cancel(true)
+		_attack_visual_pending = true
+		if not is_instance_valid(_target) or _target_gap(_target) > attack_range: _chase(dt)
+		return
 	attack_timeline.tick_cooldown(dt)
 	# 默认命中后必须完整收招；配置允许的连招段结束且没有圈内目标时可提前转走。
 	# 冻结会在上方提前 return，因此同样会暂停后摇计时。
@@ -1811,6 +1872,12 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 			_attacking = true
 			if attack_timeline.recovery > 0.0:
 				return
+	if returning_projectile_id >= 0:
+		_attacking = false
+		attack_timeline.cancel(true)
+		_attack_visual_pending = true
+		_update_target(false)
+		return
 	if burst_finishing: _end_attack_burst()
 	# 已准备的突进必须由通用突进状态消费；后摇刚结束也不能落回普通攻击。
 	if movement_strike.is_armed():
@@ -1835,6 +1902,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 					attack_timeline.restart_visual()
 			if not committed_attack and close_attack_range > 0.0:
 				close_attack = _target_gap(_target) <= close_attack_range
+			if magazine.capacity > 0: magazine.remaining = 0.0
 			if not _attacking:
 				# 行军已清除旧间隔；重新进入正常射程从本刀前摇开始。
 				# 原地转火等未进入行军的路径仍保留已有攻击节奏。
@@ -1848,6 +1916,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 	_cancel_attack_and_chase(dt)
 
 func _cancel_attack_and_chase(dt: float) -> void:
+	magazine.start(self)
 	_attacking = false
 	_continuous_visual_target_id = 0
 	attack_timeline.cancel(true)
@@ -2556,6 +2625,7 @@ func _recompute_path_to(goal: Vector2) -> void:
 		_path_index = 1
 
 func _attack(dt: float) -> void:
+	if returning_projectile_id >= 0: return
 	if float(_base_form_stats.get("fixed_attack_length", 0.0)) > 0.0:
 		_attack_fixed_area(dt)
 		return
@@ -2620,11 +2690,13 @@ func _attack(dt: float) -> void:
 			if empowered_attack_blind_charges > 0:
 				attack_effects["blind_charges"] = empowered_attack_blind_charges
 			attack_effects.merge(empowered_attack_effects)
-			empowered_attack_effects = {}
-			empowered_attack_ready = false
-			empowered_attack_damage_multiplier = 1.0
-			empowered_attack_speed_multiplier = 1.0
-			empowered_attack_blind_charges = 0
+			empowered_attacks_left = maxi(empowered_attacks_left - 1, 0)
+			empowered_attack_ready = empowered_attacks_left > 0
+			if not empowered_attack_ready:
+				empowered_attack_effects = {}
+				empowered_attack_damage_multiplier = 1.0
+				empowered_attack_speed_multiplier = 1.0
+				empowered_attack_blind_charges = 0
 		# 挥击序号与表现层攻击动画序号同步推进，供命中回血按三段循环取模。
 		_attack_swing_count += 1
 		record_combat_activity()
@@ -2638,6 +2710,7 @@ func _attack(dt: float) -> void:
 		var attack_form_index := form_index
 		if (projectile_speed <= 0.0 or close_attack) and battle_context != null and battle_context.damage_batch().collecting:
 			attack_effects["delivery_callback"] = _settle_melee_delivery.bind(form_change_serial, _attack_visual_serial, true)
+		magazine.consume(self)
 		var completed := _perform_attack_strike(_target, hit_damage, attack_effects)
 		if burst_attacks_left > 0:
 			burst_attacks_left -= 1
@@ -2813,14 +2886,21 @@ func _deal_attack_damage(amount: float, effects: Dictionary = {}) -> void:
 ## 龙王等持续普攻与主动持续伤害共用 BattleContext 的权威伤害脉冲结算。
 ## 持续攻击由 _attack(dt) 以 damage*dt 驱动，范围读取卡牌配置并保留普攻击中回调。
 func _deal_continuous_damage(amount: float) -> void:
-	if _target == null or not is_instance_valid(_target):
-		return
-	if battle_context != null:
-		battle_context.apply_damage_pulse(self, _target, amount, splash_radius, global_position, true, form_index, {"continuous_damage": true})
-		return
-	var result := _continuous_damage_stream.hit(_target, amount, self, team, global_position)
-	if result.landed:
-		on_attack_landed(form_index, 0.0)
+	var targets: Array[Node2D] = []
+	var definition := PresentationConfig.for_form(_base_form_stats, form_index)
+	if bool(definition.get("attack_all_in_range", false)):
+		for candidate in get_tree().get_nodes_in_group("combatants"):
+			if candidate is Node2D and _target_is_attackable(candidate) and _target_gap(candidate) <= attack_range:
+				targets.append(candidate)
+	elif is_instance_valid(_target):
+		targets.append(_target)
+	for target in targets:
+		if battle_context != null:
+			battle_context.apply_damage_pulse(self, target, amount, splash_radius, global_position, true, form_index, {"continuous_damage": true})
+		else:
+			var result := _continuous_damage_stream.hit(target, amount, self, team, global_position)
+			if result.landed:
+				on_attack_landed(form_index, float(result.health_lost))
 
 func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary = {}) -> bool:
 	effects = effects.duplicate(true)
@@ -3047,11 +3127,19 @@ func _try_heal_on_hit(submitted_swing: int = -1) -> void:
 
 func _try_attack_lifesteal(landed_damage: float, cycle_ratio: float = 0.0) -> void:
 	if CombatInteraction.in_stasis(self): return
-	var ratio := attack_lifesteal_ratio + cycle_ratio + buffs.strongest(&"timed_lifesteal", &"ratio", 0.0)
+	var ratio := float(PresentationConfig.for_form(_base_form_stats, form_index).get("innate_lifesteal_ratio", 0.0)) + attack_lifesteal_ratio + cycle_ratio + buffs.strongest(&"timed_lifesteal", &"ratio", 0.0)
 	if ratio <= 0.0 or landed_damage <= 0.0:
 		return
 	var health_cap := BattleNumbers.quantity(max_hp * attack_lifesteal_max_health_ratio)
-	_receive_health_gain(landed_damage * ratio, health_cap, false)
+	var healing := landed_damage * ratio
+	if continuous_attack:
+		if grievous_wounds or hp >= health_cap:
+			_continuous_lifesteal_remainder = 0.0
+			return
+		_continuous_lifesteal_remainder += healing
+		healing = BattleNumbers.quantity(_continuous_lifesteal_remainder)
+		_continuous_lifesteal_remainder -= healing
+	_receive_health_gain(healing, health_cap, false)
 
 func cancel_skill_cast(recover_position: bool = true) -> void:
 	auto_pull.cancel()
@@ -3950,3 +4038,6 @@ func _draw_grievous_wounds(center: Vector2) -> void:
 		draw_colored_polygon(petal, Color(0.16, 0.18, 0.19))
 		petal.append(petal[0])
 		draw_polyline(petal, Color(0.10, 0.11, 0.12), 0.65, true)
+
+func returning_attack_distance() -> float:
+	return float(_base_form_stats.get("returning_attack_distance", 0.0))

@@ -33,8 +33,8 @@ func run(harness: SceneTree) -> void:
 	var terminal_not_before := 85
 	var terminal_override := OS.get_environment("CLASH_TEST_TERMINAL_TICK")
 	if not terminal_override.is_empty():
-		if not terminal_override.is_valid_int() or int(terminal_override) < 85 or int(terminal_override) > 160:
-			push_error("CLASH_TEST_TERMINAL_TICK must be an integer in 85..160")
+		if not terminal_override.is_valid_int() or int(terminal_override) < 85 or int(terminal_override) > 300:
+			push_error("CLASH_TEST_TERMINAL_TICK must be an integer in 85..300")
 			main.free()
 			harness.quit(1)
 			return
@@ -44,6 +44,16 @@ func run(harness: SceneTree) -> void:
 		main._audio_manager.cue_played.connect(func(card, cue, _pos):
 			if card == "match" and cue in [&"victory", &"defeat"]: result_cues.append(cue))
 	var bomb_case = preload("res://tests/fixtures/mega_inferno_bomb_network_case.gd").new() if OS.get_environment("CLASH_TEST_MEGA_INFERNO_BOMB") == "1" else null
+	var ziggs_case = preload("res://tests/fixtures/ziggs_network_case.gd").new() if OS.get_environment("CLASH_TEST_ZIGGS") == "1" else null
+	if ziggs_case != null: terminal_not_before = maxi(terminal_not_before, 240)
+	var bear_case = preload("res://tests/fixtures/airdrop_bear_network_case.gd").new() if OS.get_environment("CLASH_TEST_AIRDROP_BEAR") == "1" else null
+	if bear_case != null: terminal_not_before = maxi(terminal_not_before, 150)
+	var graves_case = preload("res://tests/fixtures/graves_network_case.gd").new() if OS.get_environment("CLASH_TEST_GRAVES") == "1" else null
+	if graves_case != null: terminal_not_before = maxi(terminal_not_before, 145)
+	var sivir_case = preload("res://tests/fixtures/sivir_network_case.gd").new() if OS.get_environment("CLASH_TEST_SIVIR") == "1" else null
+	if sivir_case != null: terminal_not_before = maxi(terminal_not_before, 145)
+	var scarecrow_case = preload("res://tests/fixtures/scarecrow_network_case.gd").new() if OS.get_environment("CLASH_TEST_SCARECROW") == "1" else null
+	if scarecrow_case != null: terminal_not_before = maxi(terminal_not_before, 145)
 	var thorn_case = preload("res://tests/fixtures/thorn_spitter_network_case.gd").new() if OS.get_environment("CLASH_TEST_THORN_SPITTER") == "1" else null
 	var vine_case = preload("res://tests/fixtures/vine_lasher_network_case.gd").new() if OS.get_environment("CLASH_TEST_VINE_LASHER") == "1" else null
 	if vine_case != null: terminal_not_before = maxi(terminal_not_before, 225)
@@ -87,6 +97,11 @@ func run(harness: SceneTree) -> void:
 	while Time.get_ticks_msec() - start < 20000:
 		await harness.process_frame
 		if bomb_case != null: bomb_case.poll(main)
+		if ziggs_case != null: ziggs_case.poll(main)
+		if bear_case != null: bear_case.poll(main)
+		if graves_case != null: graves_case.poll(main)
+		if sivir_case != null: sivir_case.poll(main)
+		if scarecrow_case != null: scarecrow_case.poll(main)
 		if thorn_case != null: thorn_case.poll(main)
 		if vine_case != null: vine_case.poll(main)
 		if evolution_case != null: evolution_case.poll(main)
@@ -291,6 +306,21 @@ func run(harness: SceneTree) -> void:
 		if vine_case != null:
 			result["vine_lasher"] = vine_case.result()
 			result["passed"] = result.passed and result.vine_lasher.passed
+		if ziggs_case != null:
+			result["ziggs"] = ziggs_case.result()
+			result["passed"] = result.passed and result.ziggs.passed
+		if bear_case != null:
+			result["airdrop_bear"] = bear_case.result()
+			result["passed"] = result.passed and result.airdrop_bear.passed
+		if graves_case != null:
+			result["graves"] = graves_case.result()
+			result["passed"] = result.passed and result.graves.passed
+		if sivir_case != null:
+			result["sivir"] = sivir_case.result()
+			result["passed"] = result.passed and result.sivir.passed
+		if scarecrow_case != null:
+			result["scarecrow"] = scarecrow_case.result()
+			result["passed"] = result.passed and result.scarecrow.passed
 		if thorn_case != null:
 			result["thorn_spitter"] = thorn_case.result()
 			result["passed"] = result.passed and result.thorn_spitter.passed

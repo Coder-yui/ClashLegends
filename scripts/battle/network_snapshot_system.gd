@@ -107,7 +107,10 @@ const U_ACTIVE_SKILL_START_READY := 69
 const U_UNTARGETABLE := 70
 const U_DORMANT := 71
 const U_TIMED_GROWTH := 72
-const UNIT_PAYLOAD_SIZE := 73
+const U_CONTINUOUS_TARGETS := 73
+const U_MAGAZINE := 74
+const U_BURNING_AURA := 75
+const UNIT_PAYLOAD_SIZE := 76
 
 const P_ID := 0
 const P_X := 1
@@ -306,6 +309,13 @@ func decode_validated(snapshot_bytes: PackedByteArray) -> DecodedSnapshot:
 		if not payload[U_ACTION_CLOCK] is Vector2: return null
 		if not (payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is int or payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is float): return null
 		if not is_finite(float(payload[U_TEAM_ATTACK_BOOST_MULTIPLIER])) or float(payload[U_TEAM_ATTACK_BOOST_MULTIPLIER]) < 1.0: return null
+		if not payload[U_MAGAZINE] is Vector3: return null
+		var magazine: Vector3 = payload[U_MAGAZINE]
+		if not magazine.is_finite() or magazine.x < 0.0 or magazine.y < 0.0 or magazine.z < 0.0: return null
+		if magazine.x != floorf(magazine.x) or magazine.z != floorf(magazine.z): return null
+		if not payload[U_CONTINUOUS_TARGETS] is PackedVector3Array or payload[U_CONTINUOUS_TARGETS].size() > 2048: return null
+		for target in payload[U_CONTINUOUS_TARGETS]:
+			if not target.is_finite() or target.z < -1.0 or target.z != floorf(target.z): return null
 		if not payload[U_TIMED_GROWTH] is Vector2: return null
 		var timed_growth: Vector2 = payload[U_TIMED_GROWTH]
 		if not is_finite(timed_growth.x) or not is_finite(timed_growth.y) or timed_growth.x < 0.0 or timed_growth.y < 1.0: return null
@@ -321,6 +331,7 @@ func decode_validated(snapshot_bytes: PackedByteArray) -> DecodedSnapshot:
 		if not payload[U_GRIEVOUS_WOUNDS] is bool: return null
 		if not payload[U_ACTIVE_SKILL_START_READY] is bool: return null
 		if not payload[U_UNTARGETABLE] is bool: return null
+		if not payload[U_BURNING_AURA] is bool: return null
 		if not payload[U_DORMANT] is bool: return null
 		if not _finite_number(payload[U_SUNLIGHT]) or float(payload[U_SUNLIGHT]) < 0.0: return null
 		if not payload[U_FREE_RECAST] is bool or not payload[U_BLEED_STACKS] is int or int(payload[U_BLEED_STACKS]) < 0 or not (payload[U_BLOOD_RAGE] is float or payload[U_BLOOD_RAGE] is int) or not is_finite(float(payload[U_BLOOD_RAGE])) or float(payload[U_BLOOD_RAGE]) < 0.0: return null
@@ -331,6 +342,8 @@ func decode_validated(snapshot_bytes: PackedByteArray) -> DecodedSnapshot:
 			return null
 		if not payload[U_ID] is int or ids.has(payload[U_ID]) or not payload[U_SPAWN] is Dictionary or not _valid_spawn(payload[U_SPAWN]):
 			return null
+		var magazine_card: Dictionary = CardDB.get_card(payload[U_SPAWN].args[0])
+		if magazine.x > int(magazine_card.get("magazine_size", 0)) or magazine.y > float(magazine_card.get("reload_duration", 0.0)) + 0.001: return null
 		if int(payload[U_SPAWN].args[3]) != int(payload[U_ID]) or int(payload[U_SPAWN].birth_tick) > int(decoded[S_SERVER_TICK]) or int(payload[U_SPAWN].birth_revision) > int(decoded[S_LIFECYCLE_REVISION]):
 			return null
 		ids[payload[U_ID]] = true
@@ -452,6 +465,8 @@ func _apply_units(units_data: Array) -> bool:
 		u.net_has_continuous_target = int(d[U_HAS_CONTINUOUS_TARGET]) == 1
 		u.net_continuous_target_pos = Vector2(d[U_CONTINUOUS_X], d[U_CONTINUOUS_Y])
 		u.net_continuous_target_air_id = int(d[U_CONTINUOUS_TARGET_AIR_ID])
+		u.net_continuous_targets = d[U_CONTINUOUS_TARGETS]
+		u.net_magazine = d[U_MAGAZINE]
 		if _controller._auto_test and not _controller._auto_continuous_target_seen and u.net_has_continuous_target:
 			_controller._auto_continuous_target_seen = true
 			print("[测试] 客户端已收到持续吐息目标端点")
@@ -502,6 +517,7 @@ func _apply_units(units_data: Array) -> bool:
 		u.net_grievous_wounds = d[U_GRIEVOUS_WOUNDS]
 		u.net_untargetable = d[U_UNTARGETABLE]
 		u.dormant = d[U_DORMANT]
+		u.burning_aura = d[U_BURNING_AURA]
 		u.net_sunlight = float(d[U_SUNLIGHT])
 		u.net_buff_visual_clock = d[U_BUFF_VISUAL_CLOCK]
 		u.net_hit_haste_full = d[U_HIT_HASTE_FULL]
@@ -740,7 +756,7 @@ func _unit_snapshot_payload(id: int, u: Unit, birth: Dictionary, has_continuous_
 		u.lifesteal_state_visual(), u.active_buff_clock_visual(),
 		u.restoration_shield_state_visual(),
 		u.blind_visual(), u.teleport_serial, u.deployment_shield_active_visual(), int(u.is_charged_visual()), u.sunlight_visual(), u.pool_shield_visual(), u.grievous_wounds_visual(),
-		_active_skill_start_ready(u), u.untargetable_visual(), u.dormant, u.timed_growth_stats,
+		_active_skill_start_ready(u), u.untargetable_visual(), u.dormant, u.timed_growth_stats, u.continuous_targets_snapshot(), u.magazine_visual_state(), u.burning_aura,
 	]
 
 ## 起手结果仅用于UI锁；不包含付款、冷却或次数，不赋予客户端结算能力。

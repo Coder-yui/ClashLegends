@@ -26,6 +26,7 @@
 
 | 定义 / 正文（含形态） | 当前机制与边界重点 | 动画 / 音频 |
 | --- | --- | --- |
+| `sivir` · [战争女神](../units/sivir.md) | 往返穿透远程单位 | [动画](../units/animations/sivir.md) / [音频](../units/audio/sivir.md) / [特效](../units/effects/sivir.md) |
 | `powder_keg` · [火药桶](../units/powder_keg.md) | 死亡爆炸、单次击杀金币、主动伤后斩杀 | [动画](../units/animations/powder_keg.md) · [声音](../units/audio/powder_keg.md) · [特效](../units/effects/powder_keg.md) |
 | `jayce` · [未来守护者](../units/jayce.md) | 周期换形、首击主目标附伤与3次攻速强化 | [动画](../units/animations/jayce.md) · [声音](../units/audio/jayce.md) · [特效](../units/effects/jayce.md) |
 | `jayce`覆盖形态 · [战锤](../units/jayce_hammer.md) | 主目标百分比首击与地面溅射 | 复用杰斯素材入口 |
@@ -164,3 +165,12 @@
 | `severing_bolt` · [攢聚雷](../units/severing_bolt.md) | 3费，65像素范围，单体/硬控取高倍率 | [动画](../units/animations/severing_bolt.md) · [声音](../units/audio/severing_bolt.md) · [特效](../units/effects/severing_bolt.md) |
 
 | `pool_of_reflection` · [庇护清泉](../units/pool_of_reflection.md) | 3费，110像素范围，3秒持续补盾 | [动画](../units/animations/pool_of_reflection.md) · [声音](../units/audio/pool_of_reflection.md) · [特效](../units/effects/pool_of_reflection.md) |
+
+| `scarecrow` · [草间人](../units/scarecrow.md) | 范围持续吸血、保血变形 | [动作](../units/animations/scarecrow.md) · [声音](../units/audio/scarecrow.md) |
+| `fiddlesticks` · [远古恐惧](../units/fiddlesticks.md) | 可移动衍生形态 | [动作](../units/animations/fiddlesticks.md) · [声音](../units/audio/fiddlesticks.md) |
+
+| `ziggs` · [爆破鬼才](../units/ziggs.md) | 固定落点投弹、弹跳与建筑斩杀 | [动作](../units/animations/ziggs.md) · [声音](../units/audio/ziggs.md) · [特效](../units/effects/ziggs.md) |
+| `graves` · [法外狂徒](../units/graves.md) | 双弹匣霰弹单位 | [动作](../units/animations/graves.md) · [声音](../units/audio/graves.md) · [特效](../units/effects/graves.md) |
+
+| `airdrop_bear` / [空投熊](../units/airdrop_bear.md) | 己方半场、延迟落地、衍生召唤、强化眩晕与常驻灼烧 | [特效](../units/effects/airdrop_bear.md) / [音频](../units/audio/airdrop_bear.md) |
+| `tibbers` / [提伯斯](../units/tibbers.md) | 衍生近战、无寿命、用户摄影卡面 | [动画](../units/animations/tibbers.md) / [音频](../units/audio/tibbers.md) |

@@ -32,6 +32,7 @@ var _model_resources := ModelVisualResources.new()
 var _last_buff_visible := false
 var _last_stealth_pose := false
 var _last_dormant_pose := false
+var _reloading_pose := false
 
 var _state: UnitPresentationState
 var _current_clip_speed := 1.0
@@ -281,7 +282,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_projectile_anchor = preload("res://scripts/presentation/projectile_model_anchor.gd").create(_model_root)
 	_configure_attack_launch_anchors()
 	_source.set_meta("projectile_model_anchor", weakref(_projectile_anchor))
-	_source.set_meta("continuous_beam_native", _model_root.has_method("advance_continuous_attack_visual"))
+	_source.set_meta("continuous_beam_native", (_model_root.has_method("advance_continuous_attack_visual") or _model_root.has_method("advance_continuous_multi_attack_visual")))
 	_source.has_model_deployment_effect = _model_root.has_method("advance_deployment_visual")
 	_recreate_team_ring()
 	if not reuse:
@@ -452,6 +453,22 @@ func _sync_visual(force: bool, delta: float) -> void:
 	# 播放器已停止时，必须主动交还给基础状态，不能把最后一帧出拳姿态留住。
 	if _playing_visual_action and _source.get_visual_action_time_left() <= 0.0 and not _animation_player.is_playing():
 		_finish_visual_action()
+	var reload_state := _source.magazine_visual_state()
+	if reload_state.y > 0.0 and _animation_names.has("reload") and not _playing_visual_action and not _state.stunned and not _state.frozen:
+		_playing_attack = false
+		_holding_attack_pose = false
+		_attack_hit_pending = false
+		_attack_recover_pending = false
+		var clip := StringName(_animation_names.get("reload_move", _animation_names.reload) if _source.get_locomotion_visual_state_code() == 2 else _animation_names.reload)
+		var duration := float(_source._base_form_stats.get("reload_duration", 2.0))
+		if not _reloading_pose or _animation_player.assigned_animation != clip: _play_clip(clip, &"locomotion", 1.0, 0.08)
+		_reloading_pose = true
+		_animation_player.speed_scale = 0.0
+		_animation_player.seek(clampf(1.0 - reload_state.y / duration, 0.0, 1.0) * _animation_player.get_animation(clip).length, true)
+		return
+	if _reloading_pose:
+		_reloading_pose = false
+		force = true
 	_update_attack_stance(delta)
 	var state := _source.get_visual_state_code()
 	var locomotion_state := _source.get_locomotion_visual_state_code()
@@ -1844,7 +1861,9 @@ func _start_death_followup() -> bool:
 func _update_continuous_beam_origin(delta: float = 0.0) -> void:
 	if _model_root == null or _camera == null:
 		return
-	if _model_root.has_method("advance_continuous_attack_visual"):
+	if _model_root.has_method("advance_continuous_multi_attack_visual"):
+		_model_root.call("advance_continuous_multi_attack_visual", _source.continuous_target_endpoints() if _source.continuous_beam_visible and _source.has_continuous_visual_target() else PackedVector2Array(), _camera, delta)
+	elif _model_root.has_method("advance_continuous_attack_visual"):
 		_model_root.call("advance_continuous_attack_visual", _source.continuous_beam_visible and _source.has_continuous_visual_target(), _source.get_continuous_beam_endpoint_position(), _camera, delta)
 	var mouth_world: Vector3
 	if _model_root.has_method("get_beam_origin_world"):
@@ -2001,6 +2020,8 @@ func _sync_control_override() -> bool:
 		_sync_visual_action_while_controlled()
 	# 眩晕保留已开始的技能/部署/转换；普通动作由取消事件切到 Idle。
 	if idle_control and not _playing_visual_action and not _playing_deploy_sequence and _source.get_locomotion_visual_state_code() != 0:
+		# 此分支提前返回，不经过普通状态同步；不能把上一个普攻倍率带入待机。
+		_animation_player.speed_scale = 1.0
 		if _current_state != 1 or (_buff_idle_suppressed() and _animation_player.assigned_animation != _first_valid_animation("idle")):
 			_current_state = 1
 			_play_state(1, 0.1)
@@ -2068,6 +2089,8 @@ func _update_active_buff_visual(delta: float) -> void:
 	if _active_buff_visual.follow_model_anchor and is_instance_valid(_projectile_anchor):
 		_active_buff_visual.global_position = _projectile_anchor.global_position
 	var status_active := is_instance_valid(_source) and _state.active_buff
+	if _active_buff_visual.status_source == "empowered_attack":
+		status_active = is_instance_valid(_source) and _source.is_empowered_attack_ready_visual()
 	if _active_buff_visual.status_source == "blood_rage":
 		status_active = is_instance_valid(_source) and _source.blood_rage_time_left_visual() > 0.0
 	if _active_buff_visual.status_source == "sacrifice_empowerment":
