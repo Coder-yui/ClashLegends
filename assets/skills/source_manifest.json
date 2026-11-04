@@ -1020,6 +1020,15 @@
     "sha256": "906f25ca2e1c75a651309faa4b1b1234f5b05edb2793a7539e70102cf0eeee4c"
   },
   {
+    "card": "ziggs",
+    "skill_index": 0,
+    "path": "res://assets/skills/ziggs_q.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Ziggs.wad.client",
+    "source_path": "assets/characters/ziggs/hud/icons2d/ziggsq.dds",
+    "source_sha256": "202cb8b40902732c5b0ee6ee29ceb403486d10061825837600744a7215446786",
+    "sha256": "68b768ca545e7e84eb82715573b9998a9a19a3eef6a54e7631f66b558cc6b91b"
+  },
+  {
     "card": "graves",
     "skill_index": 0,
     "path": "res://assets/skills/graves_e.png",

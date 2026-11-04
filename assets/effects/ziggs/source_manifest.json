@@ -1,0 +1,49 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Ziggs.wad.client",
+  "sampling_fps": 120,
+  "seed": 79,
+  "native_proportions": true,
+  "variants": {
+    "basic": {
+      "sha256": "0db3ba86fffe61fac82998982a4468c1deb3e096f2dab9567cae677168c0017f",
+      "emitters": 9,
+      "source_system": "Ziggs_Base_BA_mis",
+      "child_system": "Ziggs_Base_BA_Fuse_Trail"
+    },
+    "missile": {
+      "sha256": "fb457f28522753b2862077fad2aa5f8e465dd8a889637cd0a7bbff6f3cac3cd8",
+      "emitters": 8,
+      "source_system": "Ziggs_Base_Q_mis_01",
+      "child_system": "Ziggs_Base_Q_Fuse_Trail"
+    },
+    "hit": {
+      "sha256": "f0710141f6ff1a488b4f621f93b2654a17e5db25f15e1ad2882708d54a980e46",
+      "emitters": 13,
+      "source_system": "Ziggs_Base_Q_explosion",
+      "child_system": null
+    },
+    "passive": {
+      "source_system": "Ziggs_Base_P_buf",
+      "emitters": 4,
+      "sha256": "7947215a5c8666f74f0a4ab4aa4af1ce2d3abe137256eca674abb59b6c757973",
+      "attachment": "Bomb bone position and orientation; world native scale 0.014; sampled bindWeight curve at particle slot 38"
+    },
+    "missile2": {
+      "source_system": "Ziggs_Base_Q_mis_02",
+      "child_system": "Ziggs_Base_Q_Fuse_Trail",
+      "emitters": 8,
+      "sha256": "ed6395c506e191881f4b56729ddee5f24b52b0b7f13d357448511354f5e18cdf"
+    },
+    "missile3": {
+      "source_system": "Ziggs_Base_Q_mis_03",
+      "child_system": "Ziggs_Base_Q_Fuse_Trail",
+      "emitters": 8,
+      "sha256": "774c264bd0fd38d869a052a7695cf03bda7d3c8ed8493dfc09a9b30dd57c5cbe"
+    }
+  },
+  "project_adaptations": [
+    "Non-homing ground bombs; basic radius 30, empowered radius 40, all three empowered landings explode.",
+    "Q explosion retained for basic AoE by project design; original BA_tar is a target flash, not the chosen ground explosion.",
+    "No Q_bounce visual or landing sound; each ground explosion emits its matching basic/Q impact audio once."
+  ]
+}
