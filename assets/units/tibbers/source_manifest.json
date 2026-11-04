@@ -1,0 +1,8 @@
+{
+  "source_package": "Annie.wad.client",
+  "model": "assets/characters/annietibbers/skins/base/annietibbers.skn",
+  "skeleton": "assets/characters/annietibbers/skins/base/annietibbers.skl",
+  "scale": 0.013,
+  "hidden_meshes": [],
+  "sha256": "ab0a7b96fb6323890acbea6ff01c74889363f655d4141dd99b52b43ac5d5b18e"
+}

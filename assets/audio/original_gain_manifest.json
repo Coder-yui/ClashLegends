@@ -73468,6 +73468,709 @@
       "duration": 2.414716553287982
     },
     {
+      "file": "assets/audio/units/airdrop_bear/play_sfx_annie_annier_oncast_r1.wav",
+      "sha256": "aafc8e20214b47d349c22860f3e9b383756c51c4109e1f1d370dff4dbc4293b8",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_Annie_AnnieR_OnCast {r1}.txtp",
+          "txtp_sha256": "b020fc7e0ff20159e8a021c7dd5c035072620fd7e1c374cc26be725d99c8b885",
+          "event_ids": [
+            "2801929996"
+          ],
+          "media_ids": [
+            "381038883",
+            "500684046",
+            "506344755",
+            "637486965"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_Annie_AnnieR_OnCast {r1}.wav",
+          "sha256": "aafc8e20214b47d349c22860f3e9b383756c51c4109e1f1d370dff4dbc4293b8"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "vgmstream-cli -i; source event gain retained",
+        "filters": [],
+        "filter_complex": null
+      },
+      "duration": 2.474988662131519
+    },
+    {
+      "file": "assets/audio/units/airdrop_bear/play_sfx_annie_annier_oncast_r2.wav",
+      "sha256": "5e18af6f247a5c386c3471b445cf990315455f862433d5b2178830888a416fd6",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_Annie_AnnieR_OnCast {r2}.txtp",
+          "txtp_sha256": "23d32b1defa2f8229f4fde3108fe115dc570ffd2c738da3ac22fbdcdcb630caa",
+          "event_ids": [
+            "2801929996"
+          ],
+          "media_ids": [
+            "381038883",
+            "500684046",
+            "506344755",
+            "637486965"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_Annie_AnnieR_OnCast {r2}.wav",
+          "sha256": "5e18af6f247a5c386c3471b445cf990315455f862433d5b2178830888a416fd6"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "vgmstream-cli -i; source event gain retained",
+        "filters": [],
+        "filter_complex": null
+      },
+      "duration": 2.516643990929705
+    },
+    {
+      "file": "assets/audio/units/airdrop_bear/play_sfx_annie_annier_oncast_r3.wav",
+      "sha256": "9101f36eeeca16c2ef36ac8085c7033f78f11b2bc056685fd077d6bc84426831",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_Annie_AnnieR_OnCast {r3}.txtp",
+          "txtp_sha256": "983cc21c23af0f398fbb902b9ff29276baf2aea91c7df54c1b50fb3f698379e7",
+          "event_ids": [
+            "2801929996"
+          ],
+          "media_ids": [
+            "381038883",
+            "500684046",
+            "506344755",
+            "637486965"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_Annie_AnnieR_OnCast {r3}.wav",
+          "sha256": "9101f36eeeca16c2ef36ac8085c7033f78f11b2bc056685fd077d6bc84426831"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "vgmstream-cli -i; source event gain retained",
+        "filters": [],
+        "filter_complex": null
+      },
+      "duration": 2.924965986394558
+    },
+    {
+      "file": "assets/audio/units/airdrop_bear/play_sfx_annie_annier_onhitlocation.wav",
+      "sha256": "d2880dec04ff85eed151d876c03b65b778850bbb59303f721be8a8a92d9c6409",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_Annie_AnnieR_OnHitLocation.txtp",
+          "txtp_sha256": "ed2ab577e01f8557a294048bba4d08132a8cb59ba2c4af0f51faacf0f183360a",
+          "event_ids": [
+            "266961481"
+          ],
+          "media_ids": [
+            "840469966"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_Annie_AnnieR_OnHitLocation.wav",
+          "sha256": "d2880dec04ff85eed151d876c03b65b778850bbb59303f721be8a8a92d9c6409"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "vgmstream-cli -i; source event gain retained",
+        "filters": [],
+        "filter_complex": null
+      },
+      "duration": 1.3320408163265307
+    },
+    {
+      "file": "assets/audio/units/tibbers/play_sfx_annietibbers_annietibbersbasicattack2_oncast_r.wav",
+      "sha256": "b99c0355cde8b2c579a3a333a246e6a6536325c71a99dbcb0e1ff7069f6d328d",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnCast {r}.txtp",
+          "txtp_sha256": "ab47213ae56e4827ec3de962cafbb0acf20035deb832e70539262383434dfb2f",
+          "event_ids": [
+            "533447698"
+          ],
+          "media_ids": [
+            "12749723",
+            "52102561",
+            "119369386",
+            "141111959",
+            "421195050",
+            "842335943",
+            "901479848",
+            "911985217"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnCast {r}.wav",
+          "sha256": "b99c0355cde8b2c579a3a333a246e6a6536325c71a99dbcb0e1ff7069f6d328d"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "vgmstream-cli -i; source event gain retained",
+        "filters": [],
+        "filter_complex": null
+      },
+      "duration": 0.8577097505668935,
+      "equivalent_sources": [
+        {
+          "sha256": "b99c0355cde8b2c579a3a333a246e6a6536325c71a99dbcb0e1ff7069f6d328d",
+          "source_events": [
+            {
+              "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnCast {r} {d}.txtp",
+              "txtp_sha256": "593ce51e65de8a6974c60ff44b72c45f09187a3028b6c26076840d37bacc8521",
+              "event_ids": [
+                "615320626"
+              ],
+              "media_ids": [
+                "12749723",
+                "52102561",
+                "119369386",
+                "141111959",
+                "421195050",
+                "842335943",
+                "901479848",
+                "911985217"
+              ]
+            }
+          ],
+          "source_inputs": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnCast {r} {d}.wav",
+              "sha256": "b99c0355cde8b2c579a3a333a246e6a6536325c71a99dbcb0e1ff7069f6d328d"
+            }
+          ],
+          "processing": {
+            "tool_master_gain_db": 0.0,
+            "post_gain_db": 0.0,
+            "runtime_gain_db": 0.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "notes": "vgmstream-cli -i; source event gain retained"
+          },
+          "duration": 0.8577097505668935,
+          "former_filename": "play_sfx_annietibbers_annietibbersbasicattack_oncast_r_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/tibbers/play_sfx_annietibbers_annietibbersbasicattack2_onhit_r1.wav",
+      "sha256": "4046f8d973df6794ee02c9a8e7c8c1322d14538bc784a9d184105bbfbfa056ba",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit {r1}.txtp",
+          "txtp_sha256": "b9b26a8ec91af32e39edd4ada6f00c3800143970aae7cb4363b1f1ee5152bfbe",
+          "event_ids": [
+            "1285385654"
+          ],
+          "media_ids": [
+            "149458517",
+            "252055901",
+            "794431347",
+            "966661505"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit {r1}.wav",
+          "sha256": "4046f8d973df6794ee02c9a8e7c8c1322d14538bc784a9d184105bbfbfa056ba"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "vgmstream-cli -i; source event gain retained",
+        "filters": [],
+        "filter_complex": null
+      },
+      "duration": 0.3107936507936508,
+      "equivalent_sources": [
+        {
+          "sha256": "4046f8d973df6794ee02c9a8e7c8c1322d14538bc784a9d184105bbfbfa056ba",
+          "source_events": [
+            {
+              "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit {r1} {d}.txtp",
+              "txtp_sha256": "0e0d5c8120440c593e98fec94fd5975bedae948510e78641b7b93c5287cb421f",
+              "event_ids": [
+                "1150934870"
+              ],
+              "media_ids": [
+                "149458517",
+                "252055901",
+                "794431347",
+                "966661505"
+              ]
+            }
+          ],
+          "source_inputs": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit {r1} {d}.wav",
+              "sha256": "4046f8d973df6794ee02c9a8e7c8c1322d14538bc784a9d184105bbfbfa056ba"
+            }
+          ],
+          "processing": {
+            "tool_master_gain_db": 0.0,
+            "post_gain_db": 0.0,
+            "runtime_gain_db": 0.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "notes": "vgmstream-cli -i; source event gain retained"
+          },
+          "duration": 0.3107936507936508,
+          "former_filename": "play_sfx_annietibbers_annietibbersbasicattack_onhit_r1_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/tibbers/play_sfx_annietibbers_annietibbersbasicattack2_onhit_r2.wav",
+      "sha256": "85699a2109e8d17cb086593ca350d6edf03741a59c201724f7de7a2dc2bfb3f2",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit {r2}.txtp",
+          "txtp_sha256": "b94da559d84d9d47813c266182371039609eda36b3c85126a37f87630ce29902",
+          "event_ids": [
+            "1285385654"
+          ],
+          "media_ids": [
+            "149458517",
+            "252055901",
+            "794431347",
+            "966661505"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit {r2}.wav",
+          "sha256": "85699a2109e8d17cb086593ca350d6edf03741a59c201724f7de7a2dc2bfb3f2"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "vgmstream-cli -i; source event gain retained",
+        "filters": [],
+        "filter_complex": null
+      },
+      "duration": 0.23015873015873015,
+      "equivalent_sources": [
+        {
+          "sha256": "85699a2109e8d17cb086593ca350d6edf03741a59c201724f7de7a2dc2bfb3f2",
+          "source_events": [
+            {
+              "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit {r2} {d}.txtp",
+              "txtp_sha256": "1ce811c90dcd95af6268d9c7beede3d32ba0074935b806308280e875f7751da6",
+              "event_ids": [
+                "1150934870"
+              ],
+              "media_ids": [
+                "149458517",
+                "252055901",
+                "794431347",
+                "966661505"
+              ]
+            }
+          ],
+          "source_inputs": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit {r2} {d}.wav",
+              "sha256": "85699a2109e8d17cb086593ca350d6edf03741a59c201724f7de7a2dc2bfb3f2"
+            }
+          ],
+          "processing": {
+            "tool_master_gain_db": 0.0,
+            "post_gain_db": 0.0,
+            "runtime_gain_db": 0.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "notes": "vgmstream-cli -i; source event gain retained"
+          },
+          "duration": 0.23015873015873015,
+          "former_filename": "play_sfx_annietibbers_annietibbersbasicattack_onhit_r2_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/tibbers/play_sfx_annietibbers_annietibbersbasicattack2_onhit_r3.wav",
+      "sha256": "64463afbabcea4548f368b1d107023526aa73bf12b3be0f67903b602e041995c",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit {r3}.txtp",
+          "txtp_sha256": "c7989a04015655a2ae8b2b870d5585e347c114b656a203bafe4ab8d8c02a2e29",
+          "event_ids": [
+            "1285385654"
+          ],
+          "media_ids": [
+            "149458517",
+            "252055901",
+            "794431347",
+            "966661505"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit {r3}.wav",
+          "sha256": "64463afbabcea4548f368b1d107023526aa73bf12b3be0f67903b602e041995c"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "vgmstream-cli -i; source event gain retained",
+        "filters": [],
+        "filter_complex": null
+      },
+      "duration": 0.36108843537414964,
+      "equivalent_sources": [
+        {
+          "sha256": "64463afbabcea4548f368b1d107023526aa73bf12b3be0f67903b602e041995c",
+          "source_events": [
+            {
+              "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit {r3} {d}.txtp",
+              "txtp_sha256": "7d6e9d0ed606f6b4d68986202a8bdb20030f6fc7007ffa7ff3a21d5a54aaa920",
+              "event_ids": [
+                "1150934870"
+              ],
+              "media_ids": [
+                "149458517",
+                "252055901",
+                "794431347",
+                "966661505"
+              ]
+            }
+          ],
+          "source_inputs": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit {r3} {d}.wav",
+              "sha256": "64463afbabcea4548f368b1d107023526aa73bf12b3be0f67903b602e041995c"
+            }
+          ],
+          "processing": {
+            "tool_master_gain_db": 0.0,
+            "post_gain_db": 0.0,
+            "runtime_gain_db": 0.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "notes": "vgmstream-cli -i; source event gain retained"
+          },
+          "duration": 0.36108843537414964,
+          "former_filename": "play_sfx_annietibbers_annietibbersbasicattack_onhit_r3_d.wav"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/tibbers/play_sfx_annietibbers_annier_death_buffactivate_r1.wav",
+      "sha256": "665d5304ab2e73a3807dccfd25ff6d5519fbd9093085dc0b4bdc82630c6327ec",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieR_death_buffactivate {r1}.txtp",
+          "txtp_sha256": "6b695aa1ebac2d9eab04c92de175e46d3fd84e54aa3e98bd6a6aa6dea89daa0c",
+          "event_ids": [
+            "3459558882"
+          ],
+          "media_ids": [
+            "381429701",
+            "472797351",
+            "772693716"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieR_death_buffactivate {r1}.wav",
+          "sha256": "0d9357f83c0f5ce1cc724197af9b7c49ec7e79ec0af44d45cd25f1b298cbbcff"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "filters": [
+          "atrim=duration=1.5",
+          "afade=t=out:st=1:d=0.5:curve=tri"
+        ],
+        "filter_complex": null
+      },
+      "duration": 1.5
+    },
+    {
+      "file": "assets/audio/units/tibbers/play_sfx_annietibbers_annier_death_buffactivate_r2.wav",
+      "sha256": "54b18933c5e7736458c94e595b0aebe34c869d6f8276adb4c800e366b2014309",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieR_death_buffactivate {r2}.txtp",
+          "txtp_sha256": "86d3e835692e063dc73d839ca101efe5a1f9ba8195248a17ea3035bed3e76612",
+          "event_ids": [
+            "3459558882"
+          ],
+          "media_ids": [
+            "381429701",
+            "472797351",
+            "772693716"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieR_death_buffactivate {r2}.wav",
+          "sha256": "ea4e97f95bd9bd8e6f4a9ea1089f0e5bba1d1a52b7383ca88d9dc29fdadb1eb9"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "filters": [
+          "atrim=duration=1.5",
+          "afade=t=out:st=1:d=0.5:curve=tri"
+        ],
+        "filter_complex": null
+      },
+      "duration": 1.5
+    },
+    {
+      "file": "assets/audio/units/tibbers/play_sfx_annietibbers_annier_death_buffactivate_r3.wav",
+      "sha256": "e191d9bb571e1e914b351dcb97cf2af0a1f692a4d7765baf22bea3ed2150c39b",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieR_death_buffactivate {r3}.txtp",
+          "txtp_sha256": "a0b74e4d037eb5d398c2a51107ab5bf296eb59122ad9ff86839de1eaecd91a7f",
+          "event_ids": [
+            "3459558882"
+          ],
+          "media_ids": [
+            "381429701",
+            "472797351",
+            "772693716"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieR_death_buffactivate {r3}.wav",
+          "sha256": "8ae0930738e1878326dadd5938b31d1de70acff475cbc5409ed9d826dcc98297"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "filters": [
+          "atrim=duration=1.5",
+          "afade=t=out:st=1:d=0.5:curve=tri"
+        ],
+        "filter_complex": null
+      },
+      "duration": 1.5
+    },
+    {
+      "file": "assets/audio/units/tibbers/play_sfx_annietibbers_annier_buffactivate_loop_r1.wav",
+      "sha256": "3bddb9575531518c030c96a70b7d17d71f22392dc6734d0e3f2aa004caa9ce8b",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieR_buffactivate_loop {r1}.txtp",
+          "txtp_sha256": "47d6c5e35501337f27e4c07f95e319625ec2ecef081d7c5337750099cd3fac08",
+          "event_ids": [
+            "1152544524"
+          ],
+          "media_ids": [
+            "184476118",
+            "557061188"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieR_buffactivate_loop {r1}.wav",
+          "sha256": "3bddb9575531518c030c96a70b7d17d71f22392dc6734d0e3f2aa004caa9ce8b"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "vgmstream-cli -i; source event gain retained",
+        "filters": [],
+        "filter_complex": null
+      },
+      "duration": 4.999977324263039
+    },
+    {
+      "file": "assets/audio/units/tibbers/play_sfx_annietibbers_annier_buffactivate_loop_r2.wav",
+      "sha256": "1688d65e0ba6ca6e68f394de09b26270f0bf0cc389756a55eda36af71439e6a0",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieR_buffactivate_loop {r2}.txtp",
+          "txtp_sha256": "d789e3f97d991a474bd4ff2e9fcea503310ed5c28d86e8f8f939e0e362eb4e3f",
+          "event_ids": [
+            "1152544524"
+          ],
+          "media_ids": [
+            "184476118",
+            "557061188"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieR_buffactivate_loop {r2}.wav",
+          "sha256": "1688d65e0ba6ca6e68f394de09b26270f0bf0cc389756a55eda36af71439e6a0"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "vgmstream-cli -i; source event gain retained",
+        "filters": [],
+        "filter_complex": null
+      },
+      "duration": 4.999977324263039
+    },
+    {
+      "file": "assets/audio/units/airdrop_bear/play_sfx_annie_annier_tibbers_enraged_buffactivate_r1.wav",
+      "sha256": "570569d6e5570e6fe8a191e85a1e1bca7ecbe08581f39c697ca5e41e283365a5",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_Annie_AnnieR_tibbers_enraged_buffactivate {r1}.txtp",
+          "txtp_sha256": "e191bef12cccfae8157c874f9c5164cf687acf7766990ee78dbb0c9da11c8653",
+          "event_ids": [
+            "1161918533"
+          ],
+          "media_ids": [
+            "864389543"
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "fresh vgmstream-cli -i; wwiser -gv=0dB; event gain retained",
+        "filters": [],
+        "filter_complex": null
+      },
+      "duration": 3.130385487528345
+    },
+    {
+      "file": "assets/audio/units/airdrop_bear/play_sfx_annie_annier_tibbers_enraged_buffactivate_r2.wav",
+      "sha256": "e201db106871811539091ef753f26dd26404dc19a9cd5f1aef3f5b8eb64ac830",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_Annie_AnnieR_tibbers_enraged_buffactivate {r2}.txtp",
+          "txtp_sha256": "9d7272a7e3981c4e9b3a300e7e5e258cfecbf08758afe44dba0ec2c61989be6b",
+          "event_ids": [
+            "1161918533"
+          ],
+          "media_ids": [
+            "808016357"
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "fresh vgmstream-cli -i; wwiser -gv=0dB; event gain retained",
+        "filters": [],
+        "filter_complex": null
+      },
+      "duration": 3.105759637188209
+    },
+    {
+      "file": "assets/audio/units/airdrop_bear/play_sfx_annie_annier_tibbers_enraged_buffactivate_r3.wav",
+      "sha256": "bbc8e92ad352b3f1c529cf998706757ad47eab5881e9bae67026fa57ed17fcda",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_Annie_AnnieR_tibbers_enraged_buffactivate {r3}.txtp",
+          "txtp_sha256": "25d574c86de3138dc7444bf82d4d6cd0117789602d93b888b5a3be6e18c907dd",
+          "event_ids": [
+            "1161918533"
+          ],
+          "media_ids": [
+            "764071662"
+          ]
+        }
+      ],
+      "source_inputs": [],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "sample_rate": 44100,
+        "channels": 1,
+        "notes": "fresh vgmstream-cli -i; wwiser -gv=0dB; event gain retained",
+        "filters": [],
+        "filter_complex": null
+      },
+      "duration": 3.013990929705215
+    },
+    {
       "file": "assets/audio/units/ziggs/play_sfx_ziggs_ziggsshortfuse_onbuffactivate_r1.wav",
       "sha256": "86dcfa6a96db3e958778a2b61a6f1431b0630a6612e41fcdae07353f6b08a47d",
       "source_events": [

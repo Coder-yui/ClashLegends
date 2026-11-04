@@ -1,0 +1,106 @@
+[
+  {
+    "file": "play_sfx_annie_annier_oncast_r1.wav",
+    "event": "Play_sfx_Annie_AnnieR_OnCast",
+    "event_id": 2801929996,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_Annie_AnnieR_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_Annie_AnnieR_OnCast {r1}.txtp",
+    "media_ids": [
+      381038883,
+      500684046,
+      506344755,
+      637486965
+    ],
+    "duration": 2.475,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "aafc8e20214b47d349c22860f3e9b383756c51c4109e1f1d370dff4dbc4293b8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_annie_annier_oncast_r2.wav",
+    "event": "Play_sfx_Annie_AnnieR_OnCast",
+    "event_id": 2801929996,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_Annie_AnnieR_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_Annie_AnnieR_OnCast {r2}.txtp",
+    "media_ids": [
+      381038883,
+      500684046,
+      506344755,
+      637486965
+    ],
+    "duration": 2.5166,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5e18af6f247a5c386c3471b445cf990315455f862433d5b2178830888a416fd6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_annie_annier_oncast_r3.wav",
+    "event": "Play_sfx_Annie_AnnieR_OnCast",
+    "event_id": 2801929996,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_Annie_AnnieR_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_Annie_AnnieR_OnCast {r3}.txtp",
+    "media_ids": [
+      381038883,
+      500684046,
+      506344755,
+      637486965
+    ],
+    "duration": 2.925,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9101f36eeeca16c2ef36ac8085c7033f78f11b2bc056685fd077d6bc84426831",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_annie_annier_onhitlocation.wav",
+    "event": "Play_sfx_Annie_AnnieR_OnHitLocation",
+    "event_id": 266961481,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_Annie_AnnieR_OnHitLocation.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_Annie_AnnieR_OnHitLocation.txtp",
+    "media_ids": [
+      840469966
+    ],
+    "duration": 1.332,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d2880dec04ff85eed151d876c03b65b778850bbb59303f721be8a8a92d9c6409",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_annie_annier_tibbers_enraged_buffactivate_r1.wav",
+    "event": "Play_sfx_Annie_AnnieR_tibbers_enraged_buffactivate",
+    "event_id": 1161918533,
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_Annie_AnnieR_tibbers_enraged_buffactivate {r1}.txtp",
+    "media_ids": [
+      864389543
+    ],
+    "duration": 3.130385487528345,
+    "processing": "fresh vgmstream-cli -i; wwiser -gv=0dB; event gain retained",
+    "sha256": "570569d6e5570e6fe8a191e85a1e1bca7ecbe08581f39c697ca5e41e283365a5",
+    "selection_note": "外层随机分支1；从4分支中保留前3变体，不归一化。"
+  },
+  {
+    "file": "play_sfx_annie_annier_tibbers_enraged_buffactivate_r2.wav",
+    "event": "Play_sfx_Annie_AnnieR_tibbers_enraged_buffactivate",
+    "event_id": 1161918533,
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_Annie_AnnieR_tibbers_enraged_buffactivate {r2}.txtp",
+    "media_ids": [
+      808016357
+    ],
+    "duration": 3.105759637188209,
+    "processing": "fresh vgmstream-cli -i; wwiser -gv=0dB; event gain retained",
+    "sha256": "e201db106871811539091ef753f26dd26404dc19a9cd5f1aef3f5b8eb64ac830",
+    "selection_note": "外层随机分支2；从4分支中保留前3变体，不归一化。"
+  },
+  {
+    "file": "play_sfx_annie_annier_tibbers_enraged_buffactivate_r3.wav",
+    "event": "Play_sfx_Annie_AnnieR_tibbers_enraged_buffactivate",
+    "event_id": 1161918533,
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_Annie_AnnieR_tibbers_enraged_buffactivate {r3}.txtp",
+    "media_ids": [
+      764071662
+    ],
+    "duration": 3.013990929705215,
+    "processing": "fresh vgmstream-cli -i; wwiser -gv=0dB; event gain retained",
+    "sha256": "bbc8e92ad352b3f1c529cf998706757ad47eab5881e9bae67026fa57ed17fcda",
+    "selection_note": "外层随机分支3；从4分支中保留前3变体，不归一化。"
+  }
+]

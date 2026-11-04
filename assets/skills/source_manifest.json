@@ -1045,5 +1045,14 @@
     "source_path": "assets/characters/sivir/hud/icons2d/sivir_e.dds",
     "source_sha256": "8cf0df8953b1bff0653b96bd77fa90b43922c5977f29cba4e3c976c17ae8708c",
     "sha256": "3df55299b06420359a6291c84d1a4beb7a93e7a904dd33808ff40f021826e4d7"
+  },
+  {
+    "card": "airdrop_bear",
+    "skill_index": 0,
+    "path": "res://assets/skills/annie_r.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Annie.wad.client",
+    "source_path": "assets/characters/annie/hud/icons2d/annie_r1.dds",
+    "source_sha256": "5ad826ea6ee08ac8758385e74199a21ce4d8e8b12cd0010d22ca5db944d5411a",
+    "sha256": "57529d21d9fdd4f9ea785160ff39aa035d2abccfe1c6907e77a9154f34e3eabb"
   }
 ]

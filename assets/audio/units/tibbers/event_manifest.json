@@ -1,0 +1,256 @@
+[
+  {
+    "file": "play_sfx_annietibbers_annietibbersbasicattack2_oncast_r.wav",
+    "event": "Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnCast",
+    "event_id": 533447698,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnCast {r}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnCast {r}.txtp",
+    "media_ids": [
+      12749723,
+      52102561,
+      119369386,
+      141111959,
+      421195050,
+      842335943,
+      901479848,
+      911985217
+    ],
+    "duration": 0.8577,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b99c0355cde8b2c579a3a333a246e6a6536325c71a99dbcb0e1ff7069f6d328d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnCast",
+        "event_id": 615320626,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnCast {r} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnCast {r} {d}.txtp",
+        "media_ids": [
+          12749723,
+          52102561,
+          119369386,
+          141111959,
+          421195050,
+          842335943,
+          901479848,
+          911985217
+        ],
+        "duration": 0.8577,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "b99c0355cde8b2c579a3a333a246e6a6536325c71a99dbcb0e1ff7069f6d328d",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_annietibbers_annietibbersbasicattack_oncast_r_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_annietibbers_annietibbersbasicattack2_onhit_r1.wav",
+    "event": "Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit",
+    "event_id": 1285385654,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit {r1}.txtp",
+    "media_ids": [
+      149458517,
+      252055901,
+      794431347,
+      966661505
+    ],
+    "duration": 0.3108,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4046f8d973df6794ee02c9a8e7c8c1322d14538bc784a9d184105bbfbfa056ba",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit",
+        "event_id": 1150934870,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit {r1} {d}.txtp",
+        "media_ids": [
+          149458517,
+          252055901,
+          794431347,
+          966661505
+        ],
+        "duration": 0.3108,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "4046f8d973df6794ee02c9a8e7c8c1322d14538bc784a9d184105bbfbfa056ba",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_annietibbers_annietibbersbasicattack_onhit_r1_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_annietibbers_annietibbersbasicattack2_onhit_r2.wav",
+    "event": "Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit",
+    "event_id": 1285385654,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit {r2}.txtp",
+    "media_ids": [
+      149458517,
+      252055901,
+      794431347,
+      966661505
+    ],
+    "duration": 0.2302,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "85699a2109e8d17cb086593ca350d6edf03741a59c201724f7de7a2dc2bfb3f2",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit",
+        "event_id": 1150934870,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit {r2} {d}.txtp",
+        "media_ids": [
+          149458517,
+          252055901,
+          794431347,
+          966661505
+        ],
+        "duration": 0.2302,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "85699a2109e8d17cb086593ca350d6edf03741a59c201724f7de7a2dc2bfb3f2",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_annietibbers_annietibbersbasicattack_onhit_r2_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_annietibbers_annietibbersbasicattack2_onhit_r3.wav",
+    "event": "Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit",
+    "event_id": 1285385654,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack2_OnHit {r3}.txtp",
+    "media_ids": [
+      149458517,
+      252055901,
+      794431347,
+      966661505
+    ],
+    "duration": 0.3611,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "64463afbabcea4548f368b1d107023526aa73bf12b3be0f67903b602e041995c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit",
+        "event_id": 1150934870,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieTibbersBasicAttack_OnHit {r3} {d}.txtp",
+        "media_ids": [
+          149458517,
+          252055901,
+          794431347,
+          966661505
+        ],
+        "duration": 0.3611,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "64463afbabcea4548f368b1d107023526aa73bf12b3be0f67903b602e041995c",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_annietibbers_annietibbersbasicattack_onhit_r3_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_annietibbers_annier_death_buffactivate_r1.wav",
+    "event": "Play_sfx_AnnieTibbers_AnnieR_death_buffactivate",
+    "event_id": 3459558882,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieR_death_buffactivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieR_death_buffactivate {r1}.txtp",
+    "media_ids": [
+      381429701,
+      472797351,
+      772693716
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "665d5304ab2e73a3807dccfd25ff6d5519fbd9093085dc0b4bdc82630c6327ec",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.170997732426304,
+      "source_sha256": "0d9357f83c0f5ce1cc724197af9b7c49ec7e79ec0af44d45cd25f1b298cbbcff",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_annietibbers_annier_death_buffactivate_r2.wav",
+    "event": "Play_sfx_AnnieTibbers_AnnieR_death_buffactivate",
+    "event_id": 3459558882,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieR_death_buffactivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieR_death_buffactivate {r2}.txtp",
+    "media_ids": [
+      381429701,
+      472797351,
+      772693716
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "54b18933c5e7736458c94e595b0aebe34c869d6f8276adb4c800e366b2014309",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 1.933061224489796,
+      "source_sha256": "ea4e97f95bd9bd8e6f4a9ea1089f0e5bba1d1a52b7383ca88d9dc29fdadb1eb9",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_annietibbers_annier_death_buffactivate_r3.wav",
+    "event": "Play_sfx_AnnieTibbers_AnnieR_death_buffactivate",
+    "event_id": 3459558882,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieR_death_buffactivate {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieR_death_buffactivate {r3}.txtp",
+    "media_ids": [
+      381429701,
+      472797351,
+      772693716
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "e191d9bb571e1e914b351dcb97cf2af0a1f692a4d7765baf22bea3ed2150c39b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 1.882312925170068,
+      "source_sha256": "8ae0930738e1878326dadd5938b31d1de70acff475cbc5409ed9d826dcc98297",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_annietibbers_annier_buffactivate_loop_r1.wav",
+    "event": "Play_sfx_AnnieTibbers_AnnieR_buffactivate_loop",
+    "event_id": 1152544524,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieR_buffactivate_loop {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieR_buffactivate_loop {r1}.txtp",
+    "media_ids": [
+      184476118,
+      557061188
+    ],
+    "duration": 5.0,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3bddb9575531518c030c96a70b7d17d71f22392dc6734d0e3f2aa004caa9ce8b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_annietibbers_annier_buffactivate_loop_r2.wav",
+    "event": "Play_sfx_AnnieTibbers_AnnieR_buffactivate_loop",
+    "event_id": 1152544524,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/event_wav/Play_sfx_AnnieTibbers_AnnieR_buffactivate_loop {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/空投熊/audio-source/annie/txtp/Play_sfx_AnnieTibbers_AnnieR_buffactivate_loop {r2}.txtp",
+    "media_ids": [
+      184476118,
+      557061188
+    ],
+    "duration": 5.0,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1688d65e0ba6ca6e68f394de09b26270f0bf0cc389756a55eda36af71439e6a0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  }
+]
