@@ -30,6 +30,8 @@ uniform vec2 mult_flip=vec2(0.0);
 uniform int address_mode=0;
 uniform int mult_address=0;
 uniform int erosion_address=0;
+// LoL quad_ps_fixedalphauv keeps the silhouette while RGB scrolls.
+uniform bool fixed_alpha_uv=false;
 uniform bool has_mult=false;
 uniform bool has_ramp=false;
 uniform bool has_erosion=false;
@@ -40,6 +42,7 @@ uniform vec4 soft_params=vec4(0.0,1e8,1.0,1.0);
 uniform float alpha_ref=0.0;
 uniform float warp_strength=0.0;
 varying vec2 base_uv;
+varying vec2 alpha_uv;
 varying vec2 mult_uv;
 varying vec4 tint;
 varying float unit_scale;
@@ -89,6 +92,7 @@ void vertex() {
  if(is_mesh || (!billboard && !is_ray))pos=projection_basis*center+shape_basis*(pos-center);
  // Preserve sampled native height; camera projection supplies foreshortening.
  VERTEX=pos;
+ alpha_uv=texuv;
  base_uv=layer_uv(texuv,21,uv_center,uv_flip,cell);
  mult_uv=layer_uv(texuv,28,mult_center,mult_flip,cell_mult);
  tint=vec4(p[7],p[8],p[9],p[10])*COLOR;
@@ -98,6 +102,7 @@ void vertex() {
 void fragment() {
  if(is_mesh && cull_mesh && !FRONT_FACING)discard;
  vec4 texel=texture(source_texture,addressed(base_uv,address_mode));
+ if(fixed_alpha_uv)texel.a=texture(source_texture,alpha_uv).a;
  if(has_ramp) texel*=texture(ramp_texture,has_mult?mult_uv:vec2(p[35],p[36]));
  if(has_mult) texel*=texture(mult_texture,addressed(mult_uv,mult_address));
  vec4 lit=texel*tint;

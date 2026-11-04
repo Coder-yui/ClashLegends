@@ -1,0 +1,34 @@
+shader_type spatial;
+render_mode depth_test_disabled, unshaded, blend_mix, cull_disabled, depth_draw_never, shadows_disabled;
+uniform sampler2D source_texture : source_color, repeat_enable;
+uniform sampler2D mult_texture : source_color, repeat_enable;
+uniform sampler2D erosion_texture : repeat_enable;
+uniform sampler2D palette_texture : source_color;
+uniform bool has_palette = false;
+uniform float palette_row = 0.0;
+uniform float palette_count = 1.0;
+uniform bool has_mult = false;
+uniform bool has_erosion = false;
+uniform vec4 tint : source_color = vec4(1.0);
+uniform vec2 uv_scale = vec2(1.0);
+uniform vec2 uv_offset = vec2(0.0);
+uniform vec2 uv_phase = vec2(0.0);
+uniform vec2 mult_scale = vec2(1.0);
+uniform vec2 mult_phase = vec2(0.0);
+uniform vec2 tex_div = vec2(1.0);
+uniform float elapsed = 0.0;
+uniform float frame = 0.0;
+uniform float erosion = 0.0;
+uniform float opacity = 1.0;
+uniform bool uv_clamp = false;
+void fragment() {
+ vec2 atlas = (UV + vec2(mod(frame,tex_div.x),floor(frame/tex_div.x)))/tex_div;
+ vec2 sample_uv = atlas * uv_scale + uv_offset + uv_phase;
+ vec4 tex = texture(source_texture, uv_clamp ? clamp(sample_uv, vec2(0.0), vec2(1.0)) : sample_uv);
+ if(has_mult) tex *= texture(mult_texture, UV * mult_scale + mult_phase);
+ if(has_palette) tex.rgb = texture(palette_texture, vec2(tex.r, (palette_row + 0.5) / palette_count)).rgb;
+ float alpha = tex.a;
+ if(has_erosion) alpha *= smoothstep(erosion-0.08,erosion+0.08,texture(erosion_texture,UV).r);
+ ALBEDO = tex.rgb * tint.rgb * COLOR.rgb;
+ ALPHA = alpha * tint.a * COLOR.a * opacity;
+}

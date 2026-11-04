@@ -9,6 +9,7 @@ const MIX := "res://assets/units/pantheon/arrival/particle_mix.gdshader"
 static var _data: Dictionary = {}
 static var _mesh_cache: Dictionary = {}
 static var _texture_cache: Dictionary = {}
+static var _color_image_cache: Dictionary = {}
 var _emitters: Array = []
 var _particles: Array = []
 var _trails: Array = []
@@ -165,6 +166,8 @@ func _update(p: Dictionary, age: float) -> void:
 		node.global_position -= node.global_basis.z * node.mesh.get_aabb().get_center().z
 	var rgba: Array = sample(c.Color, t)
 	var tint := Color(rgba[0], rgba[1], rgba[2], rgba[3]) * (p.color as Color)
+	if not String(c.get("color_texture", "")).is_empty():
+		tint *= _life_color(c.color_texture, t)
 	node.material_override.set_shader_parameter("tint", tint)
 	node.material_override.set_shader_parameter("elapsed", age)
 	node.material_override.set_shader_parameter("frame", fmod(float(p.frame) + floor(age * float(p.get("frame_rate", 0.0))), maxf(1.0, float(c.frames))))
@@ -232,7 +235,7 @@ func _birth_sample(c: Dictionary, t: float) -> Variant:
 
 static func prepare_assets() -> void:
 	for c in resource_emitters():
-		for key in ["texture", "mult", "erosion", "distortion_texture", "palette_texture"]:
+		for key in ["texture", "mult", "erosion", "distortion_texture", "palette_texture", "color_texture"]:
 			if not String(c.get(key, "")).is_empty(): _texture(c[key])
 		if not String(c.mesh).is_empty(): _mesh(c.mesh)
 
@@ -256,6 +259,14 @@ static func vec3(a: Array) -> Vector3:
 static func vec2(a: Array) -> Vector2:
 	return Vector2(a[0], a[1])
 
+## Native colorLookUpTypeX=1/Y=0: normalized particle life and first row.
+static func _life_color(path: String, age: float) -> Color:
+	if not _color_image_cache.has(path):
+		_color_image_cache[path] = _texture(path).get_image()
+	var data: Image = _color_image_cache[path]
+	var x := clampf(age, 0.0, 1.0) * (data.get_width() - 1)
+	return data.get_pixel(int(x), 0).lerp(data.get_pixel(mini(int(x) + 1, data.get_width() - 1), 0), x - floorf(x))
+
 static func _texture(path: String) -> Texture2D:
 	if not _texture_cache.has(path): _texture_cache[path] = load(path)
 	return _texture_cache[path]
@@ -272,7 +283,7 @@ static func _material(c: Dictionary) -> ShaderMaterial:
 		material.set_shader_parameter("palette_row", float(c.palette_row))
 		material.set_shader_parameter("palette_count", float(c.palette_count))
 	material.render_priority = clampi(int(c.pass), -128, 127)
-	material.set_shader_parameter("source_texture", _texture(c.texture))
+	if not String(c.texture).is_empty(): material.set_shader_parameter("source_texture", _texture(c.texture))
 	material.set_shader_parameter("uv_clamp", bool(c.get("uv_clamp", false)))
 	material.set_shader_parameter("uv_scale", vec2(sample(c.uvScale, 0.0)))
 	material.set_shader_parameter("uv_offset", vec2(sample(c.birthUVOffset, 0.0)))
@@ -333,13 +344,15 @@ static func _update_flow(material: ShaderMaterial, c: Dictionary, age: float, li
 static func release_prepared_assets() -> void:
 	_mesh_cache.clear()
 	_texture_cache.clear()
+	_color_image_cache.clear()
 
 static func resource_shader_matches(value: Dictionary) -> bool:
 	return value.has("blend") and value.has("duration") and value.has("texture")
 
 static func resource_shader_path(value: Dictionary) -> String:
+	if not String(value.get("shader", "")).is_empty(): return String(value.shader)
 	if not String(value.get("distortion_texture", "")).is_empty(): return "res://scripts/presentation/native_particle_distortion.gdshader"
-	return ADD if int(value.blend) in [0, 4] else MIX
+	return preload("res://scripts/presentation/particle_render_policy.gd").shader_path(ADD if int(value.blend) in [0, 4] else MIX, value)
 
 ## 与运行时系统/层开关相同的潘森依赖集合。
 static func resource_emitters() -> Array:
