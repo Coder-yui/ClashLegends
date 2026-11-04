@@ -1020,6 +1020,15 @@
     "sha256": "906f25ca2e1c75a651309faa4b1b1234f5b05edb2793a7539e70102cf0eeee4c"
   },
   {
+    "card": "graves",
+    "skill_index": 0,
+    "path": "res://assets/skills/graves_e.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Graves.wad.client",
+    "source_path": "assets/characters/graves/hud/icons2d/gravese.dds",
+    "source_sha256": "fbea26a960de6b251ee7b8e6b28dbee247cd32be3ac4c207352926e838b9b714",
+    "sha256": "bc2c819e7bd2ffad34bafeb176a23cc063f39af86e2872ca28926d3b30ce69d3"
+  },
+  {
     "card": "sivir",
     "skill_index": 0,
     "path": "res://assets/skills/sivir_e.png",

@@ -1,0 +1,15 @@
+{
+  "source": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/指定模型/法外狂徒.glb",
+  "source_sha256": "d627de63e1477b30519e0ecd524b1e66f3b2f347e67a7f962c503bb8401a69f3",
+  "scale": 1.8,
+  "native_skin_scale": 1.2,
+  "default_hidden_submeshes": [],
+  "reload_move": {
+    "recipe": "tools/assets/bake_graves_reload.gd",
+    "source_mask": "Graves Skin0 Upper",
+    "bone_count": 89,
+    "duration": 2.0,
+    "fps": 30
+  },
+  "original_requested_path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/01-待开发/卡牌模型/法外狂徒.glb"
+}

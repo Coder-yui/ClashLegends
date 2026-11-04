@@ -72080,6 +72080,494 @@
       }
     },
     {
+      "file": "assets/audio/units/graves/play_sfx_graves_gravesbasicattack_onhit_1559186049_1153642577_r1.wav",
+      "sha256": "38daa4bdb6a5a518dc7b9ef450265f1327fa601d5609cfcd1699e6918e5d717f",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttack_OnHit [1559186049=1153642577] {r1}.txtp",
+          "txtp_sha256": "c5bb33b4f8debedc69cf8dcf94a220c78ff044d4697490b18140bc714947d6b1",
+          "event_ids": [
+            "244215342"
+          ],
+          "media_ids": [
+            "90564790",
+            "157222720",
+            "225464686",
+            "254349228"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 1.2767,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_sfx_graves_gravesbasicattack_onhit_1559186049_1153642577_r2.wav",
+      "sha256": "9f3da49b169400b6c8fa1465388dd84bd798ac2375871ccb01144bb94df49069",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttack_OnHit [1559186049=1153642577] {r2}.txtp",
+          "txtp_sha256": "040f05d52c358f6230de5970160d69eb55fbdfec347c16bc4297f4435e185078",
+          "event_ids": [
+            "244215342"
+          ],
+          "media_ids": [
+            "90564790",
+            "157222720",
+            "225464686",
+            "254349228"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 1.0548,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_sfx_graves_gravesbasicattack_onhit_1559186049_1153642577_r3.wav",
+      "sha256": "9553e1aaaec696b6ee980ce346a66e89b7b57b7f6d23bc21b7d203bc8619401f",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttack_OnHit [1559186049=1153642577] {r3}.txtp",
+          "txtp_sha256": "70d49fc595e0d57c69e3cc2664c44425c02d44c5b19f7236c908a6a22d1dbc37",
+          "event_ids": [
+            "244215342"
+          ],
+          "media_ids": [
+            "90564790",
+            "157222720",
+            "225464686",
+            "254349228"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 1.1505,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_sfx_graves_gravesbasicattack_onmissilelaunch_r1.wav",
+      "sha256": "f30686b9cfa7472a2f125b7cf8a1a61c1c604a5619676531b68c4e262d38bf2a",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttack_OnMissileLaunch {r1}.txtp",
+          "txtp_sha256": "4fd7e20c05b5f9f0bed3ead8dc4079ec461d88f7f1f9c6492ea7dca19db6c33c",
+          "event_ids": [
+            "4245900836"
+          ],
+          "media_ids": [
+            "54790445",
+            "65521337",
+            "390550520",
+            "415862004"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 0.7102,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_sfx_graves_gravesbasicattack_onmissilelaunch_r2.wav",
+      "sha256": "c71f4660122539a62ac4961cc3ddc5a1cbdb04d1a272e06a8eb019fc212285d5",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttack_OnMissileLaunch {r2}.txtp",
+          "txtp_sha256": "5df228952ddbf86166575515d6d47ed9777bbf2af016e19d91b458b80ec41b07",
+          "event_ids": [
+            "4245900836"
+          ],
+          "media_ids": [
+            "54790445",
+            "65521337",
+            "390550520",
+            "415862004"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 0.9063,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_sfx_graves_gravesbasicattack_onmissilelaunch_r3.wav",
+      "sha256": "09f5d19fc17bb9301e436d85f0f0015f720a49cf4a2736bc91d634d38a9bea66",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttack_OnMissileLaunch {r3}.txtp",
+          "txtp_sha256": "e9fb2f0f93a140305536565b2941f98162d73b8acbfe0ca0f955ab226c3f9e29",
+          "event_ids": [
+            "4245900836"
+          ],
+          "media_ids": [
+            "54790445",
+            "65521337",
+            "390550520",
+            "415862004"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 0.968,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_sfx_graves_gravesbasicattackspread_reload_open.wav",
+      "sha256": "e33009eb8aee8716de17f526a46c8c437be5f0e6cc6344de5edbd9640f42631a",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttackSpread_reload_open.txtp",
+          "txtp_sha256": "5904dac05bcd1ea15f87ecdce5e13c3717fbdfe974f51620bcd05af5d1827212",
+          "event_ids": [
+            "2368742187"
+          ],
+          "media_ids": [
+            "298835097"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 0.7747,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_sfx_graves_gravesbasicattackspread_reload_close.wav",
+      "sha256": "a02257ed0303bf985f0aa6e5616a0e1fca7f825c1759af8058078299a405beac",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttackSpread_reload_close.txtp",
+          "txtp_sha256": "c338919c86ea23a78f54879b31ba9d530078098ed48a4d30c7701a2748ce500b",
+          "event_ids": [
+            "3924966265"
+          ],
+          "media_ids": [
+            "983764571"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 0.4799,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_sfx_graves_gravesmove_oncast_r1.wav",
+      "sha256": "bc63db65c716dc7b21caf110b41a3302fb6bdb5dd6cb1276277d354647ba7766",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesMove_OnCast {r1}.txtp",
+          "txtp_sha256": "618cad19fa5da6be7273b9db1bf534f358a58a013379bf81a1b0e2c9b1c4a901",
+          "event_ids": [
+            "348979587"
+          ],
+          "media_ids": [
+            "12410936",
+            "117126899",
+            "149996625",
+            "158012136"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 0.7319,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_sfx_graves_gravesmove_oncast_r2.wav",
+      "sha256": "0ce17a35c736faa428a9e4d9cfc9eb868b847e12735b4975698ef8962b08c1c6",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesMove_OnCast {r2}.txtp",
+          "txtp_sha256": "55f7efa39965bff0a84211805c40cc3fbe670f3ef7b7ab15dadbdda91ad0ef7a",
+          "event_ids": [
+            "348979587"
+          ],
+          "media_ids": [
+            "12410936",
+            "117126899",
+            "149996625",
+            "158012136"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 0.8728,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_sfx_graves_gravesmove_oncast_r3.wav",
+      "sha256": "1e2a05166c8146742822ab93a46e6a250d7150408be666751d80039fe28d03e1",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesMove_OnCast {r3}.txtp",
+          "txtp_sha256": "ef3e7add6f9c66902ed0a661dfd428edb5a74e14ebabc105d145d0ceab4ff33b",
+          "event_ids": [
+            "348979587"
+          ],
+          "media_ids": [
+            "12410936",
+            "117126899",
+            "149996625",
+            "158012136"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 0.7685,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_vo_graves_death3d_r1_zh_cn.wav",
+      "sha256": "90c9630065d523d19512094f0ee4eef74308fdd8a3bf2651c4f7194fa63e25ea",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Death3D {r1}.txtp",
+          "txtp_sha256": "ffb9174fdf4748e7d8a4c66df26e05f04550d4355655e6bab4af2f5d688eed1c",
+          "event_ids": [
+            "1816760090"
+          ],
+          "media_ids": [
+            "582561247",
+            "809016394",
+            "1434315667",
+            "1657830278"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 1.5,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_vo_graves_death3d_r2_zh_cn.wav",
+      "sha256": "585029eaca94e2ee63fc5f4f8c0cdc8c1b372df3ea3abfbd6e7c26c458e1367d",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Death3D {r2}.txtp",
+          "txtp_sha256": "e6dfde0f179cccbf739075d00dc71b7dc769789fc696cfcec291b111a6776f72",
+          "event_ids": [
+            "1816760090"
+          ],
+          "media_ids": [
+            "582561247",
+            "809016394",
+            "1434315667",
+            "1657830278"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 1.5,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_vo_graves_death3d_r3_zh_cn.wav",
+      "sha256": "9bd3c2155f54f39fd09290687ed60c635eb4906a2d2cb3ae510e0f248d12322b",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Death3D {r3}.txtp",
+          "txtp_sha256": "4fc0d4d6fb9cc99728322d8536b74911a574a9029ff5c2bdee6c30d47284a6b8",
+          "event_ids": [
+            "1816760090"
+          ],
+          "media_ids": [
+            "582561247",
+            "809016394",
+            "1434315667",
+            "1657830278"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 1.5,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_vo_graves_move2dstandard_r10_zh_cn.wav",
+      "sha256": "cd966b70121f701afeb9fc7ea7d14904a729747b163df62d34fb87cb86f42786",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Move2DStandard {r10}.txtp",
+          "txtp_sha256": "52eb5aabc06c2e045320bbaaaae03bedb14702acea8b9208f723cbdd78979718",
+          "event_ids": [
+            "1130363853"
+          ],
+          "media_ids": [
+            "12247659",
+            "70734714",
+            "487508898",
+            "1005433024",
+            "1145492014",
+            "1274905705",
+            "1385360089",
+            "1396760689",
+            "1567416779",
+            "2092519265"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 1.646,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_vo_graves_move2dstandard_r1_zh_cn.wav",
+      "sha256": "2ed61d380e224eed224ab737503798f0e47e898df789035727c3097080744533",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Move2DStandard {r1}.txtp",
+          "txtp_sha256": "cf1dd524295bb88d8f714ec630f3e19ff17ceab43bbcfcb20ff7123ffaa491ed",
+          "event_ids": [
+            "1130363853"
+          ],
+          "media_ids": [
+            "12247659",
+            "70734714",
+            "487508898",
+            "1005433024",
+            "1145492014",
+            "1274905705",
+            "1385360089",
+            "1396760689",
+            "1567416779",
+            "2092519265"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 1.5078,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/graves/play_vo_graves_move2dstandard_r2_zh_cn.wav",
+      "sha256": "e19fec71bfce72bd675f104c07255c71d8a8ecd04167295aa71dbb2fe623c8a4",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Move2DStandard {r2}.txtp",
+          "txtp_sha256": "d98a5b63c45567a03a088e7bf58f8366e69344c33dded40f731d6f187a493286",
+          "event_ids": [
+            "1130363853"
+          ],
+          "media_ids": [
+            "12247659",
+            "70734714",
+            "487508898",
+            "1005433024",
+            "1145492014",
+            "1274905705",
+            "1385360089",
+            "1396760689",
+            "1567416779",
+            "2092519265"
+          ]
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 1.2183,
+      "verified_by_listening": false
+    },
+    {
       "file": "assets/audio/units/sivir/play_sfx_sivir_sivirq_oncast_r1.wav",
       "sha256": "85dffd8dfa2d1526537155938c01c2d7f0deb52bde0ec5c1f5c84a5d97ba599b",
       "source_events": [

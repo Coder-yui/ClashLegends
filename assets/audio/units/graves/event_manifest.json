@@ -1,0 +1,327 @@
+[
+  {
+    "file": "play_sfx_graves_gravesbasicattack_onhit_1559186049_1153642577_r1.wav",
+    "event": "Play_sfx_Graves_GravesBasicAttack_OnHit",
+    "event_id": 244215342,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/event_wav/Play_sfx_Graves_GravesBasicAttack_OnHit [1559186049=1153642577] {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttack_OnHit [1559186049=1153642577] {r1}.txtp",
+    "media_ids": [
+      90564790,
+      157222720,
+      225464686,
+      254349228
+    ],
+    "duration": 1.2767,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "38daa4bdb6a5a518dc7b9ef450265f1327fa601d5609cfcd1699e6918e5d717f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_graves_gravesbasicattack_onhit_1559186049_1153642577_r2.wav",
+    "event": "Play_sfx_Graves_GravesBasicAttack_OnHit",
+    "event_id": 244215342,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/event_wav/Play_sfx_Graves_GravesBasicAttack_OnHit [1559186049=1153642577] {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttack_OnHit [1559186049=1153642577] {r2}.txtp",
+    "media_ids": [
+      90564790,
+      157222720,
+      225464686,
+      254349228
+    ],
+    "duration": 1.0548,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9f3da49b169400b6c8fa1465388dd84bd798ac2375871ccb01144bb94df49069",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_graves_gravesbasicattack_onhit_1559186049_1153642577_r3.wav",
+    "event": "Play_sfx_Graves_GravesBasicAttack_OnHit",
+    "event_id": 244215342,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/event_wav/Play_sfx_Graves_GravesBasicAttack_OnHit [1559186049=1153642577] {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttack_OnHit [1559186049=1153642577] {r3}.txtp",
+    "media_ids": [
+      90564790,
+      157222720,
+      225464686,
+      254349228
+    ],
+    "duration": 1.1505,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9553e1aaaec696b6ee980ce346a66e89b7b57b7f6d23bc21b7d203bc8619401f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_graves_gravesbasicattack_onmissilelaunch_r1.wav",
+    "event": "Play_sfx_Graves_GravesBasicAttack_OnMissileLaunch",
+    "event_id": 4245900836,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/event_wav/Play_sfx_Graves_GravesBasicAttack_OnMissileLaunch {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttack_OnMissileLaunch {r1}.txtp",
+    "media_ids": [
+      54790445,
+      65521337,
+      390550520,
+      415862004
+    ],
+    "duration": 0.7102,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f30686b9cfa7472a2f125b7cf8a1a61c1c604a5619676531b68c4e262d38bf2a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_graves_gravesbasicattack_onmissilelaunch_r2.wav",
+    "event": "Play_sfx_Graves_GravesBasicAttack_OnMissileLaunch",
+    "event_id": 4245900836,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/event_wav/Play_sfx_Graves_GravesBasicAttack_OnMissileLaunch {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttack_OnMissileLaunch {r2}.txtp",
+    "media_ids": [
+      54790445,
+      65521337,
+      390550520,
+      415862004
+    ],
+    "duration": 0.9063,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c71f4660122539a62ac4961cc3ddc5a1cbdb04d1a272e06a8eb019fc212285d5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_graves_gravesbasicattack_onmissilelaunch_r3.wav",
+    "event": "Play_sfx_Graves_GravesBasicAttack_OnMissileLaunch",
+    "event_id": 4245900836,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/event_wav/Play_sfx_Graves_GravesBasicAttack_OnMissileLaunch {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttack_OnMissileLaunch {r3}.txtp",
+    "media_ids": [
+      54790445,
+      65521337,
+      390550520,
+      415862004
+    ],
+    "duration": 0.968,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "09f5d19fc17bb9301e436d85f0f0015f720a49cf4a2736bc91d634d38a9bea66",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_graves_gravesbasicattackspread_reload_open.wav",
+    "event": "Play_sfx_Graves_GravesBasicAttackSpread_reload_open",
+    "event_id": 2368742187,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/event_wav/Play_sfx_Graves_GravesBasicAttackSpread_reload_open.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttackSpread_reload_open.txtp",
+    "media_ids": [
+      298835097
+    ],
+    "duration": 0.7747,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e33009eb8aee8716de17f526a46c8c437be5f0e6cc6344de5edbd9640f42631a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_graves_gravesbasicattackspread_reload_close.wav",
+    "event": "Play_sfx_Graves_GravesBasicAttackSpread_reload_close",
+    "event_id": 3924966265,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/event_wav/Play_sfx_Graves_GravesBasicAttackSpread_reload_close.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesBasicAttackSpread_reload_close.txtp",
+    "media_ids": [
+      983764571
+    ],
+    "duration": 0.4799,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a02257ed0303bf985f0aa6e5616a0e1fca7f825c1759af8058078299a405beac",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_graves_gravesmove_oncast_r1.wav",
+    "event": "Play_sfx_Graves_GravesMove_OnCast",
+    "event_id": 348979587,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/event_wav/Play_sfx_Graves_GravesMove_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesMove_OnCast {r1}.txtp",
+    "media_ids": [
+      12410936,
+      117126899,
+      149996625,
+      158012136
+    ],
+    "duration": 0.7319,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "bc63db65c716dc7b21caf110b41a3302fb6bdb5dd6cb1276277d354647ba7766",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_graves_gravesmove_oncast_r2.wav",
+    "event": "Play_sfx_Graves_GravesMove_OnCast",
+    "event_id": 348979587,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/event_wav/Play_sfx_Graves_GravesMove_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesMove_OnCast {r2}.txtp",
+    "media_ids": [
+      12410936,
+      117126899,
+      149996625,
+      158012136
+    ],
+    "duration": 0.8728,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0ce17a35c736faa428a9e4d9cfc9eb868b847e12735b4975698ef8962b08c1c6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_graves_gravesmove_oncast_r3.wav",
+    "event": "Play_sfx_Graves_GravesMove_OnCast",
+    "event_id": 348979587,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/event_wav/Play_sfx_Graves_GravesMove_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves/txtp/Play_sfx_Graves_GravesMove_OnCast {r3}.txtp",
+    "media_ids": [
+      12410936,
+      117126899,
+      149996625,
+      158012136
+    ],
+    "duration": 0.7685,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1e2a05166c8146742822ab93a46e6a250d7150408be666751d80039fe28d03e1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_graves_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Graves_Death3D",
+    "event_id": 1816760090,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/event_wav/Play_vo_Graves_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Death3D {r1}.txtp",
+    "media_ids": [
+      582561247,
+      809016394,
+      1434315667,
+      1657830278
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "90c9630065d523d19512094f0ee4eef74308fdd8a3bf2651c4f7194fa63e25ea",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 1.9890929705215419,
+      "source_sha256": "81775ce3d48e594c91b3d3cd907484d0feb682afb7f0dae44c766df569f5c999",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_graves_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Graves_Death3D",
+    "event_id": 1816760090,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/event_wav/Play_vo_Graves_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Death3D {r2}.txtp",
+    "media_ids": [
+      582561247,
+      809016394,
+      1434315667,
+      1657830278
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "585029eaca94e2ee63fc5f4f8c0cdc8c1b372df3ea3abfbd6e7c26c458e1367d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.1602721088435373,
+      "source_sha256": "57853c23b3acd83145734515ba8ee1425bc0d7880d39ba381f5302b2104b1faf",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_graves_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Graves_Death3D",
+    "event_id": 1816760090,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/event_wav/Play_vo_Graves_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Death3D {r3}.txtp",
+    "media_ids": [
+      582561247,
+      809016394,
+      1434315667,
+      1657830278
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "9bd3c2155f54f39fd09290687ed60c635eb4906a2d2cb3ae510e0f248d12322b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.211360544217687,
+      "source_sha256": "c74f7b8302a6cac71aaf1ed38f3360fa3658f43079c0ddd9d822c44071ab17fe",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_graves_move2dstandard_r10_zh_cn.wav",
+    "event": "Play_vo_Graves_Move2DStandard",
+    "event_id": 1130363853,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/event_wav/Play_vo_Graves_Move2DStandard {r10}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Move2DStandard {r10}.txtp",
+    "media_ids": [
+      12247659,
+      70734714,
+      487508898,
+      1005433024,
+      1145492014,
+      1274905705,
+      1385360089,
+      1396760689,
+      1567416779,
+      2092519265
+    ],
+    "duration": 1.646,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "cd966b70121f701afeb9fc7ea7d14904a729747b163df62d34fb87cb86f42786",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_graves_move2dstandard_r1_zh_cn.wav",
+    "event": "Play_vo_Graves_Move2DStandard",
+    "event_id": 1130363853,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/event_wav/Play_vo_Graves_Move2DStandard {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Move2DStandard {r1}.txtp",
+    "media_ids": [
+      12247659,
+      70734714,
+      487508898,
+      1005433024,
+      1145492014,
+      1274905705,
+      1385360089,
+      1396760689,
+      1567416779,
+      2092519265
+    ],
+    "duration": 1.5078,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2ed61d380e224eed224ab737503798f0e47e898df789035727c3097080744533",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_graves_move2dstandard_r2_zh_cn.wav",
+    "event": "Play_vo_Graves_Move2DStandard",
+    "event_id": 1130363853,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/event_wav/Play_vo_Graves_Move2DStandard {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Move2DStandard {r2}.txtp",
+    "media_ids": [
+      12247659,
+      70734714,
+      487508898,
+      1005433024,
+      1145492014,
+      1274905705,
+      1385360089,
+      1396760689,
+      1567416779,
+      2092519265
+    ],
+    "duration": 1.2183,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e19fec71bfce72bd675f104c07255c71d8a8ecd04167295aa71dbb2fe623c8a4",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  }
+]
