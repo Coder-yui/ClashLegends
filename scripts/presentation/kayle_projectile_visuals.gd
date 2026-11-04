@@ -73,7 +73,7 @@ func _path_position(p: Dictionary, view: Dictionary) -> Vector2:
 	var path: Dictionary = p.get("visual_path", {})
 	if path.is_empty(): return _system._visual_position(p)
 	if not view.has("start_offset"):
-		view.start_offset = (path.origin_offset as Vector2) + _model_offset(path.source, Vector2(0, -80))
+		view.start_offset = (path.origin_offset as Vector2) + _system._visual_launch_offset(path.source, path.get("start_model_offset", Vector2(0, -80)))
 		view.end_offset = _model_offset(path.target, Vector2(0, -30))
 	if not bool(path.wave): view.end_offset = _model_offset(path.target, view.end_offset)
 	var position := (p.pos as Vector2) + (view.start_offset as Vector2).lerp(view.end_offset, float(path.progress))

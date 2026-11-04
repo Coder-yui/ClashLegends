@@ -56,6 +56,7 @@ var _stasis_visible := false
 var _frozen_visible := false
 var _status_head_height := 0.0
 var _projectile_anchor: Node3D
+var _projectile_launch_anchor: BoneAttachment3D
 var _source: Tower
 var _camera: Camera3D
 var _model_root: Node3D
@@ -90,6 +91,16 @@ func setup(tower: Tower, packed: PackedScene, camera: Camera3D, config: Dictiona
 	_animations = config.get("animations", {}).duplicate()
 	add_child(_model_root)
 	_projectile_anchor = preload("res://scripts/presentation/projectile_model_anchor.gd").create(_model_root)
+	# 用原版骨骼定位独立发射挂点；塔身通用锚点仍用于被击中位置。
+	if not tower.is_king:
+		for skeleton in _model_root.find_children("*", "Skeleton3D", true, false):
+			var bone_index: int = skeleton.find_bone("joint2")
+			if bone_index < 0: continue
+			_projectile_launch_anchor = BoneAttachment3D.new()
+			_projectile_launch_anchor.name = "TowerProjectileLaunchAnchor"
+			_projectile_launch_anchor.bone_idx = bone_index
+			skeleton.add_child(_projectile_launch_anchor)
+			break
 	_animation_player = _find_animation_player(_model_root)
 	if _animation_player == null:
 		push_warning("塔的 3D 模型中未找到 AnimationPlayer")
@@ -113,10 +124,10 @@ func setup(tower: Tower, packed: PackedScene, camera: Camera3D, config: Dictiona
 	_cache_status_head_height()
 	_source.destroyed.connect(_on_source_destroyed)
 	_source.visual_hit.connect(_on_source_visual_hit)
-	_sync_position()
 	# 相机滚转抵消画布翻转后，模型朝向同样按观察方选择，保持己方朝上、敌方朝下。
 	var viewer_team := 1 if bool(camera.get_meta("canvas_flipped", false)) else 0
 	rotation.y = PI if tower.team == viewer_team else 0.0
+	_sync_position()
 	return true
 
 func _process(delta: float) -> void:
@@ -173,6 +184,10 @@ func _sync_position() -> void:
 	_source.set_stun_head_world_position(BattleGroundProjection.unproject(_camera, to_global(Vector3(0, _status_head_height, 0))))
 	if is_instance_valid(_projectile_anchor):
 		_source.set_meta("projectile_model_offset", BattleGroundProjection.unproject(_camera, _projectile_anchor.global_position) - BattleGroundProjection.unproject(_camera, global_position))
+	if is_instance_valid(_projectile_launch_anchor):
+		# joint2 位于晶石边缘；在塔模型空间微调至晶石中心，随塔朝向旋转。
+		var crystal_center := _projectile_launch_anchor.global_position + global_transform.basis * Vector3(0.0, 0.172, -0.125)
+		_source.set_meta("projectile_launch_offset", BattleGroundProjection.unproject(_camera, crystal_center) - BattleGroundProjection.unproject(_camera, global_position))
 
 func _cache_status_head_height() -> void:
 	var meshes: Array[MeshInstance3D] = []

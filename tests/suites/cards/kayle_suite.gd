@@ -363,6 +363,7 @@ func _test_sword_facing() -> void:
 		var caster: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 900), {"deploy_time_override": 0.0}))
 		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300 + side * 160, 900), {"deploy_time_override": 0.0}))
 		caster.set_meta("projectile_model_offset", Vector2(0, -80))
+		caster.set_meta("projectile_launch_offset", Vector2(0, -80))
 		target.set_meta("projectile_model_offset", Vector2(0, -30))
 		var system: ProjectileSystem = _main._projectile_system
 		SuiteUtils.begin_attack_visual(caster, target)

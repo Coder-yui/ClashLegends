@@ -1,8 +1,12 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/units/pix/source/pix.glb" id="1_pix"]
 
+[ext_resource type="Script" path="res://scripts/presentation/attack_muzzle_model.gd" id="attack_muzzle"]
+
 [node name="PixView" type="Node3D"]
+script = ExtResource("attack_muzzle")
+attack_launch_use_configured_offset = true
 
 [node name="Model" parent="." instance=ExtResource("1_pix")]
 position = Vector3(0, 0.802, 0)

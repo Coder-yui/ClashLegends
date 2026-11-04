@@ -201,7 +201,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		"start": start_position, "end": target.global_position,
 		"origin_offset": attacker.global_position - start_position,
 		"source": _visual_entity(attacker), "target": _visual_entity(target),
-		"start_model_offset": attacker.get_meta("projectile_model_offset", source_fallback),
+		"start_model_offset": source_fallback if attacker.get_meta("projectile_launch_use_config", false) else attacker.get_meta("projectile_model_offset", source_fallback),
 		"end_model_offset": target.get_meta("projectile_model_offset", Vector2(0.0, -30.0)),
 		"contact_radius": target.body_radius + attacker.projectile_collision_radius,
 		"progress": 0.0, "wave": false,
@@ -715,13 +715,13 @@ func _visual_position(projectile: Dictionary) -> Vector2:
 	if bool(path.get("fixed_muzzle", false)):
 		var id := int(projectile.get("visual_id", -1))
 		if not _visual_origin_cache.has(id):
-			_visual_origin_cache[id] = _visual_model_offset(path.source, path.get("start_model_offset", Vector2.ZERO))
+			_visual_origin_cache[id] = _visual_launch_offset(path.source, path.get("start_model_offset", Vector2.ZERO))
 		return projectile.pos + path.origin_offset + _visual_origin_cache[id]
 	if not path.is_empty() and not bool(path.get("wave", false)):
 		var progress := clampf(float(path.get("progress", 0.0)), 0.0, 1.0)
 		var id: int = int(projectile.get("visual_id", -1))
 		if not _visual_origin_cache.has(id):
-			_visual_origin_cache[id] = _visual_model_offset(path.source, path.get("start_model_offset", Vector2.ZERO))
+			_visual_origin_cache[id] = _visual_launch_offset(path.source, path.get("start_model_offset", Vector2.ZERO))
 		var start_offset: Vector2 = path.origin_offset + _visual_origin_cache[id]
 		var end_offset: Vector2 = _visual_model_offset(path.target, path.get("end_model_offset", Vector2(0, -30)))
 		var point: Vector2 = projectile.pos + start_offset.lerp(end_offset, progress)
@@ -729,6 +729,11 @@ func _visual_position(projectile: Dictionary) -> Vector2:
 		return point + direction.normalized() * float(path.get("contact_radius", 0.0)) * progress
 	var visual_offset: Vector2 = projectile.get("visual_offset", Vector2.ZERO)
 	return projectile.pos + visual_offset + Vector2(0.0, -float(projectile.get("visual_height", 0.0)))
+
+func _visual_launch_offset(descriptor: Dictionary, fallback: Vector2) -> Vector2:
+	var body := _visual_body(descriptor)
+	if not is_instance_valid(body) or bool(body.get_meta("projectile_launch_use_config", false)): return fallback
+	return body.get_meta("projectile_launch_offset", body.get_meta("projectile_model_offset", fallback))
 
 func _visual_model_offset(descriptor: Dictionary, fallback: Vector2) -> Vector2:
 	var body := _visual_body(descriptor)

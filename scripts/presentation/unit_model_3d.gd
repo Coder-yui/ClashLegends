@@ -37,6 +37,7 @@ var _state: UnitPresentationState
 var _current_clip_speed := 1.0
 var _stable_head_offset := NAN
 var _projectile_anchor: Node3D
+var _attack_launch_anchors: Array[Node3D] = []
 var _last_frozen_overlay := false
 var _was_controlled := false
 var _source: Unit
@@ -278,6 +279,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_configure_looping_animations()
 	if is_instance_valid(_projectile_anchor): _projectile_anchor.free()
 	_projectile_anchor = preload("res://scripts/presentation/projectile_model_anchor.gd").create(_model_root)
+	_configure_attack_launch_anchors()
 	_source.set_meta("projectile_model_anchor", weakref(_projectile_anchor))
 	_source.set_meta("continuous_beam_native", _model_root.has_method("advance_continuous_attack_visual"))
 	_source.has_model_deployment_effect = _model_root.has_method("advance_deployment_visual")
@@ -1109,6 +1111,34 @@ func _visual_bounds_bottom_y() -> float:
 			bottom = minf(bottom, to_local(mesh_instance.to_global(corner)).y)
 	return bottom
 
+## 单独保存攻击发射骨，目标受击仍使用通用身体锚点。
+func _configure_attack_launch_anchors() -> void:
+	for anchor in _attack_launch_anchors:
+		if is_instance_valid(anchor): anchor.free()
+	_attack_launch_anchors.clear()
+	if is_instance_valid(_source) and _source.has_meta("projectile_launch_offset"): _source.remove_meta("projectile_launch_offset")
+	if is_instance_valid(_source) and _source.has_meta("projectile_launch_use_config"): _source.remove_meta("projectile_launch_use_config")
+	if not _model_root.has_method("get_attack_launch_bones"): return
+	if bool(_model_root.call("uses_configured_attack_launch")):
+		_source.set_meta("projectile_launch_use_config", true)
+	var skeleton := _model_root.find_child("Skeleton3D", true, false) as Skeleton3D
+	if skeleton == null: return
+	for requested in _model_root.call("get_attack_launch_bones"):
+		var bone_index := -1
+		if not String(requested).is_empty():
+			for index in skeleton.get_bone_count():
+				if String(skeleton.get_bone_name(index)).to_lower() == String(requested).to_lower():
+					bone_index = index
+					break
+		if bone_index < 0:
+			_attack_launch_anchors.append(null)
+			continue
+		var anchor := BoneAttachment3D.new()
+		anchor.name = "AttackLaunch%d" % _attack_launch_anchors.size()
+		anchor.bone_idx = bone_index
+		skeleton.add_child(anchor)
+		_attack_launch_anchors.append(anchor)
+
 ## 用包装场景中全部网格的实际投影顶部定位血条；模型缩放或脚底校正后无需再手填像素偏移。
 func _update_health_bar_anchor() -> void:
 	if _source == null or _camera == null or not _model_resources.has_meshes():
@@ -1123,6 +1153,13 @@ func _update_health_bar_anchor() -> void:
 
 	if is_instance_valid(_projectile_anchor):
 		_source.set_meta("projectile_model_offset", BattleGroundProjection.unproject(_camera, _projectile_anchor.global_position) - ground_screen)
+	if not _attack_launch_anchors.is_empty():
+		var index := mini(_active_attack_index, _attack_launch_anchors.size() - 1)
+		var launch_anchor := _attack_launch_anchors[index]
+		if is_instance_valid(launch_anchor):
+			_source.set_meta("projectile_launch_offset", BattleGroundProjection.unproject(_camera, launch_anchor.global_position) - ground_screen)
+		elif _source.has_meta("projectile_launch_offset"):
+			_source.remove_meta("projectile_launch_offset")
 	# 建筑等横向展开模型可由包装场景提供稳定的 3D 顶端锚点；仍只影响 UI 投影。
 	if _model_root != null and _model_root.has_method("get_health_bar_anchor_local"):
 		var local_anchor = _model_root.call("get_health_bar_anchor_local")

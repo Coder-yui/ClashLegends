@@ -1,8 +1,12 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/units/apex_turret/source/apex_turret.glb" id="1_apex"]
 
+[ext_resource type="Script" path="res://scripts/presentation/attack_muzzle_model.gd" id="attack_muzzle"]
+
 [node name="H28QTurretView" type="Node3D"]
+script = ExtResource("attack_muzzle")
+attack_launch_use_configured_offset = true
 scale = Vector3(1.375, 1.375, 1.375)
 
 [node name="Model" parent="." instance=ExtResource("1_apex")]

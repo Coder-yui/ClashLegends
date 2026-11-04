@@ -1,8 +1,12 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/units/teemo/source/teemo.glb" id="1_teemo"]
 
+[ext_resource type="Script" path="res://scripts/presentation/attack_muzzle_model.gd" id="attack_muzzle"]
+
 [node name="TeemoView" type="Node3D"]
+script = ExtResource("attack_muzzle")
+attack_launch_bones = PackedStringArray("Blowgun1")
 
 [node name="Model" parent="." instance=ExtResource("1_teemo")]
 scale = Vector3(0.01185, 0.01185, 0.01185)

@@ -5,6 +5,7 @@
 
 [node name="GnarSmallView" type="Node3D"]
 script = ExtResource("2_filter")
+attack_launch_bones = PackedStringArray("L_Buffbone_Glb_Hand_Loc", "R_Buffbone_Glb_Hand_Loc")
 filtered_clips = PackedStringArray("gnar_runtime/Revert_Transform", "Run1_In")
 hidden_surface_indices = PackedInt32Array(2)
 additive_output_clip = &"Revert_Transform"

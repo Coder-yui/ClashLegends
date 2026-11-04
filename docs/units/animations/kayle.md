@@ -62,3 +62,7 @@ AttackPassive 独立绑定 kayle_attackpassive.anm，AttackPassiveFast分支阈�
 Respawn结束时正在移动：近战接Run_In，远程接Kayle_RunInPassive_anm；进入混合0.24秒，片尾接循环移动混合0秒。这条部署出口为用户要求的项目适配，不能将其表述为已证明的LoL原生Respawn边沿。双方实际渲染及片段轨迹已核对。
 
 远程起步 Kayle_RunInPassive_anm → Kayle_RunPassive_anm 的姿态并非无缝，项目适配统一使用0.18秒混合，覆盖部署与待机进入起步后的出口。
+
+## 普攻发射位置
+
+远程形态原版 `KayleBasicAttack3/4` 均从 `R_hand` 发射；剑与焰浪视觉读取独立的发射锚点。

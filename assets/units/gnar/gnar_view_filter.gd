@@ -1,4 +1,4 @@
-extends Node3D
+extends "res://scripts/presentation/attack_muzzle_model.gd"
 ## 纳尔专用表现修正：过滤动画中的临时道具，并把导出的加法缩放层合成为正常展开姿势。
 
 @export var filtered_clips := PackedStringArray()

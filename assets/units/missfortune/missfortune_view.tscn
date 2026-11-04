@@ -1,8 +1,12 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/units/missfortune/source/missfortune.glb" id="1_missfortune"]
 
+[ext_resource type="Script" path="res://scripts/presentation/attack_muzzle_model.gd" id="attack_muzzle"]
+
 [node name="MissFortuneView" type="Node3D"]
+script = ExtResource("attack_muzzle")
+attack_launch_bones = PackedStringArray("R_WEAPON", "L_WEAPON")
 
 [node name="Model" parent="." instance=ExtResource("1_missfortune")]
 scale = Vector3(0.014, 0.014, 0.014)

@@ -127,7 +127,16 @@ func _check_tower_projectile_visual() -> void:
 		and red_projectile.pos == red_tower.global_position,
 		"敌方防御塔弹体使用红色并镜像到另一侧权杖晶石，实际发射位置不变",
 	)
-	_main._projectile_system.projectiles.clear()
+	_main._projectile_system.clear_all()
+	# 工作台/实战的 3D 代理同时提供塔身与权杖锚点；发射和受击必须分别使用。
+	red_tower.set_meta("projectile_model_offset", Vector2(0, -70))
+	red_tower.set_meta("projectile_launch_offset", Vector2(-35, -180))
+	_main.launch_attack(red_tower, red_target, red_tower.damage, red_tower.projectile_speed, 0.0, 0.0, Tower.RED_PROJECTILE_COLOR)
+	var anchored_shot: Dictionary = _main._projectile_system.projectiles.values()[0]
+	_expect(_main._projectile_system._visual_position(anchored_shot) == red_tower.global_position + Vector2(-35, -180), "防御塔弹体使用晶石发射锚点而非塔身受击锚点")
+	var descriptor: Dictionary = anchored_shot.visual_path.source
+	_expect(_main._projectile_system._visual_model_offset(descriptor, Vector2.ZERO) == Vector2(0, -70), "防御塔作为目标仍使用塔身受击锚点")
+	_main._projectile_system.clear_all()
 	red_tower.free()
 	red_target.free()
 

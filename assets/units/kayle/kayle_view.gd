@@ -1,4 +1,4 @@
-extends Node3D
+extends "res://scripts/presentation/attack_muzzle_model.gd"
 ## Skin0 初始隐藏列表 / Evolve3 / IdlePassive 的部件选择，仅负责表现。
 @export var ranged := false
 var _mesh: MeshInstance3D

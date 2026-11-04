@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://assets/units/kayle/kayle_view.gd" id="2"]
 [node name="KayleView" type="Node3D"]
 script = ExtResource("2")
+attack_launch_bones = PackedStringArray("R_Hand", "R_Hand")
 ranged = true
 [node name="Model" parent="." instance=ExtResource("1")]
 scale = Vector3(0.013, 0.013, 0.013)

@@ -31,6 +31,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_ashe_art_integration()
 	_check_sett_art_integration()
 	_check_teemo_art_integration()
+	_check_native_attack_muzzles()
+	_check_configured_muzzle_fallback()
 
 func _check_heal_range_team() -> void:
 	var spells: SpellSystem = _main._spell_system
@@ -1354,3 +1356,67 @@ func _check_display_layout() -> void:
 	_main._hand.scale = original_hand_scale
 	_main._active_skill_bar.scale = original_skill_scale
 	_main.get_viewport().canvas_transform = previous_canvas
+
+## 模型发射骨与目标受击锚点分离；逐套动作及双方使用对应源骨骼。
+func _check_native_attack_muzzles() -> void:
+	var cases := {
+		"ashe": ["R_hand", "R_hand"], "teemo": ["Blowgun1"],
+		"missfortune": ["R_WEAPON", "L_WEAPON"], "gnar": ["L_Buffbone_Glb_Hand_Loc", "R_Buffbone_Glb_Hand_Loc"],
+		"lulu": ["BUFFBONE_CSTM_WEAPON_1", "R_hand"], "corki": ["gun", "gun"],
+		"twisted_fate": ["L_Hand", "L_Hand", "R_Hand", "L_Hand", ""],
+		"anivia": ["", "Head"], "kayle_ranged": ["R_Hand", "R_Hand"],
+	}
+	for id in cases:
+		for team in [0, 1]:
+			var stats: Dictionary = CardDB.get_card(id).duplicate(true)
+			stats["deploy_time"] = 0.0
+			var unit := Unit.new()
+			unit.setup(team, stats, stats.name)
+			unit.position = Vector2(300, 800)
+			_main.add_child(unit)
+			_main._battle_presentation.attach_unit(unit, stats)
+			var view: UnitModel3D
+			for candidate in _main._battle_presentation._world_root.get_children():
+				if candidate is UnitModel3D and candidate._source == unit: view = candidate; break
+			_expect(view != null and view._attack_launch_anchors.size() == cases[id].size(), "%s team %d 创建按动作分组的发射挂点" % [id, team])
+			if view != null and view._attack_launch_anchors.size() == cases[id].size():
+				for index in cases[id].size():
+					view._active_attack_index = index
+					view._update_health_bar_anchor()
+					var anchor := view._attack_launch_anchors[index] as BoneAttachment3D
+					if cases[id][index] == "":
+						_expect(anchor == null and not unit.has_meta("projectile_launch_offset"), "%s 无源骨骼时保持现有回退" % id)
+						continue
+					var valid := anchor != null and String((anchor.get_parent() as Skeleton3D).get_bone_name(anchor.bone_idx)).to_lower() == String(cases[id][index]).to_lower()
+					var descriptor := ProjectileSystem._visual_entity(unit)
+					var actual: Vector2 = _main._projectile_system._visual_launch_offset(descriptor, Vector2.INF)
+					_expect(valid and unit.has_meta("projectile_launch_offset") and actual.is_equal_approx(unit.get_meta("projectile_launch_offset")), "%s team %d attack %d 绑定原始发射骨" % [id, team, index])
+					_expect(unit.has_meta("projectile_model_offset"), "%s 保留目标受击身体锚点" % id)
+			if view != null: view.free()
+			unit.free()
+
+## 缺失原版骨骼时恢复既有项目配置，不能被通用胸部/包围盒锚点覆盖。
+func _check_configured_muzzle_fallback() -> void:
+	for id in ["pix_single", "apex_turret"]:
+		for team in [0, 1]:
+			var stats: Dictionary = CardDB.get_card(id).duplicate(true)
+			stats["deploy_time"] = 0.0
+			var unit := Unit.new()
+			unit.setup(team, stats, stats.name)
+			unit.position = Vector2(300, 800)
+			_main.add_child(unit)
+			_main._battle_presentation.attach_unit(unit, stats)
+			var target := Unit.new()
+			var target_stats := CardDB.get_card("target_dummy")
+			target.setup(1-team, target_stats, target_stats.name)
+			target.position = unit.position + Vector2(0, -140 if team == 0 else 140)
+			_main.add_child(target)
+			_main._projectile_system.clear_all()
+			_main.launch_attack(unit, target, 1.0, unit.projectile_speed, 0.0, 0.0, Color.WHITE)
+			var projectile: Dictionary = _main._projectile_system.projectiles.values()[0]
+			var configured := unit.position + unit.position.direction_to(target.position) * unit.projectile_visual_forward_offset + Vector2(0, -unit.projectile_visual_height)
+			_expect(unit.get_meta("projectile_launch_use_config", false) and _main._projectile_system._visual_position(projectile).is_equal_approx(configured), "%s team %d 缺骨时使用既有配置" % [id, team])
+			_main._projectile_system.clear_all()
+			for candidate in _main._battle_presentation._world_root.get_children():
+				if candidate is UnitModel3D and candidate._source == unit: candidate.free(); break
+			unit.free(); target.free()

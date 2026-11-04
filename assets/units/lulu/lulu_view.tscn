@@ -1,5 +1,9 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 [ext_resource type="PackedScene" path="res://assets/units/lulu/source/lulu.glb" id="1"]
+[ext_resource type="Script" path="res://scripts/presentation/attack_muzzle_model.gd" id="attack_muzzle"]
+
 [node name="LuluView" type="Node3D"]
+script = ExtResource("attack_muzzle")
+attack_launch_bones = PackedStringArray("BUFFBONE_CSTM_WEAPON_1", "R_hand")
 [node name="Model" parent="." instance=ExtResource("1")]
 scale = Vector3(0.014, 0.014, 0.014)
