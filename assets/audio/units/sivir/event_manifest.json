@@ -1,0 +1,251 @@
+[
+  {
+    "file": "play_sfx_sivir_sivirq_oncast_r1.wav",
+    "event": "Play_sfx_Sivir_SivirQ_OnCast",
+    "event_id": 4176229329,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/event_wav/Play_sfx_Sivir_SivirQ_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirQ_OnCast {r1}.txtp",
+    "media_ids": [
+      441434341,
+      523774553,
+      577473269
+    ],
+    "duration": 1.2958,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "85dffd8dfa2d1526537155938c01c2d7f0deb52bde0ec5c1f5c84a5d97ba599b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sivir_sivirq_oncast_r2.wav",
+    "event": "Play_sfx_Sivir_SivirQ_OnCast",
+    "event_id": 4176229329,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/event_wav/Play_sfx_Sivir_SivirQ_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirQ_OnCast {r2}.txtp",
+    "media_ids": [
+      441434341,
+      523774553,
+      577473269
+    ],
+    "duration": 1.348,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c040b757f225098c69e9ff8bdcf3104881e42fa31ad3b681066f2192f22209bc",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sivir_sivirq_oncast_r3.wav",
+    "event": "Play_sfx_Sivir_SivirQ_OnCast",
+    "event_id": 4176229329,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/event_wav/Play_sfx_Sivir_SivirQ_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirQ_OnCast {r3}.txtp",
+    "media_ids": [
+      441434341,
+      523774553,
+      577473269
+    ],
+    "duration": 1.6063,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b8c989f90f24f4a69380f7ee1471401a37b59df6319c80fc2178c1c9b1320447",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sivir_sivirq_hit_r1.wav",
+    "event": "Play_sfx_Sivir_SivirQ_hit",
+    "event_id": 1419197874,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/event_wav/Play_sfx_Sivir_SivirQ_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirQ_hit {r1}.txtp",
+    "media_ids": [
+      30310186,
+      423248603,
+      526778842,
+      676240343,
+      700051508,
+      941838837
+    ],
+    "duration": 0.8433,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d31f8dbebb0613b992c5fe56126f1acf004febeee43956b6cc6d15578d96ea45",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sivir_sivirq_hit_r2.wav",
+    "event": "Play_sfx_Sivir_SivirQ_hit",
+    "event_id": 1419197874,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/event_wav/Play_sfx_Sivir_SivirQ_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirQ_hit {r2}.txtp",
+    "media_ids": [
+      30310186,
+      423248603,
+      526778842,
+      676240343,
+      700051508,
+      941838837
+    ],
+    "duration": 0.8355,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5d390eb0b5930d0e53cf1123b5a1cec0090fb1789425e2bbcf2e7a7ff0e0abde",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sivir_sivirq_hit_r3.wav",
+    "event": "Play_sfx_Sivir_SivirQ_hit",
+    "event_id": 1419197874,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/event_wav/Play_sfx_Sivir_SivirQ_hit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirQ_hit {r3}.txtp",
+    "media_ids": [
+      30310186,
+      423248603,
+      526778842,
+      676240343,
+      700051508,
+      941838837
+    ],
+    "duration": 0.7741,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c501d706d3b485a4903e6f7745859ea24d67142776a1da8d99bb85f046efe487",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sivir_sivirqmissile_onmissilelaunch_r1.wav",
+    "event": "Play_sfx_Sivir_SivirQMissile_OnMissileLaunch",
+    "event_id": 3385220941,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/event_wav/Play_sfx_Sivir_SivirQMissile_OnMissileLaunch {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirQMissile_OnMissileLaunch {r1}.txtp",
+    "media_ids": [
+      45977684,
+      388184696,
+      636809438
+    ],
+    "duration": 1.6514,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "87050c53a1ca4f16f94a9479d9107f79ae295804c508ddf57093136056e57dfb",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sivir_sivirqmissile_onmissilelaunch_r2.wav",
+    "event": "Play_sfx_Sivir_SivirQMissile_OnMissileLaunch",
+    "event_id": 3385220941,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/event_wav/Play_sfx_Sivir_SivirQMissile_OnMissileLaunch {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirQMissile_OnMissileLaunch {r2}.txtp",
+    "media_ids": [
+      45977684,
+      388184696,
+      636809438
+    ],
+    "duration": 1.8898,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1c368a70e96b9748aac17542472f3da224bf3b6bfd3d00a126f27c78515cdc9b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sivir_sivirqmissile_onmissilelaunch_r3.wav",
+    "event": "Play_sfx_Sivir_SivirQMissile_OnMissileLaunch",
+    "event_id": 3385220941,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/event_wav/Play_sfx_Sivir_SivirQMissile_OnMissileLaunch {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirQMissile_OnMissileLaunch {r3}.txtp",
+    "media_ids": [
+      45977684,
+      388184696,
+      636809438
+    ],
+    "duration": 2.148,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "29986db0233a0fb784dab23e1ab82d0ce66e242240ca84b4928bcf911fdeae49",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sivir_sivire_onbuffactivate_r1.wav",
+    "event": "Play_sfx_Sivir_SivirE_OnBuffActivate",
+    "event_id": 4008136820,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/event_wav/Play_sfx_Sivir_SivirE_OnBuffActivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirE_OnBuffActivate {r1}.txtp",
+    "media_ids": [
+      530898384,
+      1059050639
+    ],
+    "duration": 4.5114,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d220bdff2937ca2d703a007d6aaaa1e6c62b98ff3f5439d28693e31ed81aaa9f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sivir_sivire_onbuffactivate_r2.wav",
+    "event": "Play_sfx_Sivir_SivirE_OnBuffActivate",
+    "event_id": 4008136820,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/event_wav/Play_sfx_Sivir_SivirE_OnBuffActivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirE_OnBuffActivate {r2}.txtp",
+    "media_ids": [
+      530898384,
+      1059050639
+    ],
+    "duration": 4.3581,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b2a88b392e1d2994c10abacbacee187ad678888a55cdc1ac963cd81028c5128d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sivir_sivire_onbuffdeactivate.wav",
+    "event": "Play_sfx_Sivir_SivirE_OnBuffDeactivate",
+    "event_id": 2360257221,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/event_wav/Play_sfx_Sivir_SivirE_OnBuffDeactivate.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirE_OnBuffDeactivate.txtp",
+    "media_ids": [
+      411313603
+    ],
+    "duration": 2.091,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3de2a51809525407251681f709235a5bcdac631abf66974b1af6437ce45cfa65",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sivir_death3d_cast.wav",
+    "event": "Play_sfx_Sivir_Death3D_cast",
+    "event_id": 4051731619,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/event_wav/Play_sfx_Sivir_Death3D_cast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_Death3D_cast.txtp",
+    "media_ids": [
+      482283536
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "6a279d688579d7c39f76d19dc88dfa7c03d3a43c1d2542b8a9d060635e5cf83a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.8372562358276645,
+      "source_sha256": "e002252d0aaa36d91fbb7f4cfae3bccb53c3d8406107829fd58a742af50ef30c",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "return_1.wav",
+    "event": "Play_sfx_Sivir_SivirQMissileReturn_OnMissileLaunch",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirQMissileReturn_OnMissileLaunch {r1} {d}.txtp",
+    "duration": 2.7646485260770977,
+    "processing": "vgmstream-cli -i; wwiser -gv=0dB; source event gain retained",
+    "sha256": "7d92b60b56b1b366f96529b8886b028274e0f4612ebca2c8f4e722241a21c593"
+  },
+  {
+    "file": "return_2.wav",
+    "event": "Play_sfx_Sivir_SivirQMissileReturn_OnMissileLaunch",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirQMissileReturn_OnMissileLaunch {r2} {d}.txtp",
+    "duration": 2.05578231292517,
+    "processing": "vgmstream-cli -i; wwiser -gv=0dB; source event gain retained",
+    "sha256": "431f16fc58f8c9aa28ff208a2050614980bf3ad3cd761ab38aa6c0e291ff06f6"
+  },
+  {
+    "file": "return_3.wav",
+    "event": "Play_sfx_Sivir_SivirQMissileReturn_OnMissileLaunch",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/audio-source/sivir/txtp/Play_sfx_Sivir_SivirQMissileReturn_OnMissileLaunch {r3} {d}.txtp",
+    "duration": 2.414716553287982,
+    "processing": "vgmstream-cli -i; wwiser -gv=0dB; source event gain retained",
+    "sha256": "3eebe6d89eba5d0b08ab78eda3336c69396d9a99d9b47bfb3df006837f34bdea"
+  },
+  {
+    "file": "deploy.ogg",
+    "text": "公事公办而已。",
+    "source_original": "ClashLegends-开发素材库/05-已完成/战争女神/源件/战争女神/ban-voice/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-ban-vo/15.ogg",
+    "sha256": "622225ce95c857fdc17906673a86d91a8dc14c56ce1dd5513055cc4224c04f85"
+  }
+]

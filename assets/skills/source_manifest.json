@@ -1018,5 +1018,14 @@
     "source_path": "assets/characters/fiddlesticks/hud/icons2d/fiddlesticksp.dds",
     "source_sha256": "bd0f7e68eb00e8078e83ba64fe588b57da05fbfd294a6f8224abe78115b9df9d",
     "sha256": "906f25ca2e1c75a651309faa4b1b1234f5b05edb2793a7539e70102cf0eeee4c"
+  },
+  {
+    "card": "sivir",
+    "skill_index": 0,
+    "path": "res://assets/skills/sivir_e.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Sivir.wad.client",
+    "source_path": "assets/characters/sivir/hud/icons2d/sivir_e.dds",
+    "source_sha256": "8cf0df8953b1bff0653b96bd77fa90b43922c5977f29cba4e3c976c17ae8708c",
+    "sha256": "3df55299b06420359a6291c84d1a4beb7a93e7a904dd33808ff40f021826e4d7"
   }
 ]

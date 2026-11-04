@@ -1,0 +1,73 @@
+{
+  "systems": [
+    "shield",
+    "block"
+  ],
+  "resources": [
+    {
+      "source": "assets/characters/sivir/skins/base/particles/sivir_base_e_shield_sphere.scb",
+      "sha256": "99c3df648b797fc7400318288c83cd47b6142c1c8a6a4bfe0bf5bb6757dcc6fa",
+      "output": "res://assets/effects/sivir/native/sivir_base_e_shield_sphere.mesh.json"
+    },
+    {
+      "source": "assets/characters/sivir/skins/base/particles/sivir_base_e_shield_line.tex",
+      "sha256": "47d26aed530cb243c44f74fda11c915ce6d2a54c0bc00ec4690ca8412bc15ee4",
+      "output": "res://assets/effects/sivir/native/sivir_base_e_shield_line.png"
+    },
+    {
+      "source": "assets/characters/sivir/skins/base/particles/sivir_base_q_mis_trail_mult.tex",
+      "sha256": "1eabef7a7af50b71ad2548a2c43e182713ce4fc823245e1c8416b947ea36b42d",
+      "output": "res://assets/effects/sivir/native/sivir_base_q_mis_trail_mult.png"
+    },
+    {
+      "source": "assets/characters/sivir/skins/base/particles/sivir_base_e_buf_manashield.tex",
+      "sha256": "290234ce147da48c47e981898263908534c17dbd4d865d924fdf6f57cfe5ace7",
+      "output": "res://assets/effects/sivir/native/sivir_base_e_buf_manashield.png"
+    },
+    {
+      "source": "assets/characters/sivir/skins/base/particles/sivir_base_e_spark.tex",
+      "sha256": "204510d0655834cece344219ddacd384a91e5eae9ea019391e8d8f17319717ba",
+      "output": "res://assets/effects/sivir/native/sivir_base_e_spark.png"
+    },
+    {
+      "source": "assets/characters/sivir/skins/base/particles/sphere_01.scb",
+      "sha256": "99c3df648b797fc7400318288c83cd47b6142c1c8a6a4bfe0bf5bb6757dcc6fa",
+      "output": "res://assets/effects/sivir/native/sphere_01.mesh.json"
+    },
+    {
+      "source": "assets/characters/sivir/skins/base/particles/sivir_base_e_blueorb.tex",
+      "sha256": "c5ffb410e4f5ff14add41b8b0d81d454cfa69255c8ef503b37f47d1cd6f7a0ef",
+      "output": "res://assets/effects/sivir/native/sivir_base_e_blueorb.png"
+    },
+    {
+      "source": "assets/characters/sivir/skins/base/particles/sivir_base_e_buf_manashield_mult.tex",
+      "sha256": "c13bb7ffba2b7df59c3a7c84ab9bc187a7a74692e38a1bb3c991fc11e156053d",
+      "output": "res://assets/effects/sivir/native/sivir_base_e_buf_manashield_mult.png"
+    },
+    {
+      "source": "assets/characters/sivir/skins/base/particles/sivir_color-hold.tex",
+      "sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "res://assets/effects/sivir/native/sivir_color-hold.png"
+    },
+    {
+      "source": "assets/characters/sivir/skins/base/particles/color-sivirsparks.tex",
+      "sha256": "97fc67ffa06c343ba4184443e7973404c5a0b49b6aa70080cabe52c7e70526c2",
+      "output": "res://assets/effects/sivir/native/color-sivirsparks.png"
+    },
+    {
+      "source": "assets/characters/sivir/skins/base/particles/sphere_axismirror.scb",
+      "sha256": "0705ee01b16899970ecffa8e1c88b9cc8ab219d0b5ef3b0fab1c0a64033d0485",
+      "output": "res://assets/effects/sivir/native/sphere_axismirror.mesh.json"
+    },
+    {
+      "source": "assets/characters/sivir/skins/base/particles/sivir_base_e_tar_sheen.tex",
+      "sha256": "ae2eed00e60838fa8e75094ecf230964a9ce5a7aea322b1710910012b70abe1d",
+      "output": "res://assets/effects/sivir/native/sivir_base_e_tar_sheen.png"
+    },
+    {
+      "source": "assets/characters/sivir/skins/base/particles/sivir_base_e_tar_globering.tex",
+      "sha256": "9fc87425359082b4b7f60ffdf987c968837392b1240602190409a4ca98daa045",
+      "output": "res://assets/effects/sivir/native/sivir_base_e_tar_globering.png"
+    }
+  ]
+}

@@ -1,0 +1,1104 @@
+{
+  "emitters": [
+    {
+      "name": "Sphere",
+      "mesh": "res://assets/effects/sivir/native/sivir_base_e_shield_sphere.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": false,
+      "life": {
+        "base": 1.0
+      },
+      "rate": {
+        "base": 5.0
+      },
+      "duration": 3.0,
+      "delay": 0,
+      "texture": "res://assets/effects/sivir/native/sivir_base_e_shield_line.png",
+      "offset": [
+        0.0,
+        85.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0.0,
+          85.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 0,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          9.45,
+          9.45,
+          9.45
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          180.0,
+          1.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.1,
+          0.5,
+          0.7,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          1.0,
+          1.0
+        ],
+        "times": [
+          0.0,
+          1.0
+        ],
+        "values": [
+          [
+            -0.2,
+            0.7
+          ],
+          [
+            -1.0,
+            0.5
+          ]
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0,
+      "miscRenderFlags": 1,
+      "apply_local_orientation": true,
+      "local_orientation": false,
+      "uniform_scale": false,
+      "color_texture": "res://assets/effects/sivir/native/sivir_base_e_buf_manashield_mult.png",
+      "color_lookup_x": 1,
+      "color_lookup_y": 0
+    },
+    {
+      "name": "gloworb",
+      "mesh": "",
+      "primitive": "",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": false,
+      "life": {
+        "base": 3.0
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/effects/sivir/native/sivir_base_q_mis_trail_mult.png",
+      "offset": [
+        0.0,
+        85.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0.0,
+          85.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 0,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          125.0,
+          125.0,
+          125.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.9,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          1.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          -1.5,
+          0.0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "res://assets/effects/sivir/native/sivir_base_e_buf_manashield.png",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0,
+      "miscRenderFlags": 0,
+      "apply_local_orientation": true,
+      "local_orientation": true,
+      "uniform_scale": false
+    },
+    {
+      "name": "flash",
+      "mesh": "",
+      "primitive": "VfxPrimitiveArbitraryQuad",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": true,
+      "life": {
+        "base": 0.3
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/effects/sivir/native/sivir_base_e_spark.png",
+      "offset": [
+        0.0,
+        80.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0.0,
+          80.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 5,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          350.0,
+          350.0,
+          0.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.2,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          -90.0,
+          0.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0.0,
+          200.0,
+          0.0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0,
+      "miscRenderFlags": 0,
+      "apply_local_orientation": true,
+      "local_orientation": false,
+      "uniform_scale": false,
+      "color_texture": "res://assets/effects/sivir/native/sivir_color-hold.png",
+      "color_lookup_x": 1,
+      "color_lookup_y": 0
+    },
+    {
+      "name": "spheredetail",
+      "mesh": "res://assets/effects/sivir/native/sphere_01.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": true,
+      "life": {
+        "base": 1.0
+      },
+      "rate": {
+        "base": 6.0
+      },
+      "duration": 3.0,
+      "delay": 0.1,
+      "texture": "",
+      "offset": [
+        0.0,
+        85.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0,
+        "times": [
+          0.0,
+          1.0
+        ],
+        "values": [
+          1.0,
+          0.0
+        ]
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0.0,
+          85.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 0,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          9.45,
+          9.45,
+          9.45
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0,
+      "miscRenderFlags": 0,
+      "apply_local_orientation": true,
+      "local_orientation": false,
+      "uniform_scale": true,
+      "shader": "res://assets/effects/sivir/shell.gdshader",
+      "color_texture": "res://assets/effects/sivir/native/color-sivirsparks.png",
+      "color_lookup_x": 1,
+      "color_lookup_y": 0
+    },
+    {
+      "name": "orb",
+      "mesh": "",
+      "primitive": "",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": false,
+      "life": {
+        "base": 3.0
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/effects/sivir/native/sivir_base_e_blueorb.png",
+      "offset": [
+        0.0,
+        -10.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0.0,
+          -10.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 0,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          300.0,
+          300.0,
+          300.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            300.0,
+            300.0,
+            300.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.8,
+              1.2
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0,
+      "miscRenderFlags": 1,
+      "apply_local_orientation": true,
+      "local_orientation": true,
+      "uniform_scale": true
+    }
+  ]
+}
