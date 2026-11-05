@@ -1,8 +1,14 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/towers/princess/source/princess_tower_blue.glb" id="1_tower"]
+
+[ext_resource type="CylinderMesh" path="res://assets/towers/princess/inner_foundation.tres" id="2_base"]
 
 [node name="PrincessTowerBlueView" type="Node3D"]
 
 [node name="Model" parent="." instance=ExtResource("1_tower")]
 scale = Vector3(0.01, 0.01, 0.01)
+
+[node name="InnerFoundation" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.04, 0)
+mesh = ExtResource("2_base")
