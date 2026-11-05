@@ -256,72 +256,29 @@
     }
   },
   {
-    "file": "play_vo_graves_move2dstandard_r10_zh_cn.wav",
+    "file": "play_vo_graves_move2dstandard_r8_zh_cn.wav",
+    "label": "把头埋地。",
+    "sha256": "51f35a9a14951869206595fa8bcb391d91306be52729724810d6afe9b5988d2e",
     "event": "Play_vo_Graves_Move2DStandard",
-    "event_id": 1130363853,
-    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/event_wav/Play_vo_Graves_Move2DStandard {r10}.wav",
-    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Move2DStandard {r10}.txtp",
-    "media_ids": [
-      12247659,
-      70734714,
-      487508898,
-      1005433024,
-      1145492014,
-      1274905705,
-      1385360089,
-      1396760689,
-      1567416779,
-      2092519265
-    ],
-    "duration": 1.646,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "cd966b70121f701afeb9fc7ea7d14904a729747b163df62d34fb87cb86f42786",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Move2DStandard {r8}.txtp",
+    "selected_media_id": 2092519265,
+    "processing": "original event gain, wwiser TXTP and vgmstream-cli -i"
   },
   {
-    "file": "play_vo_graves_move2dstandard_r1_zh_cn.wav",
-    "event": "Play_vo_Graves_Move2DStandard",
-    "event_id": 1130363853,
-    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/event_wav/Play_vo_Graves_Move2DStandard {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Move2DStandard {r1}.txtp",
-    "media_ids": [
-      12247659,
-      70734714,
-      487508898,
-      1005433024,
-      1145492014,
-      1274905705,
-      1385360089,
-      1396760689,
-      1567416779,
-      2092519265
-    ],
-    "duration": 1.5078,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "2ed61d380e224eed224ab737503798f0e47e898df789035727c3097080744533",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "file": "champion_choose_104_zh_cn.ogg",
+    "label": "我与死亡同行。",
+    "sha256": "0bf7fdb8e86ab9c7eae940c4212ed16293d1d8d05404cc4d76857c6e406263e2",
+    "event": "champion-choose-vo/104",
+    "source_original": "ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/client-voice/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/104.ogg",
+    "processing": "original client OGG copied byte-for-byte"
   },
   {
-    "file": "play_vo_graves_move2dstandard_r2_zh_cn.wav",
+    "file": "play_vo_graves_move2dstandard_r6_zh_cn.wav",
+    "label": "我可没时间胡闹。",
+    "sha256": "d65f308dc30789485e68d06b2c77db013df04a00f7a127f4508afb9e121d8d43",
     "event": "Play_vo_Graves_Move2DStandard",
-    "event_id": 1130363853,
-    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/event_wav/Play_vo_Graves_Move2DStandard {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Move2DStandard {r2}.txtp",
-    "media_ids": [
-      12247659,
-      70734714,
-      487508898,
-      1005433024,
-      1145492014,
-      1274905705,
-      1385360089,
-      1396760689,
-      1567416779,
-      2092519265
-    ],
-    "duration": 1.2183,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "e19fec71bfce72bd675f104c07255c71d8a8ecd04167295aa71dbb2fe623c8a4",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/法外狂徒/源件与过程记录/audio-source/graves_vo/txtp/Play_vo_Graves_Move2DStandard {r6}.txtp",
+    "selected_media_id": 1567416779,
+    "processing": "original event gain, wwiser TXTP and vgmstream-cli -i"
   }
 ]

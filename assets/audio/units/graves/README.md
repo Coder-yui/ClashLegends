@@ -10,7 +10,7 @@
 | `reload:end` | `Play_sfx_Graves_GravesBasicAttackSpread_reload_close` |
 | `active:start` | `Play_sfx_Graves_GravesMove_OnCast` |
 | `death` | `Play_vo_Graves_Death3D` |
-| `deploy:voice` | `Play_vo_Graves_Move2DStandard` |
+| `deploy:voice` | 移动事件r8、中文客户端104号选人语音（单条播放补偿−18dB）、移动事件r6 |
 
 文件/变体、源 TXTP、媒体及 SHA-256 见同目录 event_manifest.json（大纳尔为 mega_event_manifest.json）。
 

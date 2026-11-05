@@ -80,10 +80,11 @@ static func definition() -> Dictionary:
 					"bus": "Voice"
 				},
 				"deploy:voice": {
+					"clip_volume_db": {"res://assets/audio/units/graves/champion_choose_104_zh_cn.ogg": -18.0},
 					"pool": [
-						"res://assets/audio/units/graves/play_vo_graves_move2dstandard_r10_zh_cn.wav",
-						"res://assets/audio/units/graves/play_vo_graves_move2dstandard_r1_zh_cn.wav",
-						"res://assets/audio/units/graves/play_vo_graves_move2dstandard_r2_zh_cn.wav"
+						"res://assets/audio/units/graves/play_vo_graves_move2dstandard_r8_zh_cn.wav",
+						"res://assets/audio/units/graves/champion_choose_104_zh_cn.ogg",
+						"res://assets/audio/units/graves/play_vo_graves_move2dstandard_r6_zh_cn.wav"
 					],
 					"volume_db": 0.0,
 					"bus": "Voice"
