@@ -1,6 +1,6 @@
 class_name BoundedDashState
 extends RefCounted
-## 普通主动位移：剩余距离内能找到落点才跨地形，不借额外延长预算。
+## 普通主动位移：剩余距离内能找到落点才跨地形，仅在名义终点受阻时使用配置的落点余量。
 var source_ref: WeakRef
 var serial: int
 var direction: Vector2
@@ -15,6 +15,12 @@ func _init(source: Unit, skill: Dictionary) -> void:
 	direction = source.active_skill_cast_facing.normalized()
 	if bool(skill.get("dash_backward", false)): direction = -direction
 	distance = float(skill.length)
+	if skill.has("landing_extension"):
+		var extra := float(skill.landing_extension) + source.body_radius + 2.0
+		var landing := UnitLandingQuery.displacement_endpoint(source, source.global_position, direction, distance, extra)
+		if landing.is_finite():
+			# 起步时只分配一次额外路程，逐Tick检查不再次增加预算。
+			distance = maxf(distance, source.global_position.distance_to(landing))
 	duration = float(skill.cast_duration)
 	source.magazine.restore(int(skill.get("ammo_restore", 0)))
 	source.sync_dash_cast(serial, true, duration, 0.0, 1.0, duration)

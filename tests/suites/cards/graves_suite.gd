@@ -7,6 +7,7 @@ func run(harness: Object) -> void:
 	_expect(errors.is_empty(), "全卡定义合同：" + str(errors))
 	_check_magazine()
 	_check_pellets()
+	_check_approach_spread()
 	_check_dash()
 	_check_paid_skill()
 	_check_invalid()
@@ -63,6 +64,29 @@ func _check_magazine() -> void:
 	_expect(actor.magazine.remaining == 2.0, "眩晕暂停换弹进度")
 	_clear()
 
+func _check_approach_spread() -> void:
+	for card in ["ashe", "teemo", "imp"]:
+		var actor := _spawn_ready_unit("graves", 0, Vector2(240, 980))
+		var target := _spawn_ready_unit(card, 1, Vector2(240, 750))
+		target.max_hp = 10000
+		target.hp = 10000
+		target.can_attack = false
+		target.move_speed = 0.0
+		for i in 120:
+			_main._sim_step(0.05)
+			if actor.magazine.rounds == 1: break
+		_expect(actor.position.y < 980 and actor.magazine.rounds == 1, card + " 正面走入射程开第一枪")
+		for i in 6: _main._tick_projectiles(0.05)
+		var hits := (10000.0 - target.hp) / 28.0
+		print("[Graves approach] ", card, " pos=", actor.position, " target=", target.position, " hits=", hits)
+		_expect(hits > 0 and hits < 6, card + " 射程边缘部分命中：" + str(hits))
+		var before := target.hp
+		actor.position = target.position + Vector2.DOWN * (actor.body_radius + target.body_radius)
+		_shoot(actor, target)
+		for i in 6: _main._tick_projectiles(0.05)
+		_expect(before - target.hp == 168, card + " 贴身六颗全中")
+		_clear()
+
 func _shoot(actor: Unit, target: Unit) -> void:
 	SuiteUtils.begin_attack_visual(actor, target)
 	_main._projectile_system.launch(actor, target, 28.0, 900.0, 0.0, 12.0, actor.color)
@@ -112,9 +136,9 @@ func _check_pellets() -> void:
 	_expect(victim.hp == old_hp - 168.0, "可对空且来源死亡不撤销独立弹丸")
 	_clear()
 
-func _dash(actor: Unit, direction: Vector2, length: float = 160.0) -> BoundedDashState:
+func _dash(actor: Unit, direction: Vector2, length: float = -1.0) -> BoundedDashState:
 	var skill: Dictionary = CardDB.active_skills_for("graves")[0].duplicate(true)
-	skill.length = length
+	if length > 0: skill.length = length
 	actor.begin_active_skill_cast(0.4, -direction)
 	return BoundedDashState.new(actor, skill)
 
@@ -126,11 +150,11 @@ func _check_dash() -> void:
 		var dash := _dash(actor, Vector2.RIGHT)
 		_expect(actor.magazine.rounds == 1 and actor.magazine.remaining == 0.0, "双方技能起手补1弹并取消换弹")
 		for i in 8: dash.tick(0.05)
-		_expect(actor.position.distance_to(Vector2(460, 950)) < 0.01 and not actor.skill_dash_active, "双方0.4秒后撤160px并释放行动锁")
+		_expect(actor.position.distance_to(Vector2(420, 950)) < 0.01 and not actor.skill_dash_active, "双方0.4秒后撤120px并释放行动锁")
 		actor.position = Vector2(360, 565)
 		dash = _dash(actor, Vector2.DOWN)
 		for i in 8: dash.tick(0.05)
-		_expect(actor.position.y > 700 and UnitLandingQuery.displacement_legal(actor, actor.position), "预算足够跨河且合法落地")
+		_expect(actor.position.y > 685 and actor.position.y <= 748.001 and UnitLandingQuery.displacement_legal(actor, actor.position), "预算足够跨河且合法落地")
 		actor.position = Vector2(360, 565)
 		dash = _dash(actor, Vector2.DOWN, 60.0)
 		for i in 8: dash.tick(0.05)
@@ -139,9 +163,9 @@ func _check_dash() -> void:
 		var building := _spawn_ready_unit("tombstone", 1-team, Vector2(330, 950))
 		dash = _dash(actor, Vector2.RIGHT)
 		for i in 8: dash.tick(0.05)
-		_expect(actor.position.x > 390 and UnitLandingQuery.displacement_legal(actor, actor.position), "足够距离跨建筑")
+		_expect(actor.position.x > 370 and actor.position.x <= 433.001 and UnitLandingQuery.displacement_legal(actor, actor.position), "足够距离跨建筑")
 		actor.position = Vector2(250, 950)
-		dash = _dash(actor, Vector2.RIGHT, 80.0)
+		dash = _dash(actor, Vector2.RIGHT, 40.0)
 		for i in 8: dash.tick(0.05)
 		_expect(actor.position.x < 300 and UnitLandingQuery.displacement_legal(actor, actor.position), "不足距离在建筑前停下")
 		building.free()

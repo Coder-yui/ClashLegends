@@ -1125,6 +1125,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s: 必须是 Dictionary" % label)
 			continue
 		_validate_known_fields(label, skill, ACTIVE_SKILL_FIELDS, errors)
+		if skill.has("landing_extension") and float(skill.landing_extension) < 0.0:
+			errors.append(label + ".landing_extension: 必须非负")
 		if String(skill.get("kind", "")) == "dash":
 			if float(skill.get("length", 0.0)) <= 0.0 or float(skill.get("cast_duration", 0.0)) <= 0.0 or float(skill.get("impact_delay", 0.0)) != 0.0:
 				errors.append(label + ": 普通位移需要正距离/时长且立即开始")
@@ -1273,8 +1275,6 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				if float(skill.get("rewind_seconds", 0.0)) > float(stats.get("position_history_duration", 0.0)): errors.append(label + ": 回溯必须有足够历史窗口")
 			&"blink_nova":
 				_require_fields(label, skill, [&"length", &"radius", &"damage"], errors)
-				if skill.has("landing_extension") and float(skill.landing_extension) < 0.0:
-					errors.append(label + ".landing_extension: 必须非负")
 			&"nova":
 				_require_fields(label, skill, [&"radius", &"damage"], errors)
 				if skill.has("stun_duration"):

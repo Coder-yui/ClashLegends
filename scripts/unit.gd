@@ -3941,6 +3941,13 @@ func _draw() -> void:
 		fill.a = bar_alpha
 		var bar_position := Vector2(bar_left, _health_bar_center.y - HEALTH_BAR_HEIGHT * 0.5)
 		draw_rect(Rect2(bar_position, Vector2(layout.background_width, HEALTH_BAR_HEIGHT)), Color(0.15, 0.15, 0.15, bar_alpha))
+		if card_id == "graves":
+			var rounds := int(magazine_visual_state().x)
+			for slot in 2:
+				var tint := Color.WHITE if slot < rounds else Color(0.32, 0.32, 0.32)
+				tint.a = bar_alpha
+				var shell_rect := Rect2(bar_position + Vector2(slot * 10, -12), Vector2(10, 10))
+				draw_texture_rect(preload("res://assets/units/graves/gravespshell1.png"), shell_rect, false, tint)
 		if layout.normal_width > 0.0:
 			draw_rect(Rect2(bar_position, Vector2(layout.normal_width, HEALTH_BAR_HEIGHT)), fill)
 		if layout.overflow_width > 0.0:

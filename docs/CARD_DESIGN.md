@@ -420,7 +420,7 @@ nova可配置`attack_slow_multiplier`，要求正数slow_duration及[0.1,1)倍�
 `ballistic_attack`将远程普攻落点固定为出手时目标位置，空地筛选和伤害仍在权威Tick结算。`empowered_attack.attack_count`默认1，支持多次强化；`bounce_count/bounce_distance`为落地次数和每跳延伸距离；固定落点强化可用主动`radius`覆盖该次炸弹范围，未配置则继承普通`splash_radius`。落地爆炸表现与声音每次各派发一次，不按范围内目标数量重复。已投出的弹体独立于目标/来源生死，客户端只恢复表现。`structure_execute_ratio/tower_execute_ratio`在接纳的攻击伤害后执行严格生命比例斩杀，复用CombatExecution及正常死亡链。见[爆破鬼才](units/ziggs.md)。
 ## 弹匣与普通自主位移
 
-法外狂徒使用通用MagazineState：2发、2秒换弹，空弹匣禁止攻击但可移动；剩一发离开攻击时换弹，目标入射程取消。冰冻、眩晕、凝滞暂停。每枪6颗独立不追踪、不穿透弹丸。`dash`主动由BoundedDashState执行，剩余预算内能找到合法落点才穿越建筑/河流，不能延长距离；定身禁止起步，硬控或击退中止。
+法外狂徒使用通用MagazineState：2发、2秒换弹，空弹匣禁止攻击但可移动；剩一发离开攻击时换弹，目标入射程取消。冰冻、眩晕、凝滞暂停。每枪6颗独立不追踪、不穿透弹丸。`dash`主动由BoundedDashState执行，名义终点受阻时，配置了landing_extension的位移可额外搜索配置距离加实时半径加2的范围；定身禁止起步，硬控或击退中止。
 ## 往返穿透普攻与抵挡治疗
 
 `returning_attack_distance`为正数，仅单枚离散远程普攻使用。去程锁定出手方向，回程追随来源当前位置，每程独立去重；不追踪敌人，来源控制/死亡不取消已建立结果。Unit在收到回收结果之前禁止新普攻，清场统一解除。原弹体位置、方向、来源描述已可供双方表现使用，不新增协议字段。

@@ -67,7 +67,7 @@ var health_bar_visible: bool:
 		return PresentationConfig.status_indicators_visible(_unit) and (
 			untargetable or _unit.death_form.waiting() or not is_equal_approx(health_ratio, 1.0)
 			or _unit.grievous_wounds_visual() or _unit.get_shield_health_ratio() > 0.0 or _unit.team_attack_boost_multiplier > 1.0
-			or _unit.is_skill_resource_visible())
+			or _unit.magazine.capacity > 0 or _unit.is_skill_resource_visible())
 
 var health_bar_layout: Dictionary:
 	get:

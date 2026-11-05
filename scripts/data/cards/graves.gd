@@ -16,9 +16,9 @@ static func definition() -> Dictionary:
 			"is_air": false, "building_only": false, "can_attack_air": true,
 			"active_skills": [{
 				"name": "快速拔枪", "kind": "dash", "cost": 1, "max_uses": 2, "cooldown": 8.0,
-				"length": 160.0, "cast_duration": 0.4, "impact_delay": 0.0,
+				"length": 120.0, "landing_extension": 40.0, "cast_duration": 0.4, "impact_delay": 0.0,
 				"dash_backward": true, "ammo_restore": 1, "cast_locks": ["movement", "attack", "facing"],
-				"description": "向释放朝向的后方滑行4格并获得1发子弹（最多2发），取消当前换弹。距离足以越过建筑或河流时穿过，否则在障碍前停下。1金币，共2次，冷却8秒。",
+				"description": "向释放朝向的后方滑行3格并获得1发子弹（最多2发），取消当前换弹。终点受阻时向后额外寻找最多40＋身体半径＋2的合法落点，否则停在障碍前。1金币，共2次，冷却8秒。",
 			}],
 		},
 		"visual": {
