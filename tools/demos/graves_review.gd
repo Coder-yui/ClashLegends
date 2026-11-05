@@ -27,8 +27,8 @@ func _run() -> void:
 			print("[Graves cue] ", main.runtime._sim_tick_id, " ", cue)
 			if cue == "attack_launch":
 				for unit in get_nodes_in_group("combatants"):
-					if unit is Unit and unit.card_id == "graves" and unit.has_meta("projectile_model_anchor"):
-						var anchor = unit.get_meta("projectile_model_anchor").get_ref()
+					if unit is Unit and unit.card_id == "graves" and unit.has_meta("projectile_launch_anchor"):
+						var anchor = unit.get_meta("projectile_launch_anchor").get_ref()
 						if is_instance_valid(anchor): print("[Muzzle] team=",unit.team," authoritative=",unit.position," bone=",anchor.global_position," attack_elapsed=",unit.get_attack_elapsed_visual()))
 	var units: Array[Unit] = []
 	var targets: Array[Unit] = []

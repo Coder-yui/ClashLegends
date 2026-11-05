@@ -22,7 +22,7 @@ static func definition() -> Dictionary:
 			}],
 		},
 		"visual": {
-			"resource_dependencies": {"effects": [{"provider": "res://assets/effects/graves/player.gd", "variant": "missile"}, {"provider": "res://assets/effects/graves/player.gd", "variant": "cast"}]},
+			"resource_dependencies": {"effects": [{"provider": "res://assets/effects/graves/player.gd", "variant": "missile"}]},
 			"visual_active_buff_scene": "res://assets/effects/graves/buff.tscn",
 			"visual_scene_path": "res://assets/units/graves/graves_view.tscn",
 			"visual_forward_yaw": 0.0, "visual_radius": RADIUS_SLIGHTLY_LARGE + VISUAL_RADIUS_PADDING,

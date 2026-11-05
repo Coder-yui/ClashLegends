@@ -461,9 +461,11 @@ func _sync_visual(force: bool, delta: float) -> void:
 		_attack_recover_pending = false
 		var clip := StringName(_animation_names.get("reload_move", _animation_names.reload) if _source.get_locomotion_visual_state_code() == 2 else _animation_names.reload)
 		var duration := float(_source._base_form_stats.get("reload_duration", 2.0))
-		if not _reloading_pose or _animation_player.assigned_animation != clip: _play_clip(clip, &"locomotion", 1.0, 0.08)
+		# 换弹由权威时钟逐帧定位。停止片段自身的推进，避免冻结整台播放器及其过渡。
+		if not _reloading_pose or _animation_player.assigned_animation != clip:
+			_play_clip(clip, &"locomotion", 0.0, 0.0)
 		_reloading_pose = true
-		_animation_player.speed_scale = 0.0
+		_animation_player.speed_scale = 1.0
 		_animation_player.seek(clampf(1.0 - reload_state.y / duration, 0.0, 1.0) * _animation_player.get_animation(clip).length, true)
 		return
 	if _reloading_pose:
@@ -1135,6 +1137,7 @@ func _configure_attack_launch_anchors() -> void:
 	_attack_launch_anchors.clear()
 	if is_instance_valid(_source) and _source.has_meta("projectile_launch_offset"): _source.remove_meta("projectile_launch_offset")
 	if is_instance_valid(_source) and _source.has_meta("projectile_launch_use_config"): _source.remove_meta("projectile_launch_use_config")
+	if _source.has_meta("projectile_launch_anchor"): _source.remove_meta("projectile_launch_anchor")
 	if not _model_root.has_method("get_attack_launch_bones"): return
 	if bool(_model_root.call("uses_configured_attack_launch")):
 		_source.set_meta("projectile_launch_use_config", true)
@@ -1174,6 +1177,9 @@ func _update_health_bar_anchor() -> void:
 		var index := mini(_active_attack_index, _attack_launch_anchors.size() - 1)
 		var launch_anchor := _attack_launch_anchors[index]
 		if is_instance_valid(launch_anchor):
+			var previous: WeakRef = _source.get_meta("projectile_launch_anchor") if _source.has_meta("projectile_launch_anchor") else null
+			if previous == null or previous.get_ref() != launch_anchor:
+				_source.set_meta("projectile_launch_anchor", weakref(launch_anchor))
 			_source.set_meta("projectile_launch_offset", BattleGroundProjection.unproject(_camera, launch_anchor.global_position) - ground_screen)
 		elif _source.has_meta("projectile_launch_offset"):
 			_source.remove_meta("projectile_launch_offset")

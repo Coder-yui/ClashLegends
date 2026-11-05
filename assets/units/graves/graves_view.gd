@@ -3,16 +3,11 @@ var unit_ref: WeakRef
 func configure_unit_visual(unit: Unit) -> void:
 	unit_ref = weakref(unit)
 ## 原版子弹挂点；只改变可见枪口，权威弹道来自Unit中心。
-func create_projectile_anchor() -> Node3D:
-	for skeleton in find_children("*", "Skeleton3D", true, false):
-		for index in skeleton.get_bone_count():
-			if String(skeleton.get_bone_name(index)).to_lower() == "buffbone_cstm_weapona":
-				var anchor := BoneAttachment3D.new()
-				anchor.name = "ProjectileModelAnchor"
-				anchor.bone_idx = index
-				skeleton.add_child(anchor)
-				return anchor
-	return null
+func get_attack_launch_bones() -> Array[String]:
+	return ["buffbone_cstm_weapona"]
+
+func uses_configured_attack_launch() -> bool:
+	return false
 
 func prepare_visual_animations() -> void:
 	var player := find_children("*", "AnimationPlayer", true, false)[0] as AnimationPlayer

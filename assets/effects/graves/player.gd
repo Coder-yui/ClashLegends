@@ -1,7 +1,7 @@
 extends Node3D
 ## Graves原版普攻与快速拔枪粒子；三维比例与逐层深度标志保持原值。
 # 项目弹体约8px核心、28px纵向光束；各轴等比，不沿距离拉长。
-const NATIVE_SCALE := 0.018
+const NATIVE_SCALE := 0.015
 const ROOT := "res://assets/effects/graves/"
 static var _cache: Dictionary = {}
 var _data: Dictionary = {}
@@ -12,6 +12,7 @@ var _motion_births: Dictionary = {}
 var _trails: Dictionary = {}
 var _birth_positions: Dictionary = {}
 var _birth_times: Dictionary = {}
+var _last_times: Dictionary = {}
 var _motion_previous_time := -1.0
 var _motion_previous := Transform3D.IDENTITY
 var _unit_scale := 1.0
@@ -30,15 +31,18 @@ func load_kind(kind: String) -> void:
 			if not _meshes.has(e.mesh_path): _meshes[e.mesh_path] = _mesh(e.mesh_path)
 			materials.append(_material(e))
 		var births := {}
+		var last_times := {}
 		for frame_index in data.frames.size():
 			for emitter_index in data.frames[frame_index].size():
 				for particle in data.frames[frame_index][emitter_index]:
 					var key := Vector2i(emitter_index, int(particle[0]))
 					if not births.has(key): births[key] = float(frame_index) / float(data.fps)
-		_cache[kind] = {"data": data, "materials": materials, "births": births}
+					last_times[key] = float(frame_index + 1) / float(data.fps)
+		_cache[kind] = {"data": data, "materials": materials, "births": births, "last_times": last_times}
 	_data = _cache[kind].data
 	_materials.assign(_cache[kind].materials)
 	_birth_times = _cache[kind].births
+	_last_times = _cache[kind].last_times
 
 func setup_native(unit_scale: float) -> void:
 	_unit_scale = unit_scale
@@ -109,7 +113,7 @@ func seek_motion(age: float, origin: Vector3, orientation: Basis) -> void:
 	for i in values.size():
 		var emitter: Dictionary = _data.emitters[i]
 		if int(emitter.get("quadType", -1)) in [5, 6, 11]: continue
-		var bind_weight := float(emitter.get("bindWeight", {}).get("constant", [1.0])[0])
+		var bind_curve: Dictionary = emitter.get("bindWeight", {})
 		var emitter_basis := orientation if bool(emitter.get("localOrientation", true)) else Basis.IDENTITY
 		for j in values[i].size():
 			var key := str(i) + ":" + str(values[i][j][0])
@@ -121,7 +125,16 @@ func seek_motion(age: float, origin: Vector3, orientation: Basis) -> void:
 			var particle_basis: Basis = emitter_basis if bool(emitter.get("particleLocalOrientation", false)) else birth.basis
 			var item: MeshInstance3D = _pools[i][j]
 			item.basis = orientation.inverse() * particle_basis
-			item.position = inverse * ((birth.origin as Vector3) - origin) * (1.0-bind_weight)
+			var clock_key := Vector2i(i, int(values[i][j][0]))
+			var born: float = _birth_times[clock_key]
+			var lifetime := maxf(float(_last_times[clock_key]) - born, 1.0 / float(_data.fps))
+			var weight := _motion_weight(bind_curve, clampf((age - born) / lifetime, 0.0, 1.0))
+			var previous: Vector3 = birth.get("previous", birth.origin)
+			var bound: Vector3 = birth.get("bound", Vector3.ZERO)
+			bound += (origin - previous) * weight
+			birth.previous = origin
+			birth.bound = bound
+			item.position = inverse * ((birth.origin as Vector3) + bound - origin)
 	_motion_births = live
 	var trail_live := {}
 	for i in values.size():
@@ -195,13 +208,23 @@ static func _material(e: Dictionary) -> ShaderMaterial:
 
 ## 对外资源契约：定义读取不会创建粒子或加载纹理。
 static func resource_manifest(variant: String) -> Dictionary:
-	if variant not in ["missile", "cast", "dash"]: return {}
+	if variant not in ["missile", "dash"]: return {}
 	return {"paths": [ROOT + "trail.gdshader", ROOT + "trail_mix.gdshader", ROOT + "trail_no_depth.gdshader", ROOT + "trail_mix_no_depth.gdshader"], "json": [ROOT + variant + "/sampled.json"], "sample": {"player": "res://assets/effects/graves/player.gd", "kind": variant, "setup": "native"}}
 
 static func resource_shader_path(e: Dictionary) -> String:
 	if int(e.get("quadType", -1)) == 5: return preload("res://scripts/presentation/particle_render_policy.gd").shader_path(ROOT + ("trail_mix.gdshader" if int(e.blendMode) == 1 else "trail.gdshader"), e)
 	var shader_name := "warp" if e.distortion != null else ("subtract" if int(e.blendMode) == 2 else ("pure_add" if int(e.blendMode) == 0 else ("add" if int(e.blendMode) == 4 else "mix")))
 	return preload("res://scripts/presentation/particle_render_policy.gd").shader_path("res://assets/effects/solar_flare/" + shader_name + ".gdshader", e)
+
+## 原版仅正绑定权重继承发射器本步位移。烟与火星按粒子寿命采样曲线。
+func _motion_weight(curve: Dictionary, phase: float) -> float:
+	var keys: Array = curve.get("keys", [])
+	if keys.is_empty(): return maxf(float(curve.get("constant", [1.0])[0]), 0.0)
+	for i in range(1, keys.size()):
+		if phase <= float(keys[i].time):
+			var t := inverse_lerp(float(keys[i-1].time), float(keys[i].time), phase)
+			return maxf(lerpf(float(keys[i-1].values[0]), float(keys[i].values[0]), clampf(t, 0.0, 1.0)), 0.0)
+	return maxf(float(keys.back().values[0]), 0.0)
 
 func _sync_trail(index: int, emitter: Dictionary, particles: Array) -> void:
 	if not _trails.has(index):
