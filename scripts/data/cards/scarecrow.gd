@@ -5,7 +5,7 @@ static func definition() -> Dictionary:
 	var data := mobile.duplicate(true)
 	data.gameplay.merge({
 		"name": "草间人", "cost": 6, "type": "building", "selectable": true,
-		"description": "持续汲取攻击范围内全部敌人的生命，每个目标每秒60伤害，回复实际伤害的50%。自然衰血持续50秒；治疗可延长存续。",
+		"description": "每轮锁定射程内敌人吸血2秒，停0.75秒后重新选敌，每个目标每秒60伤害，回复实际伤害的50%。自然衰血持续50秒；治疗可延长存续。",
 		"speed": 0.0, "is_building": true, "footprint_tiles": Vector2i(3, 3),
 		"lifespan": 50.0, "lifespan_hp_decay": true, "transform_duration": 0.3,
 		"active_skills": [{"name": "巫骇草人", "kind": "toggle_form", "cost": 1, "max_uses": 1, "cooldown": 20.0,

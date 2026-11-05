@@ -121,7 +121,7 @@ const CARD_FIELDS := [&"returning_attack_distance", &"magazine_size", &"reload_d
 	&"sacrifice_damage", &"sacrifice_delay",
 	&"can_attack",
 	&"rage_crit_multiplier",
-	&"innate_lifesteal_ratio", &"stealth_delay", &"proximity_reveal_stun", &"attack_all_in_range", &"isolated_attack_multiplier",
+	&"innate_lifesteal_ratio", &"stealth_delay", &"proximity_reveal_stun", &"attack_all_in_range", &"drain_duration", &"drain_pause", &"isolated_attack_multiplier",
 	&"strike_count", &"strike_interval", &"stun_duration", &"tower_damage_multiplier",
 	&"heal_on_hit_name", &"on_hit_passive_name", &"team_attack_boost_first_delay", &"team_attack_boost_interval", &"team_attack_boost_multiplier", &"team_attack_boost_forge_duration", &"team_attack_boost_release_time",
 	&"river_traversal", &"permanent_unit_phasing", &"terrain_traversal", &"terrain_entry_heal", &"terrain_entry_speed_multiplier", &"growth_ranged_id", &"growth_melee_id", &"growth_ranged_hits", &"growth_melee_hits",

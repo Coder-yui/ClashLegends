@@ -286,6 +286,8 @@ static func passives(stats: Dictionary) -> Array[Dictionary]:
 
 	if bool(stats.get("is_continuous_attack", false)):
 		var description := "持续对%s造成每秒%s伤害。" % ["范围内所有敌人" if bool(stats.get("attack_all_in_range", false)) else "当前目标", format_number(float(stats.get("damage", 0.0)))]
+		if stats.has("drain_duration"):
+			description = "每轮锁定开攻时射程内的敌人，持续%s秒，每个目标每秒受到%s伤害。离开射程即断线，新目标等下一轮。两轮间隔%s秒。" % [format_number(stats.drain_duration), format_number(stats.damage), format_number(stats.drain_pause)]
 		if float(stats.get("splash_radius", 0.0)) > 0.0: description += "对目标周围%s范围造成伤害。" % format_number(float(stats.splash_radius))
 		if float(stats.get("innate_lifesteal_ratio", 0.0)) > 0.0: description += "回复实际伤害的%s%%。" % format_number(float(stats.innate_lifesteal_ratio) * 100.0)
 		result.append({"name": "生命汲取" if float(stats.get("innate_lifesteal_ratio", 0.0)) > 0.0 else "持续攻击", "description": description})

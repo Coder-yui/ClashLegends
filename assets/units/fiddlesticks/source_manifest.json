@@ -10,7 +10,7 @@
     "animation-organization/data/characters/fiddlesticks/animations/skin0.bin": "73550f5353180fdbd7e1b1428cb57c23fc596add69a9e76d4e9c5c8585bf283a"
   },
   "runtime_model_sha256": "1c488f21035c9f7151691e91f93482f815fdc77f44ae0280413ddc57d6865dad",
-  "processing": "lol2gltf with 5 selected animations; all 6 native submeshes retained; native material mapping; optional surfaces split at runtime with shared skin/skeleton; discrete visibility tracks follow skin0 AnimationGraphData at 30 fps; uniform scene scale 0.012",
+  "processing": "lol2gltf with 5 selected animations; all 6 native submeshes retained; native material mapping; optional surfaces split at runtime with shared skin/skeleton; active clip visibility follows skin0 AnimationGraphData at 30 fps; uniform scene scale 0.012",
   "animations": [
     "fiddlesticks_idle1",
     "fiddlesticks_run",

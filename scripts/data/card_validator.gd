@@ -475,6 +475,13 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 	if bool(stats.get("attack_all_in_range", false)):
 		if (float(stats.get("projectile_speed", 0.0)) <= 0.0 and not bool(stats.get("is_continuous_attack", false))) or float(stats.get("splash_radius", 0.0)) > 0.0:
 			errors.append(label + ": 全目标攻击要求无溅射的远程或持续普攻")
+	if stats.has("drain_duration") or stats.has("drain_pause"):
+		if not bool(stats.get("attack_all_in_range", false)) or not bool(stats.get("is_continuous_attack", false)):
+			errors.append(label + ": 分轮汲取需要范围持续攻击")
+		for field in ["drain_duration", "drain_pause"]:
+			var value = stats.get(field)
+			if not (value is float or value is int) or not is_finite(float(value)) or float(value) <= 0.0:
+				errors.append(label + "." + field + ": 分轮汲取时长必须为正数")
 	if stats.has("innate_lifesteal_ratio"):
 		_validate_number_value(label + ".innate_lifesteal_ratio", stats.innate_lifesteal_ratio, 0.0, errors, true)
 	for field in ["attack_passive_multipliers", "attack_lifesteal_ratios"]:

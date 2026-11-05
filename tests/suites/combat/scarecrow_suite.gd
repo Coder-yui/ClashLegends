@@ -6,6 +6,7 @@ func run(harness: Object) -> void:
 	harness.root.add_child(_main)
 	for team in 2:
 		_check_drain(team)
+	_check_drain_cycle()
 	_check_transform()
 	_check_control_and_shield()
 	_check_network()
@@ -25,7 +26,7 @@ func _check_drain(team: int) -> void:
 	source._target = ground
 	var hp_ground := ground.hp
 	var hp_air := air.hp
-	for tick in 20: source._deal_continuous_damage(3.0)
+	for tick in 20: source._tick_drain_cycle(0.05)
 	_expect(ground.hp == hp_ground - 60 and air.hp == hp_air - 60, "双方范围汲取对地对空每秒60")
 	_expect(ally.hp == ally.max_hp and outside.hp == outside.max_hp, "不伤友军与范围外目标")
 	_expect(source.hp == 660, "两目标实际伤害合计120回复60")
@@ -39,6 +40,32 @@ func _check_drain(team: int) -> void:
 	ally.free()
 	outside.free()
 	source.free()
+
+func _check_drain_cycle() -> void:
+	for card_id in ["scarecrow", "fiddlesticks"]:
+		var source := _spawn_ready_unit(card_id, 0, Vector2(360, 800))
+		var first := _spawn_ready_unit("target_dummy", 1, Vector2(420, 800))
+		var late := _spawn_ready_unit("target_dummy", 1, Vector2(680, 800))
+		source.sim_tick(0.05)
+		late.position = Vector2(450, 800)
+		for tick in 39: source.sim_tick(0.05)
+		_expect(first.hp == first.max_hp - 120 and late.hp == late.max_hp and source.continuous_targets_snapshot().size() == 1, card_id + "一轮40次汲取只命中开攻时锁定的目标")
+		for tick in 15: source.sim_tick(0.05)
+		_expect(not source._attacking and source.continuous_targets_snapshot().is_empty() and first.hp == first.max_hp - 120, card_id + "停顿15 Tick期间无伤害与血线")
+		source.sim_tick(0.05)
+		_expect(source.continuous_targets_snapshot().size() == 2 and late.hp == late.max_hp - 3, card_id + "下一轮重新锁定新目标")
+		first.position = Vector2(680, 800)
+		source.sim_tick(0.05)
+		first.position = Vector2(420, 800)
+		source.sim_tick(0.05)
+		_expect(source.continuous_targets_snapshot().size() == 1 and first.hp == first.max_hp - 123, card_id + "断线目标本轮不重新连接")
+		first.position = Vector2(630, 800)
+		late.position = Vector2(630, 800)
+		source.sim_tick(0.05)
+		_expect(not source._attacking and (source.get_locomotion_visual_state_code() == 2) == (card_id == "fiddlesticks"), card_id + "失去全部目标后立即进入停顿，可移动形态开始追击")
+		first.free()
+		late.free()
+		source.free()
 
 func _check_transform() -> void:
 	var source := _spawn_ready_unit("scarecrow", 0, Vector2(360, 800))
@@ -65,10 +92,10 @@ func _check_control_and_shield() -> void:
 	source.hp = 600
 	source._target = target
 	target.add_shield(60, 10.0)
-	for tick in 20: source._deal_continuous_damage(3.0)
+	for tick in 20: source._tick_drain_cycle(0.05)
 	_expect(target.hp == target.max_hp and source.hp == 600, "护盾完全吸收时没有吸血")
 	source.grievous_wounds = true
-	for tick in 20: source._deal_continuous_damage(3.0)
+	for tick in 20: source._tick_drain_cycle(0.05)
 	_expect(source.hp == 600, "重伤禁止持续汲取回复")
 	source.grievous_wounds = false
 	for control in ["stun", "freeze", "apply_stasis"]:
@@ -85,7 +112,7 @@ func _check_network() -> void:
 	var source := _spawn_ready_unit("scarecrow", 0, Vector2(360, 800))
 	var target := _spawn_ready_unit("aurelionsol", 1, Vector2(460, 800))
 	source._target = target
-	source._attacking = true
+	source._tick_drain_cycle(0.05)
 	var system: NetworkSnapshotSystem = _main._snapshot_system
 	var fixture = preload("res://tests/fixtures/network_fixture.gd")
 	var payload := fixture.snapshot_payload(system, source.net_id, source, true, target.position)
@@ -122,6 +149,9 @@ func _check_definition_contract() -> void:
 	for form in [false, true]:
 		var stats := CardDB.get_card("scarecrow").duplicate(true)
 		var candidate: Dictionary = stats.transformed_stats if form else stats
+		candidate.drain_pause = 0.0
+		_expect(not CardDB.VALIDATOR.validate_all({"scarecrow": stats}, false).is_empty(), "两种形态均拒绝零停顿")
+		candidate.drain_pause = 0.75
 		candidate.innate_lifesteal_ratio = -0.5
 		_expect(not CardDB.VALIDATOR.validate_all({"scarecrow": stats}, false).is_empty(), "基础与移动形态都拒绝负吸血比例")
 	var rows := CardDetails.attributes(CardDB.get_card("scarecrow"))
@@ -150,6 +180,25 @@ func _check_native_parts() -> void:
 		player.seek(sample[1], true)
 		for part in view.OPTIONAL_PARTS:
 			_expect(view._optional_parts[part].visible == (part in sample[2]), "原生部件窗口 %s %.3f %s" % [sample[0], sample[1], part])
+	# Exercise real crossfades at play() and on the first rendered movement frame.
+	var clips := ["fiddlesticks_idle1", "fiddlesticks_run", "fiddlesticks_spell2", "fiddlesticks_spell2_channel", "fiddlesticks_death_v2"]
+	for source in clips:
+		for target in clips:
+			if source == target:
+				continue
+			player.stop()
+			player.play(source)
+			player.seek(2.5, true)
+			player.play(target, 0.2)
+			var expected: Array = []
+			if target == "fiddlesticks_idle1":
+				expected = ["Lantern", "R_Demon_Arm"]
+			elif target == "fiddlesticks_death_v2":
+				expected = ["L_Demon_Arm", "R_Demon_Arm"]
+			for delta in [0.0, 1.0 / 60.0, 0.1, 0.1]:
+				for part in view.OPTIONAL_PARTS:
+					_expect(view._optional_parts[part].visible == (part in expected), "动作过渡 %s -> %s %s" % [source, target, part])
+				player.advance(delta)
 	var tracks := player.get_animation("fiddlesticks_idle1").get_track_count()
 	view.prepare_visual_animations()
 	_expect(player.get_animation("fiddlesticks_idle1").get_track_count() == tracks, "预热重复准备不重复添加显隐轨道")

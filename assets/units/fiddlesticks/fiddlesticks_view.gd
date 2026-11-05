@@ -42,26 +42,23 @@ func prepare_visual_animations() -> void:
 				_optional_parts[part_name] = part
 		instance.mesh = core
 	assert(_optional_parts.size() == 4, "Fiddlesticks requires all native optional submeshes")
-	var animation_root := player.get_node(player.root_node)
-	for library_name in player.get_animation_library_list():
-		var original := player.get_animation_library(library_name)
-		var library := AnimationLibrary.new()
-		for clip in original.get_animation_list():
-			var animation := original.get_animation(clip).duplicate(true) as Animation
-			var windows: Dictionary = PART_WINDOWS.get(String(clip), {})
-			for part_name in OPTIONAL_PARTS:
-				var part: MeshInstance3D = _optional_parts[part_name]
-				var track := animation.add_track(Animation.TYPE_VALUE)
-				animation.track_set_path(track, NodePath(String(animation_root.get_path_to(part)) + ":visible"))
-				animation.value_track_set_update_mode(track, Animation.UPDATE_DISCRETE)
-				var window: Vector2 = windows.get(part_name, Vector2(-1, -1))
-				animation.track_insert_key(track, 0.0, window.x == 0)
-				if window.x > 0: animation.track_insert_key(track, window.x / 30.0, true)
-				if window.y > 0: animation.track_insert_key(track, window.y / 30.0, false)
-			library.add_animation(clip, animation)
-		player.remove_animation_library(library_name)
-		player.add_animation_library(library_name, library)
+	# Evaluate the incoming clip's events independently of outgoing pose weights.
+	player.current_animation_changed.connect(_on_clip_changed)
+	player.mixer_applied.connect(_sync_part_windows.bind(player))
 	_parts_prepared = true
+
+func _on_clip_changed(clip: StringName) -> void:
+	_show_parts_at(clip, 0.0)
+
+func _sync_part_windows(player: AnimationPlayer) -> void:
+	if player.assigned_animation != &"":
+		_show_parts_at(player.assigned_animation, player.current_animation_position * 30.0)
+
+func _show_parts_at(clip: StringName, frame: float) -> void:
+	var windows: Dictionary = PART_WINDOWS.get(clip, {})
+	for part_name in OPTIONAL_PARTS:
+		var window: Vector2 = windows.get(part_name, Vector2(-1, -1))
+		_optional_parts[part_name].visible = window.x >= 0 and frame >= window.x and (window.y < 0 or frame < window.y)
 
 func _ready() -> void:
 	prepare_visual_animations()

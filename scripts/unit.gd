@@ -93,6 +93,11 @@ var form_refresh_on_kill := false
 var on_hit_max_health_ratio := 0.0
 var on_hit_tower_damage := 0.0
 var _lifespan_decay_remainder := 0.0
+var _drain_duration := 0.0
+var _drain_pause := 0.0
+var _drain_elapsed := 0.0
+var _drain_pause_left := 0.0
+var _drain_targets: Array[Node2D] = []
 var _continuous_lifesteal_remainder := 0.0
 var _continuous_damage_stream := BattleNumbers.DamageStream.new()
 var damage := 10.0
@@ -561,6 +566,9 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	can_attack = bool(stats.get("can_attack", true))
 	can_attack_air = stats.get("can_attack_air", true)
 	continuous_attack = stats.get("is_continuous_attack", false)
+	_drain_duration = float(stats.get("drain_duration", 0.0))
+	_drain_pause = float(stats.get("drain_pause", 0.0))
+	_reset_drain()
 	growth_health_bonus = 0.0
 	growth_body_scale = 1.0
 	timed_growth_stats = Vector2(0.0, 1.0)
@@ -1329,6 +1337,7 @@ func is_active_skill_facing_locked() -> bool:
 	return active_skill_cast_timer > 0.0 and CAST_LOCK_FACING in active_skill_cast_locks
 
 func _cancel_attack_for_cast() -> void:
+	_reset_drain()
 	_attacking = false
 	attack_timeline.cancel(true)
 	_attack_visual_pending = false
@@ -1508,6 +1517,9 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool) -> void:
 func _load_form_attributes(next_stats: Dictionary) -> void:
 	is_building = bool(next_stats.get("is_building", is_building))
 	continuous_attack = bool(next_stats.get("is_continuous_attack", continuous_attack))
+	_drain_duration = float(next_stats.get("drain_duration", 0.0))
+	_drain_pause = float(next_stats.get("drain_pause", 0.0))
+	_reset_drain()
 	if next_stats.has("is_building"):
 		lifespan = float(next_stats.get("lifespan", 0.0))
 		lifespan_hp_decay = bool(next_stats.get("lifespan_hp_decay", false))
@@ -1636,16 +1648,16 @@ func continuous_targets_snapshot() -> PackedVector3Array:
 	if _in_client_mode(): return net_continuous_targets
 	var result := PackedVector3Array()
 	if not has_continuous_visual_target() or not bool(PresentationConfig.for_form(_base_form_stats, form_index).get("attack_all_in_range", false)): return result
-	for candidate in get_tree().get_nodes_in_group("combatants"):
-		if candidate is Node2D and _target_is_attackable(candidate) and _target_gap(candidate) <= attack_range:
+	for candidate in _continuous_area_targets():
+		if _in_drain_range(candidate):
 			result.append(Vector3(candidate.global_position.x, candidate.global_position.y, candidate.net_id if candidate is Unit else -1))
 	return result
 
 func continuous_target_endpoints() -> PackedVector2Array:
 	var points := PackedVector2Array()
 	if not _in_client_mode():
-		for target in get_tree().get_nodes_in_group("combatants"):
-			if target is Node2D and _target_is_attackable(target) and _target_gap(target) <= attack_range:
+		for target in _continuous_area_targets():
+			if _in_drain_range(target):
 				points.append(target.get_visual_screen_position() + target.get_meta("projectile_model_offset", Vector2.ZERO) if target is Unit else target.global_position)
 		return points
 	var bodies := {}
@@ -1844,6 +1856,9 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		_attack_visual_pending = true
 		if not is_instance_valid(_target) or _target_gap(_target) > attack_range: _chase(dt)
 		return
+	if _drain_duration > 0.0:
+		_tick_drain_cycle(dt)
+		return
 	attack_timeline.tick_cooldown(dt)
 	# 默认命中后必须完整收招；配置允许的连招段结束且没有圈内目标时可提前转走。
 	# 冻结会在上方提前 return，因此同样会暂停后摇计时。
@@ -1914,6 +1929,52 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 			_attack(dt)
 			return
 	_cancel_attack_and_chase(dt)
+
+func _reset_drain() -> void:
+	_drain_targets.clear()
+	_drain_elapsed = 0.0
+	_drain_pause_left = 0.0
+
+func _continuous_area_targets() -> Array:
+	if _drain_duration > 0.0:
+		return _drain_targets
+	return get_tree().get_nodes_in_group("combatants")
+
+func _in_drain_range(candidate) -> bool:
+	return is_instance_valid(candidate) and _target_is_attackable(candidate) and _target_gap(candidate) <= attack_range
+
+func _tick_drain_cycle(dt: float) -> void:
+	if _attacking:
+		for index in range(_drain_targets.size() - 1, -1, -1):
+			if not _in_drain_range(_drain_targets[index]):
+				_drain_targets.remove_at(index)
+		if _drain_targets.is_empty() or _drain_elapsed >= _drain_duration - 0.00001:
+			_attacking = false
+			_drain_targets.clear()
+			_drain_pause_left = _drain_pause
+	if not _attacking:
+		_update_target(false)
+		if _drain_pause_left > 0.00001:
+			_drain_pause_left = maxf(0.0, _drain_pause_left - dt)
+			if not _in_drain_range(_target):
+				_chase(dt)
+			return
+		if not _in_drain_range(_target):
+			_chase(dt)
+			return
+		for candidate in get_tree().get_nodes_in_group("combatants"):
+			if candidate is Node2D and _in_drain_range(candidate):
+				_drain_targets.append(candidate)
+		_drain_elapsed = 0.0
+		_attacking = true
+		_path = PackedVector2Array()
+		_path_index = 0
+		_attack_visual_serial += 1
+		attack_timeline.restart_visual()
+	if not _drain_targets.has(_target):
+		_target = _drain_targets.front()
+	_deal_continuous_damage(damage * active_damage_multiplier * _effective_attack_speed_multiplier() * dt)
+	_drain_elapsed += dt
 
 func _cancel_attack_and_chase(dt: float) -> void:
 	magazine.start(self)
@@ -2889,8 +2950,8 @@ func _deal_continuous_damage(amount: float) -> void:
 	var targets: Array[Node2D] = []
 	var definition := PresentationConfig.for_form(_base_form_stats, form_index)
 	if bool(definition.get("attack_all_in_range", false)):
-		for candidate in get_tree().get_nodes_in_group("combatants"):
-			if candidate is Node2D and _target_is_attackable(candidate) and _target_gap(candidate) <= attack_range:
+		for candidate in _continuous_area_targets():
+			if _in_drain_range(candidate):
 				targets.append(candidate)
 	elif is_instance_valid(_target):
 		targets.append(_target)
@@ -3166,6 +3227,7 @@ func cancel_controlled_action(reason: StringName, recover_position: bool = true)
 	if cancel_displacement: cancel_skill_cast(recover_position)
 
 func cancel_basic_attack(reason: StringName) -> void:
+	_reset_drain()
 	fixed_attack_direction = Vector2.ZERO
 	assert(ActionCancellation.valid_reason(reason), "未声明的动作取消原因：%s" % reason)
 	if reason in [ActionCancellation.STUN, ActionCancellation.FREEZE, ActionCancellation.STASIS, ActionCancellation.KNOCKBACK, ActionCancellation.DEATH_FORM, ActionCancellation.SILENCE, ActionCancellation.TAUNT]:
