@@ -48,6 +48,12 @@ func run(harness: SceneTree) -> void:
 	if ziggs_case != null: terminal_not_before = maxi(terminal_not_before, 240)
 	var bear_case = preload("res://tests/fixtures/airdrop_bear_network_case.gd").new() if OS.get_environment("CLASH_TEST_AIRDROP_BEAR") == "1" else null
 	if bear_case != null: terminal_not_before = maxi(terminal_not_before, 150)
+	var olaf_case = preload("res://tests/fixtures/olaf_r_network_case.gd").new() if OS.get_environment("CLASH_TEST_OLAF_R") == "1" else null
+	if olaf_case != null: terminal_not_before = maxi(terminal_not_before, 165)
+	var ivern_case = preload("res://tests/fixtures/ivern_network_case.gd").new() if OS.get_environment("CLASH_TEST_IVERN") == "1" else null
+	if ivern_case != null: terminal_not_before = maxi(terminal_not_before, 190)
+	var sona_case = preload("res://tests/fixtures/sona_network_case.gd").new() if OS.get_environment("CLASH_TEST_SONA") == "1" else null
+	if sona_case != null: terminal_not_before = maxi(terminal_not_before, 240)
 	var graves_case = preload("res://tests/fixtures/graves_network_case.gd").new() if OS.get_environment("CLASH_TEST_GRAVES") == "1" else null
 	if graves_case != null: terminal_not_before = maxi(terminal_not_before, 145)
 	var sivir_case = preload("res://tests/fixtures/sivir_network_case.gd").new() if OS.get_environment("CLASH_TEST_SIVIR") == "1" else null
@@ -94,11 +100,16 @@ func run(harness: SceneTree) -> void:
 	var mist_exit_applied := false
 	var mist_pair_active := false
 	var mist_observation: Dictionary = {}
-	while Time.get_ticks_msec() - start < 20000:
+	# 琴女场景须等待光环自然到期；包括正式30秒加载上限及20秒战斗观察预算。
+	var observation_limit := 50000 if sona_case != null or ivern_case != null else 20000
+	while Time.get_ticks_msec() - start < observation_limit:
 		await harness.process_frame
 		if bomb_case != null: bomb_case.poll(main)
 		if ziggs_case != null: ziggs_case.poll(main)
 		if bear_case != null: bear_case.poll(main)
+		if olaf_case != null: olaf_case.poll(main)
+		if ivern_case != null: ivern_case.poll(main)
+		if sona_case != null: sona_case.poll(main)
 		if graves_case != null: graves_case.poll(main)
 		if sivir_case != null: sivir_case.poll(main)
 		if scarecrow_case != null: scarecrow_case.poll(main)
@@ -312,6 +323,12 @@ func run(harness: SceneTree) -> void:
 		if bear_case != null:
 			result["airdrop_bear"] = bear_case.result()
 			result["passed"] = result.passed and result.airdrop_bear.passed
+		if ivern_case != null:
+			result["ivern"] = ivern_case.result()
+			result["passed"] = result.passed and result.ivern.passed
+		if sona_case != null:
+			result["sona"] = sona_case.result()
+			result["passed"] = result.passed and result.sona.passed
 		if graves_case != null:
 			result["graves"] = graves_case.result()
 			result["passed"] = result.passed and result.graves.passed
@@ -388,6 +405,9 @@ func run(harness: SceneTree) -> void:
 		result["audio_sequence"] = main._audio_manager == null and main._battle_presentation == null and main._hand == null and main._effects_view == null and main._resources.resources.is_empty() and main._projectile_system.get_child_count() == 0 and main.runtime.local_team == -1
 		result["passed"] = result.passed and result.audio_sequence
 	if medium_case != null: result.passed = result.passed and result.medium_lightning.passed
+	if olaf_case != null:
+		result["olaf_r"] = olaf_case.result(main.runtime.mode == "server")
+		result.passed = result.passed and result.olaf_r.passed
 	print("[NETWORK_RESULT] " + JSON.stringify(result))
 	# 留出可靠结果送达和音频线程释放的窗口，然后关闭自己的 ENet peer。
 	await harness.create_timer(0.5).timeout

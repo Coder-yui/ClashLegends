@@ -26,6 +26,9 @@
 
 | 定义 / 正文（含形态） | 当前机制与边界重点 | 动画 / 音频 |
 | --- | --- | --- |
+| `ivern` · [翠神](../units/ivern.md) | 远程后排、主动召唤小菊 | [动画](../units/animations/ivern.md) / [音频](../units/audio/ivern.md) / [特效](../units/effects/ivern.md) |
+| `daisy` · [小菊](../units/daisy.md) | 衍生近战、第三击额外伤害与眩晕 | [动画](../units/animations/daisy.md) / [音频](../units/audio/daisy.md) / [特效](../units/effects/daisy.md) |
+| `sona` · [琴瑟仙女](../units/sona.md) | 命中范围治疗空军 | [动画](../units/animations/sona.md) / [音频](../units/audio/sona.md) / [特效](../units/effects/sona.md) |
 | `sivir` · [战争女神](../units/sivir.md) | 往返穿透远程单位 | [动画](../units/animations/sivir.md) / [音频](../units/audio/sivir.md) / [特效](../units/effects/sivir.md) |
 | `powder_keg` · [火药桶](../units/powder_keg.md) | 死亡爆炸、单次击杀金币、主动伤后斩杀 | [动画](../units/animations/powder_keg.md) · [声音](../units/audio/powder_keg.md) · [特效](../units/effects/powder_keg.md) |
 | `jayce` · [未来守护者](../units/jayce.md) | 周期换形、首击主目标附伤与3次攻速强化 | [动画](../units/animations/jayce.md) · [声音](../units/audio/jayce.md) · [特效](../units/effects/jayce.md) |
@@ -152,7 +155,7 @@
 | `malzahar` · [虚空先知](../units/malzahar.md) | 空中周期召唤与下一击引导 | [动作](../units/animations/malzahar.md) · [声音](../units/audio/malzahar.md) |
 | `voidling` · [虚灵](../units/voidling.md) | 关联小型近战单位 | [动作](../units/animations/voidling.md) · [声音](../units/audio/voidling.md) |
 
-| `olaf` · [狂战士](../units/olaf.md) | 双单位近战、护盾与5秒攻速/吸血增益 | [动画](../units/animations/olaf.md) · [音频](../units/audio/olaf.md) · [特效](../units/effects/olaf.md) |
+| `olaf` · [狂战士](../units/olaf.md) | 双单位近战、W护盾/攻速/吸血，R解控免控与6秒四项增益 | [动画](../units/animations/olaf.md) · [音频](../units/audio/olaf.md) · [特效](../units/effects/olaf.md) |
 | `olaf_single` · [狂战士（单只）](../units/olaf_single.md) | 工作台关联对象，共用狂战士机制 | [动画](../units/animations/olaf.md) · [音频](../units/audio/olaf.md) · [特效](../units/effects/olaf.md) |
 
 | `yorick` · [牧魂人](../units/yorick.md) | 目标圆心范围普攻、Q单次固定回血 | [动作](../units/animations/yorick.md) · [声音](../units/audio/yorick.md) · [特效](../units/effects/yorick.md) |

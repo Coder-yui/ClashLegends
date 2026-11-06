@@ -249,4 +249,12 @@ ProjectileSuite 内的 view 子检查覆盖内容代次、同帧前后读取、�
 
 空投熊专项：`--suite AirdropBearSuite`覆盖己方半场、延迟落地、对空地/塔伤害、召唤、效果盾、眩晕、常驻火圈、凝滞/冰冻边界、死亡清理与快照类型。`CLASH_TEST_AIRDROP_BEAR=1 CLASH_TEST_TERMINAL_TICK=160 python3 tools/dev.py verify --suite AirdropBearSuite --network`验证服务器和两客户端火圈建立、5秒攻速到期与权威隔离。
 
+奥拉夫诸神黄昏专项：`--suite OlafSuite`覆盖双阵营同批生效、受控起手、净化/免控、120Tick到期、吸血、双方凝滞免疫及R动作/音轨。`CLASH_TEST_OLAF_R=1 python3 tools/dev.py verify --suite OlafSuite --network --network-render`追加服务器和双客户端免控时钟、生效/到期、强化普攻及原版R音效；测试沿正式加载期绘制预热固定牌组外的奥拉夫，终局至少165Tick。
+
 爆破鬼才专项：`--suite ZiggsSuite`覆盖固定落点、普通30/强化40边界、三次落地、三次强化、建筑斩杀、单次爆炸音及粒子尾段。`CLASH_TEST_ZIGGS=1 CLASH_TEST_TERMINAL_TICK=260 python3 tools/dev.py verify --suite ZiggsSuite --network`检查服务器与两客户端三段外观、待发建立/耗尽及真实伤害；测试终局覆盖可设85–300Tick，默认85不变。
+
+### 琴瑟仙女
+
+`SonaSuite`覆盖部署完成2秒首次、后续5秒周期/3秒光环、命中不触发、不刷新、受控只保留一轮、范围空地治疗、重伤/控制/凝滞/死亡、R穿透伤害与眩晕、付费次数冷却及非法快照。`ProjectileSuite`另含琴女普攻和R的纯表现变更权威轨迹对比。三进程附加场景使用`CLASH_TEST_SONA=1 python3 tools/dev.py verify --suite SonaSuite --network`，包含双方资源计划、双客户端两轮光环时钟、只读权威状态、水平R、普攻/R音频事件及到期停音；首次运行前按需加`--import`。
+
+翠神专项：`--suite IvernSuite`覆盖小菊三击循环、致盲/凝滞、召唤归属和独立存活、3费单次20秒冷却。`CLASH_TEST_IVERN=1 python3 tools/dev.py verify --suite IvernSuite --network`追加服务器与两客户端的弹体、召唤物、攻击段及眩晕同步。

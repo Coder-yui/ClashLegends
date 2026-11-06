@@ -57,6 +57,10 @@ func _ready() -> void:
 	runtime._deck = ["garen", "gnar", "xin", "teemo", "ashe", "heal", "freeze", "tombstone"]
 	if OS.get_environment("CLASH_TEST_MEDIUM_LIGHTNING") == "1": runtime._deck[5] = "medium_lightning"
 	runtime._active_skill_choices = {"garen": 0}
+	if OS.get_environment("CLASH_TEST_SONA") == "1":
+		runtime._deck[4] = "sona"
+		runtime._active_skill_choices["sona"] = 0
+	if OS.get_environment("CLASH_TEST_IVERN") == "1": runtime._deck[4] = "ivern"
 	super._ready()
 	_queue_trace_output = OS.get_environment("CLASH_QUEUE_TRACE_DIR")
 	var fixed_delay := 0.0
@@ -146,3 +150,14 @@ func _rpc_active_skill_rejected(epoch: String, ability_id: int, request_id: int)
 func _trace_skill(stage: String, details: Dictionary) -> void:
 	details.merge({"stage": stage, "role": runtime.mode, "local_team": runtime.local_team, "sim_tick": runtime._sim_tick_id, "authority_tick": get_authoritative_server_tick(), "estimated_tick": get_estimated_server_tick(), "clock_estimate": _network_clock.estimate(Time.get_ticks_msec()), "clock_synchronized": _network_clock.synchronized, "phase": runtime.session.phase, "game_over": runtime.game_over, "wall_msec": Time.get_ticks_msec()})
 	print("[NETWORK_SKILL_TRACE] " + JSON.stringify(details))
+
+var _olaf_fixture_resources: MatchResources
+func _prepare_match_assets() -> void:
+	await super._prepare_match_assets()
+	if OS.get_environment("CLASH_TEST_OLAF_R") != "1" or runtime.game_over: return
+	# 专项额外单位沿正式加载期绘制预热，避免固定盖伦牌组外资源在开局后编译。
+	_olaf_fixture_resources = MatchResources.new()
+	_olaf_fixture_resources.plan = preload("res://scripts/presentation/match_resource_plan.gd").for_match([["olaf_single"], ["olaf_single"]], [{"olaf_single": 1}, {"olaf_single": 1}])
+	await _olaf_fixture_resources.prepare_async(["olaf_single"], get_tree())
+	_audio_manager.prepare_audio(CardDB.get_card("olaf_single").audio)
+	await _battle_presentation.model_pool.prepare(_olaf_fixture_resources.resources, _battle_presentation._world_root, _battle_presentation._camera, _olaf_fixture_resources.cards, _olaf_fixture_resources.plan)
