@@ -97,6 +97,7 @@ var _lifespan_decay_remainder := 0.0
 var _drain_duration := 0.0
 var _drain_pause := 0.0
 var _drain_elapsed := 0.0
+var _drain_facing := Vector2.ZERO
 var _drain_pause_left := 0.0
 var _drain_targets: Array[Node2D] = []
 var _continuous_lifesteal_remainder := 0.0
@@ -1591,6 +1592,10 @@ func get_visual_facing_direction() -> Vector2:
 	return _body_facing_direction
 
 func _desired_facing_direction() -> Vector2:
+	if is_building and _drain_duration > 0.0:
+		return Vector2.UP if team == 0 else Vector2.DOWN
+	if _drain_duration > 0.0 and (_attacking or _move_intent.length_squared() <= 0.01) and not _drain_facing.is_zero_approx():
+		return _drain_facing
 	if _attacking and not fixed_attack_direction.is_zero_approx(): return fixed_attack_direction
 	if structure_rush.locked() and structure_rush.direction.length_squared() > 0.001:
 		return structure_rush.direction
@@ -1939,6 +1944,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 func _reset_drain() -> void:
 	_drain_targets.clear()
 	_drain_elapsed = 0.0
+	_drain_facing = Vector2.ZERO
 	_drain_pause_left = 0.0
 
 func _continuous_area_targets() -> Array:
@@ -1960,18 +1966,21 @@ func _tick_drain_cycle(dt: float) -> void:
 			_drain_pause_left = _drain_pause
 	if not _attacking:
 		_update_target(false)
+		if not _in_drain_range(_target):
+			_drain_pause_left = maxf(0.0, _drain_pause_left - dt)
+			_chase(dt)
+			# Moving out of the stationary attack cadence permits a fresh attack on contact.
+			if _move_intent.length_squared() > 0.01:
+				_drain_pause_left = 0.0
+			return
 		if _drain_pause_left > 0.00001:
 			_drain_pause_left = maxf(0.0, _drain_pause_left - dt)
-			if not _in_drain_range(_target):
-				_chase(dt)
-			return
-		if not _in_drain_range(_target):
-			_chase(dt)
 			return
 		for candidate in get_tree().get_nodes_in_group("combatants"):
 			if candidate is Node2D and _in_drain_range(candidate):
 				_drain_targets.append(candidate)
 		_drain_elapsed = 0.0
+		_drain_facing = global_position.direction_to(_target.global_position)
 		_attacking = true
 		_path = PackedVector2Array()
 		_path_index = 0

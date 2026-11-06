@@ -15,15 +15,29 @@ static func definition() -> Dictionary:
 			"visual_scene_path": "res://assets/units/fiddlesticks/fiddlesticks_view.tscn",
 			"visual_radius": 29.0, "visual_forward_yaw": 0.0,
 			"color": Color(0.65, 0.23, 0.19),
-			"visual_animations": {"idle": "fiddlesticks_idle1", "move": "fiddlesticks_run",
-				"attack_enter": "fiddlesticks_spell2", "attack_loop": "fiddlesticks_spell2_channel", "death": "fiddlesticks_death_v2", "death_duration": 0.8},
+			"visual_animations": {"transition_blends": {"locomotion": 0.14, "action_in": 0.1, "action_out": 0.14, "death": 0.08}, "idle": "fiddlesticks_idle1", "move": "fiddlesticks_run",
+				"attack_enter": "fiddlesticks_spell2", "attack_loop": "fiddlesticks_spell2_channel",
+				"transitions": {
+					"fiddlesticks_run>idle": {"animation": "fiddlesticks_idlein1", "blend_in": 0.05, "blend_out": 0.0},
+					"fiddlesticks_spell2_to_run>idle": {"animation": "fiddlesticks_idlein1", "blend_in": 0.05, "blend_out": 0.0},
+					"fiddlesticks_spell2_channel>idle": {"animation": "fiddlesticks_spell2_channel_toidle", "blend_in": 0.0, "blend_out": 0.0},
+					"attack>move": {"animation": "fiddlesticks_spell2_to_run", "blend_in": 0.0, "blend_out": 0.0},
+					"fiddlesticks_spell2_channel_toidle>move": {"animation": "fiddlesticks_spell2_to_run", "blend_in": 0.1, "blend_out": 0.0},
+				},
+				"clip_blends": {
+					"fiddlesticks_spell2>fiddlesticks_spell2_channel": 0.0,
+					"fiddlesticks_run>fiddlesticks_spell2": 0.1,
+					"fiddlesticks_idle1>fiddlesticks_spell2": 0.1,
+					"fiddlesticks_spell2_to_run>fiddlesticks_spell2": 0.08,
+					"fiddlesticks_spell2_channel_toidle>fiddlesticks_spell2": 0.08,
+				},
+				"death": "fiddlesticks_death_effigies", "death_duration": 1.94},
 			"continuous_beam_color": Color(0.7, 0.08, 0.03, 0.8),
 			"continuous_beam_origin_height": 45.0,
 		},
 		# BEGIN IMPORTED AUDIO fiddlesticks
 		"audio": {
 			"events": {
-				"deploy:voice": {"pool": ["res://assets/audio/units/fiddlesticks/champion_choose_9_zh_cn.ogg"], "volume_db": 0.0, "bus": "Voice"},
 				"continuous_attack:start": {
 					"pool": [
 						"res://assets/audio/units/fiddlesticks/play_sfx_fiddlesticks_fiddlesticksw_oncast_r1.wav",
@@ -42,20 +56,8 @@ static func definition() -> Dictionary:
 					"bus": "Combat"
 				},
 				"death": {
-					"pool": [
-						"res://assets/audio/units/fiddlesticks/play_sfx_fiddlesticks_death3d_buffactivate.wav"
-					],
-					"volume_db": 0.0,
-					"bus": "Combat"
-				},
-				"death:voice": {
-					"pool": [
-						"res://assets/audio/units/fiddlesticks/play_vo_fiddlesticks_death3d_r1_zh_cn.wav",
-						"res://assets/audio/units/fiddlesticks/play_vo_fiddlesticks_death3d_r2_zh_cn.wav",
-						"res://assets/audio/units/fiddlesticks/play_vo_fiddlesticks_death3d_r3_zh_cn.wav"
-					],
-					"volume_db": 0.0,
-					"bus": "Voice"
+					"pool": ["res://assets/audio/units/fiddlesticks/effigy_death_mobile_r1.wav", "res://assets/audio/units/fiddlesticks/effigy_death_mobile_r2.wav"],
+					"volume_db": 0.0, "bus": "Combat"
 				}
 			}
 		},

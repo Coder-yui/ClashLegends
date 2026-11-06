@@ -11,6 +11,7 @@ class RejectSpecialAudio extends GameAudioManager:
 
 func run(harness: Object, main: Node2D) -> void:
 	preload("res://tests/fixtures/attack_audio_checks.gd").new().run(harness, main)
+	_check_scarecrow_audio(harness, main)
 	_check_audio_variant_cap(harness)
 	_check_no_audio_substitution(harness, main)
 	await _check_stasis_audio(harness, main)
@@ -1460,3 +1461,57 @@ func _check_bomb_flight_audio(harness: Object, main: Node2D) -> void:
 	harness._expect(audio._spell_flight_players.is_empty(), "清场停止终极爆弹持续声")
 	main._spell_system.bomb_effects.clear()
 	main._last_card_event_id = previous_event_id
+
+
+func _check_scarecrow_audio(harness: Object, main: Node2D) -> void:
+	var audio: GameAudioManager = main._audio_manager
+	for card_id in ["scarecrow", "fiddlesticks"]:
+		var unit := Unit.new()
+		unit.card_id = card_id
+		unit.setup(0, CardDB.get_card(card_id), card_id)
+		main.add_child(unit)
+		unit.set_battle_context(main.battle_context)
+		var cues: Array[StringName] = []
+		var listener := func(id: String, cue: StringName, _pos: Vector2):
+			if id == card_id: cues.append(cue)
+		audio.cue_played.connect(listener)
+		audio.attach_unit(unit, CardDB.get_card(card_id))
+		audio._process(0.0)
+		harness._expect(cues.has(&"deploy:start") == (card_id == "scarecrow"), "只有建筑respawn播放对应部署音效")
+		harness._expect(not cues.has(&"deploy:voice"), "两种形态部署都不播放语音")
+		if card_id == "scarecrow":
+			var skill: Dictionary = CardDB.active_skills_for(card_id)[0].duplicate(true)
+			skill.impact_delay = 999.0
+			unit._deploy_timer = 0.0
+			var started: bool = main.runtime._start_active_skill_cast(unit, skill)
+			harness._expect(started and cues.count(&"active:cast") == 1, "巫骇草人成功起手播放一次选定的三秒音效")
+			main.runtime._commands.clear_impacts()
+			unit.sync_network_form(1, 1)
+			audio._process(0.0)
+			harness._expect(audio.play_event(unit, &"active:cast", unit.position), "换形快照先到时仍能消费迟到的主动起音")
+			unit.sync_network_form(0, 2)
+
+		unit._deploy_timer = 0.0
+		var target := Unit.new()
+		target.setup(1, CardDB.get_card("target_dummy"), "target")
+		main.add_child(target)
+		unit._target = target
+		unit._attacking = true
+		unit._attack_visual_serial = 1
+		audio._process(0.0)
+		var key := audio._sustain_key(unit.get_instance_id(), &"attack")
+		harness._expect(audio._sustain_players.has(key) and cues.count(&"continuous_attack:start") == 1, "每轮启动一次W起音与持续层")
+		unit._attacking = false
+		audio._process(0.0)
+		harness._expect(not audio._sustain_players.has(key), "停顿时结束W持续层")
+		unit._attacking = true
+		unit._attack_visual_serial += 1
+		audio._process(0.0)
+		harness._expect(audio._sustain_players.has(key) and cues.count(&"continuous_attack:start") == 2, "下一轮重开W音效")
+		unit.notify_visual_death()
+		unit.notify_visual_death()
+		harness._expect(not audio._sustain_players.has(key) and cues.count(&"death") == 1 and not cues.has(&"death:voice"), "两种形态死亡仅播放一次草人倒下声并结束持续层")
+		audio.cue_played.disconnect(listener)
+		unit.free()
+		target.free()
+		audio._process(0.0)

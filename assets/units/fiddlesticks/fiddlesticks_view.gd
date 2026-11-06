@@ -10,8 +10,10 @@ var _optional_parts: Dictionary = {}
 # skin0 AnimationGraphData, native 30Hz event frames. No visibility event means
 # restore initialSubmeshToHide, never carry the preceding clip's temporary props.
 const PART_WINDOWS := {
+	"fiddlesticks_idlein1": {"R_Demon_Arm": Vector2(29, -1), "Lantern": Vector2(61, -1)},
+	"fiddlesticks_respawn": {"R_Demon_Arm": Vector2(91, -1), "Lantern": Vector2(99, -1)},
+	"fiddlesticks_spell2_channel_toidle": {"R_Demon_Arm": Vector2(25, -1), "Lantern": Vector2(58, -1)},
 	"fiddlesticks_idle1": {"Lantern": Vector2(0, -1), "R_Demon_Arm": Vector2(0, -1), "Tongue": Vector2(64, 91)},
-	"fiddlesticks_death_v2": {"L_Demon_Arm": Vector2(0, 77), "R_Demon_Arm": Vector2(0, 77)},
 }
 const OPTIONAL_PARTS := ["Lantern", "Tongue", "L_Demon_Arm", "R_Demon_Arm"]
 

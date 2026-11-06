@@ -7,16 +7,31 @@
     "source/assets/characters/fiddlesticks/skins/base/fiddlesticks_base_body_tx_cm.tex": "035071903ce2782807af471c0c800db387ac5111dd8d74ed6471eff532957876",
     "source/assets/characters/fiddlesticks/skins/base/fiddlesticks_base_weapon_tx_cm.tex": "73091363e5508d2dab9eb0bf8284adc3588effb70b5e6f906c04b04a0528c30a",
     "source/assets/characters/fiddlesticks/skins/base/fiddlesticksloadscreen.tex": "89437103de2a60dfd3c4ee12083c29035148d511b1843696a5795a4171dbc933",
-    "animation-organization/data/characters/fiddlesticks/animations/skin0.bin": "73550f5353180fdbd7e1b1428cb57c23fc596add69a9e76d4e9c5c8585bf283a"
+    "animation-organization/data/characters/fiddlesticks/animations/skin0.bin": "73550f5353180fdbd7e1b1428cb57c23fc596add69a9e76d4e9c5c8585bf283a",
+    "source/assets/characters/fiddlesticks/skins/base/animations/fiddlesticks_spell2_channel.anm": "fd484cdad723187f0a9dd1e620238be63e887eb702f4799e8ead0cee72eb011b",
+    "source/assets/characters/fiddlesticks/skins/base/animations/fiddlesticks_death_v2.anm": "3795f4bf774c95fbb255be09db91fdbb52bca9539a9d6fc8610d90ce9d9bad0d",
+    "source/assets/characters/fiddlesticks/skins/base/animations/fiddlesticks_death_effigies.anm": "c7062a55a880dbdcda964aea0cf0960380127f21bca451bc44278a676a3b2651",
+    "source/assets/characters/fiddlesticks/skins/base/animations/fiddlesticks_run_in.anm": "75294a7b499480e40cdcd8aa20b71b7dbf87e41806818f9188c1887134251174",
+    "source/assets/characters/fiddlesticks/skins/base/animations/fiddlesticks_run.anm": "2a12bebb9819277f4a8451b5e1abeaf61497ade0252b586d05935bc39acef239",
+    "source/assets/characters/fiddlesticks/skins/base/animations/fiddlesticks_respawn.anm": "e38ad63fadde13c01d28e57f05fc2ef4b9b61356305dbd15a2c0362b2fe92fa4",
+    "source/assets/characters/fiddlesticks/skins/base/animations/fiddlesticks_idlein1.anm": "f9884afe89abdcea8248bc2fbc6f07a57e505593f769dd334c24429eac69cbd3",
+    "source/assets/characters/fiddlesticks/skins/base/animations/fiddlesticks_spell2_to_run.anm": "e7f19c6ed118c5bc9378f8cc27a2621b1a5b2d373ff1d319647c59d26caba9b0",
+    "source/assets/characters/fiddlesticks/skins/base/animations/fiddlesticks_idle1.anm": "e4855d12893e7fe0c5644b31d35d41ec0f5322edda65a1cf2491dd9f040ba79c",
+    "source/assets/characters/fiddlesticks/skins/base/animations/fiddlesticks_spell2.anm": "201560b0006fb3727c3deb8d21841e4f363220dd5dbbe79e9cc71c65d090127f",
+    "source/assets/characters/fiddlesticks/skins/base/animations/fiddlesticks_spell2_channel_toidle.anm": "71a684f630877e58b565fa2b9ee8b25ea34e5b5343cc91ea1da7a6a05636e80c"
   },
-  "runtime_model_sha256": "1c488f21035c9f7151691e91f93482f815fdc77f44ae0280413ddc57d6865dad",
-  "processing": "lol2gltf with 5 selected animations; all 6 native submeshes retained; native material mapping; optional surfaces split at runtime with shared skin/skeleton; active clip visibility follows skin0 AnimationGraphData at 30 fps; uniform scene scale 0.012",
+  "runtime_model_sha256": "ab384d6e111b061c906b4dee67e36f68fe05592b3da80d7106c4d72c33cfb5e2",
+  "processing": "lol2gltf with 9 selected animations; all 6 native submeshes retained; native material mapping; optional surfaces split at runtime with shared skin/skeleton; active clip visibility follows skin0 AnimationGraphData at 30 fps; uniform scene scale 0.012",
   "animations": [
-    "fiddlesticks_idle1",
-    "fiddlesticks_run",
-    "fiddlesticks_spell2",
     "fiddlesticks_spell2_channel",
-    "fiddlesticks_death_v2"
+    "fiddlesticks_death_effigies",
+    "fiddlesticks_run",
+    "fiddlesticks_respawn",
+    "fiddlesticks_idlein1",
+    "fiddlesticks_spell2_to_run",
+    "fiddlesticks_idle1",
+    "fiddlesticks_spell2",
+    "fiddlesticks_spell2_channel_toidle"
   ],
   "card_art": "Original fiddlesticksloadscreen.tex decoded without crop or repaint.",
   "initial_hidden_submeshes": [
@@ -41,18 +56,40 @@
         91
       ]
     },
-    "death_v2": {
-      "L_Demon_Arm": [
-        0,
-        77
-      ],
-      "R_Demon_Arm": [
-        0,
-        77
-      ]
-    },
     "run": {},
     "spell2": {},
-    "spell2_channel": {}
+    "spell2_channel": {},
+    "respawn": {
+      "R_Demon_Arm": [
+        91,
+        null
+      ],
+      "Lantern": [
+        99,
+        null
+      ]
+    },
+    "spell2_channel_toidle": {
+      "R_Demon_Arm": [
+        25,
+        null
+      ],
+      "Lantern": [
+        58,
+        null
+      ]
+    },
+    "idlein1": {
+      "R_Demon_Arm": [
+        29,
+        null
+      ],
+      "Lantern": [
+        61,
+        null
+      ]
+    },
+    "death_effigies": {},
+    "spell2_to_run": {}
   }
 }

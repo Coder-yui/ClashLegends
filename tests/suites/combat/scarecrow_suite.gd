@@ -7,6 +7,9 @@ func run(harness: Object) -> void:
 	for team in 2:
 		_check_drain(team)
 	_check_drain_cycle()
+	_check_drain_reentry_and_facing()
+	_check_building_facing()
+	_check_deployment()
 	_check_transform()
 	_check_control_and_shield()
 	_check_network()
@@ -66,6 +69,48 @@ func _check_drain_cycle() -> void:
 		first.free()
 		late.free()
 		source.free()
+
+func _check_deployment() -> void:
+	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "scarecrow", Vector2(360, 800)))
+	var target := _spawn_ready_unit("target_dummy", 1, Vector2(420, 800))
+	_expect(is_equal_approx(source.deploy_time, 2.0), "正式部署时间为2秒")
+	for tick in 39: source.sim_tick(0.05)
+	_expect(target.hp == target.max_hp and not source.is_deployed(), "两秒部署完成前不攻击")
+	source.sim_tick(0.05)
+	_expect(source.is_deployed() and target.hp < target.max_hp, "部署第40 Tick解锁攻击")
+	source.free()
+	target.free()
+
+func _check_drain_reentry_and_facing() -> void:
+	var source := _spawn_ready_unit("fiddlesticks", 0, Vector2(360, 800))
+	var first := _spawn_ready_unit("target_dummy", 1, Vector2(430, 800))
+	var second := _spawn_ready_unit("target_dummy", 1, Vector2(320, 720))
+	var late := _spawn_ready_unit("target_dummy", 1, Vector2(680, 800))
+	source.sim_tick(0.05)
+	var facing := source.get_visual_facing_direction()
+	first.hp = 0
+	second.position = Vector2(360, 700)
+	source.sim_tick(0.05)
+	_expect(source._attacking and source.get_visual_facing_direction().is_equal_approx(facing), "主目标死亡与存活目标移动都不改变本轮朝向")
+	late.position = Vector2(460, 800)
+	second.hp = 0
+	source.sim_tick(0.05)
+	_expect(not source._attacking and late.hp == late.max_hp and source._drain_pause_left > 0 and source.get_visual_facing_direction().is_equal_approx(facing), "全体提前死亡立即中断，原地新目标等待间隔")
+	for tick in 14: source.sim_tick(0.05)
+	source.sim_tick(0.05)
+	_expect(source._attacking and late.hp < late.max_hp, "中断后的下一轮重新选敌")
+	for tick in 39: source.sim_tick(0.05)
+	late.position = Vector2(630, 800)
+	source.sim_tick(0.05)
+	_expect(not source._attacking and source.get_locomotion_visual_state_code() == 2 and source._drain_pause_left == 0, "完整一轮结束无圈内目标立即移动并清除原地间隔")
+	late.position = source.position + Vector2(100, 0)
+	var hp_before := late.hp
+	source.sim_tick(0.05)
+	_expect(source._attacking and late.hp < hp_before, "仅移动一个Tick再入圈立即开始新一轮")
+	source.free()
+	first.free()
+	second.free()
+	late.free()
 
 func _check_transform() -> void:
 	var source := _spawn_ready_unit("scarecrow", 0, Vector2(360, 800))
@@ -164,6 +209,16 @@ func _check_native_parts() -> void:
 	var player := view.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	_expect(view._optional_parts.size() == 4, "完整接回灯笼、舌头与双黑手")
 	for sample in [
+		["fiddlesticks_respawn", 90.9 / 30.0, []],
+		["fiddlesticks_respawn", 91.1 / 30.0, ["R_Demon_Arm"]],
+		["fiddlesticks_respawn", 99.1 / 30.0, ["R_Demon_Arm", "Lantern"]],
+		["fiddlesticks_spell2_channel_toidle", 24.9 / 30.0, []],
+		["fiddlesticks_spell2_channel_toidle", 25.1 / 30.0, ["R_Demon_Arm"]],
+		["fiddlesticks_spell2_channel_toidle", 58.1 / 30.0, ["R_Demon_Arm", "Lantern"]],
+		["fiddlesticks_idlein1", 29.1 / 30.0, ["R_Demon_Arm"]],
+		["fiddlesticks_idlein1", 61.1 / 30.0, ["R_Demon_Arm", "Lantern"]],
+		["fiddlesticks_spell2_to_run", 0.5, []],
+		["fiddlesticks_death_effigies", 1.0, []],
 		["fiddlesticks_idle1", 0.0, ["Lantern", "R_Demon_Arm"]],
 		["fiddlesticks_idle1", 63.9 / 30.0, ["Lantern", "R_Demon_Arm"]],
 		["fiddlesticks_idle1", 64.1 / 30.0, ["Lantern", "R_Demon_Arm", "Tongue"]],
@@ -172,8 +227,6 @@ func _check_native_parts() -> void:
 		["fiddlesticks_idle1", 2.5, ["Lantern", "R_Demon_Arm", "Tongue"]],
 		["fiddlesticks_spell2", 0.1, []],
 		["fiddlesticks_spell2_channel", 1.0, []],
-		["fiddlesticks_death_v2", 76.9 / 30.0, ["L_Demon_Arm", "R_Demon_Arm"]],
-		["fiddlesticks_death_v2", 77.1 / 30.0, []],
 		["fiddlesticks_idle1", 0.0, ["Lantern", "R_Demon_Arm"]],
 	]:
 		player.play(sample[0])
@@ -181,7 +234,7 @@ func _check_native_parts() -> void:
 		for part in view.OPTIONAL_PARTS:
 			_expect(view._optional_parts[part].visible == (part in sample[2]), "原生部件窗口 %s %.3f %s" % [sample[0], sample[1], part])
 	# Exercise real crossfades at play() and on the first rendered movement frame.
-	var clips := ["fiddlesticks_idle1", "fiddlesticks_run", "fiddlesticks_spell2", "fiddlesticks_spell2_channel", "fiddlesticks_death_v2"]
+	var clips := ["fiddlesticks_idle1", "fiddlesticks_run", "fiddlesticks_spell2", "fiddlesticks_spell2_channel", "fiddlesticks_respawn", "fiddlesticks_death_effigies", "fiddlesticks_spell2_to_run", "fiddlesticks_spell2_channel_toidle", "fiddlesticks_idlein1"]
 	for source in clips:
 		for target in clips:
 			if source == target:
@@ -193,8 +246,6 @@ func _check_native_parts() -> void:
 			var expected: Array = []
 			if target == "fiddlesticks_idle1":
 				expected = ["Lantern", "R_Demon_Arm"]
-			elif target == "fiddlesticks_death_v2":
-				expected = ["L_Demon_Arm", "R_Demon_Arm"]
 			for delta in [0.0, 1.0 / 60.0, 0.1, 0.1]:
 				for part in view.OPTIONAL_PARTS:
 					_expect(view._optional_parts[part].visible == (part in expected), "动作过渡 %s -> %s %s" % [source, target, part])
@@ -205,3 +256,19 @@ func _check_native_parts() -> void:
 	view.reset_pool_visual()
 	_expect(view._optional_parts.values().all(func(part): return not part.visible), "模型回池不残留临时部件")
 	view.free()
+
+
+func _check_building_facing() -> void:
+	for team in 2:
+		var source := _spawn_ready_unit("scarecrow", team, Vector2(360, 800))
+		var target := _spawn_ready_unit("target_dummy", 1 - team, Vector2(430, 800))
+		var facing := Vector2.UP if team == 0 else Vector2.DOWN
+		source.sim_tick(0.05)
+		_expect(source.get_visual_facing_direction() == facing, "建筑开攻仍固定阵营朝向")
+		target.position = Vector2(300, 800)
+		source.sim_tick(0.05)
+		_expect(source.get_visual_facing_direction() == facing, "建筑目标绕行不转向")
+		for tick in 55: source.sim_tick(0.05)
+		_expect(source.get_visual_facing_direction() == facing, "建筑跨轮重新选敌不转向")
+		source.free()
+		target.free()

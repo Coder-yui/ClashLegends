@@ -1,20 +1,13 @@
-# fiddlesticks 音频映射
+# 草间人和远古恐惧音频
 
-W范围持续汲取；持续层随停止攻击、控制、死亡与清场停止。不接原版W最后一跳音效，因为本卡没有最后一跳爆发。
+| 项目事件 | 原版事件 | 处理 |
+| --- | --- | --- |
+| 建筑deploy:start | Respawn3D_buffactivate | 2.15倍保调变速以匹配两秒部署，约2.05秒含尾音 |
+| active:cast | FiddlesticksScarecrowEffigy_OnHitLocation | 固定试听版本前3秒，2.5–3秒线性淡出 |
+| continuous_attack:start | FiddlesticksW_OnCast | 3变体、源增益 |
+| continuous_attack:sustain | FiddlesticksWdrain_OnBuffActivate | 2变体、源增益，按每轮生命周期停止 |
+| death | Death3D_effigies | 2变体，建筑完整约2.15秒，移动形态1.5秒淡出 |
 
-| 项目 cue / 动作段 | 原始事件 |
-| --- | --- |
-| `continuous_attack:start` | `Play_sfx_Fiddlesticks_FiddlesticksW_OnCast` |
-| `continuous_attack:sustain` | `Play_sfx_Fiddlesticks_FiddlesticksWdrain_OnBuffActivate` |
-| `death` | `Play_sfx_Fiddlesticks_Death3D_buffactivate` |
-| `death:voice` | `Play_vo_Fiddlesticks_Death3D` |
+原英雄死亡语音与原Death3D_buffactivate已替换。素材库audio-review-1106保留重新解码源件及旧正式文件，W五个声音重新解码后与正式PCM一致。源事件、媒体编号、加工及哈希见[event_manifest.json](event_manifest.json)和[原版增益清单](../../original_gain_manifest.json)。
 
-文件/变体、源 TXTP、媒体及 SHA-256 见同目录 event_manifest.json（大纳尔为 mega_event_manifest.json）。
-
-来源：本机 LOL_Asset_Source 的英雄基础皮肤 SFX 与 zh_CN VO；原包只读，外部库选定成品复制到 assets，并非待开发队列迁移。wwiser v20260909 + 对应共享 init.bnk；vgmstream-cli -i 解码为 PCM16 WAV，保留事件层叠和源增益，不逐文件归一化。只选择一组未知 Switch 条件，不假称材质语义；不完整复现 Wwise 实时 RTPC、滤波与嵌套随机。素材版权属于 Riot，仅作本项目学习用途。
-
-验收状态与缺口见 docs/AUDIO_CARD_MAP.md。
-
-死亡声音超过 1.5 秒时，只保留前 1.5 秒：前 1 秒保持原音量，1–1.5 秒按振幅线性淡出；不超过 1.5 秒的素材不变。
-
-部署使用本地客户端zh_CN-assets.wad内champion-choose-vo/9.ogg，原文件直接复制，SHA-256与原路径见../../original_gain_manifest.json。中文死亡语音亦按1.5秒上限加工。
+[草间人音频](../../../../docs/units/audio/scarecrow.md) · [远古恐惧音频](../../../../docs/units/audio/fiddlesticks.md)。

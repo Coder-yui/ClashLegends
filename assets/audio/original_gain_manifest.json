@@ -71943,143 +71943,6 @@
       "duration": 3.5825
     },
     {
-      "file": "assets/audio/units/fiddlesticks/play_sfx_fiddlesticks_death3d_buffactivate.wav",
-      "sha256": "4fbae1cbdd6fc2ceadadfc3054a9eb59e2f35d4b92ca2c6530ccfd9cc25e7fd8",
-      "source_events": [
-        {
-          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/txtp/Play_sfx_Fiddlesticks_Death3D_buffactivate.txtp",
-          "txtp_sha256": "140b2f22fbc7731cd378005a2d5ade41d7f9bec28d1701d4f4a3a13c6a38568a",
-          "event_ids": [
-            "3187054192"
-          ],
-          "media_ids": [
-            "243469657"
-          ]
-        }
-      ],
-      "processing": {
-        "gain_db": 0,
-        "description": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-        "death_envelope": {
-          "source_duration": 6.12265306122449,
-          "source_sha256": "1ae1a8e6ab623b05db3f9b28a8ef846b92c318d50fe50cd5560167d6db34a164",
-          "keep_seconds": 1.5,
-          "fade_start_seconds": 1.0,
-          "fade_seconds": 0.5,
-          "curve": "linear_amplitude"
-        }
-      },
-      "duration": 1.5
-    },
-    {
-      "file": "assets/audio/units/fiddlesticks/play_vo_fiddlesticks_death3d_r1_zh_cn.wav",
-      "sha256": "ad70c43e1e5c4facbfb93868719e6a15eeb701eb43e33e39f362c3a98811f325",
-      "source_events": [
-        {
-          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks_vo/txtp/Play_vo_Fiddlesticks_Death3D {r1}.txtp",
-          "txtp_sha256": "2e49c439ee2f6452a821db18b8be8acdf194eb3cc408d0f36b2b69cf952c74dc",
-          "event_ids": [
-            "884653773"
-          ],
-          "media_ids": [
-            "221945662",
-            "425696113",
-            "985924680",
-            "1184167273",
-            "1624062724"
-          ]
-        }
-      ],
-      "processing": {
-        "gain_db": 0,
-        "description": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-        "death_envelope": {
-          "source_duration": 3.9653968253968253,
-          "source_sha256": "af0c0090209778996d424bdfca7f99ec33acb3ae75d77442b29fcd4bff9db3a0",
-          "keep_seconds": 1.5,
-          "fade_start_seconds": 1.0,
-          "fade_seconds": 0.5,
-          "curve": "linear_amplitude"
-        }
-      },
-      "duration": 1.5
-    },
-    {
-      "file": "assets/audio/units/fiddlesticks/play_vo_fiddlesticks_death3d_r2_zh_cn.wav",
-      "sha256": "81a0acccf529c39edbad970d92666e737116a24dd9c79c68a920b51a1497a44d",
-      "source_events": [
-        {
-          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks_vo/txtp/Play_vo_Fiddlesticks_Death3D {r2}.txtp",
-          "txtp_sha256": "e78c5d40aed7c47738ec7ef87b64605cf8d724b1d20719d8e73031d0c985a437",
-          "event_ids": [
-            "884653773"
-          ],
-          "media_ids": [
-            "221945662",
-            "425696113",
-            "985924680",
-            "1184167273",
-            "1624062724"
-          ]
-        }
-      ],
-      "processing": {
-        "gain_db": 0,
-        "description": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-        "death_envelope": {
-          "source_duration": 3.9172562358276646,
-          "source_sha256": "2c9a5cafaab8bed32a43ae2bab63975107f73873cece42955fef61aa524ee603",
-          "keep_seconds": 1.5,
-          "fade_start_seconds": 1.0,
-          "fade_seconds": 0.5,
-          "curve": "linear_amplitude"
-        }
-      },
-      "duration": 1.5
-    },
-    {
-      "file": "assets/audio/units/fiddlesticks/play_vo_fiddlesticks_death3d_r3_zh_cn.wav",
-      "sha256": "e1af992841e6a13544106be522450847cab0553f36ae037af1bffb521719d554",
-      "source_events": [
-        {
-          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks_vo/txtp/Play_vo_Fiddlesticks_Death3D {r3}.txtp",
-          "txtp_sha256": "f66f76657f914a745d654c2bb2cfc11dd8ceadfba8b916e507c673ff40c67501",
-          "event_ids": [
-            "884653773"
-          ],
-          "media_ids": [
-            "221945662",
-            "425696113",
-            "985924680",
-            "1184167273",
-            "1624062724"
-          ]
-        }
-      ],
-      "processing": {
-        "gain_db": 0,
-        "description": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-        "death_envelope": {
-          "source_duration": 4.24671201814059,
-          "source_sha256": "10caca856135e17438ba7c2a146b3cd2606fb8d43e5d80955d83645e53623f74",
-          "keep_seconds": 1.5,
-          "fade_start_seconds": 1.0,
-          "fade_seconds": 0.5,
-          "curve": "linear_amplitude"
-        }
-      },
-      "duration": 1.5
-    },
-    {
-      "file": "assets/audio/units/fiddlesticks/champion_choose_9_zh_cn.ogg",
-      "sha256": "ca1ce0777548e551e551939355c970233575b0545b5a68d2eacb5813c1d5437f",
-      "source_original": "ClashLegends-开发素材库/03-制作中/草间人/deploy-voice/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/9.ogg",
-      "processing": {
-        "gain_db": 0,
-        "description": "Original client champion selection OGG, copied byte-for-byte."
-      }
-    },
-    {
       "file": "assets/audio/units/ziggs/deploy_choose_zh_cn.ogg",
       "sha256": "03166cdceabdbb7c8f5f84eef9e5f94288d8fe414cad932d376a3d3fb340cdbb",
       "source_events": [],
@@ -74149,6 +74012,153 @@
           ]
         }
       ]
+    },
+    {
+      "file": "assets/audio/units/fiddlesticks/respawn_2s.wav",
+      "sha256": "d283ccb8ca3abda42859145c634d876e0b189540202582d8b416b0b7c15cc1f4",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/txtp/Play_sfx_Fiddlesticks_Respawn3D_buffactivate {d}.txtp",
+          "txtp_sha256": "564d3f1ba4816a1d204b508dbe2025de6292d1024adb5f3de35a47c53882d08d",
+          "event_ids": [
+            "3908197390"
+          ],
+          "media_ids": [
+            "193693590"
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0,
+        "description": "ffmpeg atempo=2.15 to match 4.3s animation to 2s deployment; source event gain retained"
+      },
+      "duration": 2.0495238095238095
+    },
+    {
+      "file": "assets/audio/units/fiddlesticks/effigy_death_building_r1.wav",
+      "sha256": "653f8b5eb54937f68f7f05f555cd1ec8f007ac2e36d26772013bf622f92d4401",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/txtp/Play_sfx_Fiddlesticks_Death3D_effigies {r1}.txtp",
+          "txtp_sha256": "26364df9853aaa53c90bb528155cf5c4f68697896dd2988b47dc79b832364f4b",
+          "event_ids": [
+            "763556074"
+          ],
+          "media_ids": [
+            "342461065",
+            "878318584"
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0,
+        "description": "source event gain retained"
+      },
+      "duration": 2.151904761904762
+    },
+    {
+      "file": "assets/audio/units/fiddlesticks/effigy_death_building_r2.wav",
+      "sha256": "602f957b407c542aeccc5793c5d83650a16778ac82a2aa8a2a4020143a7ea42d",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/txtp/Play_sfx_Fiddlesticks_Death3D_effigies {r2}.txtp",
+          "txtp_sha256": "c70275243f45b2628d3735b14eee7078fbefb61c3ceed9d06762b92d460a9fb4",
+          "event_ids": [
+            "763556074"
+          ],
+          "media_ids": [
+            "342461065",
+            "878318584"
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0,
+        "description": "source event gain retained"
+      },
+      "duration": 2.1448299319727893
+    },
+    {
+      "file": "assets/audio/units/fiddlesticks/effigy_death_mobile_r1.wav",
+      "sha256": "9561a9cc4edf1058dd9b1014b465a91667937e3e5f5cbdd7eb2976e80b266f99",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/txtp/Play_sfx_Fiddlesticks_Death3D_effigies {r1}.txtp",
+          "txtp_sha256": "26364df9853aaa53c90bb528155cf5c4f68697896dd2988b47dc79b832364f4b",
+          "event_ids": [
+            "763556074"
+          ],
+          "media_ids": [
+            "342461065",
+            "878318584"
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0,
+        "description": "source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
+      },
+      "duration": 1.5
+    },
+    {
+      "file": "assets/audio/units/fiddlesticks/effigy_death_mobile_r2.wav",
+      "sha256": "3ff1707ea4b395cb3d7dcd644f62b38b45f32e9ee48c5f493bf85357f06e668f",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/txtp/Play_sfx_Fiddlesticks_Death3D_effigies {r2}.txtp",
+          "txtp_sha256": "c70275243f45b2628d3735b14eee7078fbefb61c3ceed9d06762b92d460a9fb4",
+          "event_ids": [
+            "763556074"
+          ],
+          "media_ids": [
+            "342461065",
+            "878318584"
+          ]
+        }
+      ],
+      "processing": {
+        "gain_db": 0,
+        "description": "source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
+      },
+      "duration": 1.5
+    },
+    {
+      "file": "assets/audio/units/fiddlesticks/effigy_active_3s.wav",
+      "sha256": "1f26fe6b4b3622aa3fb09bd6e4c0117b103fc9880e70f924179755a38bb96f8d",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/草间人/audio/fiddlesticks/txtp/Play_sfx_Fiddlesticks_FiddlesticksScarecrowEffigy_OnHitLocation {r} {m}.txtp",
+          "txtp_sha256": "6ee05b8a6910a7d59477435c84c4c8da37c72ca2498280c860763eb93937f99a",
+          "event_ids": [
+            "2995597660"
+          ],
+          "media_ids": [
+            "34129940",
+            "403276730",
+            "849222668",
+            "834431859",
+            "831478695",
+            "976995718",
+            "706185382",
+            "793872783",
+            "11371598",
+            "1038469158",
+            "186802427",
+            "801964539"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/03-制作中/草间人/passive-audition/effigy_place.wav",
+          "sha256": "57a71bcd2af1d105dbee8c3a8c7da36a1db35138932e16f7b41221bce6e043ed"
+        }
+      ],
+      "processing": {
+        "gain_db": 0,
+        "description": "user-selected audition render; trim first 3s; first 2.5s unchanged PCM; final 0.5s linear amplitude fade to zero; one fixed variant; original event gain"
+      },
+      "duration": 3.0
     }
   ]
 }

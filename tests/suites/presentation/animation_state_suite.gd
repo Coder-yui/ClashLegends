@@ -5,6 +5,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_scarecrow_routes()
 	_check_egg_death_model()
 	_check_locomotion_attack_interrupts()
 	_check_samira_stances()
@@ -892,3 +893,82 @@ func _check_control_idle_playback_rate() -> void:
 			_expect(player.assigned_animation == "annietibbers_idle1" and is_equal_approx(player.get_playing_speed(), 1.0), "冰冻解除但仍眩晕时回到原速待机")
 			view.free()
 		unit.free()
+
+
+func _check_scarecrow_routes() -> void:
+	var stats := CardDB.get_card("scarecrow")
+	var unit := Unit.new()
+	unit.setup(0, stats, stats.name)
+	_main.add_child(unit)
+	_main._battle_presentation.attach_unit(unit, stats)
+	var view := _view_for(unit)
+	_expect(view != null, "草间人正常入口创建表现代理")
+	if view == null:
+		unit.free()
+		return
+	view._sync_visual(true, 0.0)
+	var player := view._animation_player
+	_expect(player.current_animation == "fiddlesticks_respawn" and is_equal_approx(player.get_playing_speed(), player.get_animation("fiddlesticks_respawn").length / 2.0), "草间人respawn完整适配两秒部署")
+	unit._deploy_timer = 0.0
+	unit._attacking = true
+	unit._attack_visual_serial += 1
+	view._sync_visual(false, 0.0)
+	_expect(player.current_animation == "fiddlesticks_spell2", "部署结束直接衔接W起手")
+	view._on_animation_finished(&"fiddlesticks_spell2")
+	_expect(player.current_animation == "fiddlesticks_spell2_channel" and view._last_clip_blend_time == 0.0, "W起手按原图零混合进入引导")
+	unit._attacking = false
+	view._sync_visual(false, 0.0)
+	_expect(player.current_animation == "fiddlesticks_spell2_channel_toidle", "吸血结束使用原生收势而非直接待机")
+	unit._attacking = true
+	unit._attack_visual_serial += 1
+	view._sync_visual(false, 0.0)
+	_expect(player.current_animation == "fiddlesticks_spell2", "下一轮立即打断长收势")
+	view._on_source_died()
+	_expect(player.current_animation == "fiddlesticks_death_effigies" and is_equal_approx(player.get_playing_speed(), 1.0), "建筑使用原速death_effigies")
+	view.free()
+	unit.free()
+
+	stats = CardDB.get_card("fiddlesticks")
+	unit = Unit.new()
+	unit.setup(0, stats, stats.name)
+	unit._deploy_timer = 0.0
+	_main.add_child(unit)
+	_main._battle_presentation.attach_unit(unit, stats)
+	view = _view_for(unit)
+	player = view._animation_player
+	unit._attacking = true
+	unit._attack_visual_serial += 1
+	view._sync_visual(true, 0.0)
+	view._on_animation_finished(&"fiddlesticks_spell2")
+	unit._attacking = false
+	unit._move_intent = Vector2.UP
+	view._sync_visual(false, 0.0)
+	_expect(player.current_animation == "fiddlesticks_spell2_to_run", "单位吸血结束移动使用Spell2_ToRun")
+	unit._attacking = true
+	unit._attack_visual_serial += 1
+	unit._move_intent = Vector2.ZERO
+	view._sync_visual(false, 0.0)
+	_expect(player.current_animation == "fiddlesticks_spell2", "移动一帧再开攻立即打断ToRun")
+	view._on_animation_finished(&"fiddlesticks_spell2")
+	unit._attacking = false
+	unit._move_intent = Vector2.UP
+	view._sync_visual(false, 0.0)
+	view._on_animation_finished(&"fiddlesticks_spell2_to_run")
+	_expect(player.current_animation == "fiddlesticks_run" and view._last_clip_blend_time == 0.0, "ToRun完成直接衔接Run")
+	unit._move_intent = Vector2.ZERO
+	view._sync_visual(false, 0.0)
+	_expect(player.current_animation == "fiddlesticks_idlein1", "移动停下接原生IdleIn")
+	view._on_animation_finished(&"fiddlesticks_idlein1")
+	unit._move_intent = Vector2.UP
+	view._sync_visual(false, 0.0)
+	_expect(player.current_animation == "fiddlesticks_run" and view._last_clip_blend_time > 0.0, "去掉RunIn后待机直接混合进入Run")
+	unit._attacking = true
+	unit._attack_visual_serial += 1
+	unit._move_intent = Vector2.ZERO
+	view._sync_visual(false, 0.0)
+	_expect(player.current_animation == "fiddlesticks_spell2" and view._last_clip_blend_time > 0.0, "移动开攻保留姿势混合")
+	view._on_source_died()
+	_expect(player.current_animation == "fiddlesticks_death_effigies", "移动形态同样使用death_effigies")
+
+	view.free()
+	unit.free()
