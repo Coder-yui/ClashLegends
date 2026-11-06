@@ -1,0 +1,33 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Olaf.wad.client",
+  "source_chunk": "resolved_by_dump_vfx",
+  "resolved_definition_sha256": "839a0a3fec39ed4752c2829c9bb9e8ea1c53da60e92dcc6c692329968a093d2e",
+  "system": "Characters/Olaf/Skins/Skin0/Particles/Olaf_Base_R_buff_weap",
+  "assets": {
+    "assets/characters/olaf/skins/base/particles/olaf_base_r_ash01.tex": {
+      "source_sha256": "518d9d651229c75320746db8f8d0113952cd97c23f89fb05f9eb2086189e6d1b",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_r_ash01.png",
+      "output_sha256": "b3e4a8baf0cf5c0eb1f387a90f13e7d310e1cd7535dec9d3c94081ae0e44c320"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_r_mis_01_ribbon.tex": {
+      "source_sha256": "97d0b13cca6a72a17216abe176fdc4eb216c607ab9fbc46710e628935df9a8b4",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_r_mis_01_ribbon.png",
+      "output_sha256": "edf800094fef2a4956b361f9717a83fd7bcbb3df3e1cf8851e5f54be66515dca"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_r_tar_trail.tex": {
+      "source_sha256": "09aefbbd6fe9f58d5db853715c9081b71fe555a45185a52419f4b0ee70e11373",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_r_tar_trail.png",
+      "output_sha256": "18aaaa0c9fb84207572be73e3f1c3555f0194e97c67e9cf0db1719e81dc9baf6"
+    },
+    "assets/characters/olaf/skins/base/particles/lux_skin07_r_distort.tex": {
+      "source_sha256": "41241eafa700d7aa8a280bc7d943c090005324d146d33777a5b8b4bda3ab977b",
+      "output": "assets/characters/olaf/skins/base/particles/lux_skin07_r_distort.png",
+      "output_sha256": "9d1c0afae3a4040376460a1809143487b39bafa5e0d59448ca4c22bcde7dadd9"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_r_fire2x2.tex": {
+      "source_sha256": "c5eb5ded7703048c840f4fa6f6ebaf8131db0e26c97a865f840a62855fb81bdf",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_r_fire2x2.png",
+      "output_sha256": "6dc6e0f4907f8225004b50973beebcf970e1b9a5355e0713e2ed0ddbff10beba"
+    }
+  }
+}

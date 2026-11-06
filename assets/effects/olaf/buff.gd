@@ -7,21 +7,22 @@ var _bones: Array[int] = []
 # Imported model uses 0.0085 metres per LoL unit; include its live wrapper scale.
 const SOURCE_UNIT_SCALE := 0.0085
 # Compact framing for this model: hand flash, shield, two axe layers, hand flash, skin.
-const PART_FIT := [0.6, 0.75, 0.5, 0.5, 0.6, 1.0]
+const PART_FIT := [0.6, 0.75, 0.5, 0.5, 0.6, 1.0, 1.0, 1.0, 1.0, 1.0]
 var _model: Node3D
 var _unit_scale := SOURCE_UNIT_SCALE
 # AutoBuffActivateEffect[1..4] from OlafFrenziedStrikes.luabin64.
 # Shield/glow placement is retained as project adaptation; no source hook was found.
-const PART_BONES := ["L_BUFFBONE_GLB_HAND_LOC", "", "L_weapon", "R_weapon", "R_BUFFBONE_GLB_HAND_LOC", ""]
+const PART_BONES := ["L_BUFFBONE_GLB_HAND_LOC", "", "L_weapon", "R_weapon", "R_BUFFBONE_GLB_HAND_LOC", "", "", "", "L_BUFFBONE_GLB_HAND_LOC", "R_BUFFBONE_GLB_HAND_LOC"]
 
 func configure(_radius: float, _team: int = 0) -> void:
 	status_source = "active_buff_clock"
-	for kind in ["cas", "shield", "buf_glow", "buf_glow", "cas", "buf_blood"]:
+	for kind in ["cas", "shield", "buf_glow", "buf_glow", "cas", "buf_blood", "r_cas", "r_buf", "r_buff_weap", "r_buff_weap"]:
 		var part := PLAYER.new()
 		add_child(part)
 		part.load_kind(kind)
 		part.setup_native(SOURCE_UNIT_SCALE)
-		part.name = ["左手施放", "护盾", "左斧增益", "右斧增益", "右手施放", "体表增益"][_parts.size()]
+		part._motion.clear()
+		part.name = ["左手施放", "护盾", "左斧增益", "右斧增益", "右手施放", "体表增益", "诸神施放", "诸神体表", "诸神左手", "诸神右手"][_parts.size()]
 		_parts.append(part)
 	visible = false
 
@@ -46,11 +47,12 @@ func advance_status(status_active: bool, shown: bool, _delta: float) -> void:
 		for part in _parts: part.update_attached(false)
 		return
 	_update_placement()
-	var age := maxf(status_state.x, 0.0)
+	var ragnarok := control_immunity_clock.y > control_immunity_clock.x
+	var age := maxf(control_immunity_clock.x if ragnarok else status_state.x, 0.0)
 	for i in _parts.size():
 		var part := _parts[i]
 		part.seek(age)
-		part.visible = shown and (i != 1 or shield_active)
+		part.visible = shown and ((i >= 6) == ragnarok) and (i != 1 or shield_active)
 		part.update_attached(part.visible)
 
 func _update_placement() -> void:
@@ -69,3 +71,18 @@ func _update_placement() -> void:
 		else:
 			part.global_position = _model.global_position
 			if i == 1: part.global_position.y += 100.0 * fitted_scale
+
+func prepare_resource_sample(skills: Array, draw: Callable) -> void:
+	for skill in skills:
+		if skill.get("kind") != "buff": continue
+		var duration := float(skill.get("duration", 0.0))
+		for age in [0.05, 0.15, 0.5, 1.5, 3.0]:
+			status_state = Vector2(age, duration)
+			control_immunity_clock = status_state if bool(skill.get("control_immunity", false)) else Vector2.ZERO
+			shield_active = float(skill.get("shield", 0.0)) > 0.0
+			advance_status(true, true, 0.0)
+			draw.call()
+	status_state = Vector2.ZERO
+	control_immunity_clock = Vector2.ZERO
+	shield_active = false
+	advance_status(false, false, 0.0)

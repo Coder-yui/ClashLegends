@@ -420,5 +420,38 @@
     "sha256": "ad832b31557ac144631e0a57c413fc146c2a5876c6ec4599ab77c7b27d45850d",
     "text": "杀戮的欲望正在高涨！",
     "verified_by_listening": false
+  },
+  {
+    "file": "play_sfx_olaf_olafr_oncast.wav",
+    "event": "Play_sfx_Olaf_OlafR_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/诸神黄昏/audio/txtp/Play_sfx_Olaf_OlafR_OnCast.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/诸神黄昏/audio/play_sfx_olaf_olafr_oncast.wav",
+    "duration": 8.87498866213152,
+    "processing": "wwiser -gv=0dB; fresh vgmstream-cli -i; original event gain",
+    "sha256": "97b0362491c3e567a8bd0fc1f267ba3a19296124c9b3e18f772497ba7fcad00e"
+  },
+  {
+    "file": "play_sfx_olaf_olafr_onbuffactivate.wav",
+    "event": "Play_sfx_Olaf_OlafR_OnBuffActivate",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/诸神黄昏/audio/txtp/Play_sfx_Olaf_OlafR_OnBuffActivate.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/诸神黄昏/audio/play_sfx_olaf_olafr_onbuffactivate.wav",
+    "duration": 6.300997732426304,
+    "processing": "wwiser -gv=0dB; fresh vgmstream-cli -i; original event gain",
+    "sha256": "d321eab67c5b1c90ac4144989e8202c4576d1b3f24f3391c6dc45187a63724cf",
+    "runtime_loop": {
+      "begin_sample": 0,
+      "end_sample": 277874,
+      "sample_rate": 44100,
+      "source": "original Wwise media loop; Godot WAV import forward loop"
+    },
+    "stop_event": {
+      "event": "Stop_sfx_Olaf_OlafR_OnBuffActivate",
+      "event_id": 1728274469,
+      "action_id": 915336548,
+      "target_container": 1996,
+      "transition_seconds": 0.75,
+      "curve": "linear",
+      "cleanup": "buff expiry/death fade; battle cleanup immediate"
+    }
   }
 ]

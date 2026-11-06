@@ -1,5 +1,5 @@
 extends Node3D
-## 奥拉夫原版 W 的施放、护盾、双斧粒子采样。
+## 奥拉夫原版 W / R 的施放、蒙皮与双手粒子采样。
 ## The authority supplies age; this node never advances battle state.
 const ROOT := "res://assets/effects/olaf/"
 static var _cache: Dictionary = {}
@@ -9,6 +9,10 @@ var _materials: Array[ShaderMaterial] = []
 var _pools: Array = []
 var _attached: Array[Dictionary] = []
 var _age := 0.0
+var _kind := ""
+var _motion: Array[Dictionary] = []
+var _ribbons: Dictionary = {}
+const RIBBON := preload("res://assets/effects/hecarim/ribbon.gd")
 var _frame := -1
 var _last_basis := Basis.IDENTITY
 var projection_basis := Basis.IDENTITY
@@ -19,6 +23,7 @@ func shape_basis_for(emitter_name: String) -> Basis:
 	return projection_basis if emitter_name in GROUND_PLANES else Basis.IDENTITY
 
 func load_kind(kind: String) -> void:
+	_kind = kind
 	if not _cache.has(kind):
 		var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(ROOT + kind + "/sampled.json"))
 		var materials: Array[ShaderMaterial] = []
@@ -38,6 +43,11 @@ func advance(delta: float) -> void:
 	seek(_age + delta)
 
 func seek(age: float) -> void:
+	if _kind.begins_with("r_"):
+		if age < _age: _motion.clear()
+		if _motion.is_empty() or age > float(_motion.back().time):
+			_motion.append({"time": age, "position": global_position})
+		while _motion.size() > 2 and age - float(_motion[1].time) > 4.0: _motion.pop_front()
 	_age = maxf(age, 0.0)
 	var frame := mini(int(_age * float(_data.fps)), _data.frames.size() - 1)
 	if frame == _frame and projection_basis == _last_basis: return
@@ -47,6 +57,9 @@ func seek(age: float) -> void:
 	for emitter_index in values.size():
 		var e: Dictionary = _data.emitters[emitter_index]
 		if int(e.get("quadType", -1)) in [6, 11]: continue
+		if _kind.begins_with("r_") and int(e.get("quadType", -1)) == 4:
+			_draw_ribbon(emitter_index, values[emitter_index])
+			continue
 		var pool: Array = _pools[emitter_index]
 		var particles: Array = values[emitter_index]
 		while pool.size() < particles.size():
@@ -65,7 +78,7 @@ func seek(age: float) -> void:
 			if item.visible:
 				item.material_override.set_shader_parameter("projection_basis", projection_basis)
 				item.material_override.set_shader_parameter("shape_basis", shape_basis_for(e.name))
-				item.material_override.set_shader_parameter("p", PackedFloat32Array(particles[j]))
+				item.material_override.set_shader_parameter("p", PackedFloat32Array(_placed_particle(e, particles[j]).slice(0, 38)))
 				var camera := get_viewport().get_camera_3d()
 				if camera != null:
 					var values_j: Array = particles[j]
@@ -86,7 +99,7 @@ func update_attached(shown: bool) -> void:
 	for entry in _attached:
 		var values: Array = _data.frames[maxi(_frame, 0)][entry.index]
 		entry.material.set_shader_parameter("attached_enabled", shown and not values.is_empty() and _age <= float(_data.duration))
-		if not values.is_empty(): entry.material.set_shader_parameter("p", PackedFloat32Array(values[0]))
+		if not values.is_empty(): entry.material.set_shader_parameter("p", PackedFloat32Array(values[0].slice(0, 38)))
 
 static func _mesh(path: String) -> ArrayMesh:
 	var vertices := PackedVector3Array()
@@ -132,6 +145,8 @@ static func _material(e: Dictionary) -> ShaderMaterial:
 		"has_mult":not e.mult_path.is_empty(), "has_ramp":not e.color_path.is_empty() and e.erosion == null,
 		"has_erosion":e.erosion != null, "has_soft":e.soft != null, "push_pull":e.depthPushPull,
 	}
+	if e.reflection != null:
+		params["source_fresnel"] = Vector4(e.reflection.fresnelColor[0], e.reflection.fresnelColor[1], e.reflection.fresnelColor[2], e.reflection.fresnel)
 	if e.multUv != null:
 		params.merge({"mult_center":_v2(e.multUv.center),"mult_flip":Vector2(float(e.multUv.flipU),float(e.multUv.flipV)),"mult_address":int(e.multUv.addressMode)})
 	if e.erosion != null:
@@ -147,10 +162,69 @@ static func _material(e: Dictionary) -> ShaderMaterial:
 
 ## 对外资源契约：定义读取不会创建粒子或加载纹理。
 static func resource_manifest(variant: String) -> Dictionary:
-	if variant not in ["cas", "shield", "buf_glow", "buf_blood"]: return {}
-	return {"json": [ROOT + variant + "/sampled.json"], "sample": {"player": "res://assets/effects/olaf/player.gd", "kind": variant, "setup": "native"}}
+	if variant not in ["cas", "shield", "buf_glow", "buf_blood", "r_cas", "r_buf", "r_buff_weap"]: return {}
+	return {"paths": [ROOT + "ribbon_add.gdshader", "res://assets/effects/hecarim/ribbon.gd"] if variant == "r_buff_weap" else [], "json": [ROOT + variant + "/sampled.json"], "sample": {"player": "res://assets/effects/olaf/player.gd", "kind": variant, "setup": "native"}}
 
 static func resource_shader_path(e: Dictionary) -> String:
-	if int(e.get("quadType", -1)) == 11: return ROOT + "attached.gdshader"
+	if int(e.get("quadType", -1)) == 11:
+		return ROOT + ("r_attached_mix.gdshader" if bool(e.get("native_r", false)) and int(e.blendMode) == 1 else "attached.gdshader")
+	if bool(e.get("native_r", false)) and int(e.blendMode) == 3:
+		return ROOT + "opaque.gdshader"
 	var shader_name := "warp" if e.distortion != null else ("subtract" if int(e.blendMode) == 2 else ("pure_add" if int(e.blendMode) == 0 else ("add" if int(e.blendMode) == 4 else "mix")))
-	return ROOT + shader_name + ".gdshader"
+	# R's authored disableZBuffer flag keeps near-ground billboards uncut.
+	var overlay := "_overlay" if bool(e.get("native_r", false)) and (int(e.get("miscRenderFlags", 0)) & 1) != 0 else ""
+	return ROOT + shader_name + overlay + ".gdshader"
+
+## R的自由粒子与带状拖尾保留出生世界位置，随只读骨骼轨迹移动。
+func _motion_point(time: float) -> Vector3:
+	if _motion.is_empty(): return global_position
+	var before: Dictionary = _motion[0]
+	for point in _motion:
+		if float(point.time) >= time:
+			var weight := clampf((time - float(before.time)) / maxf(float(point.time) - float(before.time), 0.00001), 0.0, 1.0)
+			return (before.position as Vector3).lerp(point.position, weight)
+		before = point
+	return before.position
+
+func _placed_particle(emitter: Dictionary, raw: Array) -> Array:
+	if not _kind.begins_with("r_") or raw.size() < 40: return raw
+	var p := raw.duplicate()
+	var binding: Dictionary = emitter.bindWeight
+	var weight := float(binding.constant[0])
+	var keys: Array = binding.keys
+	if not keys.is_empty():
+		weight = float(keys[0].values[0])
+		for i in range(1, keys.size()):
+			var before: Dictionary = keys[i-1]
+			var after: Dictionary = keys[i]
+			weight = lerpf(float(before.values[0]), float(after.values[0]), clampf((float(p[39])-float(before.time))/maxf(float(after.time)-float(before.time),0.00001),0.0,1.0))
+			if float(p[39]) <= float(after.time): break
+	var offset := global_basis.inverse() * (_motion_point(float(p[38])) - global_position) * (1.0 - weight)
+	p[1] += offset.x
+	p[2] += offset.y
+	p[3] += offset.z
+	return p
+
+func _draw_ribbon(index: int, particles: Array) -> void:
+	var e: Dictionary = _data.emitters[index]
+	if not _ribbons.has(index):
+		var node := MeshInstance3D.new()
+		var material := ShaderMaterial.new()
+		material.shader = load(ROOT + "ribbon_add.gdshader")
+		material.set_shader_parameter("source_texture", load(e.texture_path))
+		node.material_override = material
+		node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		add_child(node)
+		_ribbons[index] = node
+	var node: MeshInstance3D = _ribbons[index]
+	node.visible = particles.size() > 1 and _age <= float(_data.duration)
+	if not node.visible: return
+	var ordered := particles.duplicate()
+	ordered.sort_custom(func(a, b): return float(a[38]) > float(b[38]))
+	var positions: Array[Vector3] = []
+	for raw in ordered:
+		var p := _placed_particle(e, raw)
+		positions.append(Vector3(p[1], p[2], p[3]))
+	var camera := get_viewport().get_camera_3d()
+	var view := global_basis.inverse() * camera.global_basis.z if camera != null else Vector3(0,1,1)
+	node.mesh = RIBBON.build(ordered, positions, view.normalized(), float(e.trail.cutoff), float(e.trail.tiling.constant[0]))

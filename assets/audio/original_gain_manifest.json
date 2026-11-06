@@ -74159,6 +74159,80 @@
         "description": "user-selected audition render; trim first 3s; first 2.5s unchanged PCM; final 0.5s linear amplitude fade to zero; one fixed variant; original event gain"
       },
       "duration": 3.0
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafr_oncast.wav",
+      "sha256": "97b0362491c3e567a8bd0fc1f267ba3a19296124c9b3e18f772497ba7fcad00e",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/狂战士/诸神黄昏/audio/txtp/Play_sfx_Olaf_OlafR_OnCast.txtp",
+          "txtp_sha256": "d8e225c24bcf062727e79a8b0a66332873930a6a790746e25da18a99c0530a5c",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/assets/sounds/wwise2016/sfx/characters/olaf/skins/base/olaf_base_sfx_audio.bnk",
+              "sha256": "a4887a1a7c280d52261b0b8047ffaf337c91f793a3ab29ccb72fd6916da4cc09"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/assets/sounds/wwise2016/sfx/characters/olaf/skins/base/olaf_base_sfx_events.bnk",
+              "sha256": "2537a64fab5b15d538b975d1aa03464a97953a42ddac2ad79e8c9397782f5349"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/03-制作中/狂战士/诸神黄昏/audio/play_sfx_olaf_olafr_oncast.wav",
+          "sha256": "97b0362491c3e567a8bd0fc1f267ba3a19296124c9b3e18f772497ba7fcad00e"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 8.87498866213152,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafr_onbuffactivate.wav",
+      "sha256": "d321eab67c5b1c90ac4144989e8202c4576d1b3f24f3391c6dc45187a63724cf",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/狂战士/诸神黄昏/audio/txtp/Play_sfx_Olaf_OlafR_OnBuffActivate.txtp",
+          "txtp_sha256": "0d56f86251bc2ec682f1f42b158cef2f54f090af46cd06e75b579a4164c69fab",
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/assets/sounds/wwise2016/sfx/characters/olaf/skins/base/olaf_base_sfx_audio.bnk",
+              "sha256": "a4887a1a7c280d52261b0b8047ffaf337c91f793a3ab29ccb72fd6916da4cc09"
+            },
+            {
+              "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/assets/sounds/wwise2016/sfx/characters/olaf/skins/base/olaf_base_sfx_events.bnk",
+              "sha256": "2537a64fab5b15d538b975d1aa03464a97953a42ddac2ad79e8c9397782f5349"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/03-制作中/狂战士/诸神黄昏/audio/play_sfx_olaf_olafr_onbuffactivate.wav",
+          "sha256": "d321eab67c5b1c90ac4144989e8202c4576d1b3f24f3391c6dc45187a63724cf"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "duration": 6.300997732426304,
+      "verified_by_listening": false
     }
   ]
 }

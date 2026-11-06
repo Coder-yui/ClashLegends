@@ -1,0 +1,33 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Olaf.wad.client",
+  "source_chunk": "resolved_by_dump_vfx",
+  "resolved_definition_sha256": "916513116278e7fa44e6b5f2d902094a52e99f9d3e704b7156b6aa121bd20235",
+  "system": "Characters/Olaf/Skins/Skin0/Particles/Olaf_Base_R_cas",
+  "assets": {
+    "assets/characters/olaf/skins/base/particles/olaf_base_e_chainelec_01.tex": {
+      "source_sha256": "cd4c51ab585ea34ea005d24a93c56d11a600a827111b6dab3695479a7721c1a1",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_e_chainelec_01.png",
+      "output_sha256": "6d3e53a276817cd8e542c5222d7c60a2aeb26587a0afdd17eb76f6432758c200"
+    },
+    "assets/characters/olaf/skins/base/particles/smoke_vert.tex": {
+      "source_sha256": "8d20926f5c628adcd6a3b4ac6ae07b474f76dbb22b3ffeaab3236bd1f6682524",
+      "output": "assets/characters/olaf/skins/base/particles/smoke_vert.png",
+      "output_sha256": "1d030a7f7571eadca334b9a2edefdbe8fa2aedfaf33b86a7fa329fe18a7f4086"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_w_enhanced_pulsewave.tex": {
+      "source_sha256": "1f5baca7e84ead8a76cdaaaf9391e7b568791fb45879f8fa1b8b682430b046f1",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_w_enhanced_pulsewave.png",
+      "output_sha256": "e41456586d7b7bba7631ef350009db944ddaa97e8ce182cdf6b2e1b1fb75ee00"
+    },
+    "assets/characters/olaf/skins/base/particles/helix.scb": {
+      "source_sha256": "3c7fa4f4b466b33f90d893dd153f42b71ceb6c19aa8046574d418d8a9b7ec6dd",
+      "output": "assets/characters/olaf/skins/base/particles/helix.mesh.json",
+      "output_sha256": "35a8536354f66305b9f56269d6e0e784a047c72df9915b25f422da282d602f94"
+    },
+    "assets/characters/olaf/skins/base/particles/helix.tex": {
+      "source_sha256": "0aa66a261cbd6a8163defb7c57a29f4ad433804cd65abd206424f5e1977bce6f",
+      "output": "assets/characters/olaf/skins/base/particles/helix.png",
+      "output_sha256": "00addc07b5bd17df7773d6951a98dce1f122c311acb0afb7a6d1085848dfa832"
+    }
+  }
+}

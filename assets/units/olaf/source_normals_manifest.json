@@ -1,0 +1,11 @@
+{
+  "source_skn": "ClashLegends-开发素材库/03-制作中/狂战士/base/assets/characters/olaf/skins/base/olaf.skn",
+  "source_skn_sha256": "4ad9fce97011ff532ff0c3c73c734ebb6496518090cb4943f937452e69abe3bd",
+  "original_glb_sha256": "a314573e891c36b39428e91465b51cfe37386c87ca5ed1e7996544142d08ce44",
+  "output_sha256": "6f0fc65de20948370fad81f99c3ca1225858fc2c8f4611992c8adfc4a102e3de",
+  "vertices": 2897,
+  "matched_position_max_error": 5.9127807761072404e-08,
+  "all_uv_equal": true,
+  "normal_transform": "mirror X only; no animation, vertex position, UV, indices, joint or weight changes",
+  "scope": "Restore original SKN normals only; original supplied GLB geometry, UVs, skinning and 19 animations preserved."
+}

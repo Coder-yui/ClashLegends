@@ -1,0 +1,38 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Olaf.wad.client",
+  "source_chunk": "resolved_by_dump_vfx",
+  "resolved_definition_sha256": "f3b8d2f9c77b378000f29abae4aca91b61290b68ca68eb1218a79bd2495b79dd",
+  "system": "Characters/Olaf/Skins/Skin0/Particles/Olaf_Base_R_buf",
+  "assets": {
+    "assets/characters/olaf/skins/base/particles/common_sru_tower_explosion_glow.tex": {
+      "source_sha256": "50be169cbbe8a4479b0dba9a927b8449ab15e66e08bf0e93316f4baf0f5b697f",
+      "output": "assets/characters/olaf/skins/base/particles/common_sru_tower_explosion_glow.png",
+      "output_sha256": "aac8d6c4189aa84df8fc59d1e302059e013636493d8e6d56fd24bb651e342f35"
+    },
+    "assets/characters/olaf/skins/base/particles/alphaslice_mesh.tex": {
+      "source_sha256": "45d28984b1466228f8cd02d542382ab11fe6ad2c1e85fba1b11dce90e27c685e",
+      "output": "assets/characters/olaf/skins/base/particles/alphaslice_mesh.png",
+      "output_sha256": "b2f405c3cbc2ab2162f67f65fce8e1febeb38d35749b79ff860b93896e5f219a"
+    },
+    "assets/characters/olaf/skins/base/particles/alphaslice_bubbles_02.tex": {
+      "source_sha256": "2d23625bf9cc3c29af0db565babaa76378445c6a85732beba3ec29767ac76f2b",
+      "output": "assets/characters/olaf/skins/base/particles/alphaslice_bubbles_02.png",
+      "output_sha256": "148ed15050956a9590e69d69c31eda23e60c10fdb9231f930b919689a68474bd"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_r_small_mote.tex": {
+      "source_sha256": "40d31052f879970cad592a7f4577b48ac6804b2699addd9889003c77412f329d",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_r_small_mote.png",
+      "output_sha256": "cf5bf6cb2e45a0b8e5610686bb93adce50c28e6e4f11661fc71f1a0c2206f873"
+    },
+    "assets/characters/olaf/skins/base/particles/itemzhonya_spark.tex": {
+      "source_sha256": "aef036f7cf3a65f52fa108c7d990ac8ede8b627fd1a9d2239ea95f68840db2d4",
+      "output": "assets/characters/olaf/skins/base/particles/itemzhonya_spark.png",
+      "output_sha256": "99a8bf7d095de0920dd843a9f12ae029351d4bddc74b91a6e792ffc83034f68a"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_bitsdissolve_01.tex": {
+      "source_sha256": "538953b6a949c2bb603e316c249240bec3e8227f613db8a00527b68bdf2bd9ac",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_bitsdissolve_01.png",
+      "output_sha256": "e2071ce213d6b8887612a8cf965aef43b7f3b93343a42049c7853c7b3490aa86"
+    }
+  }
+}

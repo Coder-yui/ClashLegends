@@ -1,4 +1,6 @@
 uniform float p[38];
+uniform vec4 source_fresnel=vec4(0.0);
+varying vec3 native_rim;
 uniform bool is_mesh=false;
 uniform bool attached_enabled=false;
 uniform bool cull_mesh=false;
@@ -90,6 +92,13 @@ void vertex() {
  // Preserve sampled native height; camera projection supplies foreshortening.
  #ifdef OLAF_ATTACHED
  pos=VERTEX*size;
+ native_rim=vec3(0.0);
+ if(source_fresnel.w>0.0){
+  vec3 eye=(MODELVIEW_MATRIX*vec4(pos,1.0)).xyz;
+  vec3 normal=normalize(MODELVIEW_NORMAL_MATRIX*NORMAL);
+  float facing=clamp(dot(normalize(-eye),normal),0.0,1.0);
+  native_rim=(1.0-(facing>0.0?pow(facing,source_fresnel.w):0.0))*source_fresnel.rgb;
+ }
  texuv=UV;
  #endif
  VERTEX=pos;
@@ -108,6 +117,9 @@ void fragment() {
  if(has_ramp) texel*=texture(ramp_texture,has_mult?mult_uv:vec2(p[35],p[36]));
  if(has_mult) texel*=texture(mult_texture,addressed(mult_uv,mult_address));
  vec4 lit=texel*tint;
+ #ifdef OLAF_ATTACHED
+ if(source_fresnel.w>0.0)lit.rgb=clamp(lit.rgb+native_rim*texel.a,vec3(0.0),vec3(1.0));
+ #endif
  if(has_erosion){
   float v=clamp(dot(texture(erosion_texture,addressed(base_uv,erosion_address)),erosion_mix),0.0,1.0);
   lit.a*=clamp((p[37]-v+erosion_band.x)*erosion_band.y,0.0,1.0)-clamp((p[37]-v)*erosion_band.z,0.0,1.0);
@@ -136,9 +148,11 @@ void fragment() {
 #endif
  // LoL's shader samples raw colour values. Convert the finished colour for Godot's linear target.
  ALBEDO=OUTPUT_IS_SRGB ? lit.rgb : mix(lit.rgb/12.92,pow((lit.rgb+vec3(0.055))/1.055,vec3(2.4)),step(vec3(0.04045),lit.rgb));
+#ifndef OLAF_OPAQUE
 #ifdef PURE_ADD
  ALPHA=1.0;
 #else
  ALPHA=clamp(lit.a,0.0,1.0);
+#endif
 #endif
 }

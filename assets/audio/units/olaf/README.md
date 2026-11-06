@@ -21,3 +21,7 @@
 验收状态与缺口见 docs/AUDIO_CARD_MAP.md。
 
 死亡声音超过 1.5 秒时，只保留前 1.5 秒：前 1 秒保持原音量，1–1.5 秒按振幅线性淡出；不超过 1.5 秒的素材不变。
+
+诸神黄昏：play_sfx_olaf_olafr_oncast.wav / play_sfx_olaf_olafr_onbuffactivate.wav，原事件增益，fresh decode；source recipe位于素材库狂战士/诸神黄昏/import_r_audio.py。持续声由免控窗口管理。
+
+R持续声保留原媒体0–277874采样点正向循环；Stop_sfx_Olaf_OlafR_OnBuffActivate（事件1728274469 → Stop动作915336548 → 容器1996）按原TransitionTime=750ms、Linear淡出。权威六秒到期不延长，清场立即停止。WAV PCM不改写，循环由导入配置承接。
