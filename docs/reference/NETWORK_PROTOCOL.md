@@ -4,9 +4,9 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->131 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->133 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
-| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->76 |
+| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->78 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->8 |
 | 弹体载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd PROJECTILE_PAYLOAD_SIZE -->15 |
 
@@ -18,7 +18,7 @@
 
 RPC 端点留在 Main，服务器与两个客户端保持相同节点路径。服务器绑定两名玩家席位，以连接反查阵营；两名玩家分别维护单调请求序号，拒绝旧会话及非参与者。服务器没有本地玩家，公共战场事件发给两端，私有状态按接收阵营生成。表现系统只产生通知，客户端播放图像与声音。
 
-生产快照通过 `decode_validated` 解压/静态校验一次，递归只读结果直接进入播放队列；`apply_decoded` 在出队时重新检查会话、终态、Tick/生命周期序号和权威时钟。坏包在到达估时及任何实体/成长/金币写入之前拒绝。单包解压上限1MiB；队列最多4096项，快照额外受16MiB累计原始序列化字节预算限制（不是实际堆上限），溢出显式断开。发送方对当前接收者共用一次只读公共世界采集，金币及成长逐端投影；终局在清场前共用一次采集。预算依据为20Hz、最大200ms播放、测试120ms迟到与50ms边界共不超过8个1MiB最大包，再留8包突发余量；不保证任意长主循环停顿或WAN突发。当前协议131的弹体载荷为15项，单位载荷76项，塔载荷8项，顶层长度不变；塔集合必须完整包含6行。旧定向技能RPC已删除，统一使用_rpc_skill_fx；出生/死亡RPC必须显式携带当前会话和生命周期参数。
+生产快照通过 `decode_validated` 解压/静态校验一次，递归只读结果直接进入播放队列；`apply_decoded` 在出队时重新检查会话、终态、Tick/生命周期序号和权威时钟。坏包在到达估时及任何实体/成长/金币写入之前拒绝。单包解压上限1MiB；队列最多4096项，快照额外受16MiB累计原始序列化字节预算限制（不是实际堆上限），溢出显式断开。发送方对当前接收者共用一次只读公共世界采集，金币及成长逐端投影；终局在清场前共用一次采集。预算依据为20Hz、最大200ms播放、测试120ms迟到与50ms边界共不超过8个1MiB最大包，再留8包突发余量；不保证任意长主循环停顿或WAN突发。当前协议133的弹体载荷为15项，单位载荷78项，塔载荷8项，顶层长度不变；塔集合必须完整包含6行。旧定向技能RPC已删除，统一使用_rpc_skill_fx；出生/死亡RPC必须显式携带当前会话和生命周期参数。
 
 ### 协议119：冲刺移动状态
 
@@ -256,3 +256,7 @@ NetworkPlayback默认100ms，根据时钟RTT/抖动与事件/快照到达时差�
 协议130追加 `U_MAGAZINE`（74，Vector3）：弹数、换弹剩余时间、换弹序号。弹数与序号为非负整数，换弹时间有限且非负，并按出生卡牌校验容量与换弹时长上限；普通非弹匣单位发送零。客户端只投影换弹动作，不自行计时补弹。
 
 协议131追加`U_BURNING_AURA`（75，bool），表示单位持有常驻灼烧。客户端只投影火圈与循环音，不建立伤害计时器；死亡或清场回收，凝滞暂时隐藏。空投落地复用已有可靠法术表现事件与单位生成入口。
+
+协议132追加`U_CONTROL_IMMUNITY_CLOCK`（76，Vector2：权威年龄/总时长），无状态为零；要求有限非负且年龄不超过总时长。主客端用同一窗口切换诸神黄昏动作、特效与音轨，客户端不结算免控或净化。
+
+协议133追加`U_HEAL_AURA`（77，Vector2：光环权威年龄/剩余时间），无状态为零。两分量均须有限非负；客户端只投影，不结算治疗。治疗改为周期触发后槽位77及Vector2语义不变，因此协议仍为133；卡牌定义签名随新周期字段变化，旧内容不能混接。

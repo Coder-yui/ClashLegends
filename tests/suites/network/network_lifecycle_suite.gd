@@ -391,6 +391,7 @@ func _check_payload_contract() -> void:
 	data[SNAP.U_DEATH_SPAWN_STATE] = Vector2(1.75, 3.0)
 	data[SNAP.U_LIFESTEAL_VISUAL_STATE] = Vector2(5, 1)
 	data[SNAP.U_BUFF_VISUAL_CLOCK] = Vector2(2, 3)
+	data[SNAP.U_CONTROL_IMMUNITY_CLOCK] = Vector2(2, 6)
 	data[SNAP.U_RESTORATION_SHIELD_STATE] = Vector2(1.75, 2)
 	data[SNAP.U_STRUCTURE_HASTE] = true
 	data[SNAP.U_STRUCTURE_HASTE_STATE] = Vector2(5.5, 3)
@@ -426,7 +427,7 @@ func _check_payload_contract() -> void:
 		var malformed := packet.duplicate(true)
 		malformed[SNAP.S_UNITS][0][SNAP.U_DEATH_SPAWN_STATE] = invalid
 		_expect(not _system.apply_decoded(_system.decode_validated(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE))), "再生窗口拒绝非法快照")
-	for field in [SNAP.U_LIFESTEAL_VISUAL_STATE, SNAP.U_BUFF_VISUAL_CLOCK]:
+	for field in [SNAP.U_LIFESTEAL_VISUAL_STATE, SNAP.U_BUFF_VISUAL_CLOCK, SNAP.U_CONTROL_IMMUNITY_CLOCK]:
 		for invalid in [Vector2(INF, 1), Vector2(-1, 1), Vector2(1, 0), Vector2(0, -1), "bad"]:
 			var malformed := packet.duplicate(true)
 			malformed[SNAP.S_UNITS][0][field] = invalid
@@ -451,6 +452,7 @@ func _check_payload_contract() -> void:
 		_expect(not _system.apply_decoded(_system.decode_validated(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE))), "被动层数与倒计时拒绝非法快照")
 	_expect(_system.apply_decoded(_system.decode_validated(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE))) and data.size() == SNAP.UNIT_PAYLOAD_SIZE, "新载荷压缩编码、解码与未知格温重建成功")
 	var replica: Unit = _main.world.replica_units_snapshot()[79000]
+	_expect(replica.control_immunity_clock_visual() == Vector2(2, 6) and replica.buffs.remaining(&"control_immunity") == 0.0, "免控快照只恢复表现时钟，不创建客户端权威免疫")
 	_expect(replica.restoration_shield_state_visual() == Vector2(1.75, 2) and replica.shields.restoration_visual_state() == Vector2.ZERO, "客户端恢复黄沙盾表现但不授予护盾玩法")
 	_expect(replica.lifesteal_state_visual() == Vector2(5, 1) and replica.active_buff_clock_visual() == Vector2(2, 3) and replica.attack_lifesteal_ratio == 0.0, "快照恢复光流进度但不授予吸血玩法")
 	_expect(replica.death_spawn_state_visual() == Vector2(1.75, 3.0) and replica.buffs.remaining(&"death_spawn") == 0.0, "再生状态快照恢复仅用于表现，不授予客户端再生Buff")

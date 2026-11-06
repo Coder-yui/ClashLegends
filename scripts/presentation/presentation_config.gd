@@ -16,7 +16,7 @@ static func attack_source(unit: Node2D) -> Dictionary:
 	if unit is Tower:
 		return {"unit_id": unit.get_instance_id(), "card_id": world_card_id(unit), "team": unit.team, "form": 0, "serial": 0}
 	return {"unit_id": unit.net_id if unit.net_id >= 0 else unit.get_instance_id(), "card_id": unit.card_id, "team": unit.team, "form": unit.get_form_index(),
-		"active_buff": unit.get_active_buff_active_visual(), "serial": unit.get_attack_visual_serial(), "first_strike": unit.is_attack_visual_first_strike(),
+		"active_buff": unit.get_active_buff_active_visual(), "control_immune": unit.control_immunity_active_visual(), "serial": unit.get_attack_visual_serial(), "first_strike": unit.is_attack_visual_first_strike(),
 		"empowered": unit.get_attack_visual_serial() > 0 and unit.get_empowered_attack_visual_serial() == unit.get_attack_visual_serial()}
 
 static func scene_path(stats: Dictionary, team: int) -> String:

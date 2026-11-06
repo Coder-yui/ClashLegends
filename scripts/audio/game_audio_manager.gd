@@ -15,6 +15,7 @@ const WORLD_PANNING_STRENGTH := 0.35
 
 ## 同一层表负责位置跟随、清理与循环策略；空cue保留原始单段音轨。
 const UNIT_SUSTAIN_LAYERS := {
+	&"heal_aura": &"heal_aura:sustain",
 	&"burning_aura": &"burning_aura:sustain",
 	&"pool_shield": &"pool_shield:sustain",
 	&"persistent_area": &"persistent_area:sustain",
@@ -424,6 +425,8 @@ func _tick_attached_units() -> void:
 			entry.last_swing_serial = serial
 			if unit.is_attack_visual_first_strike():
 				play_event(unit, &"first_strike:cast", unit.get_visual_screen_position())
+			elif unit.control_immunity_active_visual() and entry.audio.get("events", {}).has("control_immunity:attack_swing"):
+				play_event(unit, &"control_immunity:attack_swing", unit.get_visual_screen_position())
 			elif unit.get_active_buff_active_visual() and entry.audio.get("events", {}).has("active_buff:attack_swing"):
 				play_event(unit, &"active_buff:attack_swing", unit.get_visual_screen_position())
 			else:
@@ -458,6 +461,10 @@ func _tick_attached_units() -> void:
 		if burning and not bool(entry.get("burning_aura", false)): _start_sustain(unit, entry, &"burning_aura", &"burning_aura")
 		elif not burning and bool(entry.get("burning_aura", false)): _stop_sustain(instance_id, &"burning_aura")
 		entry.burning_aura = burning
+		var healing: bool = unit.heal_aura_state_visual().y > 0.0 and not state.dead and not CombatInteraction.in_stasis(unit)
+		if healing and not bool(entry.get("heal_aura", false)): _start_sustain(unit, entry, &"heal_aura", &"heal_aura")
+		elif not healing and bool(entry.get("heal_aura", false)): _stop_sustain(instance_id, &"heal_aura")
+		entry.heal_aura = healing
 		var area_clock: Vector2 = unit.active_buff_clock_visual()
 		var area_active: bool = area_clock.y > 0.0 and area_clock.x < area_clock.y and not state.dead and entry.audio.get("events", {}).has("persistent_area:sustain")
 		if area_active and not bool(entry.get("persistent_area", false)): _start_sustain(unit, entry, &"persistent_area", &"persistent_area")
@@ -466,12 +473,17 @@ func _tick_attached_units() -> void:
 			if not state.dead: play_event(unit, &"persistent_area:end", unit.get_visual_screen_position())
 		entry.persistent_area = area_active
 		var active_buff := state.active_buff
-		if active_buff and not bool(entry.active_buff):
-			play_event(unit, &"active_buff:start", unit.get_visual_screen_position())
-			_start_sustain(unit, entry, &"active_buff", &"buff")
-		elif not active_buff and bool(entry.active_buff):
-			_stop_sustain(instance_id, &"buff")
-			play_event(unit, &"active_buff:end", unit.get_visual_screen_position())
+		# 用独立R窗口选择音轨，免疫控制的尝试不会切换或重播起手。
+		var immunity_clock: Vector2 = unit.control_immunity_clock_visual()
+		var buff_event := &"control_immunity" if immunity_clock.y > immunity_clock.x and entry.audio.get("events", {}).has("control_immunity:start") else &"active_buff"
+		var old_buff_event := StringName(entry.get("buff_event", &"active_buff"))
+		if bool(entry.active_buff) and (not active_buff or old_buff_event != buff_event):
+			_stop_sustain(instance_id, &"buff", true)
+			if not state.dead: play_event(unit, StringName(String(old_buff_event) + ":end"), unit.get_visual_screen_position())
+		if active_buff and (not bool(entry.active_buff) or old_buff_event != buff_event):
+			play_event(unit, StringName(String(buff_event) + ":start"), unit.get_visual_screen_position())
+			_start_sustain(unit, entry, buff_event, &"buff")
+		entry.buff_event = buff_event
 		var full: bool = unit.is_skill_resource_visible() and unit.get_skill_resource_ratio() >= 0.999 and not state.dead
 		if full and not bool(entry.resource_full):
 			play_event(unit, &"resource_full", unit.get_visual_screen_position())
@@ -574,14 +586,15 @@ func _event_owner(unit: Unit, cue: StringName) -> Dictionary:
 	# 死亡语音属于死亡结果，不能被之前的冻结/技能取消序号吞掉。
 	if cue == &"death:voice": return {}
 	var name := String(cue)
+	if cue == &"heal_aura:start": return {"unit": unit.get_instance_id(), "kind": "heal_aura", "serial": 0}
 	if cue == &"structure_haste:start": return {"unit": unit.get_instance_id(), "kind": "structure_haste", "serial": 0}
 	if cue == &"forge:pulse": return {"unit": unit.get_instance_id(), "kind": "forge", "serial": 0}
-	if cue in [&"empowered_swing", &"active_buff:attack_swing", &"first_strike:cast", &"attack_swing", &"continuous_attack:start", &"continuous_attack:release"]:
+	if cue in [&"empowered_swing", &"active_buff:attack_swing", &"control_immunity:attack_swing", &"first_strike:cast", &"attack_swing", &"continuous_attack:start", &"continuous_attack:release"]:
 		return {"unit": unit.get_instance_id(), "kind": "attack", "serial": unit.get_attack_visual_serial()}
 	if cue in [&"active:cast", &"active:spin", &"charge:step"] and unit.active_skill_cast_timer > 0.0:
 		return {"unit": unit.get_instance_id(), "kind": "action", "serial": unit.get_visual_action_serial()}
 	var phase := name.get_slice(":", 1)
-	if name.get_slice(":", 0) in ["active_buff", "empowered_buff", "revival", "rebirth", "sanctuary", "blood_rage", "structure_haste"] or cue in [&"empowered_ready", &"resource_full", &"passive_heal", &"active:cast"]:
+	if name.get_slice(":", 0) in ["active_buff", "control_immunity", "empowered_buff", "revival", "rebirth", "sanctuary", "blood_rage", "structure_haste"] or cue in [&"empowered_ready", &"resource_full", &"passive_heal", &"active:cast"]:
 		return {}
 	if phase in ["start", "voice", "sustain", "release", "end"] and not name.begins_with("continuous_attack"):
 		return {"unit": unit.get_instance_id(), "kind": "action", "serial": unit.get_visual_action_serial()}
@@ -710,6 +723,11 @@ func play_attack_source(source: Dictionary, position: Vector2, first_strike: boo
 		configured = event.get("pool", [])
 		hit_volume = float(event.get("volume_db", 0.0))
 		cue = &"active_buff:attack_hit"
+	if cue in [&"attack_hit", &"active_buff:attack_hit"] and bool(source.get("control_immune", false)) and audio.get("events", {}).has("control_immunity:attack_hit"):
+		var event: Dictionary = audio.events["control_immunity:attack_hit"]
+		configured = event.get("pool", [])
+		hit_volume = float(event.get("volume_db", 0.0))
+		cue = &"control_immunity:attack_hit"
 	var grouped: Array = audio.get("attack_hit_once_by_segment", [])
 	var serial := int(source.get("serial", 0))
 	var once := serial > 0 and not grouped.is_empty() and bool(grouped[(serial - 1) % grouped.size()])
@@ -1282,9 +1300,9 @@ func _stop_forge_audio(instance_id: int) -> void:
 func _tick_attached_result_positions() -> void:
 	for player in _world_players:
 		var owner: Dictionary = player.get_meta("action_owner", {})
-		if owner.get("kind", "") not in ["forge", "structure_haste"] or not player.playing: continue
+		if owner.get("kind", "") not in ["forge", "structure_haste", "heal_aura"] or not player.playing: continue
 		var unit = instance_from_id(int(owner.unit))
-		if not is_instance_valid(unit) or unit.hp <= 0.0 or (owner.kind == "structure_haste" and not unit.structure_haste_visual()):
+		if not is_instance_valid(unit) or unit.hp <= 0.0 or (owner.kind == "structure_haste" and not unit.structure_haste_visual()) or (owner.kind == "heal_aura" and (unit.heal_aura_state_visual().y <= 0.0 or CombatInteraction.in_stasis(unit))):
 			player.stop()
 			continue
 		player.global_position = unit.get_visual_screen_position()

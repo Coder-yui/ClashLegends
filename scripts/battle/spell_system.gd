@@ -857,13 +857,13 @@ func _tick_event_horizon() -> void:
 			if zone.contacts.has(id) or not touches_boundary(previous, pos, zone.pos, float(zone.stats.radius), float(target.body_radius)): continue
 			var interaction := _spell_context(int(zone.team))
 			interaction["delivery"] = zone.delivery
-			if not CombatInteraction.allows_effect(target, interaction) or target.structure_rush.control_immune(): continue
+			if not CombatInteraction.allows_effect(target, interaction) or target.structure_rush.control_immune() or target.rejects_control(interaction): continue
 			zone.contacts[id] = true
 			if CombatInteraction.blocks_effect(target, interaction): continue
 			# 同一批次完成伤害与死亡后再施加；只有仍存活且准入的目标触发黑暗物质。
 			var apply := func():
 				if not is_instance_valid(target) or target.hp <= 0: return
-				if not CombatInteraction.allows_effect(target, interaction) or target.structure_rush.control_immune(): return
+				if not CombatInteraction.allows_effect(target, interaction) or target.structure_rush.control_immune() or target.rejects_control(interaction): return
 				target.stun(float(zone.stats.stun_duration), zone.source, interaction)
 				_controller.runtime.card_event("event_horizon", "spell:hit", pos, int(zone.team))
 				if not zone.triggered and not zone.skill.is_empty():

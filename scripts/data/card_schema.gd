@@ -95,7 +95,7 @@ const SIZE_RADII := {
 	SIZE_LARGE: RADIUS_LARGE,
 	SIZE_EXTREMELY_LARGE: RADIUS_EXTREMELY_LARGE,
 }
-const PROJECTILE_VISUALS := [&"sivir_blade", &"graves_bullet", &"ziggs_bomb", &"ziggs_bounce", &"ziggs_bounce_2", &"ziggs_bounce_3", &"jack_in_the_box_bullet", &"thorn_spitter_bullet", &"evolution_turret_bullet", &"jayce_bullet", &"samira_bullet", &"malzahar_missile", &"voidfish_missile", &"tristana_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
+const PROJECTILE_VISUALS := [&"ivern_bolt", &"sona_bolt", &"sivir_blade", &"graves_bullet", &"ziggs_bomb", &"ziggs_bounce", &"ziggs_bounce_2", &"ziggs_bounce_3", &"jack_in_the_box_bullet", &"thorn_spitter_bullet", &"evolution_turret_bullet", &"jayce_bullet", &"samira_bullet", &"malzahar_missile", &"voidfish_missile", &"tristana_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"airdrop_bear", &"stellar_convergence", &"final_spark", &"convergent_pulse", &"mega_inferno_bomb", &"pool_of_reflection", &"solar_flare", &"severing_bolt", &"medium_lightning", &"event_horizon", &"tidal_wave", &"void_summoning", &"explosive_cask", &"corrosion", &"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
 const ACTIVE_SKILL_KINDS := [&"spell_airdrop_bear", &"dash", &"spell_stellar_convergence", &"self_stasis", &"spell_final_spark", &"spell_convergent_pulse", &"spell_mega_inferno_bomb", &"spell_pool_of_reflection", &"spell_solar_flare", &"spell_severing_bolt", &"spell_medium_lightning", &"spell_event_horizon", &"detonate", &"spell_tidal_wave", &"attack_burst", &"rewind_nova", &"movement_strike", &"counter_strike", &"spell_void_summoning", &"self_sacrifice", &"blink_nova", &"channeled_attack", &"death_spawn", &"sacrifice_empower", &"spell_explosive_cask", &"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
@@ -125,6 +125,7 @@ const CARD_FIELDS := [&"returning_attack_distance", &"magazine_size", &"reload_d
 	&"strike_count", &"strike_interval", &"stun_duration", &"tower_damage_multiplier",
 	&"heal_on_hit_name", &"on_hit_passive_name", &"team_attack_boost_first_delay", &"team_attack_boost_interval", &"team_attack_boost_multiplier", &"team_attack_boost_forge_duration", &"team_attack_boost_release_time",
 	&"river_traversal", &"permanent_unit_phasing", &"terrain_traversal", &"terrain_entry_heal", &"terrain_entry_speed_multiplier", &"growth_ranged_id", &"growth_melee_id", &"growth_ranged_hits", &"growth_melee_hits",
+	&"heal_aura_initial_delay", &"heal_aura_trigger_interval", &"heal_aura_radius", &"heal_aura_duration", &"heal_aura_pulse_interval", &"heal_aura_amount",
 	&"hit_haste_name", &"hit_haste_max_stacks", &"hit_haste_per_stack", &"hit_haste_duration",
 	&"structure_assist_window", &"structure_haste_duration", &"structure_haste_attack_speed", &"structure_haste_speed_bonus",
 	&"bleed_damage_per_second", &"bleed_duration", &"bleed_max_stacks", &"blood_rage_duration", &"blood_rage_damage_multiplier",
@@ -151,7 +152,7 @@ const CARD_FIELDS := [&"returning_attack_distance", &"magazine_size", &"reload_d
 	&"deploy_sweep_duration", &"deploy_sweep_mass_factor_max",
 	&"auto_pull_min_range", &"auto_pull_break_range", &"auto_pull_flight", &"auto_pull_range", &"auto_pull_windup", &"auto_pull_duration",
 	&"fixed_attack_length", &"fixed_attack_width", &"attack_self_radius", &"charge_distance", &"charge_attack_range", &"charge_dash_speed", &"charge_landing_side", &"charge_impact_radius", &"charge_stun_duration", &"charge_knockback", &"charge_knockback_duration", &"charge_follow_distance", &"charge_follow_duration", &"charge_contact_duration", &"heal_every_hits", &"heal_amount", &"charge_time", &"charge_speed_multiplier",
-	&"on_hit_slow_duration", &"on_hit_slow_multiplier", &"on_hit_max_health_ratio", &"on_hit_tower_damage", &"charge_damage_multiplier", &"attack_pattern", &"attack_damage_multipliers", &"first_strike_damage_multiplier",
+	&"on_hit_slow_duration", &"on_hit_slow_multiplier", &"on_hit_max_health_ratio", &"on_hit_tower_damage", &"charge_damage_multiplier", &"attack_pattern", &"attack_damage_multipliers", &"attack_stun_durations", &"first_strike_damage_multiplier",
 	&"attack_extra_hit_damage_multipliers", &"attack_extra_hit_delays",
 	&"attack_passive_multipliers", &"attack_lifesteal_ratios", &"form_lifetime", &"form_lifetime_after_transition", &"form_speed_boost_duration", &"form_speed_boost_multiplier", &"form_refresh_on_kill",
 	&"attack_recovery_cancel_every_hits", &"attack_recovery_cancel_window",
@@ -167,7 +168,7 @@ const CARD_FIELDS := [&"returning_attack_distance", &"magazine_size", &"reload_d
 const AUDIO_FIELDS := [&"team_overrides", &"attack_launch_until_impact", &"attack_hit_once_by_segment", &"attack_swing_lead_time", &"attack_swing", &"attack_hit", &"attack_launch_by_segment", &"attack_hit_by_segment", &"empowered_hit", &"first_strike_hit", &"attack_swing_volume_db", &"attack_hit_volume_db", &"events"]
 const VISUAL_ANIMATION_FIELDS := [&"reload", &"reload_move",
 	&"attack_stance_duration", &"attack_idle", &"attack_idle_enter", &"attack_sheath_idle", &"attack_sheath_move",
-	&"dormant_idle", &"stealth_idle", &"stealth_move", &"active_buff_attack",
+	&"dormant_idle", &"stealth_idle", &"stealth_move", &"active_buff_attack", "control_immune_attack",
 	&"stun_enter", &"stun_loop", &"stun_exit", &"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"charge_move", &"terrain_move", &"full_resource_move",
 	&"move_cycle", &"attack", &"attack_enter", &"attack_retarget_enter", &"attack_loop",
 	&"attack_clip_ranges", &"attack_hit_clip_ranges", &"attack_hit", &"attack_hit_duration", &"attack_recover", &"attack_recover_delay", &"attack_reference_interval",
@@ -197,11 +198,11 @@ const ACTIVE_SKILL_FIELDS := [&"dash_backward", &"ammo_restore", &"bounce_count"
 	&"name", &"kind", &"cost", &"max_uses", &"cooldown", &"pull_distance", &"radius", &"damage", &"knockback", &"knockback_duration", &"knockback_mass_factor_max",
 	&"slow_duration", &"slow_multiplier", &"attack_slow_multiplier",
 	&"shield", &"shield_duration", &"shield_decay", &"shield_on_cast_start", &"independent_on_creation", &"resource_shield_max", &"duration", &"speed_multiplier", &"damage_multiplier",
-	&"untargetable", &"pause_lifespan", &"sacrifice_source", &"ignore_unit_collision", &"block_heal", &"block_haste_duration", &"block_attack_speed_multiplier", &"attack_speed_multiplier", &"ignore_movement_slow", &"ignore_attack_speed_slow", &"spawn_id", &"spawn_count", &"spawn_side", &"spawn_sequence_interval", &"spawn_deploy_time", &"length", &"landing_extension", &"width", &"impact_delay",
+	&"untargetable", &"pause_lifespan", &"sacrifice_source", &"ignore_unit_collision", &"block_heal", &"block_haste_duration", &"block_attack_speed_multiplier", &"attack_speed_multiplier", &"ignore_movement_slow", &"ignore_attack_speed_slow", &"control_immunity", &"cleanse_controls", &"spawn_id", &"spawn_count", &"spawn_side", &"spawn_sequence_interval", &"spawn_deploy_time", &"spawn_forward_distance", &"length", &"landing_extension", &"width", &"impact_delay",
 	&"transform_impact_delay", &"cast_duration", &"transform_cast_duration", &"stun_duration", &"ground_only",
 	&"impact_visual_shape", &"full_resource_impact_visual_shape", &"impact_visual_duration", &"cast_move_forward", &"cast_locks", &"visual_action", &"description", &"shape", &"near_width", &"far_width", &"arc_degrees", &"fan_inner_arc",
 	&"projectile_count", &"projectile_visual", &"projectile_launch_delay", &"projectile_flight_duration", &"projectile_stop_on_hit", &"projectile_piercing",
-	&"projectile_visual_height", &"projectile_visual_forward_offset", &"projectile_visual_width",
+	&"projectile_model_launch", &"projectile_visual_height", &"projectile_visual_forward_offset", &"projectile_visual_width",
 	&"center_ratio", &"center_width", &"center_damage_multiplier", &"resource_damage_scale_max",
 	&"resource_consume_only_full", &"resource_nonfull_cast_gain", &"uses_skill_resource", &"resource_damage_by_stacks", &"resource_full_damage_multiplier", &"resource_full_stun_multiplier",
 	&"resource_visual_actions", &"resource_hit_damage_sequences", &"resource_hit_delay_sequences",
@@ -225,7 +226,7 @@ const INTEGER_NUMBER_FIELDS := ["magazine_size", "attack_pellets", "ammo_restore
 
 ## 原始定义域归属；共享容器由 CardDefinitionCompiler 递归检查。
 const CARD_VISUAL_FIELDS := ["attack_hit_visual", "resource_dependencies", "icon_path", "attack_wave_visual", "attack_wave_visual_height", "active_buff_projectile_visual", "attack_interval_display", "color", "continuous_beam_color", "continuous_beam_end_width", "continuous_beam_forward_offset", "continuous_beam_origin_height", "continuous_beam_start_width", "death_replacement_visual_transition", "projectile_colors", "projectile_impact_visual", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_scale", "show_team_ring", "skill_resource_full_color", "timed_revival_visual_transition", "visual_pre_deploy_scene", "visual_active_buff_scene", "visual_animations", "visual_forward_yaw", "visual_radius", "visual_scene_path", "visual_scene_paths"]
-const SKILL_VISUAL_FIELDS := ["form_icon_paths", "visual_scale_multiplier", "impact_visual_shape", "full_resource_impact_visual_shape", "impact_visual_duration", "resource_dependencies", "projectile_colors", "projectile_impact_visuals_by_use", "projectile_visuals_by_use", "visual_actions_by_use", "projectile_impact_visual", "icon_path", "full_resource_visual_action", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_width", "resource_visual_actions", "visual_action"]
+const SKILL_VISUAL_FIELDS := ["projectile_model_launch", "form_icon_paths", "visual_scale_multiplier", "impact_visual_shape", "full_resource_impact_visual_shape", "impact_visual_duration", "resource_dependencies", "projectile_colors", "projectile_impact_visuals_by_use", "projectile_visuals_by_use", "visual_actions_by_use", "projectile_impact_visual", "icon_path", "full_resource_visual_action", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_width", "resource_visual_actions", "visual_action"]
 
 # audio.events["deploy:voice"].clip_volume_db：可选的资源路径 → 固定播放分贝补偿，未列出的池成员为 0 dB；由 CardValidator 校验。
 

@@ -455,6 +455,14 @@ func launch_skill_fan(source: Unit, skill: Dictionary, forward: Vector2) -> void
 			"visual_offset": visual_forward * float(skill.get("projectile_visual_forward_offset", skill.get("projectile_spawn_offset", source.body_radius))) - spawn_offset,
 			"visual_scale": maxf(float(skill.get("projectile_visual_width", radius * 2.0)) / (radius * 2.0), 1.0),
 		}
+		if bool(skill.get("projectile_model_launch", false)):
+			# 仅表现来源元数据；权威起点、速度、碰撞和射程不读取模型。
+			projectiles[_next_id]["visual_path"] = {
+				"start": pos, "end": pos + direction * length, "origin_offset": source.global_position - pos,
+				"source": _visual_entity(source), "target": _visual_entity(source),
+				"progress": 0.0, "contact_radius": 0.0, "wave": true, "fixed_muzzle": true,
+			}
+
 		_next_id += 1
 	_invalidate_visible_view()
 	queue_redraw()
@@ -527,11 +535,12 @@ func _tick_skill_delivery(projectile: Dictionary, dt: float, colliders: Array) -
 				if bool(projectile.skill.get("passive_wave", false)) and not bool(projectile.cast.sound_played):
 					projectile.cast.sound_played = true
 					wave_audio.emit(projectile.presentation_source, "attack_wave", hit_position, "hit")
-				if is_instance_valid(hit_target) and hit_target is Unit and hit_target.hp > 0.0:
+				if is_instance_valid(hit_target) and hit_target.hp > 0.0:
 					var skill: Dictionary = projectile.skill
-					if float(skill.get("slow_duration", 0.0)) > 0.0:
+					if hit_target is Unit and float(skill.get("slow_duration", 0.0)) > 0.0:
 						hit_target.apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)), projectile.status_source, interaction)
-					if float(skill.get("stun_duration", 0.0)) > 0.0:
+					# 建筑卡与防御塔复用各自控制入口；水晶免疫仍由Tower.stun裁决。
+					if (hit_target is Unit or hit_target is Tower) and float(skill.get("stun_duration", 0.0)) > 0.0:
 						hit_target.stun(float(skill.stun_duration), projectile.status_source, interaction)
 				if not bool(projectile.get("basic_piercing", false)) and not bool(projectile.skill.get("passive_wave", false)) and (piercing or not bool(projectile.cast.sound_played)):
 					projectile.cast.sound_played = true
@@ -648,7 +657,7 @@ func _draw() -> void:
 		match StringName(projectile.get("visual", &"orb")):
 			&"corki_missile", &"corki_missile_big": load("res://scripts/presentation/corki_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), StringName(projectile.visual) == &"corki_missile_big")
 			&"baron_siege", &"baron_ranged": preload("res://scripts/presentation/baron_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)), projectile.color)
-			&"ziggs_bomb", &"ziggs_bounce", &"ziggs_bounce_2", &"ziggs_bounce_3", &"blitzcrank_hook", &"graves_bullet", &"jack_in_the_box_bullet", &"thorn_spitter_bullet", &"evolution_turret_bullet", &"jayce_bullet", &"samira_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
+			&"ivern_bolt", &"sona_bolt", &"sona_wave", &"ziggs_bomb", &"ziggs_bounce", &"ziggs_bounce_2", &"ziggs_bounce_3", &"blitzcrank_hook", &"graves_bullet", &"jack_in_the_box_bullet", &"thorn_spitter_bullet", &"evolution_turret_bullet", &"jayce_bullet", &"samira_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
 			&"fireball": preload("res://scripts/presentation/fireball_effect_2d.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)))
 			&"magic_orb": _draw_magic_orb(projectile)
 			&"tower_orb": _draw_tower_orb(projectile)

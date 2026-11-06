@@ -30,6 +30,8 @@ var movement_rate: float:
 	get: return _unit.get_effective_movement_rate_visual()
 var attack_rate: float:
 	get: return _unit.get_active_attack_speed_multiplier_visual()
+var control_immune: bool:
+	get: return _unit.control_immunity_active_visual()
 var active_buff: bool:
 	get: return _unit.get_active_buff_active_visual()
 var active_buff_clock: Vector2:

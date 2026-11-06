@@ -121,6 +121,7 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 				errors.append(card_id + ".active_skills.piercing_distance: 穿透普攻必须配置正数固定飞行距离")
 			if skill.has("piercing_distance") and not bool(skill.get("piercing_attacks", false)):
 				errors.append(card_id + ".active_skills.piercing_distance: 仅穿透普攻使用")
+	_validate_heal_aura(card_id, stats, errors)
 	_validate_hit_haste(card_id, stats, errors)
 	_validate_structure_haste(card_id, stats, errors)
 	_validate_team_attack_boost(card_id, stats, errors)
@@ -293,6 +294,7 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			_validate_combat_stats("%s.transformed_stats" % card_id, transformed, true, errors)
 			var form_capabilities := stats.duplicate()
 			form_capabilities.merge(transformed, true)
+			_validate_heal_aura("%s.transformed_stats" % card_id, form_capabilities, errors)
 			_validate_hit_haste("%s.transformed_stats" % card_id, form_capabilities, errors)
 			_validate_visual_config("%s.transformed_stats" % card_id, transformed, errors, inspect_resources)
 			if transformed.has("audio"):
@@ -514,6 +516,14 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 	var cycle_animation_count: int = cycle_animations.size() if cycle_animations is Array else 1
 	if stats.has("attack_passive_multipliers") and cycle_animation_count != stats.attack_passive_multipliers.size():
 		errors.append("%s.attack_passive_multipliers: 必须与攻击动作等长" % label)
+	if stats.has("attack_stun_durations"):
+		var durations: Array = stats.attack_stun_durations
+		if durations.is_empty() or durations.size() != stats.get("attack_pattern", []).size() or durations.size() != cycle_animation_count:
+			errors.append(label + ".attack_stun_durations: 需要与攻击节奏和动作等长的非空循环")
+		for duration in durations:
+			if float(duration) < 0.0 or not is_finite(float(duration)): errors.append(label + ".attack_stun_durations: 时长必须有限且非负")
+		if float(stats.get("projectile_speed", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)):
+			errors.append(label + ".attack_stun_durations: 只支持离散近战")
 	if stats.has("repeat_hit_count"):
 		if int(stats.repeat_hit_count) < 2 or int(stats.repeat_hit_count) != float(stats.repeat_hit_count): errors.append(label + ".repeat_hit_count: 需要至少2次的整数")
 		if float(stats.get("repeat_hit_multiplier", 0.0)) <= 1.0 or float(stats.get("repeat_hit_haste_duration", 0.0)) <= 0.0 or float(stats.get("repeat_hit_speed_multiplier", 0.0)) <= 1.0: errors.append(label + ": 连击需要伤害倍率、加速持续时间和速度倍率")
@@ -714,7 +724,7 @@ static func _validate_projectile(label: String, stats: Dictionary, errors: Packe
 	var speed := float(stats.get("projectile_speed", 0.0))
 	if speed < 0.0:
 		errors.append("%s.projectile_speed: 必须 >= 0" % label)
-	if stats.has("attack_hit_visual") and (String(stats.attack_hit_visual) not in ["azir_beam", "splash_circle", "hecarim_q", "blitzcrank_e", "jayce"] or (speed > 0.0 and String(stats.attack_hit_visual) != "jayce")):
+	if stats.has("attack_hit_visual") and (String(stats.attack_hit_visual) not in ["azir_beam", "splash_circle", "hecarim_q", "blitzcrank_e", "jayce", "daisy_slam"] or (speed > 0.0 and String(stats.attack_hit_visual) not in ["jayce"])):
 		errors.append("%s.attack_hit_visual: 仅支持直接命中的 azir_beam / splash_circle / hecarim_q / blitzcrank_e 表现" % label)
 	if stats.has("active_buff_projectile_visual"):
 		if speed <= 0.0 or not (stats.active_buff_projectile_visual is String or stats.active_buff_projectile_visual is StringName) or StringName(stats.active_buff_projectile_visual) not in PROJECTILE_VISUALS + [&"baron_siege", &"baron_ranged"]:
@@ -954,7 +964,7 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 					errors.append("%s.visual_animations.clip_blends.%s: 必须是有限非负秒数" % [label, edge])
 	for state in [
 		&"dormant_idle", &"deploy", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"charge_move", &"terrain_move", &"full_resource_move", &"move_cycle", &"attack", &"attack_hit", &"attack_recover",
-		&"initial_move", &"attack_structure", &"attack_move", &"attack_to_move", &"active_buff_idle", &"active_buff_move", &"empowered_idle", &"empowered_move", &"first_strike_attack", &"empowered_attack",
+		&"initial_move", &"attack_structure", &"attack_move", &"attack_to_move", &"active_buff_idle", &"active_buff_move", "control_immune_attack", &"empowered_idle", &"empowered_move", &"first_strike_attack", &"empowered_attack",
 		&"empowered_attack_hit", &"empowered_attack_recover", &"empowered_attack_to_move",
 	]:
 		if not animations.has(state):
@@ -1166,6 +1176,10 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				errors.append("%s.icon_path: 必须指向 assets 内有效的 Texture2D" % label)
 		_require_fields(label, skill, [&"name", &"kind", &"cost", &"max_uses", &"cooldown"], errors)
 		var kind := StringName(skill.get("kind", ""))
+		if skill.has("spawn_forward_distance"):
+			_validate_number_value(label + ".spawn_forward_distance", skill.spawn_forward_distance, 0.001, errors, true)
+			if kind != &"summon" or int(skill.get("spawn_count", 0)) != 1 or skill.has("spawn_side") or skill.has("spawn_sequence_interval"):
+				errors.append(label + ".spawn_forward_distance: 仅用于无方位/序列的单体召唤")
 		if skill.has("strike_type"):
 			if kind not in [&"channeled_attack", &"bleeding_execute", &"empowered_attack"] or String(skill.strike_type) not in ["basic_attack", "skill"]:
 				errors.append(label + ".strike_type: 仅攻击时间线技能支持 basic_attack / skill")
@@ -1538,9 +1552,14 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.target_scope: 只支持 self/deployment_group" % label)
 		if skill.has("center_ratio") and (float(skill.center_ratio) < 0.0 or float(skill.center_ratio) > 1.0):
 			errors.append("%s.center_ratio: 必须在 0 到 1 之间" % label)
-		for bool_field in [&"ignore_movement_slow", &"ignore_attack_speed_slow"]:
+		for bool_field in [&"ignore_movement_slow", &"ignore_attack_speed_slow", &"control_immunity", &"cleanse_controls"]:
 			if skill.has(bool_field) and typeof(skill.get(bool_field)) != TYPE_BOOL:
 				errors.append("%s.%s: 必须是 bool" % [label, bool_field])
+		if skill.has("control_immunity") or skill.has("cleanse_controls"):
+			if String(skill.get("kind", "")) != "buff" or float(skill.get("duration", 0.0)) <= 0.0 or float(skill.get("impact_delay", 0.0)) != 0.0 or float(skill.get("cast_duration", 0.0)) != 0.0:
+				errors.append(label + ": 控制免疫/净化只支持即时有时限 buff")
+			if bool(skill.get("cleanse_controls", false)) and not bool(skill.get("control_immunity", false)):
+				errors.append(label + ": 受控净化需要控制免疫窗口")
 		if String(skill.get("kind", "")) == "detonate":
 			if float(skill.get("impact_delay", 0.0)) > 0.0 or float(skill.get("cast_duration", 0.0)) > 0.0 or float(stats.get("death_burst_radius", 0.0)) <= 0.0 or float(skill.get("execute_health_ratio", 0.0)) <= 0.0 or float(skill.get("execute_health_ratio", 0.0)) >= 1.0:
 				errors.append(label + ": 引爆需要死亡爆炸及(0,1)内的斩杀阈值")
@@ -1572,7 +1591,7 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append("%s.projectile_impact_visuals_by_use: 未支持的爆炸表现或缺少范围" % label)
 		if skill.has("projectile_visuals_by_use"):
 			for visual in skill.projectile_visuals_by_use:
-				if StringName(visual) not in [&"arrow", &"card", &"orb", &"laser", &"electromagnetic_wave", &"corki_missile", &"corki_missile_big"]:
+				if StringName(visual) not in [&"sona_wave", &"arrow", &"card", &"orb", &"laser", &"electromagnetic_wave", &"corki_missile", &"corki_missile_big"]:
 					errors.append("%s.projectile_visuals_by_use: 未支持的弹体表现" % label)
 		if skill.has("projectile_explosion_radius") and (float(skill.projectile_explosion_radius) <= 0.0 or not bool(skill.get("projectile_stop_on_hit", false))):
 			errors.append("%s.projectile_explosion_radius: 需要正数及首个碰撞停止弹体" % label)
@@ -1583,6 +1602,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				errors.append("%s.projectile_stop_on_hit: 必须是 bool" % label)
 			elif skill.projectile_stop_on_hit and (String(skill.get("kind", "")) != "frontal" or String(skill.get("shape", "")) != "fan" or int(skill.get("projectile_count", 0)) <= 0 or float(skill.get("projectile_flight_duration", 0.0)) <= 0.0 or float(skill.get("length", 0.0)) <= 0.0):
 				errors.append("%s.projectile_stop_on_hit: 需要 frontal/fan、正数箭矢数量、射程和飞行时长" % label)
+		if skill.has("projectile_model_launch") and (not skill.projectile_model_launch is bool or not (bool(skill.get("projectile_piercing", false)) or bool(skill.get("projectile_stop_on_hit", false)))):
+			errors.append(label + ".projectile_model_launch: 必须是实际技能弹体的布尔表现配置")
 		if skill.has("projectile_piercing"):
 			if typeof(skill.projectile_piercing) != TYPE_BOOL:
 				errors.append("%s.projectile_piercing: 必须是 bool" % label)
@@ -1590,8 +1611,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				errors.append("%s.projectile_piercing: 需要 frontal/fan 或单枚等宽 trapezoid、正数弹体数量、射程和飞行时长" % label)
 		if bool(skill.get("projectile_piercing", false)) and bool(skill.get("projectile_stop_on_hit", false)):
 			errors.append("%s: 穿透与命中停止不可同时启用" % label)
-		if skill.has("projectile_visual") and StringName(skill.projectile_visual) not in [&"arrow", &"card", &"orb", &"laser", &"electromagnetic_wave", &"corki_missile"]:
-			errors.append("%s.projectile_visual: 只支持 arrow/card/orb/laser/electromagnetic_wave/corki_missile" % label)
+		if skill.has("projectile_visual") and StringName(skill.projectile_visual) not in [&"sona_wave", &"arrow", &"card", &"orb", &"laser", &"electromagnetic_wave", &"corki_missile"]:
+			errors.append("%s.projectile_visual: 未支持的技能弹体表现" % label)
 		if skill.has("projectile_launch_delay") and float(skill.projectile_launch_delay) < 0.0:
 			errors.append("%s.projectile_launch_delay: 必须 >= 0" % label)
 		if skill.has("projectile_flight_duration") and float(skill.projectile_flight_duration) < 0.0:
@@ -1982,3 +2003,17 @@ static func _validate_resource_dependencies(label: String, stats: Dictionary, er
 		_validate_resource_dependencies("%s.active_skills[%d]" % [label, index], stats.active_skills[index], errors, inspect_resources, stats, true)
 	if stats.has("transformed_stats"):
 		_validate_resource_dependencies(label + ".transformed_stats", stats.transformed_stats, errors, inspect_resources)
+
+static func _validate_heal_aura(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	var fields := ["heal_aura_initial_delay", "heal_aura_trigger_interval", "heal_aura_radius", "heal_aura_duration", "heal_aura_pulse_interval", "heal_aura_amount"]
+	if not fields.any(func(field): return stats.has(field)): return
+	for field in fields:
+		var value: Variant = stats.get(field)
+		if not (value is float or value is int) or not is_finite(float(value)) or float(value) <= 0.0:
+			errors.append(label + "." + field + ": 必须为有限正数")
+	if fields.any(func(field): return not (stats.get(field) is float or stats.get(field) is int)): return
+	if float(stats.get("heal_aura_pulse_interval", 0.0)) > float(stats.get("heal_aura_duration", 0.0)):
+		errors.append(label + ": 治疗间隔不能超过持续时间")
+
+	if float(stats.get("heal_aura_trigger_interval", 0.0)) < float(stats.get("heal_aura_duration", 0.0)):
+		errors.append(label + ": 治疗触发周期不能短于光环持续时间")

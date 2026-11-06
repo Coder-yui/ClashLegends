@@ -110,7 +110,9 @@ const U_TIMED_GROWTH := 72
 const U_CONTINUOUS_TARGETS := 73
 const U_MAGAZINE := 74
 const U_BURNING_AURA := 75
-const UNIT_PAYLOAD_SIZE := 76
+const U_CONTROL_IMMUNITY_CLOCK := 76
+const U_HEAL_AURA := 77
+const UNIT_PAYLOAD_SIZE := 78
 
 const P_ID := 0
 const P_X := 1
@@ -332,6 +334,12 @@ func decode_validated(snapshot_bytes: PackedByteArray) -> DecodedSnapshot:
 		if not payload[U_ACTIVE_SKILL_START_READY] is bool: return null
 		if not payload[U_UNTARGETABLE] is bool: return null
 		if not payload[U_BURNING_AURA] is bool: return null
+		if not payload[U_HEAL_AURA] is Vector2: return null
+		var heal_aura: Vector2 = payload[U_HEAL_AURA]
+		if not heal_aura.is_finite() or heal_aura.x < 0.0 or heal_aura.y < 0.0: return null
+		if not payload[U_CONTROL_IMMUNITY_CLOCK] is Vector2: return null
+		var immunity_clock: Vector2 = payload[U_CONTROL_IMMUNITY_CLOCK]
+		if not immunity_clock.is_finite() or immunity_clock.x < 0.0 or immunity_clock.y < 0.0 or immunity_clock.x > immunity_clock.y: return null
 		if not payload[U_DORMANT] is bool: return null
 		if not _finite_number(payload[U_SUNLIGHT]) or float(payload[U_SUNLIGHT]) < 0.0: return null
 		if not payload[U_FREE_RECAST] is bool or not payload[U_BLEED_STACKS] is int or int(payload[U_BLEED_STACKS]) < 0 or not (payload[U_BLOOD_RAGE] is float or payload[U_BLOOD_RAGE] is int) or not is_finite(float(payload[U_BLOOD_RAGE])) or float(payload[U_BLOOD_RAGE]) < 0.0: return null
@@ -520,6 +528,8 @@ func _apply_units(units_data: Array) -> bool:
 		u.burning_aura = d[U_BURNING_AURA]
 		u.net_sunlight = float(d[U_SUNLIGHT])
 		u.net_buff_visual_clock = d[U_BUFF_VISUAL_CLOCK]
+		u.net_heal_aura = d[U_HEAL_AURA]
+		u.net_control_immunity_clock = d[U_CONTROL_IMMUNITY_CLOCK]
 		u.net_hit_haste_full = d[U_HIT_HASTE_FULL]
 		u.net_structure_haste = d[U_STRUCTURE_HASTE]
 		u.net_structure_haste_state = d[U_STRUCTURE_HASTE_STATE]
@@ -756,7 +766,7 @@ func _unit_snapshot_payload(id: int, u: Unit, birth: Dictionary, has_continuous_
 		u.lifesteal_state_visual(), u.active_buff_clock_visual(),
 		u.restoration_shield_state_visual(),
 		u.blind_visual(), u.teleport_serial, u.deployment_shield_active_visual(), int(u.is_charged_visual()), u.sunlight_visual(), u.pool_shield_visual(), u.grievous_wounds_visual(),
-		_active_skill_start_ready(u), u.untargetable_visual(), u.dormant, u.timed_growth_stats, u.continuous_targets_snapshot(), u.magazine_visual_state(), u.burning_aura,
+		_active_skill_start_ready(u), u.untargetable_visual(), u.dormant, u.timed_growth_stats, u.continuous_targets_snapshot(), u.magazine_visual_state(), u.burning_aura, u.control_immunity_clock_visual(), u.heal_aura_state_visual(),
 	]
 
 ## 起手结果仅用于UI锁；不包含付款、冷却或次数，不赋予客户端结算能力。

@@ -110,6 +110,13 @@ func _check_exceptions(main: Node2D) -> void:
 	for source_team in [0, 1]:
 		herald.apply_stasis(3, &"probe", CombatInteraction.effect_context(null, source_team))
 		_expect(not CombatInteraction.in_stasis(herald) and herald.structure_rush.phase == StructureRushState.Phase.DASHING, "先锋冲撞免疫双方凝滞且不中止轨迹")
+		var deferred: CombatResolver = main.combat_service()
+		herald.structure_rush.phase = StructureRushState.Phase.READY
+		deferred.begin_batch(100 + source_team, "chosen_order")
+		herald.apply_stasis(3, &"queued_before_rush", CombatInteraction.effect_context(null, source_team))
+		herald.structure_rush.phase = StructureRushState.Phase.DASHING
+		deferred.commit_batch()
+		_expect(not CombatInteraction.in_stasis(herald) and herald.structure_rush.phase == StructureRushState.Phase.DASHING, "先排队凝滞后开始先锋冲撞，提交时仍按双方免控拒绝")
 	herald.structure_rush.phase = StructureRushState.Phase.RECOVERY
 	herald.apply_stasis(3, &"probe", CombatInteraction.effect_context(null, 0))
 	_expect(CombatInteraction.in_stasis(herald), "冲撞免疫不扩展到恢复阶段")

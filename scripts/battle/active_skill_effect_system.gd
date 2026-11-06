@@ -114,6 +114,9 @@ func prepare_dual_form_cast(source: Unit, skill: Dictionary) -> Dictionary:
 
 ## Cast Start 的效果必须在施法窗口开始时发生；它不依赖动画，也不等待 EffectExecution。
 func apply_cast_start(source: Unit, skill: Dictionary) -> void:
+	if bool(skill.get("cleanse_controls", false)):
+		for target in _skill_target_units(source, skill):
+			target.apply_control_immunity(float(skill.duration), true, source.status_source("control_immunity"))
 	if StringName(skill.get("kind", "")) == &"rewind_nova":
 		# 回溯自身收益不重新选取目标；批次末提交时自身已进入不可选中。
 		source.heal(source.max_hp, CombatInteraction.effect_context(source, source.team, source.global_position, true))
@@ -155,7 +158,7 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 func _apply(source: Unit, skill: Dictionary) -> bool:
 	match StringName(skill.get("kind", "")):
 		&"self_stasis":
-			source.apply_stasis(float(skill.duration), source.status_source("self_stasis"))
+			source.apply_stasis(float(skill.duration), source.status_source("self_stasis"), CombatInteraction.effect_context(source))
 		&"movement_strike":
 			source.movement_strike.arm(skill)
 		&"detonate":
@@ -200,6 +203,8 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 		&"buff":
 			for target in _skill_target_units(source, skill):
 				var target_skill := _member_buff_skill(target, skill)
+				if bool(target_skill.get("control_immunity", false)):
+					target.apply_control_immunity(float(target_skill.duration), bool(target_skill.get("cleanse_controls", false)), source.status_source("control_immunity"))
 				if float(target_skill.get("heal_amount", 0.0)) > 0.0:
 					target.heal(float(target_skill.heal_amount))
 				target.apply_active_buff(
@@ -555,6 +560,8 @@ func activate_summon(source: Unit, skill: Dictionary) -> void:
 	for index in range(count):
 		var angle := TAU * float(index) / float(count)
 		var offset := Vector2.RIGHT.rotated(angle) * (source_radius + summon_radius + Unit.SUMMON_SEPARATION)
+		if skill.has("spawn_forward_distance"):
+			offset = frontal_forward(source) * float(skill.spawn_forward_distance)
 		var spawn_position := source.map_side_summon_position(summon_radius, index, count) if skill.get("spawn_side", "") == "map_side" else summon_center + offset
 		_controller.spawn_summoned(summon_team, spawn_id, spawn_position, float(skill.get("spawn_deploy_time", -1.0)), "", -1, summon_center)
 

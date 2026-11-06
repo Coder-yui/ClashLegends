@@ -17,11 +17,12 @@ func _settle_bleeding_attack(target: Node2D, source: Unit, effects: Dictionary, 
 			source.battle_context.notify_unit_audio_event(source, &"execute:kill", target.global_position)
 
 func _apply_attack_hit_effects(target: Node2D, effects: Dictionary, source: Node2D = null) -> void:
+	if is_instance_valid(target) and target.hp > 0.0 and (target is Unit or (target is Tower and bool(effects.get("stun_towers", false)))):
+		if float(effects.get("stun_duration", 0.0)) > 0.0:
+			target.stun(float(effects.stun_duration), source.status_source("movement_strike") if is_instance_valid(source) else &"movement_strike", CombatInteraction.effect_context(source))
 	if is_instance_valid(target) and target is Unit and target.hp > 0.0:
 		if float(effects.get("on_hit_slow_duration", 0.0)) > 0.0:
 			target.apply_slow(float(effects.on_hit_slow_duration), float(effects.on_hit_slow_multiplier), effects.on_hit_status_source, effects.on_hit_context)
-		if float(effects.get("stun_duration", 0.0)) > 0.0:
-			target.stun(float(effects.stun_duration), source.status_source("movement_strike") if is_instance_valid(source) else &"movement_strike", CombatInteraction.effect_context(source))
 		var blind_charges := maxi(int(effects.get("blind_charges", 0)), 0)
 		if blind_charges > 0:
 			(target as Unit).apply_blind(blind_charges, CombatInteraction.effect_context(source if is_instance_valid(source) else null))

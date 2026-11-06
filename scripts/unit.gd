@@ -72,6 +72,7 @@ var active_ability_id := -1
 var active_ability_slot := -1
 ## 携带的主动技能来源卡；异构编队的成员仍使用自己的单位卡做表现，但主动资格来自编队卡。
 var active_skill_card_id := ""
+var net_control_immunity_clock := Vector2.ZERO
 ## 同一次卡牌命令展开出的编队共享此 id；单体与召唤物为 -1。
 var deployment_group_id := -1
 var card_id := ""
@@ -293,6 +294,8 @@ var empowered_execute: Dictionary = {}
 var death_burst_execute_ratio := 0.0
 var _death_burst_done := false
 var buffs := StatusInstances.new()
+var heal_aura := preload("res://scripts/battle/periodic_heal_aura.gd").new()
+var net_heal_aura := Vector2.ZERO
 var _structure_assists: Dictionary = {}
 var target_protection := TargetProtectionState.new()
 var active_buff_timer: float:
@@ -802,6 +805,8 @@ func can_start_active_skill(skill: Dictionary) -> bool:
 	if StringName(skill.get("kind", "")) == &"movement_strike" and movement_strike.is_armed(): return false
 	if StringName(skill.get("kind", "")) == &"undying_rage":
 		return hp > 0.0 and is_deployed() and not CombatInteraction.in_stasis(self) and not death_form.used
+	if bool(skill.get("cleanse_controls", false)):
+		return hp > 0.0 and is_deployed() and not CombatInteraction.in_stasis(self) and not death_form.used and not is_form_transitioning() and not is_active_skill_casting() and not structure_rush.skill_locked()
 	return (action_permissions() & ControlState.START_SKILL) != 0
 
 ## 普攻免疫窗口由权威状态计时；到期结果沿既有独立爆炸队列提交。
@@ -1317,7 +1322,7 @@ func apply_attack_lifesteal(heal_ratio: float, max_health_ratio: float = 1.0) ->
 func apply_blind(attacks: int, interaction: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return
 	# 持续输出能力没有离散出手，致盲对此类攻击无作用。
-	if hp <= 0.0 or attacks <= 0 or continuous_attack or structure_rush.control_immune(): return
+	if hp <= 0.0 or attacks <= 0 or continuous_attack or structure_rush.control_immune() or rejects_control(): return
 	if CombatInteraction.blocks_effect(self, interaction): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func():
@@ -1742,6 +1747,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		_tick_active_statuses(dt)
 		prepare_action_clocks(dt)
 		_apply_pending_form()
+	heal_aura.tick(self, dt)
 	_hit_flash_event_cooldown = maxf(0.0, _hit_flash_event_cooldown - dt)
 	if battle_context == null or skill_dash_moved_tick != battle_context.simulation_tick(): _prev_pos = position
 	_move_intent = Vector2.ZERO
@@ -2068,7 +2074,7 @@ func _perform_deploy_sweep() -> void:
 		battle_context.notify_unit_audio_event(self, &"deploy:hit", global_position)
 
 func can_receive_knockback(origin: Vector2, distance: float, duration: float, mass_factor_max: float) -> bool:
-	return hp > 0.0 and not structure_rush.control_immune() and not is_queued_for_deletion() and not is_building and origin.is_finite() and is_finite(distance) and distance > 0.0 and is_finite(duration) and duration > 0.0 and is_finite(mass_factor_max)
+	return hp > 0.0 and not structure_rush.control_immune() and not rejects_control() and not is_queued_for_deletion() and not is_building and origin.is_finite() and is_finite(distance) and distance > 0.0 and is_finite(duration) and duration > 0.0 and is_finite(mass_factor_max)
 
 ## 出生动画是独立表现，固定匹配原始散开时长；落点延长不拉伸动画。
 ## 生成入口使用零部署锁，只有已成立的外力及其它控制限制自主行动。
@@ -2731,6 +2737,10 @@ func _attack(dt: float) -> void:
 		var attack_effects: Dictionary = {"attack_id": basic_attack_sequence, "cycle_id": _attack_visual_serial}
 		if float(_base_form_stats.get("attack_self_radius", 0.0)) > 0.0:
 			attack_effects["self_radius"] = float(_base_form_stats.attack_self_radius)
+		var stun_cycle: Array = _base_form_stats.get("attack_stun_durations", [])
+		if not stun_cycle.is_empty():
+			attack_effects["stun_duration"] = float(stun_cycle[posmod(hit_index, stun_cycle.size())])
+			attack_effects["stun_towers"] = true
 		cyclic_form.consume(self, attack_effects)
 		if first_strike:
 			# 效果随弹体携带到真实命中点；表现层不会在出手或预判 first_hit 时播放被动音。
@@ -3269,10 +3279,41 @@ func apply_action_cancellation(payload: Dictionary) -> void:
 	action_cancelled.emit(last_action_cancellation)
 
 
+func control_immunity_clock_visual() -> Vector2:
+	return net_control_immunity_clock if _in_client_mode() else buffs.clock(&"control_immunity")
+
+func control_immunity_active_visual() -> bool:
+	var clock := control_immunity_clock_visual()
+	return hp > 0.0 and not CombatInteraction.in_stasis(self) and clock.y > clock.x
+
+func rejects_control(_interaction: Dictionary = {}) -> bool:
+	return structure_rush.control_immune() or buffs.any_flag(&"control_immunity", &"enabled")
+
+func apply_control_immunity(duration: float, cleanse: bool, source: StringName) -> void:
+	if hp <= 0.0 or not CombatInteraction.allows_effect(self, {}) or not is_finite(duration) or duration <= 0.0: return
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): apply_control_immunity(duration, cleanse, source))
+		return
+	var previous_speed := _effective_attack_speed_multiplier()
+	if cleanse:
+		for family in [&"freeze", &"stun", &"root", &"silence", &"taunt"]: control.hard.clear_family(family)
+		for family in [&"slow", &"attack_slow"]: control.modifiers.clear_family(family)
+		blind_attack_charges = 0
+		taunt_source = null
+		var displaced := knockback.collisionless
+		knockback.cancel(&"cleanse")
+		if displaced: recover_displacement_position()
+		_forced_movement = false
+		_move_intent = Vector2.ZERO
+	buffs.apply(&"control_immunity", source, duration, {"enabled": true})
+	_rescale_attack_phase(previous_speed)
+	queue_redraw()
+
 func status_source(effect: String = "") -> StringName:
 	return StringName("unit:%d:%s" % [combat_source_id, effect])
 
 func apply_stasis(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
+	if rejects_control(interaction): return
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
 	if structure_rush.control_immune(): return
@@ -3283,6 +3324,7 @@ func apply_stasis(duration: float, source: StringName = &"legacy", interaction: 
 	_receive_stasis(duration, source, interaction)
 
 func _receive_stasis(duration: float, source: StringName, interaction: Dictionary = {}) -> void:
+	if rejects_control(interaction): return
 	if hp <= 0.0: return
 	CombatInteraction.record_combat_effect(self, interaction)
 	get_visual_facing_direction()
@@ -3302,6 +3344,7 @@ func _receive_stasis(duration: float, source: StringName, interaction: Dictionar
 
 ## 无现役卡施加这两种状态；保留可测试的权威入口供引导打断和后续卡复用。
 func silence(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
+	if rejects_control(interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
 	if not CombatInteraction.allows_effect(self, interaction) or CombatInteraction.blocks_effect(self, interaction): return
 	if battle_context != null and battle_context.damage_batch().collecting:
@@ -3311,6 +3354,7 @@ func silence(duration: float, source: StringName = &"legacy", interaction: Dicti
 	if channel_attack.active(): cancel_basic_attack(ActionCancellation.SILENCE)
 
 func taunt(caster: Unit, duration: float) -> void:
+	if rejects_control({}): return
 	if not is_instance_valid(caster) or caster.hp <= 0.0 or caster.is_air or caster.team == team: return
 	var interaction := CombatInteraction.effect_context(caster, caster.team, caster.global_position)
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or not CombatInteraction.allows_effect(self, interaction) or CombatInteraction.blocks_effect(self, interaction): return
@@ -3328,6 +3372,7 @@ func _exit_tree() -> void:
 
 ## 禁锢限制自主移动，保留普攻、转向与外力；独立来源和计时复用硬控容器。
 func root(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
+	if rejects_control(interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or structure_rush.control_immune(): return
 	if not CombatInteraction.allows_effect(self, interaction) or CombatInteraction.blocks_effect(self, interaction): return
 	if battle_context != null and battle_context.damage_batch().collecting:
@@ -3341,6 +3386,7 @@ func root(duration: float, source: StringName = &"legacy", interaction: Dictiona
 	structure_rush.interrupt_preparation(self)
 
 func freeze(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
+	if rejects_control(interaction): return
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or structure_rush.control_immune(): return
 	if CombatInteraction.blocks_effect(self, interaction): return
@@ -3350,6 +3396,7 @@ func freeze(duration: float, source: StringName = &"legacy", interaction: Dictio
 	_receive_freeze(duration, source, interaction)
 
 func _receive_freeze(duration: float, source: StringName, interaction: Dictionary = {}) -> void:
+	if rejects_control(interaction): return
 	if hp <= 0.0: return
 	CombatInteraction.record_combat_effect(self, interaction)
 	get_visual_facing_direction()
@@ -3360,6 +3407,7 @@ func _receive_freeze(duration: float, source: StringName, interaction: Dictionar
 	queue_redraw()
 
 func stun(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
+	if rejects_control(interaction): return
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or structure_rush.control_immune(): return
 	if CombatInteraction.blocks_effect(self, interaction): return
@@ -3369,6 +3417,7 @@ func stun(duration: float, source: StringName = &"legacy", interaction: Dictiona
 	_receive_stun(duration, source, interaction)
 
 func _receive_stun(duration: float, source: StringName, interaction: Dictionary = {}) -> void:
+	if rejects_control(interaction): return
 	if hp <= 0.0: return
 	CombatInteraction.record_combat_effect(self, interaction)
 	get_visual_facing_direction()
@@ -3378,6 +3427,7 @@ func _receive_stun(duration: float, source: StringName, interaction: Dictionary 
 	queue_redraw()
 
 func apply_slow(duration: float, multiplier: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
+	if rejects_control(interaction): return
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or not is_finite(multiplier) or structure_rush.control_immune() or active_buff_ignores_movement_slow: return
 	if multiplier < 1.0 and CombatInteraction.blocks_effect(self, interaction): return
@@ -3387,6 +3437,7 @@ func apply_slow(duration: float, multiplier: float, source: StringName = &"legac
 	_receive_apply_slow(duration, multiplier, source, interaction)
 
 func _receive_apply_slow(duration: float, multiplier: float, source: StringName, interaction: Dictionary = {}) -> void:
+	if rejects_control(interaction): return
 	if hp <= 0.0: return
 	if multiplier < 1.0: CombatInteraction.record_combat_effect(self, interaction)
 	control.refresh_slow(duration, multiplier, source)
@@ -3394,6 +3445,7 @@ func _receive_apply_slow(duration: float, multiplier: float, source: StringName,
 
 ## 预留给后续控制效果的减攻速入口；它与减速一样只改战斗计时，不改变动画权威。
 func apply_attack_speed_slow(duration: float, multiplier: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
+	if rejects_control(interaction): return
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or not is_finite(multiplier) or structure_rush.control_immune() or active_buff_ignores_attack_speed_slow: return
 	if multiplier < 1.0 and CombatInteraction.blocks_effect(self, interaction): return
@@ -3403,6 +3455,7 @@ func apply_attack_speed_slow(duration: float, multiplier: float, source: StringN
 	_receive_apply_attack_speed_slow(duration, multiplier, source, interaction)
 
 func _receive_apply_attack_speed_slow(duration: float, multiplier: float, source: StringName, interaction: Dictionary = {}) -> void:
+	if rejects_control(interaction): return
 	if hp <= 0.0: return
 	if multiplier < 1.0: CombatInteraction.record_combat_effect(self, interaction)
 	var previous_speed := _effective_attack_speed_multiplier()
@@ -3721,6 +3774,7 @@ func sacrifice_without_reward() -> void:
 	_die(true)
 
 func _die(trigger_death_effect: bool = false) -> void:
+	heal_aura.clear()
 	channel_attack.stop(self)
 	if is_queued_for_deletion() or death_form.waiting(): return
 	_resolve_death_outcome()
@@ -4110,3 +4164,7 @@ func _draw_grievous_wounds(center: Vector2) -> void:
 
 func returning_attack_distance() -> float:
 	return float(_base_form_stats.get("returning_attack_distance", 0.0))
+
+func heal_aura_state_visual() -> Vector2:
+	if hp <= 0.0: return Vector2.ZERO
+	return net_heal_aura if _in_client_mode() else heal_aura.state()

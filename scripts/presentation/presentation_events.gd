@@ -2,6 +2,8 @@ class_name PresentationEvents
 extends RefCounted
 ## 当前实际派发能力表；新增 cue 必须同时实现权威派发与消费者。
 static func supports(stats: Dictionary, cue: String) -> bool:
+	if cue in ["heal_aura:start", "heal_aura:sustain"]: return float(stats.get("heal_aura_duration", 0.0)) > 0.0
+	if cue in ["control_immunity:start", "control_immunity:sustain", "control_immunity:end", "control_immunity:attack_swing", "control_immunity:attack_hit"]: return (stats.get("active_skills", []) as Array).any(func(skill): return bool(skill.get("control_immunity", false)))
 	if cue in ["bomb:basic_impact", "bomb:impact", "bomb:second_launch", "bomb:third_launch"]: return bool(stats.get("ballistic_attack", false))
 	if cue in ["reload:start", "reload:end"]: return int(stats.get("magazine_size", 0)) > 0
 	if cue in ["attack:return", "attack_return:launch"]: return float(stats.get("returning_attack_distance", 0.0)) > 0.0

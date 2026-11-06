@@ -55,6 +55,15 @@ func remaining(family: StringName) -> float:
 			end_tick = maxi(end_tick, int(effect.end_tick))
 	return float(end_tick - tick_index) / TICKS_PER_SECOND
 
+## 最后到期实例的权威年龄与总时长；供只读表现同步，不依赖客户端倒计时。
+func clock(family: StringName) -> Vector2:
+	var selected: Dictionary = {}
+	for effect in _instances:
+		if effect.family == family and (selected.is_empty() or int(effect.end_tick) > int(selected.end_tick)):
+			selected = effect
+	if selected.is_empty(): return Vector2.ZERO
+	return Vector2(float(tick_index - int(selected.start_tick)), float(int(selected.end_tick) - int(selected.start_tick))) / TICKS_PER_SECOND
+
 func strongest(family: StringName, field: StringName, baseline: float, minimum: bool = false) -> float:
 	if suppressed: return baseline
 	var result := baseline

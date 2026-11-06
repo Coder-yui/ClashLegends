@@ -1404,6 +1404,8 @@ func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 	var attack_key := "empowered_attack" if _active_attack_empowered else ("attack_structure" if _source.is_attacking_structure_visual() else "attack")
 	if not _active_attack_empowered and _state.active_buff and _animation_names.has("active_buff_attack"):
 		attack_key = "active_buff_attack"
+	if not _active_attack_empowered and _state.control_immune and _animation_names.has("control_immune_attack"):
+		attack_key = "control_immune_attack"
 	if _source.is_attack_visual_first_strike() and _animation_names.has("first_strike_attack"):
 		attack_key = "first_strike_attack"
 	var configured = _animation_names.get(attack_key, _animation_names.get("attack", []))
@@ -1597,7 +1599,7 @@ func _configure_looping_animations() -> void:
 		if continuous_animation != null:
 			continuous_animation.loop_mode = Animation.LOOP_LINEAR
 	# 出场技能与攻击分段动画都必须是非循环完整动作。
-	for key in ["active_buff_attack", "attack", "attack_structure", "attack_hit", "attack_recover", "first_strike_attack", "empowered_attack", "empowered_attack_hit", "empowered_attack_recover", "empowered_attack_to_move", "deploy", "attack_enter", "attack_retarget_enter", "attack_to_move", "idle_cycle", "move_enter", "move_cycle"]:
+	for key in ["active_buff_attack", "control_immune_attack", "attack", "attack_structure", "attack_hit", "attack_recover", "first_strike_attack", "empowered_attack", "empowered_attack_hit", "empowered_attack_recover", "empowered_attack_to_move", "deploy", "attack_enter", "attack_retarget_enter", "attack_to_move", "idle_cycle", "move_enter", "move_cycle"]:
 		for value in _animation_list(key):
 			var animation_name := StringName(value)
 			if animation_name != &"" and _animation_player.has_animation(animation_name):
@@ -2095,6 +2097,9 @@ func _update_active_buff_visual(delta: float) -> void:
 	if _active_buff_visual.follow_model_anchor and is_instance_valid(_projectile_anchor):
 		_active_buff_visual.global_position = _projectile_anchor.global_position
 	var status_active := is_instance_valid(_source) and _state.active_buff
+	if _active_buff_visual.status_source == "heal_aura":
+		_active_buff_visual.status_state = _source.heal_aura_state_visual() if is_instance_valid(_source) else Vector2.ZERO
+		status_active = _active_buff_visual.status_state.y > 0.0
 	if _active_buff_visual.status_source == "empowered_attack":
 		status_active = is_instance_valid(_source) and _source.is_empowered_attack_ready_visual()
 	if _active_buff_visual.status_source == "blood_rage":
@@ -2120,6 +2125,14 @@ func _update_active_buff_visual(delta: float) -> void:
 	if _active_buff_visual.status_source == "restoration_shield":
 		_active_buff_visual.status_state = _source.restoration_shield_state_visual() if is_instance_valid(_source) else Vector2.ZERO
 		status_active = _active_buff_visual.status_state.x > 0.0
+	var source_valid := is_instance_valid(_source)
+	_active_buff_visual.presentation_enabled = source_valid and not _dying and PresentationConfig.status_indicators_visible(_source)
+	_active_buff_visual.action_name = _source.get_visual_action_name() if source_valid else &""
+	_active_buff_visual.action_serial = _source.get_visual_action_serial() if source_valid else 0
+	var action_duration := _source.get_visual_action_duration() if source_valid else 0.0
+	var action_left := _source.get_visual_action_time_left() if source_valid else 0.0
+	_active_buff_visual.action_state = Vector2(maxf(action_duration - action_left, 0.0), action_duration) if action_left > 0.0 and _active_buff_visual.action_serial > _source.cancelled_visual_serial else Vector2.ZERO
+	_active_buff_visual.control_immunity_clock = _source.control_immunity_clock_visual() if is_instance_valid(_source) else Vector2.ZERO
 	_active_buff_visual.shield_active = is_instance_valid(_source) and _source.get_shield_ratio() > 0.0
 	var enabled := not _dying and PresentationConfig.status_indicators_visible(_source) and status_active
 	_active_buff_visual.advance_status(not _dying and status_active, enabled, delta)
