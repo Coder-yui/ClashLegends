@@ -278,17 +278,23 @@ func _check_sun_disc() -> void:
 		for animation_name in [&"Spawn", &"Idle1_Base", &"Idle2_Base", &"Attack1_BASE", &"Attack2_BASE", &"Death"]:
 			animation_and_ruin_ok = animation_and_ruin_ok and player != null and player.has_animation(animation_name)
 		var ruin_meshes: Array[Node] = sample.get_node("RuinBase").find_children("*", "MeshInstance3D", true, false) if sample != null else []
-		var static_rubble_only := ruin_meshes.size() == 1
-		if static_rubble_only:
-			var ruin_mesh := ruin_meshes[0] as MeshInstance3D
-			static_rubble_only = ruin_mesh.mesh != null and ruin_mesh.mesh.get_surface_count() == 1
-			if static_rubble_only:
+		var rubble_count := 0
+		var foundation_count := 0
+		for node in ruin_meshes:
+			var ruin_mesh := node as MeshInstance3D
+			if ruin_mesh.mesh == null:
+				continue
+			if ruin_mesh.name == &"InnerFoundation":
+				if ruin_mesh.mesh.resource_path == "res://assets/towers/princess/inner_foundation.tres":
+					foundation_count += 1
+			elif ruin_mesh.mesh.get_surface_count() == 1:
 				var ruin_material := ruin_mesh.mesh.surface_get_material(0)
-				static_rubble_only = ruin_material != null and ruin_material.resource_name == "Rubble"
-		animation_and_ruin_ok = animation_and_ruin_ok and static_rubble_only
+				if ruin_material != null and ruin_material.resource_name == "Rubble":
+					rubble_count += 1
+		animation_and_ruin_ok = animation_and_ruin_ok and ruin_meshes.size() == 2 and rubble_count == 1 and foundation_count == 1
 		if sample != null:
 			sample.free()
-	_expect(animation_and_ruin_ok, "太阳圆盘双方包装将主体放大至略宽于废墟，只显示对应阵营防御塔 Rubble，并包含部署、双待机、普攻与死亡动画")
+	_expect(animation_and_ruin_ok, "太阳圆盘双方包装将主体放大至略宽于废墟，显示对应阵营防御塔 Rubble 与共享内层地基，并包含部署、双待机、普攻与死亡动画")
 	_expect(
 		(stats.visual_animations.idle_cycle as Array).count("Idle1_Base") == 7 and (stats.visual_animations.idle_cycle as Array).count("Idle2_Base") == 2,
 		"太阳圆盘待机按原表三次简单分支、两次 Base→Idle2→Base 分支确定循环",
