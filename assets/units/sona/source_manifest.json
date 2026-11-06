@@ -1,0 +1,19 @@
+{
+  "source_model": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/琴瑟仙女.glb",
+  "sha256": "09459936db5f11bca77666f3417ac7aa006528a38fd3aed5f17e16fbc3bf1b7a",
+  "scale": [
+    2,
+    2,
+    2
+  ],
+  "default_hidden_parts": [],
+  "card_art_source": "assets/characters/sona/skins/base/sonaloadscreen.tex",
+  "card_art_sha256": "59bb8c327f74243e5a76c6cecc8ca7e51b3ceab62d322c2acb00fc20dce98755",
+  "card_art_runtime": "res://assets/cards/sona_portrait.tres",
+  "card_art_region": [
+    0,
+    0,
+    308,
+    360
+  ]
+}

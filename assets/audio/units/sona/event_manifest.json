@@ -1,0 +1,305 @@
+[
+  {
+    "file": "play_sfx_sona_sonabasicattack_oncast_r1_d.wav",
+    "event": "Play_sfx_Sona_SonaBasicAttack_OnCast",
+    "event_id": 2253993052,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnCast {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnCast {r1} {d}.txtp",
+    "media_ids": [
+      3559326,
+      13063047,
+      70212055
+    ],
+    "duration": 0.9619,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5e200d4a49cbf23deb937c1ff2815538d238f773d3248274043a4feb06b59b8a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonabasicattack_oncast_r2_d.wav",
+    "event": "Play_sfx_Sona_SonaBasicAttack_OnCast",
+    "event_id": 2253993052,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnCast {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnCast {r2} {d}.txtp",
+    "media_ids": [
+      3559326,
+      13063047,
+      70212055
+    ],
+    "duration": 0.6149,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f2e79e7fb120229d25b4ee1ddf1b4c0723946c45390d8df3e2761ba658b12a24",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonabasicattack_oncast_r3_d.wav",
+    "event": "Play_sfx_Sona_SonaBasicAttack_OnCast",
+    "event_id": 2253993052,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnCast {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnCast {r3} {d}.txtp",
+    "media_ids": [
+      3559326,
+      13063047,
+      70212055
+    ],
+    "duration": 0.6149,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c82224e95809b75313814aaeebc0c7504147a4d78d863b904e64e46fb2670b4e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonabasicattack_onhit_r1_d.wav",
+    "event": "Play_sfx_Sona_SonaBasicAttack_OnHit",
+    "event_id": 305159092,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnHit {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnHit {r1} {d}.txtp",
+    "media_ids": [
+      202106619,
+      260186080,
+      712339436
+    ],
+    "duration": 1.8333,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7218b39c4a7c9d37535559f608ddefa0d062dbfed2663dad0484f0471f6b5f1c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonabasicattack_onhit_r2_d.wav",
+    "event": "Play_sfx_Sona_SonaBasicAttack_OnHit",
+    "event_id": 305159092,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnHit {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnHit {r2} {d}.txtp",
+    "media_ids": [
+      202106619,
+      260186080,
+      712339436
+    ],
+    "duration": 2.3262,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b9a80fc2f9eb310bb956b3e754860e0a6738044128373a58f0df216363d96d81",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonabasicattack_onhit_r3_d.wav",
+    "event": "Play_sfx_Sona_SonaBasicAttack_OnHit",
+    "event_id": 305159092,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnHit {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnHit {r3} {d}.txtp",
+    "media_ids": [
+      202106619,
+      260186080,
+      712339436
+    ],
+    "duration": 2.0476,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f1adf3c8b008c6d266c2630c108ab99907b110e2c5ed3edd70e1746ce0cb1721",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonabasicattack_onmissilelaunch_r1_d.wav",
+    "event": "Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch",
+    "event_id": 46264810,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch {r1} {d}.txtp",
+    "media_ids": [
+      37014445,
+      62995320,
+      73391190,
+      81841167,
+      393036652,
+      478099674
+    ],
+    "duration": 2.2083,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6afcbe0e1b1fb3fe42a63e5008babbaf9fb5fcae434121901fcd58958bfbaadc",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonabasicattack_onmissilelaunch_r2_d.wav",
+    "event": "Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch",
+    "event_id": 46264810,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch {r2} {d}.txtp",
+    "media_ids": [
+      37014445,
+      62995320,
+      73391190,
+      81841167,
+      393036652,
+      478099674
+    ],
+    "duration": 2.1951,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "88f24ef08376ba8deeb4a4e29f59e291ef369f2b57a066cfa38291ae75e7fd28",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonabasicattack_onmissilelaunch_r3_d.wav",
+    "event": "Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch",
+    "event_id": 46264810,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch {r3} {d}.txtp",
+    "media_ids": [
+      37014445,
+      62995320,
+      73391190,
+      81841167,
+      393036652,
+      478099674
+    ],
+    "duration": 2.3981,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "bb0b4c3b3ecf325b067ee79999d8f8816ff73362ab43edec2a9ae122e5272e8c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonaw_oncast_r1.wav",
+    "event": "Play_sfx_Sona_SonaW_OnCast",
+    "event_id": 2677506363,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaW_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaW_OnCast {r1}.txtp",
+    "media_ids": [
+      373674423,
+      408552087,
+      795582523
+    ],
+    "duration": 4.8569,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "abcaae4dc5e72efcc4a005721145fd4543f8e89fdcd28147ee1b3a06a65bf2df",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonaw_oncast_r2.wav",
+    "event": "Play_sfx_Sona_SonaW_OnCast",
+    "event_id": 2677506363,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaW_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaW_OnCast {r2}.txtp",
+    "media_ids": [
+      373674423,
+      408552087,
+      795582523
+    ],
+    "duration": 4.8569,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "81e52bd70a0e111f6fb820865e189e989f444a137dd90c0689503e812146c7a3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonaw_oncast_r3.wav",
+    "event": "Play_sfx_Sona_SonaW_OnCast",
+    "event_id": 2677506363,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaW_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaW_OnCast {r3}.txtp",
+    "media_ids": [
+      373674423,
+      408552087,
+      795582523
+    ],
+    "duration": 4.8571,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c3a4f6c4780bf2d20d491146e9af748323523b8d29a7df9fe67e4ff3fe5f9ed5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonaambientwsound_onbuffactivate.wav",
+    "event": "Play_sfx_Sona_SonaAmbientWSound_OnBuffActivate",
+    "event_id": 1568347451,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaAmbientWSound_OnBuffActivate.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaAmbientWSound_OnBuffActivate.txtp",
+    "media_ids": [
+      1999352,
+      214415811,
+      253608896,
+      310413338,
+      326872501,
+      530010668
+    ],
+    "duration": 83.0476,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "063a55a323f948e4ddf7eb555d92bdab25a4215c86a2208c9cf1e14af8b3e7de",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonar_oncast.wav",
+    "event": "Play_sfx_Sona_SonaR_OnCast",
+    "event_id": 813295724,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaR_OnCast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaR_OnCast.txtp",
+    "media_ids": [
+      497885951
+    ],
+    "duration": 3.1429,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "17276c7056f3ef1a052e76b36649bb9545248b36e8ef2f703a1f0053cfed3e1d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonar_onmissilelaunch.wav",
+    "event": "Play_sfx_Sona_SonaR_OnMissileLaunch",
+    "event_id": 432013306,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaR_OnMissileLaunch.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaR_OnMissileLaunch.txtp",
+    "media_ids": [
+      1012366840
+    ],
+    "duration": 3.5714,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1d5bdd8e16b6cbe151adaf8df8e6c9a39b29641d0f52e4618d2975a0c1117473",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonar_onhit_r1.wav",
+    "event": "Play_sfx_Sona_SonaR_OnHit",
+    "event_id": 436801028,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaR_OnHit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaR_OnHit {r1}.txtp",
+    "media_ids": [
+      629222352,
+      702153267,
+      899514917
+    ],
+    "duration": 2.7619,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2fb168482e946ee8d918bbba82c082e6e35707ef00540448fae38bb64fcbb47e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonar_onhit_r2.wav",
+    "event": "Play_sfx_Sona_SonaR_OnHit",
+    "event_id": 436801028,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaR_OnHit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaR_OnHit {r2}.txtp",
+    "media_ids": [
+      629222352,
+      702153267,
+      899514917
+    ],
+    "duration": 3.1429,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9fd2c4e00afee0b06482dc689f1947014b1f025edfc017992df591e7e4a9ab74",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sona_sonar_onhit_r3.wav",
+    "event": "Play_sfx_Sona_SonaR_OnHit",
+    "event_id": 436801028,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaR_OnHit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaR_OnHit {r3}.txtp",
+    "media_ids": [
+      629222352,
+      702153267,
+      899514917
+    ],
+    "duration": 2.5714,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5a9950541f15aa23d03767310d4736d4bffb321e3319464ddf3f291481e70ac7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "deploy_voice.ogg",
+    "event": "champion-choose-vo/37",
+    "source_path": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/deploy/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/37.ogg",
+    "sha256": "1786b9e7de7b898e1f4180b7806fbfedc5f630ed435d5728ac3dec236bd1742f",
+    "processing": "original OGG; fixed runtime -12.5 dB"
+  }
+]

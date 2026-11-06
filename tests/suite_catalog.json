@@ -866,5 +866,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "SonaSuite",
+    "script": "res://tests/suites/cards/sona_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "cards"
   }
 ]

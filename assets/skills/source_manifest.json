@@ -1054,5 +1054,14 @@
     "source_path": "assets/characters/annie/hud/icons2d/annie_r1.dds",
     "source_sha256": "5ad826ea6ee08ac8758385e74199a21ce4d8e8b12cd0010d22ca5db944d5411a",
     "sha256": "57529d21d9fdd4f9ea785160ff39aa035d2abccfe1c6907e77a9154f34e3eabb"
+  },
+  {
+    "card": "sona",
+    "skill_index": 0,
+    "path": "res://assets/skills/sona_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Sona.wad.client",
+    "source_path": "assets/characters/sona/hud/icons2d/sona_r.dds",
+    "source_sha256": "cdd4ed2dfd3439b4f1a54e862d10923e6cfb2eb03165c51d81ae0ae7f61e2c75",
+    "sha256": "4ce299705ba8971a9e74b8ce2f7161c9814574968bb9ee11cff1856053097864"
   }
 ]

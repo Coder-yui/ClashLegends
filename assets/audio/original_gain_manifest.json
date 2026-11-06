@@ -74233,6 +74233,564 @@
       },
       "duration": 6.300997732426304,
       "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonabasicattack_oncast_r1_d.wav",
+      "sha256": "5e200d4a49cbf23deb937c1ff2815538d238f773d3248274043a4feb06b59b8a",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnCast {r1} {d}.wav",
+          "sha256": "5e200d4a49cbf23deb937c1ff2815538d238f773d3248274043a4feb06b59b8a"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 0.9619047619047619,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnCast {r1} {d}.txtp",
+          "txtp_sha256": "eb42d878557fd9470cf768e188d57cc01ea86035eb20109260d735c5fe932197",
+          "event_ids": [
+            2253993052
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonabasicattack_oncast_r2_d.wav",
+      "sha256": "f2e79e7fb120229d25b4ee1ddf1b4c0723946c45390d8df3e2761ba658b12a24",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnCast {r2} {d}.wav",
+          "sha256": "f2e79e7fb120229d25b4ee1ddf1b4c0723946c45390d8df3e2761ba658b12a24"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 0.614875283446712,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnCast {r2} {d}.txtp",
+          "txtp_sha256": "190c63465038d700eb0694cb16c6b76017693b480253793a9d85a186a113a83e",
+          "event_ids": [
+            2253993052
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonabasicattack_oncast_r3_d.wav",
+      "sha256": "c82224e95809b75313814aaeebc0c7504147a4d78d863b904e64e46fb2670b4e",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnCast {r3} {d}.wav",
+          "sha256": "c82224e95809b75313814aaeebc0c7504147a4d78d863b904e64e46fb2670b4e"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 0.614875283446712,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnCast {r3} {d}.txtp",
+          "txtp_sha256": "a8c7d09548feee760dec7784fd292839e7c06c72966c47a23a9cca1749745d61",
+          "event_ids": [
+            2253993052
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonabasicattack_onhit_r1_d.wav",
+      "sha256": "7218b39c4a7c9d37535559f608ddefa0d062dbfed2663dad0484f0471f6b5f1c",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnHit {r1} {d}.wav",
+          "sha256": "7218b39c4a7c9d37535559f608ddefa0d062dbfed2663dad0484f0471f6b5f1c"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 1.8333333333333333,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnHit {r1} {d}.txtp",
+          "txtp_sha256": "6915f724fd65d6a2ae91b4376239f194dafc56500e806ccab9069d3e4c4a9e26",
+          "event_ids": [
+            305159092
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonabasicattack_onhit_r2_d.wav",
+      "sha256": "b9a80fc2f9eb310bb956b3e754860e0a6738044128373a58f0df216363d96d81",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnHit {r2} {d}.wav",
+          "sha256": "b9a80fc2f9eb310bb956b3e754860e0a6738044128373a58f0df216363d96d81"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 2.3261904761904764,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnHit {r2} {d}.txtp",
+          "txtp_sha256": "2d8155fd7bfea47827df7ecf5973743e70da6218159b957955cb9c176093a13c",
+          "event_ids": [
+            305159092
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonabasicattack_onhit_r3_d.wav",
+      "sha256": "f1adf3c8b008c6d266c2630c108ab99907b110e2c5ed3edd70e1746ce0cb1721",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnHit {r3} {d}.wav",
+          "sha256": "f1adf3c8b008c6d266c2630c108ab99907b110e2c5ed3edd70e1746ce0cb1721"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 2.0476190476190474,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnHit {r3} {d}.txtp",
+          "txtp_sha256": "947bf47197238ca4c2ed14c56d7af4fbf7d7e669bd548e4aadc2596648c925dd",
+          "event_ids": [
+            305159092
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonabasicattack_onmissilelaunch_r1_d.wav",
+      "sha256": "6afcbe0e1b1fb3fe42a63e5008babbaf9fb5fcae434121901fcd58958bfbaadc",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch {r1} {d}.wav",
+          "sha256": "6afcbe0e1b1fb3fe42a63e5008babbaf9fb5fcae434121901fcd58958bfbaadc"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 2.208253968253968,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch {r1} {d}.txtp",
+          "txtp_sha256": "177d030ff8f7e5a8b0e06fcec779f35665de0d0acaa70ceff0fd6b0cbc8ec562",
+          "event_ids": [
+            46264810
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonabasicattack_onmissilelaunch_r2_d.wav",
+      "sha256": "88f24ef08376ba8deeb4a4e29f59e291ef369f2b57a066cfa38291ae75e7fd28",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch {r2} {d}.wav",
+          "sha256": "88f24ef08376ba8deeb4a4e29f59e291ef369f2b57a066cfa38291ae75e7fd28"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 2.1951473922902496,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch {r2} {d}.txtp",
+          "txtp_sha256": "da44413f402a011a8e572aa76cce3d04ee033e80d1ce4de0bb2ac2a16759879d",
+          "event_ids": [
+            46264810
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonabasicattack_onmissilelaunch_r3_d.wav",
+      "sha256": "bb0b4c3b3ecf325b067ee79999d8f8816ff73362ab43edec2a9ae122e5272e8c",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch {r3} {d}.wav",
+          "sha256": "bb0b4c3b3ecf325b067ee79999d8f8816ff73362ab43edec2a9ae122e5272e8c"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 2.398140589569161,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaBasicAttack_OnMissileLaunch {r3} {d}.txtp",
+          "txtp_sha256": "e6b8a4af4b0eb320a2c4df190cac35e936d3e2413f49f375027b99a24ffc2519",
+          "event_ids": [
+            46264810
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonaw_oncast_r1.wav",
+      "sha256": "abcaae4dc5e72efcc4a005721145fd4543f8e89fdcd28147ee1b3a06a65bf2df",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaW_OnCast {r1}.wav",
+          "sha256": "abcaae4dc5e72efcc4a005721145fd4543f8e89fdcd28147ee1b3a06a65bf2df"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 4.85687074829932,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaW_OnCast {r1}.txtp",
+          "txtp_sha256": "3ffaed48d17b17503e2cb2356ff28d126de1e5ea6d7f945cc2ea109ee040c9ac",
+          "event_ids": [
+            2677506363
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonaw_oncast_r2.wav",
+      "sha256": "81e52bd70a0e111f6fb820865e189e989f444a137dd90c0689503e812146c7a3",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaW_OnCast {r2}.wav",
+          "sha256": "81e52bd70a0e111f6fb820865e189e989f444a137dd90c0689503e812146c7a3"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 4.85687074829932,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaW_OnCast {r2}.txtp",
+          "txtp_sha256": "423f68b707e199c8138aed3d874d7c80a1ff8aa1fae60c53d80fdfe0922073e4",
+          "event_ids": [
+            2677506363
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonaw_oncast_r3.wav",
+      "sha256": "c3a4f6c4780bf2d20d491146e9af748323523b8d29a7df9fe67e4ff3fe5f9ed5",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaW_OnCast {r3}.wav",
+          "sha256": "c3a4f6c4780bf2d20d491146e9af748323523b8d29a7df9fe67e4ff3fe5f9ed5"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 4.857142857142857,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaW_OnCast {r3}.txtp",
+          "txtp_sha256": "419b72ed3479c7b63211b9939f4372d77186d8486a938601aee5ab4bd28515bb",
+          "event_ids": [
+            2677506363
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonaambientwsound_onbuffactivate.wav",
+      "sha256": "063a55a323f948e4ddf7eb555d92bdab25a4215c86a2208c9cf1e14af8b3e7de",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaAmbientWSound_OnBuffActivate.wav",
+          "sha256": "063a55a323f948e4ddf7eb555d92bdab25a4215c86a2208c9cf1e14af8b3e7de"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 83.04761904761905,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaAmbientWSound_OnBuffActivate.txtp",
+          "txtp_sha256": "8d312172c938e35fc7a625684bf8e9adfb9ec07d31ac84a2a6c40fa4f399c608",
+          "event_ids": [
+            1568347451
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonar_oncast.wav",
+      "sha256": "17276c7056f3ef1a052e76b36649bb9545248b36e8ef2f703a1f0053cfed3e1d",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaR_OnCast.wav",
+          "sha256": "17276c7056f3ef1a052e76b36649bb9545248b36e8ef2f703a1f0053cfed3e1d"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 2
+      },
+      "verified_by_listening": false,
+      "duration": 3.142857142857143,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaR_OnCast.txtp",
+          "txtp_sha256": "7e5fde4e18a08f2daf4c98cf092288cddaeb9f01ddd874b528791bca6d675e76",
+          "event_ids": [
+            813295724
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonar_onmissilelaunch.wav",
+      "sha256": "1d5bdd8e16b6cbe151adaf8df8e6c9a39b29641d0f52e4618d2975a0c1117473",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaR_OnMissileLaunch.wav",
+          "sha256": "1d5bdd8e16b6cbe151adaf8df8e6c9a39b29641d0f52e4618d2975a0c1117473"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 3.5714285714285716,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaR_OnMissileLaunch.txtp",
+          "txtp_sha256": "af533f83d4aabd3a9b9f0d076d2148a4c80228805b2fb8f52a2a48f0163e186c",
+          "event_ids": [
+            432013306
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonar_onhit_r1.wav",
+      "sha256": "2fb168482e946ee8d918bbba82c082e6e35707ef00540448fae38bb64fcbb47e",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaR_OnHit {r1}.wav",
+          "sha256": "2fb168482e946ee8d918bbba82c082e6e35707ef00540448fae38bb64fcbb47e"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 2.761904761904762,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaR_OnHit {r1}.txtp",
+          "txtp_sha256": "b163a50e8ffddc813af246785cc7e16112a0029c6b079acf16c54fa7abd11c05",
+          "event_ids": [
+            436801028
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonar_onhit_r2.wav",
+      "sha256": "9fd2c4e00afee0b06482dc689f1947014b1f025edfc017992df591e7e4a9ab74",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaR_OnHit {r2}.wav",
+          "sha256": "9fd2c4e00afee0b06482dc689f1947014b1f025edfc017992df591e7e4a9ab74"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 3.142857142857143,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaR_OnHit {r2}.txtp",
+          "txtp_sha256": "936ad7dea9bd8cef16aced6ac72ddc58bd14a9ed1aa61a6387d143895bf293aa",
+          "event_ids": [
+            436801028
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/play_sfx_sona_sonar_onhit_r3.wav",
+      "sha256": "5a9950541f15aa23d03767310d4736d4bffb321e3319464ddf3f291481e70ac7",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/event_wav/Play_sfx_Sona_SonaR_OnHit {r3}.wav",
+          "sha256": "5a9950541f15aa23d03767310d4736d4bffb321e3319464ddf3f291481e70ac7"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "duration": 2.5714285714285716,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/audio/sona/txtp/Play_sfx_Sona_SonaR_OnHit {r3}.txtp",
+          "txtp_sha256": "1a4ad657673357eeb15a88851cdcaa815576ceb3d8d9b8491740d523d9b05c47",
+          "event_ids": [
+            436801028
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/sona/deploy_voice.ogg",
+      "sha256": "1786b9e7de7b898e1f4180b7806fbfedc5f630ed435d5728ac3dec236bd1742f",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/琴瑟仙女/源件/deploy/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/37.ogg",
+          "sha256": "1786b9e7de7b898e1f4180b7806fbfedc5f630ed435d5728ac3dec236bd1742f"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": -12.5,
+        "normalization": false
+      },
+      "verified_by_listening": false
     }
   ]
 }
