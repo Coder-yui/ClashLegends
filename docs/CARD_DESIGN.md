@@ -426,3 +426,7 @@ nova可配置`attack_slow_multiplier`，要求正数slow_duration及[0.1,1)倍�
 `returning_attack_distance`为正数，仅单枚离散远程普攻使用。去程锁定出手方向，回程追随来源当前位置，每程独立去重；不追踪敌人，来源控制/死亡不取消已建立结果。Unit在收到回收结果之前禁止新普攻，清场统一解除。原弹体位置、方向、来源描述已可供双方表现使用，不新增协议字段。
 
 `effect_shield.block_heal`为正治疗量，成功消费效果盾时走通用治疗收益阶段，同一次Delivery只消费/治疗一次，死亡不因奖励复活。到期与友方效果不奖励，梦魇原有攻速奖励保持。见[战争女神](units/sivir.md)。
+
+### 近战攻击循环附带眩晕
+
+`attack_stun_durations`与`attack_pattern`、基础攻击动作列表等长，每段时长有限且非负；目前只允许离散近战。出手按权威攻击段固化效果，真实命中存活单位后经CombatResolver施加通用眩晕。致盲无命中效果，取消前摇不推进段数；不会依赖动画事件。小菊配置三段0、0、1秒，第三段伤害倍率由已有`attack_damage_multipliers`定义。

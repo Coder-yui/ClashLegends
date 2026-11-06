@@ -873,5 +873,12 @@
     "method": "run",
     "scene": "none",
     "group": "cards"
+  },
+  {
+    "id": "IvernSuite",
+    "script": "res://tests/suites/cards/ivern_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "cards"
   }
 ]

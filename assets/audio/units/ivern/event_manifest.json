@@ -1,0 +1,248 @@
+[
+  {
+    "file": "play_sfx_ivern_ivernbasicattackranged_cast_r1.wav",
+    "event": "Play_sfx_Ivern_IvernBasicAttackRanged_cast",
+    "event_id": 2502411040,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernBasicAttackRanged_cast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernBasicAttackRanged_cast {r1}.txtp",
+    "media_ids": [
+      186202350,
+      256107954,
+      324984679,
+      379156785,
+      686007052
+    ],
+    "duration": 2.3617,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "39512783036e96fb4349eec1d2be3d86e272f7f945789ea7188fd6d6460ff200",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_ivernbasicattackranged_cast_r2.wav",
+    "event": "Play_sfx_Ivern_IvernBasicAttackRanged_cast",
+    "event_id": 2502411040,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernBasicAttackRanged_cast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernBasicAttackRanged_cast {r2}.txtp",
+    "media_ids": [
+      186202350,
+      256107954,
+      324984679,
+      379156785,
+      686007052
+    ],
+    "duration": 2.2591,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "399e63b4333b7b11bdea11fa05f377eeb5c9a4166e1239b070ceed317dad7fed",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_ivernbasicattackranged_cast_r3.wav",
+    "event": "Play_sfx_Ivern_IvernBasicAttackRanged_cast",
+    "event_id": 2502411040,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernBasicAttackRanged_cast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernBasicAttackRanged_cast {r3}.txtp",
+    "media_ids": [
+      186202350,
+      256107954,
+      324984679,
+      379156785,
+      686007052
+    ],
+    "duration": 1.9809,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4b86fc342fb3e0f7158c08834fb99ef0206c1e19b776aa2e35dbea50933cd2cf",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_ivernbasicattackranged_hit_1559186049_1153642577_r1.wav",
+    "event": "Play_sfx_Ivern_IvernBasicAttackRanged_hit",
+    "event_id": 1377358880,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernBasicAttackRanged_hit [1559186049=1153642577] {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernBasicAttackRanged_hit [1559186049=1153642577] {r1}.txtp",
+    "media_ids": [
+      128515551,
+      362023668,
+      391169908,
+      405960173,
+      857286085
+    ],
+    "duration": 1.2182,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "fffef0d6fbf7187d3a74b257b83164b63a501e8f1e9484d81fe7a4129dee54c9",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_ivernbasicattackranged_hit_1559186049_1153642577_r2.wav",
+    "event": "Play_sfx_Ivern_IvernBasicAttackRanged_hit",
+    "event_id": 1377358880,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernBasicAttackRanged_hit [1559186049=1153642577] {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernBasicAttackRanged_hit [1559186049=1153642577] {r2}.txtp",
+    "media_ids": [
+      128515551,
+      362023668,
+      391169908,
+      405960173,
+      857286085
+    ],
+    "duration": 1.0316,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3384bd188212b78efa3083469eb87483b1ff900b5c0e808978c732ffc09aafc6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_ivernbasicattackranged_hit_1559186049_1153642577_r3.wav",
+    "event": "Play_sfx_Ivern_IvernBasicAttackRanged_hit",
+    "event_id": 1377358880,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernBasicAttackRanged_hit [1559186049=1153642577] {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernBasicAttackRanged_hit [1559186049=1153642577] {r3}.txtp",
+    "media_ids": [
+      128515551,
+      362023668,
+      391169908,
+      405960173,
+      857286085
+    ],
+    "duration": 1.1533,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d563f949aaddfd525301d9712827bc5cc1a98790fd861c24c2c84a2d095bdf5f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_respawn3d_buffactivate.wav",
+    "event": "Play_sfx_Ivern_Respawn3D_buffactivate",
+    "event_id": 3359316807,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_Respawn3D_buffactivate.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_Respawn3D_buffactivate.txtp",
+    "media_ids": [
+      640087677
+    ],
+    "duration": 2.2039,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1a98594e4f5e940bbab626007bd15b95a8eef3b30cf6946089d260773d29b5aa",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_death3d_buffactivate.wav",
+    "event": "Play_sfx_Ivern_Death3D_buffactivate",
+    "event_id": 456415233,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_Death3D_buffactivate.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_Death3D_buffactivate.txtp",
+    "media_ids": [
+      201314696
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "58b05758ac41b6cd8c3b351deea57192201151674894c9581ffcdf7b056416da",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.9988208616780043,
+      "source_sha256": "4fd937a517729f98a19f62428416fd300518b7b4901a6458f6cf59ce458a415b",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_ivern_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Ivern_Death3D",
+    "event_id": 703288594,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern_vo/event_wav/Play_vo_Ivern_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern_vo/txtp/Play_vo_Ivern_Death3D {r1}.txtp",
+    "media_ids": [
+      336414075,
+      724914802,
+      1268223694,
+      1692481640,
+      1985281749,
+      2120977394
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "7e30689e2010db62c2dc3d3337ea192f46aa3b8faf106a469f55cd1c4f0625f7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.517120181405896,
+      "source_sha256": "e1458331ca2493951b9e45793bd8a02e49237fdae97b701f6a5fb407c1042ca4",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_ivern_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Ivern_Death3D",
+    "event_id": 703288594,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern_vo/event_wav/Play_vo_Ivern_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern_vo/txtp/Play_vo_Ivern_Death3D {r2}.txtp",
+    "media_ids": [
+      336414075,
+      724914802,
+      1268223694,
+      1692481640,
+      1985281749,
+      2120977394
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "b8f45452ca60108addd89cceef971a3782b261f71385a36530487a2108b5556d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.0870521541950113,
+      "source_sha256": "21f01c631f011e909a71084f59c54d050e1f76333c2e99be803f7d7d9cb77bab",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_ivern_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Ivern_Death3D",
+    "event_id": 703288594,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern_vo/event_wav/Play_vo_Ivern_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern_vo/txtp/Play_vo_Ivern_Death3D {r3}.txtp",
+    "media_ids": [
+      336414075,
+      724914802,
+      1268223694,
+      1692481640,
+      1985281749,
+      2120977394
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "c412a52168925d44192536521367c7b035d67d2c1b2200b85e48b6d05a7a0aeb",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.1356689342403627,
+      "source_sha256": "3481b784ae17171bdb73dd5eff5c521f6781da26cb12beee1d083006d75eb50c",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_ivern_ivernr_oncast.wav",
+    "event": "Play_sfx_Ivern_IvernR_OnCast",
+    "event_id": 3207461184,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernR_OnCast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernR_OnCast.txtp",
+    "media_ids": [
+      45025853
+    ],
+    "duration": 1.5478,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "32cea9f325fb418fde89435d1f40c03878304a6a93c46ef747df35b8ff7e8e9f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "deploy.ogg",
+    "event": "champion-choose-vo/427",
+    "source_file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/deploy-voice/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/427.ogg",
+    "sha256": "ca2688241519f477e342ea25eab6367342efe85eb87ce5f4ca058795a971e51e",
+    "processing": "original OGG, no re-encoding"
+  }
+]

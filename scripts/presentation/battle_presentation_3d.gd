@@ -14,6 +14,7 @@ var projectiles: Node2D
 var _blitzcrank_projectiles: Node3D
 var _thorn_projectiles: Node3D
 var _box_projectiles: Node3D
+var _ivern_projectiles: Node3D
 var _sona_projectiles: Node3D
 var _ziggs_projectiles: Node3D
 var _graves_projectiles: Node3D
@@ -86,6 +87,8 @@ func _process(delta: float) -> void:
 		_ziggs_projectiles.set_sources(projectiles, _camera)
 	if _graves_projectiles != null:
 		_graves_projectiles.set_sources(projectiles, _camera)
+	if _ivern_projectiles != null:
+		_ivern_projectiles.set_sources(projectiles, _camera)
 	if _sona_projectiles != null:
 		_sona_projectiles.set_sources(projectiles, _camera)
 	if _box_projectiles != null:
@@ -219,6 +222,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 
 	_blitzcrank_projectiles = preload("res://scripts/presentation/blitzcrank_projectile_3d.gd").new()
 	_world_root.add_child(_blitzcrank_projectiles)
+	_ivern_projectiles = preload("res://scripts/presentation/ivern_projectile_3d.gd").new()
+	_world_root.add_child(_ivern_projectiles)
 	_sona_projectiles = preload("res://scripts/presentation/sona_projectile_3d.gd").new()
 	_world_root.add_child(_sona_projectiles)
 	_thorn_projectiles = preload("res://scripts/presentation/thorn_spitter_projectile_3d.gd").new()

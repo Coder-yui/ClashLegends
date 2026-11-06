@@ -1063,5 +1063,14 @@
     "source_path": "assets/characters/sona/hud/icons2d/sona_r.dds",
     "source_sha256": "cdd4ed2dfd3439b4f1a54e862d10923e6cfb2eb03165c51d81ae0ae7f61e2c75",
     "sha256": "4ce299705ba8971a9e74b8ce2f7161c9814574968bb9ee11cff1856053097864"
+  },
+  {
+    "card": "ivern",
+    "skill_index": 0,
+    "path": "res://assets/skills/ivern_r.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Ivern.wad.client",
+    "source_path": "assets/characters/ivern/hud/icons2d/ivernr.dds",
+    "source_sha256": "b87a1118c76a1da51d9cd2eef1f36df434628eb3b7154b8002c9adf0c82db7ef",
+    "sha256": "9bd5e63ad0751bd8c8634d7ca93502d67d832c13ee386b654b48a8e61458e78e"
   }
 ]

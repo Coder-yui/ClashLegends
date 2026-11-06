@@ -215,7 +215,7 @@ func _check_authority_ignores_presentation() -> void:
 	# 防御塔与建筑卡走不同实体路径；两者都覆盖。
 	for team in 2:
 		_expect(_attack_trace("tower", CardDB.PRINCESS_TOWER_STATS, team, true, false) == _attack_trace("tower", CardDB.PRINCESS_TOWER_STATS, team, true, true), "防御塔阵营%d：纯表现偏移不改命中 Tick" % team)
-	for card_id in ["ashe", "twisted_fate", "apex_turret"]:
+	for card_id in ["ashe", "twisted_fate", "apex_turret", "sona"]:
 		for team in 2:
 			_expect(_fan_trace(card_id, team, false) == _fan_trace(card_id, team, true), "%s 阵营%d：扇形/穿透技能仅换外观不改逐 Tick 命中、生命和控制" % [card_id, team])
 
@@ -255,11 +255,11 @@ func _attack_trace(card_id: String, configured: Dictionary, team: int, lethal: b
 	_main.launch_attack(attacker, target, 50.0, attacker.projectile_speed, 0.0, 0.0, Color.WHITE)
 	var shot: Dictionary = _main._projectile_system.projectiles.values()[0]
 	# 独立几何基线：旧卡保持迁移前规则；远程天使、璐璐、图奇、麦林炮手与库奇采用身体边缘+7.5。
-	var legacy_edge := card_id in ["ashe", "teemo", "gnar", "anivia", "kayle_ranged", "lulu", "twitch", "tristana", "corki", "jinx"]
+	var legacy_edge := card_id in ["ashe", "teemo", "gnar", "anivia", "kayle_ranged", "lulu", "twitch", "tristana", "corki", "jinx", "sona"]
 	var expected_start := attacker.position + Vector2(attacker.body_radius + 7.5, 0) if legacy_edge else attacker.position
 	if card_id == "jayce": expected_start = attacker.position + Vector2(attacker.body_radius, 0)
 	var pellet_attack := int(stats.get("attack_pellets", 0)) > 0
-	var expected_radius := 7.0 if card_id == "tower" else (3.0 if card_id in ["ashe", "evolution_turret", "thorn_spitter"] else 4.0)
+	var expected_radius := 7.0 if card_id == "tower" else (3.0 if card_id in ["ashe", "evolution_turret", "thorn_spitter", "ivern"] else 4.0)
 	if pellet_attack: expected_radius = float(stats.projectile_collision_radius)
 	if float(stats.get("returning_attack_distance", 0.0)) > 0.0: expected_radius = float(stats.projectile_collision_radius)
 	if not change_visual:
@@ -296,6 +296,7 @@ func _fan_trace(card_id: String, team: int, change_visual: bool) -> Array:
 	_main.add_child(source)
 	var skill: Dictionary = stats.active_skills[0].duplicate(true)
 	if change_visual:
+		skill["projectile_model_launch"] = false
 		skill["projectile_visual"] = "orb"
 		skill["projectile_visual_width"] = 90.0
 		skill["projectile_visual_height"] = 150.0

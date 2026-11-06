@@ -39,6 +39,14 @@ func play_hit(source: Dictionary, position: Vector2, world: Node3D = null, camer
 			_place_hit(hit, camera, view.end)
 			_hits.append({"player": hit, "camera": camera, "age": 0.0, "duration": 2.0, "motion": true, "view": view})
 		return
+	if String(stats.get("attack_hit_visual", "")) == "daisy_slam":
+		if int(source.get("serial", 0)) % 3 == 0 and is_instance_valid(world) and is_instance_valid(camera):
+			var hit = load("res://assets/effects/ivern/player.gd").new()
+			world.add_child(hit)
+			hit.load_kind("slam")
+			hit.setup_native(0.012)
+			_hits.append({"player": hit, "camera": camera, "age": 0.0, "duration": 1.2, "fixed": true, "ground_height": 0.0, "view": {"end": position}})
+		return
 	if String(stats.get("attack_hit_visual", "")) == "blitzcrank_e":
 		if bool(source.get("empowered", false)) and is_instance_valid(world) and is_instance_valid(camera):
 			var hit = load("res://assets/effects/blitzcrank/player.gd").new()

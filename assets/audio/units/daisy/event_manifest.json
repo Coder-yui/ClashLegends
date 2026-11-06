@@ -1,0 +1,169 @@
+[
+  {
+    "file": "play_sfx_ivern_ivernr_daisy_attack_into_r1.wav",
+    "event": "Play_sfx_Ivern_IvernR_Daisy_attack_into",
+    "event_id": 3392794628,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernR_Daisy_attack_into {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernR_Daisy_attack_into {r1}.txtp",
+    "media_ids": [
+      148631867,
+      697732679,
+      801181058,
+      868139610
+    ],
+    "duration": 0.4142,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a9673447604f4332106f47cee9fd07df9bae454615ba078bea41f678e48cf73f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_ivernr_daisy_attack_into_r2.wav",
+    "event": "Play_sfx_Ivern_IvernR_Daisy_attack_into",
+    "event_id": 3392794628,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernR_Daisy_attack_into {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernR_Daisy_attack_into {r2}.txtp",
+    "media_ids": [
+      148631867,
+      697732679,
+      801181058,
+      868139610
+    ],
+    "duration": 0.3428,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f25e94ef7a001478adbba5d92664076cc05bd2ce4b9f3e7fb62cdba442262719",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_ivernr_daisy_attack_into_r3.wav",
+    "event": "Play_sfx_Ivern_IvernR_Daisy_attack_into",
+    "event_id": 3392794628,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernR_Daisy_attack_into {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernR_Daisy_attack_into {r3}.txtp",
+    "media_ids": [
+      148631867,
+      697732679,
+      801181058,
+      868139610
+    ],
+    "duration": 0.2971,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f70928996215fe2db21b589ab2fc4cef820ecd236866e1ffd5b65ebb8b0fd1c7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_ivernr_daisy_slam_into.wav",
+    "event": "Play_sfx_Ivern_IvernR_Daisy_slam_into",
+    "event_id": 1793038665,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernR_Daisy_slam_into.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernR_Daisy_slam_into.txtp",
+    "media_ids": [
+      57200
+    ],
+    "duration": 0.482,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7539dea7e8f143d25b1d632cd087a7511feab5495dd38c01992abad90bafc692",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_ivernr_daisy_hit_r1.wav",
+    "event": "Play_sfx_Ivern_IvernR_Daisy_hit",
+    "event_id": 3150817522,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernR_Daisy_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernR_Daisy_hit {r1}.txtp",
+    "media_ids": [
+      194552333,
+      379484226,
+      800620196,
+      906746251
+    ],
+    "duration": 1.0068,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3b2d76fdb51b606107515a481af14ae75aa8fce6da823b867cc187d9ab2ec9e5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_ivernr_daisy_hit_r2.wav",
+    "event": "Play_sfx_Ivern_IvernR_Daisy_hit",
+    "event_id": 3150817522,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernR_Daisy_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernR_Daisy_hit {r2}.txtp",
+    "media_ids": [
+      194552333,
+      379484226,
+      800620196,
+      906746251
+    ],
+    "duration": 1.0621,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "345ad4df9daf3c91901f6e32e6ceaac402c76fd0c4b9b85525a6baea18d18ab3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_ivernr_daisy_hit_r3.wav",
+    "event": "Play_sfx_Ivern_IvernR_Daisy_hit",
+    "event_id": 3150817522,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernR_Daisy_hit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernR_Daisy_hit {r3}.txtp",
+    "media_ids": [
+      194552333,
+      379484226,
+      800620196,
+      906746251
+    ],
+    "duration": 1.0673,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4d1ae3916a8fdb9e091aba5a20588913d1e628c0512bbda5634e6e18c9d069f1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_ivernr_daisy_slam_hit_r.wav",
+    "event": "Play_sfx_Ivern_IvernR_Daisy_slam_hit",
+    "event_id": 842656198,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernR_Daisy_slam_hit {r}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernR_Daisy_slam_hit {r}.txtp",
+    "media_ids": [
+      303256226,
+      357375891,
+      816123811,
+      858058890
+    ],
+    "duration": 2.5105,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "016d6897150326027982d53072f071f3881efdb045ab95fd6c05e349d41a40f7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ivern_ivernr_daisyspawn_cast_r.wav",
+    "event": "Play_sfx_Ivern_IvernR_DaisySpawn_cast",
+    "event_id": 427489169,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/event_wav/Play_sfx_Ivern_IvernR_DaisySpawn_cast {r}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/audio-source/ivern/txtp/Play_sfx_Ivern_IvernR_DaisySpawn_cast {r}.txtp",
+    "media_ids": [
+      24928396,
+      205377649,
+      479666817,
+      1067915149
+    ],
+    "duration": 3.5421,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f8f683b685e3faaab3a8a94f2ba4a7e0dd7fd0f445608f8dac1d016777c464c1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "death.wav",
+    "event": "Play_sfx_SRU_Blue_death_cast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/blue-audio/txtp/Play_sfx_SRU_Blue_death_cast.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/翠神/blue-audio/death.wav",
+    "processing": "source event gain retained; original Daisy Death_Sound mapping; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "b736e0f60271d9d07e121b2e9da635cade2cd5f9e3361ddd5d2a30c3022317d8",
+    "duration": 1.5,
+    "death_envelope": {
+      "source_duration": 8.575691609977325,
+      "source_sha256": "4c8a9590631b21b7382a60cce79e29c9682af9b631ff4715f0ef74eaf48f1f30",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  }
+]
