@@ -14,7 +14,7 @@ static func definition() -> Dictionary:
 			"projectile_spawn_at_edge": false, "projectile_spawn_offset": 0.0, "projectile_collision_radius": 4.0,
 			# deploy_time 是单位出现后的部署锁定；pre_deploy_time 是出现前只显示卡牌落点提示的阶段。
 			"deploy_time": 0.45, "pre_deploy_time": 1.3, "deploy_zone": "global",
-			# 第五次普攻使用 Spell3 动作，并在同一个弹体附带 50% 额外伤害。
+			# 第五次普攻使用原版 Crit 投牌动作，并在同一个弹体附带 50% 额外伤害。
 			"attack_damage_multipliers": [1.0, 1.0, 1.0, 1.0, 1.5],
 			"is_air": false, "building_only": false, "can_attack_air": true,
 			"active_skills": [{
@@ -31,17 +31,23 @@ static func definition() -> Dictionary:
 		"visual": { "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/twisted_fate/twisted_fate_view.tscn",
 			"visual_forward_yaw": 0.0,
+			"resource_dependencies": {"effects": [
+				{"provider": "res://scripts/presentation/twisted_fate_card_model.gd", "variant": "basic"},
+				{"provider": "res://scripts/presentation/twisted_fate_card_model.gd", "variant": "wild_blue"},
+				{"provider": "res://scripts/presentation/twisted_fate_card_model.gd", "variant": "wild_red"},
+				{"provider": "res://scripts/presentation/twisted_fate_card_model.gd", "variant": "wild_yellow"},
+			]},
 			"visual_animations": {
 				"deploy": "twistedfate_2012_idle_enter_anm", "idle": "twistedfate_2012_idle1_anm",
 				"move": "Run1",
-				"attack": ["Attack1", "Attack2", "Attack3", "Attack4", "Spell3"],
+				"attack": ["Attack1", "Attack2", "Attack3", "Attack4", "Crit"],
 				"visual_actions": {
 					"wild_cards": {"animation": "Spell1", "durations": [0.9677415], "kind": "skill", "blend_in": 0.06, "blend_out": 0.10},
 				},
 				"death": "Death", "death_duration": 0.8,
-			}, "projectile_visual": "orb", "projectile_visual_height": 60.0,
+			}, "projectile_visual": "twisted_fate_card", "projectile_visual_height": 60.0,
 			"color": Color(0.34, 0.56, 0.92),
-			"active_skills": [{ "icon_path": "res://assets/skills/twisted_fate_0.png", "projectile_visual": "card", "visual_action": "wild_cards", "projectile_visual_height": 60.0, "projectile_visual_forward_offset": 20.0,
+			"active_skills": [{ "icon_path": "res://assets/skills/twisted_fate_0.png", "projectile_visual": "twisted_fate_wild", "projectile_model_launch": true, "visual_action": "wild_cards", "projectile_visual_height": 60.0, "projectile_visual_forward_offset": 20.0,
 					"projectile_colors": [Color(1.0, 0.78, 0.12), Color(1.0, 0.16, 0.2), Color(0.15, 0.48, 1.0)],
 				}],
 		},

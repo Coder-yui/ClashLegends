@@ -4,7 +4,7 @@
 
 ## 目前怎样呈现
 
-先显示 1.3 秒传送准备，再播放 0.45 秒入场动作。前四次普通投牌之后，第五次使用 Spell3 表现强化攻击。万能牌使用 Spell1，约 0.97 秒完成。
+先显示 1.3 秒传送准备，再播放 0.45 秒入场动作。前四次普通投牌之后，第五次使用 Crit 表现强化攻击。万能牌使用 Spell1，约 0.97 秒完成。
 
 ## 已使用的动作
 
@@ -15,7 +15,7 @@
 | 部署 | twistedfate_2012_idle_enter_anm | 按游戏中的对应状态播放 |
 | 待机 | twistedfate_2012_idle1_anm | 状态持续时循环 |
 | 持续移动 | Run1 | 状态持续时循环 |
-| 普通攻击 | Attack1 → Attack2 → Attack3 → Attack4 → Spell3 | 按攻击顺序播放，跟随实际攻击速度 |
+| 普通攻击 | Attack1 → Attack2 → Attack3 → Attack4 → Crit | 按攻击顺序播放，跟随实际攻击速度 |
 | 死亡 | Death | 播放 0.8 秒 |
 
 ## 技能与变形动作
@@ -30,7 +30,7 @@
 
 ## 普攻发射位置
 
-原版 Attack1–4 分别从 `L_hand`、`L_hand`、`R_hand`、`L_hand` 发射；项目第五套 `Spell3` 没有可确认的普攻源映射，继续使用身体锚点回退。
+原版 Attack1–4 分别从 `L_hand`、`L_hand`、`R_hand`、`L_hand` 发射。第五击使用原版 `TwistedFateCritAttack` 的 `Crit` 动作及 `R_hand`；此前的 `Spell3` 实际属于 Gate 传送，不再用于普攻。第五击 150% 伤害仍为项目规则。万能牌由 `SealFateMissile` 的 `r_hand` 发出，不沿用上一套普攻的左手。
 
 ## 怎么观看与检查
 

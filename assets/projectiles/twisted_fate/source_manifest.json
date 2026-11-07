@@ -1,0 +1,35 @@
+{
+  "source_package": "TwistedFate.wad.client",
+  "scope": "Only original card geometry and atlas frames; native mesh aspect ratio, no particle stretch, trails, glow, sparks or distortion",
+  "source_layers": {
+    "basic": {
+      "system": "Characters/TwistedFate/Skins/Skin0/Particles/TwistedFate_Base_BA_Mis",
+      "layer": "TF_Card",
+      "raw_sha256": "43c2771aeedf09ae783a2c3b95448955f57a3c81cdc73436ddcc45e0569febfc"
+    },
+    "wild_blue": {
+      "system": "Characters/TwistedFate/Skins/Skin0/Particles/TwistedFate_Base_Q_Child_Blue",
+      "layer": "Card_Missile",
+      "raw_sha256": "3625c9184ecf34aefa60d650d99366b719609421aa685a93258085236eb9ba94"
+    },
+    "wild_red": {
+      "system": "Characters/TwistedFate/Skins/Skin0/Particles/TwistedFate_Base_Q_Child_Red",
+      "layer": "Card_Missile",
+      "raw_sha256": "69575a0594c33e99b514bdad93eb87184b33a0facb2e568b8fe371932e998f8b"
+    },
+    "wild_yellow": {
+      "system": "Characters/TwistedFate/Skins/Skin0/Particles/TwistedFate_Base_Q_Child_Yellow",
+      "layer": "Card_Missile",
+      "raw_sha256": "7c8ecb567c78b14c3c9f7dbaed8c7c803df14c277e36f93d2daec7a5f91cfe1e"
+    }
+  },
+  "outputs": {
+    "wild_blue.json": "3b219e34615c67692d4ffc51ab3778b6d4ddb04e3095dabdc0ef85796a8bf35b",
+    "cards.png": "f3f1b99bdad966ba54a76db307f29ec3b203cf4f58f203052e8b09a3d8709213",
+    "wild_yellow.json": "a74f6ef4a64cf2b7f50ddf5f9af78813f64c20d8782895fb75818043d3b6c4d4",
+    "wild_red.json": "48c90f267acac0e5d710bbb50ab37b74fbdca5dbb3a5d449f56381d61eec8a01",
+    "card_back.png": "46281ab00f39b35940cdcafb63ea8b97ed2856977516ec22b21e9a85d9fbf72d",
+    "card_mesh.json": "ee47e540d0a1c7aef1ddd64208f1d57418f70d465716681eb7b89306e7410273",
+    "basic.json": "a7e2a83fcef288dc3c36f8df7eb9521f4c7474c102ec88fc3e809e735263fb12"
+  }
+}

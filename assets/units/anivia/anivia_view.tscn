@@ -6,7 +6,7 @@
 
 [node name="AniviaView" type="Node3D"]
 script = ExtResource("attack_muzzle")
-attack_launch_bones = PackedStringArray("", "Head")
+attack_launch_bones = PackedStringArray("Head", "Head")
 
 [node name="Model" parent="." instance=ExtResource("1_anivia")]
 scale = Vector3(0.013662, 0.013662, 0.013662)

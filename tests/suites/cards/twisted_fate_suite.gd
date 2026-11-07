@@ -6,6 +6,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	_check_card_config()
+	_check_native_projectiles()
 	_check_global_ground_deployment()
 	_check_two_stage_deployment()
 	_check_wild_cards_visual()
@@ -33,17 +34,17 @@ func _check_card_config() -> void:
 		"卡牌大师是远程对陆对空单位，deploy_zone=global 且受占位（含河道）限制，启用 1.3 秒预部署和 0.45 秒实际部署",
 	)
 	_expect(
-		attack_animations == ["Attack1", "Attack2", "Attack3", "Attack4", "Spell3"]
+		attack_animations == ["Attack1", "Attack2", "Attack3", "Attack4", "Crit"]
 		and stats.get("attack_damage_multipliers", []) == [1.0, 1.0, 1.0, 1.0, 1.5]
 		and stats.get("attack_extra_hit_damage_multipliers", []).is_empty(),
-		"卡牌大师普攻按 Attack1/2/3/4/Spell3 循环，第五击追加额外伤害",
+		"卡牌大师普攻按 Attack1/2/3/4/Crit 循环，第五击追加额外伤害",
 	)
 	_expect(
 		String(skill.get("name", "")) == "万能牌"
 		and String(skill.get("kind", "")) == "frontal"
 		and String(skill.get("shape", "")) == "fan"
 		and int(skill.get("projectile_count", 0)) == 3
-		and String(skill.get("projectile_visual", "")) == "card"
+		and String(skill.get("projectile_visual", "")) == "twisted_fate_wild"
 		and is_equal_approx(float(skill.get("projectile_launch_delay", -1.0)), 0.25)
 		and is_equal_approx(float(skill.get("projectile_flight_duration", -1.0)), 0.75)
 		and is_equal_approx(float(skill.get("impact_delay", -1.0)), 0.25)
@@ -151,7 +152,7 @@ func _check_wild_cards_visual() -> void:
 	_expect(
 		String(effect.get("shape", "")) == "fan_shared"
 		and int(effect.get("projectile_count", 0)) == 3
-		and String(effect.get("projectile_visual", "")) == "card",
+		and String(effect.get("projectile_visual", "")) == "twisted_fate_wild",
 		"万能牌使用完整扇形提示，并保留弹体参数供表现同步",
 	)
 	_main._projectile_system.clear_all()
@@ -282,3 +283,52 @@ func _check_passive_single_projectile() -> void:
 	attacker.free()
 	target.free()
 	_main._projectile_system.clear_all()
+
+func _check_native_projectiles() -> void:
+	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/projectiles/twisted_fate/basic.json"))
+	_expect(data.emitters.size() == 1 and data.emitters[0].name == "TF_Card", "卡牌普攻只保留原版卡片，不包含光晕和拖尾")
+	var first: Array = data.frames[1][0][0]
+	_expect(is_equal_approx(first[4], first[5]) and is_equal_approx(first[4], first[6]), "卡片本体保留原网格比例，不套用粒子拉伸")
+	for kind in ["wild_blue", "wild_red", "wild_yellow"]:
+		var wild: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/projectiles/twisted_fate/" + kind + ".json"))
+		_expect(wild.emitters.size() == 1 and wild.emitters[0].name == "Card_Missile", "万能牌仅保留原版卡片层")
+		var before: Array = wild.frames[6][0][0]
+		var after: Array = wild.frames[12][0][0]
+		var rotation_delta := wrapf(atan2(after[15], after[12]) - atan2(before[15], before[12]), -PI, PI)
+		_expect(is_equal_approx(rotation_delta, deg_to_rad(-60.0)), "万能牌遵循源旋转速度1200度每秒及坐标镜像")
+	var renderer = _main._battle_presentation._twisted_fate_projectiles
+	renderer.set_sources(_main._projectile_system, _main._battle_presentation._camera)
+	for team in [0, 1]:
+		var source := Unit.new()
+		var stats: Dictionary = CardDB.get_card("twisted_fate").duplicate(true)
+		stats.deploy_time = 0.0
+		source.setup(team, stats, stats.name)
+		source.position = Vector2(300, 800)
+		_main.add_child(source)
+		_main._battle_presentation.attach_unit(source, stats)
+		var view: UnitModel3D
+		for node in _main._battle_presentation._world_root.get_children():
+			if node is UnitModel3D and node._source == source: view = node; break
+		view._active_attack_index = 0
+		view._update_health_bar_anchor()
+		var target := Unit.new()
+		var target_stats := CardDB.get_card("target_dummy")
+		target.setup(1-team, target_stats, target_stats.name)
+		target.position = source.position + Vector2(0, -140 if team == 0 else 140)
+		_main.add_child(target)
+		_main._projectile_system.clear_all()
+		_main.launch_attack(source, target, 1.0, 520.0, 0.0, 0.0, Color.WHITE)
+		renderer.sync_effects()
+		var shot: Dictionary = renderer._missiles.values()[0]
+		_expect(shot.origin.is_equal_approx(view._attack_launch_anchors[0].global_position), "卡牌原版普攻从对应手部绘制，双方不读取身体锚点")
+		_main._projectile_system.clear_all()
+		_main._projectile_system.launch_skill_fan(source, stats.active_skills[0], Vector2.UP if team == 0 else Vector2.DOWN)
+		renderer.sync_effects()
+		_expect(renderer._missiles.size() == 3, "万能牌创建三枚原版卡片模型")
+		for missile in renderer._missiles.values():
+			_expect(missile.origin.is_equal_approx((view._attack_launch_anchors[2].get_parent() as Skeleton3D).global_transform * (view._attack_launch_anchors[2].get_parent() as Skeleton3D).get_bone_global_pose((view._attack_launch_anchors[2] as BoneAttachment3D).bone_idx).origin), "万能牌统一从右手发射，不沿用前次普攻左手")
+		_main._projectile_system.clear_all()
+		_expect(renderer._missiles.is_empty(), "清场释放原版卡牌弹体")
+		view.free()
+		source.free()
+		target.free()

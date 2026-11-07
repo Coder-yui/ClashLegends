@@ -6,7 +6,7 @@
 
 [node name="PixView" type="Node3D"]
 script = ExtResource("attack_muzzle")
-attack_launch_use_configured_offset = true
+attack_launch_bones = PackedStringArray("root", "root")
 
 [node name="Model" parent="." instance=ExtResource("1_pix")]
 position = Vector3(0, 0.802, 0)

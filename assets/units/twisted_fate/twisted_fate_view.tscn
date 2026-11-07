@@ -6,7 +6,7 @@
 
 [node name="TwistedFateView" type="Node3D"]
 script = ExtResource("attack_muzzle")
-attack_launch_bones = PackedStringArray("L_Hand", "L_Hand", "R_Hand", "L_Hand", "")
+attack_launch_bones = PackedStringArray("L_Hand", "L_Hand", "R_Hand", "L_Hand", "R_Hand")
 
 [node name="Model" parent="." instance=ExtResource("1_twisted_fate")]
 scale = Vector3(0.012, 0.012, 0.012)

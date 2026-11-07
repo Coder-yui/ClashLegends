@@ -1363,8 +1363,9 @@ func _check_native_attack_muzzles() -> void:
 		"ashe": ["R_hand", "R_hand"], "teemo": ["Blowgun1"],
 		"missfortune": ["R_WEAPON", "L_WEAPON"], "gnar": ["L_Buffbone_Glb_Hand_Loc", "R_Buffbone_Glb_Hand_Loc"],
 		"lulu": ["BUFFBONE_CSTM_WEAPON_1", "R_hand"], "corki": ["gun", "gun"],
-		"twisted_fate": ["L_Hand", "L_Hand", "R_Hand", "L_Hand", ""],
-		"anivia": ["", "Head"], "kayle_ranged": ["R_Hand", "R_Hand"],
+		"twisted_fate": ["L_Hand", "L_Hand", "R_Hand", "L_Hand", "R_Hand"],
+		"pix_single": ["root", "root"], "apex_turret": ["Buffbone_Glb_Weapon_1"],
+		"anivia": ["Head", "Head"], "kayle_ranged": ["R_Hand", "R_Hand"],
 	}
 	for id in cases:
 		for team in [0, 1]:
@@ -1395,7 +1396,7 @@ func _check_native_attack_muzzles() -> void:
 			if view != null: view.free()
 			unit.free()
 
-## 缺失原版骨骼时恢复既有项目配置，不能被通用胸部/包围盒锚点覆盖。
+## 源骨适配后，实际弹体读取发射点而非旧配置或身体锚点。
 func _check_configured_muzzle_fallback() -> void:
 	for id in ["pix_single", "apex_turret"]:
 		for team in [0, 1]:
@@ -1414,8 +1415,8 @@ func _check_configured_muzzle_fallback() -> void:
 			_main._projectile_system.clear_all()
 			_main.launch_attack(unit, target, 1.0, unit.projectile_speed, 0.0, 0.0, Color.WHITE)
 			var projectile: Dictionary = _main._projectile_system.projectiles.values()[0]
-			var configured := unit.position + unit.position.direction_to(target.position) * unit.projectile_visual_forward_offset + Vector2(0, -unit.projectile_visual_height)
-			_expect(unit.get_meta("projectile_launch_use_config", false) and _main._projectile_system._visual_position(projectile).is_equal_approx(configured), "%s team %d 缺骨时使用既有配置" % [id, team])
+			var configured := unit.position + (unit.get_meta("projectile_launch_offset", Vector2.ZERO) as Vector2)
+			_expect(not unit.get_meta("projectile_launch_use_config", false) and unit.has_meta("projectile_launch_offset") and _main._projectile_system._visual_position(projectile).is_equal_approx(configured), "%s team %d 源骨适配使用模型发射点" % [id, team])
 			_main._projectile_system.clear_all()
 			for candidate in _main._battle_presentation._world_root.get_children():
 				if candidate is UnitModel3D and candidate._source == unit: candidate.free(); break
