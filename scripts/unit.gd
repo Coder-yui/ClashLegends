@@ -2617,7 +2617,8 @@ func _prepare_movement(direction: Vector2, _dt: float) -> void:
 		_move_direction = direction.normalized()
 	else:
 		var turn_weight := minf(_dt * 8.0, 1.0)
-		_move_direction = _move_direction.lerp(direction.normalized(), turn_weight).normalized()
+		# 对方向做角度插值；向量 lerp 后归一化在反向且权重小于 0.5 时会永远保留旧方向。
+		_move_direction = _move_direction.rotated(_move_direction.angle_to(direction) * turn_weight).normalized()
 	var speed_multiplier := _effective_movement_multiplier()
 	_move_intent = _move_direction * snappedf(move_speed * speed_multiplier, 0.01)
 

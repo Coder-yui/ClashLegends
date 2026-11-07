@@ -16,6 +16,7 @@ func run(harness: Object) -> void:
 	_check_receipts()
 	_check_skill_rewards()
 	_check_motion()
+	_check_reverse_after_kill()
 	_check_attack_contract()
 	_check_skill_source_release()
 	_check_batch_effects()
@@ -161,6 +162,24 @@ func _check_motion() -> void:
 	unit.apply_dash_motion(Vector2(360, 900))
 	_expect(unit.position == Vector2(360, 900) and unit._prev_pos == previous, "连续突进保留本Tick插值起点，区别不连续交接")
 	_clear()
+
+func _check_reverse_after_kill() -> void:
+	for team in [0, 1]:
+		var forward := Vector2.UP if team == 0 else Vector2.DOWN
+		var source := _spawn("nocturne", team, Vector2(360, 640))
+		var victim := _spawn("xin", 1 - team, source.position - forward * 60.0)
+		var next_target := _spawn("xin", 1 - team, source.position + forward * 160.0)
+		source._target = victim
+		source._attacking = true
+		source._move_direction = -forward
+		victim.take_damage(100000, source)
+		var start := source.position
+		for tick in 20:
+			source.sim_tick(0.05)
+			source.position += source._move_intent * 0.05
+		_expect(source._target == next_target, "梦魇击杀身后赵信后重新锁定前方敌人：队伍%d" % team)
+		_expect((source.position - start).dot(forward) > 20.0, "20Hz下反向索敌后能掉头前进，不持续后退：队伍%d" % team)
+		_clear()
 
 func _check_attack_contract() -> void:
 	var source := _spawn("garen")
