@@ -87,7 +87,7 @@ static func _audio(path: String, value: Variant, errors: PackedStringArray) -> v
 					for fade in ["fade_in", "fade_out"]:
 						if event.has(fade): check(event_path + "." + fade, event[fade], "number", errors)
 					if event.has("action_time"): check(event_path + ".action_time", event.action_time, "number", errors)
-			"attack_swing", "attack_launch_by_segment", "attack_hit_by_segment":
+			"attack_swing", "attack_launch_by_segment", "attack_hit_by_segment", "empowered_swing_by_segment", "empowered_hit_by_segment":
 				if check(child, value[key], "array", errors):
 					for index in value[key].size(): array("%s[%d]" % [child, index], value[key][index], "text", errors)
 			"attack_hit", "empowered_hit", "first_strike_hit": array(child, value[key], "text", errors)

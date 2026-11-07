@@ -988,6 +988,7 @@ func _setup_battle_presentation() -> void:
 	_battle_presentation.skills = _skill_presentation
 	_battle_presentation.projectiles = _projectile_system
 	_battle_presentation.pending_deployments = runtime._commands.inspect_deployments
+	_battle_presentation.pre_deployment_audio = _audio_manager.sync_pre_deployment_audio
 	_arena_background_sprite.hide()
 	_refresh_display_layout()
 
@@ -1937,13 +1938,17 @@ func create_network_unit(card_id: String, p_team: int, pos: Vector2, net_id: int
 ## 主机 → 客户端：两段式部署的第一段落点提示。客户端只计时和绘制标记，
 ## 真正生成仍以随后到达的 _rpc_spawn_unit 为准。
 @rpc("authority", "call_remote", "reliable")
-func _rpc_card_pre_deploy_started(epoch: String, pre_deploy_id: int, card_id: String, p_team: int, pos: Vector2, duration: float) -> void:
+func _rpc_card_pre_deploy_started(epoch: String, pre_deploy_id: int, card_id: String, p_team: int, pos: Vector2, duration: float, route: PackedVector2Array = PackedVector2Array()) -> void:
 	if not runtime.session.accepts(1, epoch, MatchSession.Phase.RUNNING) or runtime.game_over:
 		return
 	if runtime.mode != "client" or runtime.game_over:
 		return
+	if route.size()>4096 or not is_finite(duration) or duration<=0.0: return
+	for point in route:
+		if not point.is_finite(): return
+	if CardDB.get_card(card_id).has("pre_deploy_burrow_speed") and (route.size()<2 or route[-1].distance_to(pos)>0.01): return
 	_remove_card_pre_deploy_visual(pre_deploy_id)
-	runtime._commands.enqueue_deployment(p_team, card_id, pos, maxf(duration, 0.0), -1, pre_deploy_id, maxf(duration, 0.0))
+	runtime._commands.enqueue_deployment(p_team, card_id, pos, maxf(duration, 0.0), -1, pre_deploy_id, maxf(duration, 0.0), "", -1, -1, route)
 	queue_redraw()
 
 ## 主机 → 客户端：可靠触发一次短暂闪白，不依赖不可靠血量快照是否刚好采到该帧。
@@ -2596,7 +2601,7 @@ func _on_runtime_event(kind: String, data: Dictionary) -> void:
 		"skill_fx": publish_skill_fx(data)
 		"card_event": _emit_card_event(String(data.card_id), String(data.cue), data.pos, int(data.team))
 		"pre_deploy":
-			if runtime.mode == "server": _broadcast(_rpc_card_pre_deploy_started, [runtime.session.session_id, int(data.id), String(data.card_id), int(data.team), data.pos, float(data.duration)])
+			if runtime.mode == "server": _broadcast(_rpc_card_pre_deploy_started, [runtime.session.session_id, int(data.id), String(data.card_id), int(data.team), data.pos, float(data.duration), data.get("route",PackedVector2Array())])
 		"cast_notice": _present_cast_notice(int(data.team), String(data.card_id), int(data.index), int(data.get("cast_form", -1)))
 		"announcement": _present_match_announcement(String(data.cue))
 		"match_finished": _end_game(int(data.winner_team), String(data.reason))

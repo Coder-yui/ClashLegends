@@ -314,7 +314,7 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 	_validate_known_fields("%s.audio" % label, audio as Dictionary, AUDIO_FIELDS, errors)
 	# 先确认容器形状，再执行事件能力、段数及跨字段规则，不能让校验器先崩溃。
 	var malformed := false
-	for field in ["events", "team_overrides", "attack_swing", "attack_hit", "attack_launch_by_segment", "attack_hit_by_segment", "attack_hit_once_by_segment", "empowered_hit", "first_strike_hit"]:
+	for field in ["events", "team_overrides", "attack_swing", "attack_hit", "attack_launch_by_segment", "attack_hit_by_segment", "attack_hit_once_by_segment", "empowered_hit", "empowered_swing_by_segment", "empowered_hit_by_segment", "first_strike_hit"]:
 		if not audio.has(field):
 			continue
 		var expected := TYPE_DICTIONARY if field == "events" else TYPE_ARRAY
@@ -323,6 +323,10 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			malformed = true
 	if malformed:
 		return
+	if audio.has("empowered_hit") and audio.has("empowered_hit_by_segment"):
+		errors.append("%s.audio: 分段强化命中与通用强化命中池不能同时配置" % label)
+	if audio.has("empowered_swing_by_segment") and audio.get("events", {}).has("empowered_swing"):
+		errors.append("%s.audio: 分段强化挥击与通用强化挥击池不能同时配置" % label)
 	if audio.has("attack_hit") and audio.has("attack_hit_by_segment"):
 		errors.append("%s.audio: 分段命中与通用命中池不能同时配置" % label)
 	if audio.has("attack_launch_by_segment") and audio.get("events", {}).has("attack_launch"):
@@ -413,24 +417,28 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			for value in grouped:
 				if typeof(value) != TYPE_BOOL:
 					errors.append("%s.audio.attack_hit_once_by_segment: 元素必须为布尔值" % label)
-	for key in ["attack_swing", "attack_hit", "attack_launch_by_segment", "attack_hit_by_segment", "empowered_hit", "first_strike_hit"]:
+	for key in ["attack_swing", "attack_hit", "attack_launch_by_segment", "attack_hit_by_segment", "empowered_hit", "empowered_swing_by_segment", "empowered_hit_by_segment", "first_strike_hit"]:
 		if audio.has(key) and (String(stats.get("type", "")) == "spell" or float(stats.get("damage", 0.0)) <= 0.0):
 			errors.append("%s.audio.%s: 无普攻能力" % [label, key])
-	for field in ["attack_swing", "attack_launch_by_segment", "attack_hit_by_segment"]:
+	for field in ["attack_swing", "attack_launch_by_segment", "attack_hit_by_segment", "empowered_swing_by_segment", "empowered_hit_by_segment"]:
 		var swing = (audio as Dictionary).get(field, [])
 		if audio.has(field) and (not swing is Array or (swing as Array).is_empty()):
 			errors.append("%s.audio.%s: 必须是按攻击段排列的非空声音池数组" % [label, field])
 		elif audio.has(field):
 			var animations = stats.get("visual_animations", {})
-			var configured_attacks = (animations as Dictionary).get("attack", []) if animations is Dictionary else []
+			var animation_key := "empowered_attack" if field.begins_with("empowered_") else "attack"
+			var configured_attacks = (animations as Dictionary).get(animation_key, []) if animations is Dictionary else []
 			var attack_count := (configured_attacks as Array).size() if configured_attacks is Array else (0 if String(configured_attacks).is_empty() else 1)
 			if attack_count > 0 and attack_count != (swing as Array).size():
-				errors.append("%s.audio.%s: 声音池数量必须与 visual_animations.attack 数量一致" % [label, field])
+				errors.append("%s.audio.%s: 声音池数量必须与对应普攻/强化动作数量一致" % [label, field])
 			for index in (swing as Array).size():
 				if field == "attack_launch_by_segment" and float(stats.get("close_attack_range", 0.0)) > 0.0 and index >= 2 and swing[index] is Array and swing[index].is_empty(): continue
 				_validate_audio_path_pool("%s.audio.%s[%d]" % [label, field, index], (swing as Array)[index], errors, inspect_resources)
 	if audio.has("attack_hit"):
 		_validate_audio_path_pool("%s.audio.attack_hit" % label, audio.attack_hit, errors, inspect_resources)
+	if audio.has("empowered_swing_by_segment") or audio.has("empowered_hit_by_segment"):
+		if not PresentationEvents.supports(stats, "empowered_swing"):
+			errors.append("%s.audio: 分段强化音效要求强化普攻机制" % label)
 	if audio.has("empowered_hit"):
 		if not PresentationEvents.supports(stats, "empowered_swing"):
 			errors.append("%s.audio.empowered_hit: 无强化普攻机制" % label)
@@ -1429,8 +1437,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append(label + ": 突进攻击需要离散近战和至少1倍攻速")
 				if skill.has("ignore_blind") and not skill.ignore_blind is bool: errors.append(label + ".ignore_blind: 必须为布尔值")
 			&"empowered_attack":
-				if skill.has("radius") and (not is_finite(float(skill.radius)) or float(skill.radius) <= 0.0 or not bool(stats.get("ballistic_attack", false))):
-					errors.append(label + ".radius: 强化爆炸半径需要固定落点攻击及正半径")
+				if skill.has("radius") and (not is_finite(float(skill.radius)) or float(skill.radius) <= 0.0 or (not bool(stats.get("ballistic_attack", false)) and (float(stats.get("projectile_speed", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false))))):
+					errors.append(label + ".radius: 强化范围需要离散近战或固定落点攻击及正半径")
 				if skill.has("attack_count") and (not skill.attack_count is int or int(skill.attack_count) < 1): errors.append(label + ": 强化次数必须为正整数")
 				if skill.has("bounce_count") or skill.has("bounce_distance"):
 					if not skill.get("bounce_count") is int or int(skill.get("bounce_count", 0)) < 2 or not is_finite(float(skill.get("bounce_distance", 0.0))) or float(skill.get("bounce_distance", 0.0)) <= 0.0 or not bool(stats.get("ballistic_attack", false)):
@@ -1591,7 +1599,7 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append("%s.projectile_impact_visuals_by_use: 未支持的爆炸表现或缺少范围" % label)
 		if skill.has("projectile_visuals_by_use"):
 			for visual in skill.projectile_visuals_by_use:
-				if StringName(visual) not in [&"sona_wave", &"arrow", &"card", &"orb", &"laser", &"electromagnetic_wave", &"corki_missile", &"corki_missile_big"]:
+				if StringName(visual) not in [&"twisted_fate_wild", &"sona_wave", &"arrow", &"card", &"orb", &"laser", &"electromagnetic_wave", &"corki_missile", &"corki_missile_big"]:
 					errors.append("%s.projectile_visuals_by_use: 未支持的弹体表现" % label)
 		if skill.has("projectile_explosion_radius") and (float(skill.projectile_explosion_radius) <= 0.0 or not bool(skill.get("projectile_stop_on_hit", false))):
 			errors.append("%s.projectile_explosion_radius: 需要正数及首个碰撞停止弹体" % label)
@@ -1611,7 +1619,7 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				errors.append("%s.projectile_piercing: 需要 frontal/fan 或单枚等宽 trapezoid、正数弹体数量、射程和飞行时长" % label)
 		if bool(skill.get("projectile_piercing", false)) and bool(skill.get("projectile_stop_on_hit", false)):
 			errors.append("%s: 穿透与命中停止不可同时启用" % label)
-		if skill.has("projectile_visual") and StringName(skill.projectile_visual) not in [&"sona_wave", &"arrow", &"card", &"orb", &"laser", &"electromagnetic_wave", &"corki_missile"]:
+		if skill.has("projectile_visual") and StringName(skill.projectile_visual) not in [&"twisted_fate_wild", &"sona_wave", &"arrow", &"card", &"orb", &"laser", &"electromagnetic_wave", &"corki_missile"]:
 			errors.append("%s.projectile_visual: 未支持的技能弹体表现" % label)
 		if skill.has("projectile_launch_delay") and float(skill.projectile_launch_delay) < 0.0:
 			errors.append("%s.projectile_launch_delay: 必须 >= 0" % label)
@@ -1904,6 +1912,9 @@ static func _validate_deployment(card_id: String, stats: Dictionary, errors: Pac
 		errors.append("%s.pre_deploy_time: 必须 >= 0" % card_id)
 	if float(stats.get("pre_deploy_time", 0.0)) > 0.0 and card_type == &"spell":
 		errors.append("%s.pre_deploy_time: 法术不能使用单位预部署阶段" % card_id)
+	if stats.has("pre_deploy_burrow_speed"):
+		if card_type != &"unit" or float(stats.pre_deploy_burrow_speed) <= 0.0 or float(stats.get("pre_deploy_time", 0.0)) <= 0.0 or stats.has("pre_deploy_sweep_damage"):
+			errors.append("%s.pre_deploy_burrow_speed: 需要单位、正数速度与最短预部署时长，不能混用固定时序冲击波" % card_id)
 	var pre_sweep_fields := ["pre_deploy_sweep_start", "pre_deploy_sweep_distance", "pre_deploy_sweep_radius", "pre_deploy_sweep_damage"]
 	var has_pre_sweep := false
 	for field in pre_sweep_fields:

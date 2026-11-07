@@ -73,7 +73,7 @@ func run(harness: Object) -> void:
 	main.free()
 	harness._expect(MatchSession.content_fingerprint() == MatchSession.content_fingerprint() and MatchSession.content_fingerprint().length() == 64, "内容指纹稳定且完整")
 	var legacy_fingerprint := var_to_bytes([132, CardDB.all(), MatchRules.REGULATION_TIME, MatchRules.OVERTIME_TIME, FixedStepClock.STEP]).hex_encode().sha256_text()
-	harness._expect(MatchSession.PROTOCOL_VERSION == 133 and NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION == MatchSession.PROTOCOL_VERSION and MatchSession.content_fingerprint() != legacy_fingerprint, "协议133同时拥有握手/快照版本，并与132相同卡牌规则的旧指纹隔离")
+	harness._expect(MatchSession.PROTOCOL_VERSION == 134 and NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION == MatchSession.PROTOCOL_VERSION and MatchSession.content_fingerprint() != legacy_fingerprint, "协议134同时拥有握手/快照版本，并与132相同卡牌规则的旧指纹隔离")
 
 	_check_private_hand_and_adaptation(harness)
 	_check_buffer_clock_and_playback(harness)
@@ -311,6 +311,10 @@ func _check_default_local_deck(harness: Object) -> void:
 	# 默认手牌随机，潘森等卡还有预部署窗口；不能固定只等命令缓冲。
 	var wait_ticks := ceili((0.5 + float(CardDB.get_card(card).get("pre_deploy_time", 0.0))) / local.SIM_DT) + 1
 	for tick in wait_ticks: local._sim_step(local.SIM_DT)
+	# 可变路程预部署使用已排程的权威剩余时间，不读取卡牌最短等待。
+	var pending_time := 0.0
+	for entry in local.runtime._commands.inspect_deployments(): pending_time=maxf(pending_time,float(entry.time_left))
+	for tick in ceili(pending_time/local.SIM_DT)+1: local._sim_step(local.SIM_DT)
 	var spawned := false
 	for unit in harness.get_nodes_in_group("combatants"):
 		if unit is Unit and unit.card_id == card and unit.team == 0: spawned = true

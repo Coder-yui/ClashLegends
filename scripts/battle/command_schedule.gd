@@ -131,9 +131,9 @@ func has_pending_skill(ability_id: int) -> bool:
 		if int(command.ability_id) == ability_id: return true
 	return false
 
-func enqueue_deployment(team: int, card_id: String, pos: Vector2, time_left: float, active_slot: int = -1, id: int = -1, duration: float = -1.0, deployment_card_id: String = "", mirror_generation: int = -1, created_tick: int = -1) -> void:
+func enqueue_deployment(team: int, card_id: String, pos: Vector2, time_left: float, active_slot: int = -1, id: int = -1, duration: float = -1.0, deployment_card_id: String = "", mirror_generation: int = -1, created_tick: int = -1, route: PackedVector2Array = PackedVector2Array(), waiting_for_route: bool = false) -> void:
 	_pre_deployments.append({"team": team, "card_id": card_id, "pos": pos, "time_left": time_left,
-		"created_tick": created_tick, "deployment_card_id": deployment_card_id, "mirror_generation": mirror_generation, "active_slot": active_slot, "id": id, "duration": time_left if duration < 0.0 else duration})
+		"route": route.duplicate(), "waiting_for_route": waiting_for_route, "created_tick": created_tick, "deployment_card_id": deployment_card_id, "mirror_generation": mirror_generation, "active_slot": active_slot, "id": id, "duration": time_left if duration < 0.0 else duration})
 
 func allocate_deployment_id() -> int:
 	var id := _next_pre_deploy_id

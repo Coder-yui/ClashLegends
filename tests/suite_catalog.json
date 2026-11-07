@@ -880,5 +880,12 @@
     "method": "run",
     "scene": "none",
     "group": "cards"
+  },
+  {
+    "id": "ReksaiSuite",
+    "script": "res://tests/suites/cards/reksai_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "cards"
   }
 ]

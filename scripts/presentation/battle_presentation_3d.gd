@@ -68,6 +68,7 @@ var _base_camera_size: float
 var model_pool := MatchModelPool.new()
 var pending_deployments: Callable
 var _pre_deploy_views: Dictionary = {}
+var pre_deployment_audio: Callable
 
 func _process(delta: float) -> void:
 	if _malphite_effect != null and skills != null:
@@ -160,8 +161,10 @@ func _process(delta: float) -> void:
 	model_pool.advance_refill(delta)
 
 func sync_pre_deployments(deployments: Array, delta: float = 0.0) -> void:
+	var audio_samples: Array[Dictionary] = []
 	var present: Dictionary = {}
 	for entry in deployments:
+		if bool(entry.get("waiting_for_route",false)): continue
 		var path := String(CardDB.get_card(String(entry.card_id)).get("visual_pre_deploy_scene", ""))
 		if path.is_empty(): continue
 		var id := int(entry.id)
@@ -171,19 +174,22 @@ func sync_pre_deployments(deployments: Array, delta: float = 0.0) -> void:
 		if not _pre_deploy_views.has(id):
 			var view := (load(path) as PackedScene).instantiate() as PreDeploymentVisual3D
 			_world_root.add_child(view)
+			view.duration = duration
+			view.route = entry.get("route",PackedVector2Array())
 			view.setup(_camera, entry.pos, int(entry.team))
 			_pre_deploy_views[id] = {"view": view, "elapsed": elapsed, "sample": elapsed}
 		var state: Dictionary = _pre_deploy_views[id]
 		# 在20Hz快照之间插值，不能越过队列所确认的下一个Tick，也不能自行部署。
-		state.elapsed = elapsed if elapsed != float(state.sample) else minf(float(state.elapsed) + delta, elapsed + 0.05)
+		state.elapsed = minf(maxf(float(state.elapsed) + maxf(delta, 0.0), elapsed), maxf(float(state.elapsed), elapsed + 0.05))
 		state.sample = elapsed
 		(state.view as PreDeploymentVisual3D).advance_visual(clampf(float(state.elapsed) / duration, 0.0, 1.0))
+		audio_samples.append({"id":id, "card_id":entry.card_id, "team":entry.team, "pos":state.view.audio_position, "elapsed":state.elapsed})
 	for id in _pre_deploy_views.keys():
 		if not present.has(id):
-			var view: Node3D = _pre_deploy_views[id].view
-			view.hide()
-			view.queue_free()
+			var view: PreDeploymentVisual3D = _pre_deploy_views[id].view
+			view.finish_visual()
 			_pre_deploy_views.erase(id)
+	if pre_deployment_audio.is_valid(): pre_deployment_audio.call(audio_samples)
 
 
 func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void:

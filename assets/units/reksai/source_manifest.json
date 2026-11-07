@@ -1,0 +1,64 @@
+{
+  "source_model": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/01-待开发/卡牌模型/虚空遁地兽.glb",
+  "source_model_sha256": "a6fc3de8f1198e2401b38c030a909d6f4ad102903b000cba9d508127cf11edd6",
+  "runtime_model_sha256": "9a7febd2ad051295631e6f6995dda0c10f77b4909a73a22357fd188aea636b38",
+  "processing": "保留9个运行/邻近Q动画，避免Recall_Loop后缀在Godot导入时与Recall重名；骨骼、网格、材质、动画采样不改；包装统一缩放0.008。",
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/RekSai.wad.client",
+  "card_art_source": "assets/characters/reksai/skins/base/reksailoadscreen.tex",
+  "card_art_sha256": "82a4c27708150167a0c7675cb7eb8a2b7a5c51d629062d422d5bd9aaa0ff0a57",
+  "effects": {
+    "travel": {
+      "source_system": "RekSai_Base_Burrowed_W_movement_idle",
+      "raw_sha256": "ca4e90bcd9c89d9ab1777bc5daf8246b0484e958fb2f5fda5ba38477eb6a4427",
+      "runtime_sha256": "ab2fecd4152b14f1140fd54db72ae00de0b2583a3393ed4ab555b76282739cb5",
+      "sampling_duration": 8.0
+    },
+    "emerge": {
+      "source_system": "RekSai_Base_Burrowed_W_cas_knockup",
+      "raw_sha256": "3e5e615eb28a80e1543b5038d9e19ae8768344664a74f2f1a365036fe16d5d4f",
+      "runtime_sha256": "5f36f1be73992cfcf539d160f436c55054a3a6205ad6b4bb28a97ddd64164cca"
+    },
+    "swipe": {
+      "source_system": "RekSai_Base_Q_swipe_cas",
+      "raw_sha256": "8e814ec310ffd2e592708be99891657573d5542be2e7374c85c783f3d23c180d",
+      "runtime_sha256": "5de9611285b6a1b44efe16a6f71f866c83703d19f6c08a9dfa545e22ab329b7f"
+    },
+    "buff": {
+      "source_system": "RekSai_Base_Q_cas_frenzy",
+      "raw_sha256": "5caf495482c592c3c001919676f5f347a197c4edfb9824f27eab6faadcfa137c",
+      "runtime_sha256": "e044d73ad150deed24e79e4702d451f0a3c96be582323861c13804adc61ccd71"
+    },
+    "swipe_second": {
+      "source_system": "RekSai_Base_Q_swipe_2nd_cas",
+      "runtime_sha256": "41fc784a7e143f0b60185363a6f7a07047e003532e862d37102d5faa6a308c38"
+    },
+    "emerge_cast": {
+      "source_system": "RekSai_Base_Burrowed_W_cas",
+      "runtime_sha256": "8dd536c6617c9f60dd2f259da2cad59aeb3e9e6bd82f81f75118a549c5121979"
+    }
+  },
+  "sampling": {
+    "fps": 120,
+    "seed": 79,
+    "duration": 5,
+    "native_scale": 0.008
+  },
+  "limitations": [
+    "运行采样不等同于LoL原生动态随机/RTPC"
+  ],
+  "rock_animation": {
+    "source": "RekSai_Base_W_RockShard.skn/.skl/.anm",
+    "duration": 2.0,
+    "fps": 60,
+    "processing": "GLB skin transforms + inverse bind matrices, per-particle age, original geometry and UV; no deformation approximation",
+    "sha256": "8cff7d9bf6ceeaafd069b0204366d7d4acc732f89b6a904ca8dee6ae7245bfcd"
+  },
+  "q_hand_attachment": {
+    "effect": "RekSai_Base_Q_cas_frenzy",
+    "bones": [
+      "L_Buffbone_Glb_Hand_Loc",
+      "R_Buffbone_Glb_Hand_Loc"
+    ],
+    "evidence": "用户明确手部效果；原基础皮肤Q持续粒子与原模型左右手定位骨骼。WAD未包含服务端技能脚本，附着调用本身不能由客户端bin单独证明。"
+  }
+}

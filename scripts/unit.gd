@@ -726,7 +726,7 @@ func _ready() -> void:
 	add_to_group("combatants")
 	_sync_structure_group()
 	_update_fallback_health_bar_anchor()
-	# 赵信的新月护卫就是部署动作本身：生成当帧结算一次，不等待部署锁定结束，
+	# 部署范围效果（赵信新月护卫、雷克塞破土）：生成当帧结算一次，不等待部署锁定结束，
 	# 也不让动画帧反向驱动权威效果。客户端仅显示同帧特效。
 	if deploy_time > 0.0 and deploy_sweep_radius > 0.0 and (deploy_sweep_damage > 0.0 or deploy_sweep_knockback > 0.0):
 		if _in_client_mode():
@@ -2888,7 +2888,11 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 		_body_facing_direction = fixed_attack_direction
 	# 可取消的连招以前用每次尝试的序号选片，取消一拳会令动作与伤害/间隔错位。
 	# 序号仍严格递增（快照/声音去重不变），余数对齐尚未结算的权威拳段。
-	if close_attack_range > 0.0:
+	if empowered_attack_ready and int(empowered_attack_effects.get("attack_count", 1)) > 1:
+		# 已同步单调序号的余数表达本轮强化段；取消不消费，刷新从第一段重来。
+		var count := int(empowered_attack_effects.attack_count)
+		_attack_visual_serial += posmod(count - empowered_attacks_left - (_attack_visual_serial - 1), count)
+	elif close_attack_range > 0.0:
 		# 四个动作槽：远程两段、近战两段；沿现有单调序号同步模式。
 		var segment := posmod(_attack_swing_count, 2) + (2 if close_attack else 0)
 		_attack_visual_serial += posmod(segment - (_attack_visual_serial - 1), 4)
@@ -2993,7 +2997,9 @@ func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary =
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
 		return false
 	if battle_context != null:
-		return battle_context.launch_attack(self, target, amount, 0.0 if close_attack else projectile_speed, splash_radius, attack_knockback, projectile_color, effects)
+		var strike_radius := float(effects.get("splash_radius", 0.0))
+		if strike_radius <= 0.0: strike_radius = splash_radius
+		return battle_context.launch_attack(self, target, amount, 0.0 if close_attack else projectile_speed, strike_radius, attack_knockback, projectile_color, effects)
 	else:
 		var was_alive: bool = target.hp > 0.0
 		var result := BattleNumbers.hit(target, BattleNumbers.quantity(amount + repeat_hit_bonus(target, amount)) + on_hit_passive_damage(target), self, team, global_position)

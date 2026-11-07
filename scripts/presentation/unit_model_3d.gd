@@ -1412,7 +1412,7 @@ func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 	var attacks: Array = configured if configured is Array else [configured]
 	if attacks.is_empty():
 		return
-	_active_attack_index = 0 if _active_attack_empowered else (serial - 1) % attacks.size()
+	_active_attack_index = (serial - 1) % attacks.size()
 	var animation_name := StringName(attacks[_active_attack_index])
 	if animation_name == &"" or not _animation_player.has_animation(animation_name):
 		return

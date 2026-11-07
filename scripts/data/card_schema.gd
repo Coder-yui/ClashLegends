@@ -137,7 +137,7 @@ const CARD_FIELDS := [&"returning_attack_distance", &"magazine_size", &"reload_d
 	&"size_tier", &"custom_radius", &"radius", &"visual_radius", &"mass", &"sight", &"color",
 	&"is_air", &"is_building", &"building_only", &"can_attack_air", &"is_continuous_attack",
 	&"pre_deploy_sweep_flat_rear", &"pre_deploy_sweep_start", &"pre_deploy_sweep_distance", &"pre_deploy_sweep_radius", &"pre_deploy_sweep_damage",
-	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_pocket_requires_both_towers", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan", &"lifespan_hp_decay", &"dormant_without_targets", &"tower_ruin_foundation",
+	&"deploy_time", &"pre_deploy_time", &"pre_deploy_burrow_speed", &"deploy_zone", &"deploy_pocket_requires_both_towers", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan", &"lifespan_hp_decay", &"dormant_without_targets", &"tower_ruin_foundation",
 	&"deployment_count", &"deployment_spacing", &"deployment_formation", &"spawn_plan", &"deploy_formation_requires_in_bounds",
 	&"spawn_waves", &"spawn_initial_delay", &"spawn_sequence_interval", &"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"spawn_distance", &"spawn_deploy_time", &"spawn_flight_duration", &"death_spawn_side", &"death_spawn_id", &"death_spawn_count", &"death_spawn_deploy_time", &"death_spawn_spread", &"death_spawn_duration",
 	&"death_replacement_id", &"death_replacement_charges", &"death_replacement_visual_transition", &"timed_revival_id", &"timed_revival_delay", &"timed_revival_death_replacement_charges", &"timed_revival_visual_transition",
@@ -165,7 +165,7 @@ const CARD_FIELDS := [&"returning_attack_distance", &"magazine_size", &"reload_d
 	&"heal_amount", &"active_cost_bonus",
 	&"visual_pre_deploy_scene", &"visual_active_buff_scene", &"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations", &"audio",
 ]
-const AUDIO_FIELDS := [&"team_overrides", &"attack_launch_until_impact", &"attack_hit_once_by_segment", &"attack_swing_lead_time", &"attack_swing", &"attack_hit", &"attack_launch_by_segment", &"attack_hit_by_segment", &"empowered_hit", &"first_strike_hit", &"attack_swing_volume_db", &"attack_hit_volume_db", &"events"]
+const AUDIO_FIELDS := [&"team_overrides", &"attack_launch_until_impact", &"attack_hit_once_by_segment", &"attack_swing_lead_time", &"attack_swing", &"attack_hit", &"attack_launch_by_segment", &"attack_hit_by_segment", &"empowered_hit", &"empowered_swing_by_segment", &"empowered_hit_by_segment", &"first_strike_hit", &"attack_swing_volume_db", &"attack_hit_volume_db", &"events"]
 const VISUAL_ANIMATION_FIELDS := [&"reload", &"reload_move",
 	&"attack_stance_duration", &"attack_idle", &"attack_idle_enter", &"attack_sheath_idle", &"attack_sheath_move",
 	&"dormant_idle", &"stealth_idle", &"stealth_move", &"active_buff_attack", "control_immune_attack",

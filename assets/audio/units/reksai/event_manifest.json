@@ -1,0 +1,767 @@
+[
+  {
+    "file": "play_sfx_reksai_reksaibasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_Reksai_ReksaiBasicAttack2_OnCast",
+    "event_id": 2405133428,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiBasicAttack2_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiBasicAttack2_OnCast {r1}.txtp",
+    "media_ids": [
+      705239,
+      47011954,
+      77536789,
+      121155051,
+      437111149
+    ],
+    "duration": 0.6364,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d26eeec03b0f52c2ad528ad6756b65818a72167e206607eb5b0e7c874d57c831",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_Reksai_ReksaiBasicAttack_OnCast",
+        "event_id": 1704371948,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiBasicAttack_OnCast {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiBasicAttack_OnCast {r1} {d}.txtp",
+        "media_ids": [
+          705239,
+          47011954,
+          77536789,
+          121155051,
+          437111149
+        ],
+        "duration": 0.6364,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "d26eeec03b0f52c2ad528ad6756b65818a72167e206607eb5b0e7c874d57c831",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_reksai_reksaibasicattack_oncast_r1_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_reksai_reksaibasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_Reksai_ReksaiBasicAttack2_OnCast",
+    "event_id": 2405133428,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiBasicAttack2_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiBasicAttack2_OnCast {r2}.txtp",
+    "media_ids": [
+      705239,
+      47011954,
+      77536789,
+      121155051,
+      437111149
+    ],
+    "duration": 1.2343,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "67473483ec4f366d56ef27cc585b86d8f1a1c572a95b0b5241949dfef2d046ea",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_Reksai_ReksaiBasicAttack_OnCast",
+        "event_id": 1704371948,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiBasicAttack_OnCast {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiBasicAttack_OnCast {r2} {d}.txtp",
+        "media_ids": [
+          705239,
+          47011954,
+          77536789,
+          121155051,
+          437111149
+        ],
+        "duration": 1.2343,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "67473483ec4f366d56ef27cc585b86d8f1a1c572a95b0b5241949dfef2d046ea",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_reksai_reksaibasicattack_oncast_r2_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_reksai_reksaibasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_Reksai_ReksaiBasicAttack2_OnCast",
+    "event_id": 2405133428,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiBasicAttack2_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiBasicAttack2_OnCast {r3}.txtp",
+    "media_ids": [
+      705239,
+      47011954,
+      77536789,
+      121155051,
+      437111149
+    ],
+    "duration": 0.9921,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d8b67c9d86213bacf46fd099efb198b8ae5a14b735bfc9b8b873b5b994fcca70",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_Reksai_ReksaiBasicAttack_OnCast",
+        "event_id": 1704371948,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiBasicAttack_OnCast {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiBasicAttack_OnCast {r3} {d}.txtp",
+        "media_ids": [
+          705239,
+          47011954,
+          77536789,
+          121155051,
+          437111149
+        ],
+        "duration": 0.9921,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "d8b67c9d86213bacf46fd099efb198b8ae5a14b735bfc9b8b873b5b994fcca70",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_reksai_reksaibasicattack_oncast_r3_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_reksai_reksaibasicattack_onhit_1559186049_1153642577_r1_d.wav",
+    "event": "Play_sfx_Reksai_ReksaiBasicAttack_OnHit",
+    "event_id": 2064278916,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "media_ids": [
+      12133246,
+      16606952,
+      44015375,
+      120571503
+    ],
+    "duration": 0.7788,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6a3f28189398bd1aeca10d5e07b87a343c27952a5ad174ef46fa50aa7e074bde",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_Reksai_ReksaiQAttack_OnHit",
+        "event_id": 2611210675,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiQAttack_OnHit {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack_OnHit {r1} {d}.txtp",
+        "media_ids": [
+          12133246,
+          16606952,
+          44015375,
+          120571503
+        ],
+        "duration": 0.7788,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "6a3f28189398bd1aeca10d5e07b87a343c27952a5ad174ef46fa50aa7e074bde",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_reksai_reksaiqattack_onhit_r1_d.wav"
+      },
+      {
+        "event": "Play_sfx_Reksai_ReksaiQAttack2_OnHit",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack2_OnHit {r1} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/qw-rework/audio/play_sfx_reksai_reksaiqattack2_onhit_r1_d.wav",
+        "duration": 0.778843537414966,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "6a3f28189398bd1aeca10d5e07b87a343c27952a5ad174ef46fa50aa7e074bde",
+        "selection_note": "最多三个外层随机变体；逐段使用原版 QAttack2 / QAttack3 事件。",
+        "former_filename": "play_sfx_reksai_reksaiqattack2_onhit_r1_d.wav"
+      },
+      {
+        "event": "Play_sfx_Reksai_ReksaiQAttack3_OnHit",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack3_OnHit {r1} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/qw-rework/audio/play_sfx_reksai_reksaiqattack3_onhit_r1_d.wav",
+        "duration": 0.778843537414966,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "6a3f28189398bd1aeca10d5e07b87a343c27952a5ad174ef46fa50aa7e074bde",
+        "selection_note": "最多三个外层随机变体；逐段使用原版 QAttack2 / QAttack3 事件。",
+        "former_filename": "play_sfx_reksai_reksaiqattack3_onhit_r1_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_reksai_reksaibasicattack_onhit_1559186049_1153642577_r2_d.wav",
+    "event": "Play_sfx_Reksai_ReksaiBasicAttack_OnHit",
+    "event_id": 2064278916,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "media_ids": [
+      12133246,
+      16606952,
+      44015375,
+      120571503
+    ],
+    "duration": 0.7371,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2530dc7e504f8d0a8b23275ade8f187b2a2085d49b50aacc299fec4323cb1401",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_Reksai_ReksaiQAttack_OnHit",
+        "event_id": 2611210675,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiQAttack_OnHit {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack_OnHit {r2} {d}.txtp",
+        "media_ids": [
+          12133246,
+          16606952,
+          44015375,
+          120571503
+        ],
+        "duration": 0.7371,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "2530dc7e504f8d0a8b23275ade8f187b2a2085d49b50aacc299fec4323cb1401",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_reksai_reksaiqattack_onhit_r2_d.wav"
+      },
+      {
+        "event": "Play_sfx_Reksai_ReksaiQAttack2_OnHit",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack2_OnHit {r2} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/qw-rework/audio/play_sfx_reksai_reksaiqattack2_onhit_r2_d.wav",
+        "duration": 0.7370975056689343,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "2530dc7e504f8d0a8b23275ade8f187b2a2085d49b50aacc299fec4323cb1401",
+        "selection_note": "最多三个外层随机变体；逐段使用原版 QAttack2 / QAttack3 事件。",
+        "former_filename": "play_sfx_reksai_reksaiqattack2_onhit_r2_d.wav"
+      },
+      {
+        "event": "Play_sfx_Reksai_ReksaiQAttack3_OnHit",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack3_OnHit {r2} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/qw-rework/audio/play_sfx_reksai_reksaiqattack3_onhit_r2_d.wav",
+        "duration": 0.7370975056689343,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "2530dc7e504f8d0a8b23275ade8f187b2a2085d49b50aacc299fec4323cb1401",
+        "selection_note": "最多三个外层随机变体；逐段使用原版 QAttack2 / QAttack3 事件。",
+        "former_filename": "play_sfx_reksai_reksaiqattack3_onhit_r2_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_reksai_reksaibasicattack_onhit_1559186049_1153642577_r3_d.wav",
+    "event": "Play_sfx_Reksai_ReksaiBasicAttack_OnHit",
+    "event_id": 2064278916,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "media_ids": [
+      12133246,
+      16606952,
+      44015375,
+      120571503
+    ],
+    "duration": 0.5981,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "69a3ab28fbce4704ed52c222dd8c082fca8ab09e5e2136c940b743808a7e3808",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_Reksai_ReksaiQAttack_OnHit",
+        "event_id": 2611210675,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiQAttack_OnHit {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack_OnHit {r3} {d}.txtp",
+        "media_ids": [
+          12133246,
+          16606952,
+          44015375,
+          120571503
+        ],
+        "duration": 0.5981,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "69a3ab28fbce4704ed52c222dd8c082fca8ab09e5e2136c940b743808a7e3808",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_reksai_reksaiqattack_onhit_r3_d.wav"
+      },
+      {
+        "event": "Play_sfx_Reksai_ReksaiQAttack2_OnHit",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack2_OnHit {r3} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/qw-rework/audio/play_sfx_reksai_reksaiqattack2_onhit_r3_d.wav",
+        "duration": 0.5980725623582767,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "69a3ab28fbce4704ed52c222dd8c082fca8ab09e5e2136c940b743808a7e3808",
+        "selection_note": "最多三个外层随机变体；逐段使用原版 QAttack2 / QAttack3 事件。",
+        "former_filename": "play_sfx_reksai_reksaiqattack2_onhit_r3_d.wav"
+      },
+      {
+        "event": "Play_sfx_Reksai_ReksaiQAttack3_OnHit",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack3_OnHit {r3} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/qw-rework/audio/play_sfx_reksai_reksaiqattack3_onhit_r3_d.wav",
+        "duration": 0.5980725623582767,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "69a3ab28fbce4704ed52c222dd8c082fca8ab09e5e2136c940b743808a7e3808",
+        "selection_note": "最多三个外层随机变体；逐段使用原版 QAttack2 / QAttack3 事件。",
+        "former_filename": "play_sfx_reksai_reksaiqattack3_onhit_r3_d.wav"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_reksai_reksaiqattack_oncast_r1.wav",
+    "event": "Play_sfx_Reksai_ReksaiQAttack_OnCast",
+    "event_id": 2781888297,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiQAttack_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack_OnCast {r1}.txtp",
+    "media_ids": [
+      134323030,
+      783661760,
+      879470492
+    ],
+    "duration": 0.9103,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5bda100bc1787796d2213f85bee623233fa0a5238243a7ac10500b1d995636d7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiqattack_oncast_r2.wav",
+    "event": "Play_sfx_Reksai_ReksaiQAttack_OnCast",
+    "event_id": 2781888297,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiQAttack_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack_OnCast {r2}.txtp",
+    "media_ids": [
+      134323030,
+      783661760,
+      879470492
+    ],
+    "duration": 0.9103,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e6f76bf82ca052d709e06f841e61384f133308683d66b05703d8fbb7d17c3eb4",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiqattack_oncast_r3.wav",
+    "event": "Play_sfx_Reksai_ReksaiQAttack_OnCast",
+    "event_id": 2781888297,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiQAttack_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack_OnCast {r3}.txtp",
+    "media_ids": [
+      134323030,
+      783661760,
+      879470492
+    ],
+    "duration": 0.9103,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2ccde4fe6cb79a800a94f65f703ee66795192da23107f887c7a294bb5abe3805",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiq_oncast_r1.wav",
+    "event": "Play_sfx_Reksai_ReksaiQ_OnCast",
+    "event_id": 979417421,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiQ_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQ_OnCast {r1}.txtp",
+    "media_ids": [
+      90107454,
+      209540356,
+      518084091
+    ],
+    "duration": 1.3756,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b521495f3ef4de1f46eadbc2b0c638c2f6cfc0fae22bf3a47b5004fa044cbb16",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiq_oncast_r2.wav",
+    "event": "Play_sfx_Reksai_ReksaiQ_OnCast",
+    "event_id": 979417421,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiQ_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQ_OnCast {r2}.txtp",
+    "media_ids": [
+      90107454,
+      209540356,
+      518084091
+    ],
+    "duration": 1.5651,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f63a40a014ba027153d21ef772d66555f7bb10aa09d5d6586158edc9f8610467",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiq_oncast_r3.wav",
+    "event": "Play_sfx_Reksai_ReksaiQ_OnCast",
+    "event_id": 979417421,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_ReksaiQ_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQ_OnCast {r3}.txtp",
+    "media_ids": [
+      90107454,
+      209540356,
+      518084091
+    ],
+    "duration": 1.4099,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "32fb9adcabfdd2d44676d5907880c973dbcd80a8a87feb5a5690ee3212f36034",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiw_hit_r1.wav",
+    "event": "Play_sfx_Reksai_RekSaiW_hit",
+    "event_id": 846590760,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_RekSaiW_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_RekSaiW_hit {r1}.txtp",
+    "media_ids": [
+      493424595,
+      630377992,
+      946826053
+    ],
+    "duration": 2.8963,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7e8a8b51e96668573244ac58a4903ccc32a914c45ef9c1ae906e0afea322c11d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiw_hit_r2.wav",
+    "event": "Play_sfx_Reksai_RekSaiW_hit",
+    "event_id": 846590760,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_RekSaiW_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_RekSaiW_hit {r2}.txtp",
+    "media_ids": [
+      493424595,
+      630377992,
+      946826053
+    ],
+    "duration": 2.6156,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "395a30d3207dff95abbf38beed9078d05c48df024e7d8b0b51467f34330878f7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiw_hit_r3.wav",
+    "event": "Play_sfx_Reksai_RekSaiW_hit",
+    "event_id": 846590760,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_RekSaiW_hit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_RekSaiW_hit {r3}.txtp",
+    "media_ids": [
+      493424595,
+      630377992,
+      946826053
+    ],
+    "duration": 3.0485,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d1e920f447a5ee80ba5cf6c3a19aa678228fe51bf509eb6a8ab3009ed61f0daa",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiw_buffdeactivate_r1.wav",
+    "event": "Play_sfx_Reksai_RekSaiW_buffdeactivate",
+    "event_id": 3377643752,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_RekSaiW_buffdeactivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_RekSaiW_buffdeactivate {r1}.txtp",
+    "media_ids": [
+      83068305,
+      123101730,
+      599520280
+    ],
+    "duration": 2.8551,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6f4fd48ba627ffedef55f9aa95a840c9079232c461b474a8366bfb67ff46ab3a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiw_buffdeactivate_r2.wav",
+    "event": "Play_sfx_Reksai_RekSaiW_buffdeactivate",
+    "event_id": 3377643752,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_RekSaiW_buffdeactivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_RekSaiW_buffdeactivate {r2}.txtp",
+    "media_ids": [
+      83068305,
+      123101730,
+      599520280
+    ],
+    "duration": 2.6061,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4096bf2edd31faf6a02831766460ca96f126c917840059bb00fe56bf0e84fcd1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiw_buffdeactivate_r3.wav",
+    "event": "Play_sfx_Reksai_RekSaiW_buffdeactivate",
+    "event_id": 3377643752,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_RekSaiW_buffdeactivate {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_RekSaiW_buffdeactivate {r3}.txtp",
+    "media_ids": [
+      83068305,
+      123101730,
+      599520280
+    ],
+    "duration": 2.4409,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a98e56afcbf2436f2278f112f95b908321a7c25d948652e536ecc1d85b39e842",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_reksai_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Reksai_Death3D",
+    "event_id": 2662973291,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai_vo/event_wav/Play_vo_Reksai_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai_vo/txtp/Play_vo_Reksai_Death3D {r1}.txtp",
+    "media_ids": [
+      176903446,
+      484888036
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "e178efb963a0bed5b25208a378e22fb78e17bdb239aab01bd889854c907fdb0a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 5.319523809523809,
+      "source_sha256": "76069ffa54f1f63bd2b1f40ec9a40249f05de7901ee80ec971671037059f1e38",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_reksai_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Reksai_Death3D",
+    "event_id": 2662973291,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai_vo/event_wav/Play_vo_Reksai_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai_vo/txtp/Play_vo_Reksai_Death3D {r2}.txtp",
+    "media_ids": [
+      176903446,
+      484888036
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "e5de4c22ab1927bf0921e7ec414113a40c76add286ba248c4d63eb4987b8029e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 5.3264625850340135,
+      "source_sha256": "f4cb6f8f00bf20d2290244b2a64a35579f1fb25037b6cfba80aadf030da7c853",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_reksai_death3d_cast.wav",
+    "event": "Play_sfx_Reksai_Death3D_cast",
+    "event_id": 454474607,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/event_wav/Play_sfx_Reksai_Death3D_cast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_Death3D_cast.txtp",
+    "media_ids": [
+      416929979
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "d5c1f3c23ca934ed0e68f25d29e9f19b169b04ef3cf8c110e3f47f994bf33d14",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 4.2121768707483,
+      "source_sha256": "de4b1958e7f62b51a2a43acfdbd2a6acbbbb42e2a793e3d0409358e823aeec72",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_reksai_move2dstandard_reksai_vo_2480312883_r10_zh_cn.wav",
+    "event": "Play_vo_Reksai_Move2DStandard",
+    "event_id": 921558434,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai_vo/event_wav/Play_vo_Reksai_Move2DStandard [reksai_vo=2480312883] {r10}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai_vo/txtp/Play_vo_Reksai_Move2DStandard [reksai_vo=2480312883] {r10}.txtp",
+    "media_ids": [
+      23813620,
+      25135176,
+      133484868,
+      138797595,
+      144691549,
+      151764950,
+      226709558,
+      234823519,
+      302062897,
+      360530670,
+      369342910,
+      391290737,
+      506696263,
+      619856944,
+      622627569,
+      628258481,
+      674975736,
+      831531503,
+      843153298,
+      846571532,
+      883090839,
+      905878046,
+      978427001,
+      988661119,
+      1041939786
+    ],
+    "duration": 3.712,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d544e3310866ce4f262c69bfd602ad2662dc5d5786713ae8c96a36691ee78639",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_reksai_move2dstandard_reksai_vo_2480312883_r11_zh_cn.wav",
+    "event": "Play_vo_Reksai_Move2DStandard",
+    "event_id": 921558434,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai_vo/event_wav/Play_vo_Reksai_Move2DStandard [reksai_vo=2480312883] {r11}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai_vo/txtp/Play_vo_Reksai_Move2DStandard [reksai_vo=2480312883] {r11}.txtp",
+    "media_ids": [
+      23813620,
+      25135176,
+      133484868,
+      138797595,
+      144691549,
+      151764950,
+      226709558,
+      234823519,
+      302062897,
+      360530670,
+      369342910,
+      391290737,
+      506696263,
+      619856944,
+      622627569,
+      628258481,
+      674975736,
+      831531503,
+      843153298,
+      846571532,
+      883090839,
+      905878046,
+      978427001,
+      988661119,
+      1041939786
+    ],
+    "duration": 4.713,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "fae9a542df6e86ef56a65ae5e36534eca0e2fdf73edfdd9cdb7ed6afa593ada3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_reksai_move2dstandard_reksai_vo_2480312883_r12_zh_cn.wav",
+    "event": "Play_vo_Reksai_Move2DStandard",
+    "event_id": 921558434,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai_vo/event_wav/Play_vo_Reksai_Move2DStandard [reksai_vo=2480312883] {r12}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai_vo/txtp/Play_vo_Reksai_Move2DStandard [reksai_vo=2480312883] {r12}.txtp",
+    "media_ids": [
+      23813620,
+      25135176,
+      133484868,
+      138797595,
+      144691549,
+      151764950,
+      226709558,
+      234823519,
+      302062897,
+      360530670,
+      369342910,
+      391290737,
+      506696263,
+      619856944,
+      622627569,
+      628258481,
+      674975736,
+      831531503,
+      843153298,
+      846571532,
+      883090839,
+      905878046,
+      978427001,
+      988661119,
+      1041939786
+    ],
+    "duration": 2.6898,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "db734657927b33c68cb7c1c51919d17b7a521fe1cc02bf0b3ae4071e93521571",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiqattack2_oncast_r1.wav",
+    "event": "Play_sfx_Reksai_ReksaiQAttack2_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack2_OnCast {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/qw-rework/audio/play_sfx_reksai_reksaiqattack2_oncast_r1.wav",
+    "duration": 0.9501133786848073,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9d01ba1018595ad307c298551f92aa1875eb4193be4c0ce110f65779cd07ee52",
+    "selection_note": "最多三个外层随机变体；逐段使用原版 QAttack2 / QAttack3 事件。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiqattack2_oncast_r2.wav",
+    "event": "Play_sfx_Reksai_ReksaiQAttack2_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack2_OnCast {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/qw-rework/audio/play_sfx_reksai_reksaiqattack2_oncast_r2.wav",
+    "duration": 0.9501133786848073,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b0463ca9e989a1fcff29b5e1b8275de38d8714a577dd9a39f51f6a1bbd729454",
+    "selection_note": "最多三个外层随机变体；逐段使用原版 QAttack2 / QAttack3 事件。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiqattack2_oncast_r3.wav",
+    "event": "Play_sfx_Reksai_ReksaiQAttack2_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack2_OnCast {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/qw-rework/audio/play_sfx_reksai_reksaiqattack2_oncast_r3.wav",
+    "duration": 1.1729705215419501,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e3bc55c3ae3a527be0b6cadc220d36e4a715b95f6ef180a5927469977c173ae4",
+    "selection_note": "最多三个外层随机变体；逐段使用原版 QAttack2 / QAttack3 事件。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiqattack3_oncast_r1.wav",
+    "event": "Play_sfx_Reksai_ReksaiQAttack3_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack3_OnCast {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/qw-rework/audio/play_sfx_reksai_reksaiqattack3_oncast_r1.wav",
+    "duration": 1.2146258503401361,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0e9766f5be1e1486d0f211e5567a2f9f096b86742de6f4a8d2cf537f5dc0e0f6",
+    "selection_note": "最多三个外层随机变体；逐段使用原版 QAttack2 / QAttack3 事件。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiqattack3_oncast_r2.wav",
+    "event": "Play_sfx_Reksai_ReksaiQAttack3_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack3_OnCast {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/qw-rework/audio/play_sfx_reksai_reksaiqattack3_oncast_r2.wav",
+    "duration": 1.2146258503401361,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d18353fe9eefed99cfbcdf059b53b2c4972895f3cf05c9a200ed68aca4ac0376",
+    "selection_note": "最多三个外层随机变体；逐段使用原版 QAttack2 / QAttack3 事件。"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiqattack3_oncast_r3.wav",
+    "event": "Play_sfx_Reksai_ReksaiQAttack3_OnCast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQAttack3_OnCast {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/qw-rework/audio/play_sfx_reksai_reksaiqattack3_oncast_r3.wav",
+    "duration": 1.2658503401360544,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ddddf9dc0ef8062e0a5f15a353c3dfb04c66a4d57a04e0effcc4bbdebbe4059c",
+    "selection_note": "最多三个外层随机变体；逐段使用原版 QAttack2 / QAttack3 事件。"
+  },
+  {
+    "file": "w_movement_trail.wav",
+    "event": "Play_sfx_Reksai_RekSaiW_movement_trail",
+    "event_id": 3268679235,
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_RekSaiW_movement_trail.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/route-rework/w_movement_trail.wav",
+    "media_ids": [
+      248598973
+    ],
+    "duration": 4.444897959183673,
+    "processing": "vgmstream-cli -i; source event -28 dB retained; runtime loop owned by predeployment queue",
+    "sha256": "691039f557d1fd13a881b445d46286790ec7f61f9b6580ab77ecee56605af0ba"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiq_onbuffactivate_r1.wav",
+    "event": "Play_sfx_Reksai_ReksaiQ_OnBuffActivate",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQ_OnBuffActivate {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/route-rework/audio/play_sfx_reksai_reksaiq_onbuffactivate_r1.wav",
+    "duration": 6.453832199546485,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "35867fc577220bb1f81675f644247482099b3893e13e9dcbeb57b23d42c00010"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiq_onbuffactivate_r2.wav",
+    "event": "Play_sfx_Reksai_ReksaiQ_OnBuffActivate",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQ_OnBuffActivate {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/route-rework/audio/play_sfx_reksai_reksaiq_onbuffactivate_r2.wav",
+    "duration": 6.7273469387755105,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c898c7573046920b510b024f3b8a11fdc3518dbb8caf04c15514c88810afd495"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiq_onbuffactivate_r3.wav",
+    "event": "Play_sfx_Reksai_ReksaiQ_OnBuffActivate",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQ_OnBuffActivate {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/route-rework/audio/play_sfx_reksai_reksaiq_onbuffactivate_r3.wav",
+    "duration": 6.7273469387755105,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "75d80e96ee85329bae59c386ba7055307ee9b9ee57853bdbf089f713dac21a27"
+  },
+  {
+    "file": "play_sfx_reksai_reksaiq_onbuffdeactivate.wav",
+    "event": "Play_sfx_Reksai_ReksaiQ_OnBuffDeactivate",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiQ_OnBuffDeactivate.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/route-rework/audio/play_sfx_reksai_reksaiq_onbuffdeactivate.wav",
+    "duration": 2.1261451247165533,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e26c6f50bde4b4d7f8e61aef190231bd18c7847851d6d43c4462ae1a0e946f79"
+  }
+]

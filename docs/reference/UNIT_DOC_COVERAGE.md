@@ -26,6 +26,7 @@
 
 | 定义 / 正文（含形态） | 当前机制与边界重点 | 动画 / 音频 |
 | --- | --- | --- |
+| `reksai` · [虚空遁地兽](../units/reksai.md) | 地下预部署、破土击退、三次强化 | [动画](../units/animations/reksai.md) / [音频](../units/audio/reksai.md) / [特效](../units/effects/reksai.md) |
 | `ivern` · [翠神](../units/ivern.md) | 远程后排、主动召唤小菊 | [动画](../units/animations/ivern.md) / [音频](../units/audio/ivern.md) / [特效](../units/effects/ivern.md) |
 | `daisy` · [小菊](../units/daisy.md) | 衍生近战、第三击额外伤害与眩晕 | [动画](../units/animations/daisy.md) / [音频](../units/audio/daisy.md) / [特效](../units/effects/daisy.md) |
 | `sona` · [琴瑟仙女](../units/sona.md) | 命中范围治疗空军 | [动画](../units/animations/sona.md) / [音频](../units/audio/sona.md) / [特效](../units/effects/sona.md) |

@@ -116,3 +116,5 @@
 杰斯双形态补充：`first_strike:cast` / `first_strike:missile_launch` / `first_strike_hit` 也支持换形首击；`active_buff:attack_swing` 属于可取消的当前攻击，连同既有launch/hit覆盖远程W。`persistent_area:sustain` / `persistent_area:end` 读取独立领域时钟，换形保留持续音，死亡/清场停止。
 
 建筑待机：`dormant:enter` / `dormant:exit` 仅由 `dormant_without_targets` 建筑的权威待机变化派发一次；客户端消费可靠表现事件，不根据本地索敌猜测。
+
+`pre_deploy:sustain`由预部署表现队列按ID持有，位置使用对应路径的同一采样点；重复快照只更新位置，不重启声音。队列消失或终局即停止，普通预部署开始声仍走`pre_deploy:start`，两者不互相替代。

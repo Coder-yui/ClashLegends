@@ -5,6 +5,8 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_reksai_qw_lifecycle()
+	await _check_predeployment_audio()
 	_check_scarecrow_routes()
 	_check_egg_death_model()
 	_check_locomotion_attack_interrupts()
@@ -972,3 +974,109 @@ func _check_scarecrow_routes() -> void:
 
 	view.free()
 	unit.free()
+
+func _check_reksai_qw_lifecycle() -> void:
+	var stats := CardDB.get_card("reksai").duplicate(true)
+	stats.deploy_time = 0.0
+	var unit := Unit.new()
+	unit.setup(0, stats, stats.name)
+	_main.add_child(unit)
+	_main._battle_presentation.attach_unit(unit, stats)
+	var view := _view_for(unit)
+	_expect(view != null, "雷克塞原版模型可创建")
+	if view != null:
+		var model: Node3D = view._model_root
+		model.advance_deployment_visual(0.1, 0.75, true)
+		_expect(model._emerge.visible, "W击飞出土阶段显示原版粒子")
+		model.advance_deployment_visual(0.75, 0.75, true)
+		for tick in 70:
+			model.advance_ambient_visual(0.05)
+			model.advance_deployment_visual(0.75, 0.75, true)
+		_expect(not model._emerge.visible and not model._emerge_cast.visible, "部署进度饱和后出土粒子仍结束，无常驻黑地面")
+		unit._attacking = true
+		for segment in 3:
+			unit._attack_visual_serial = segment + 1
+			unit._empowered_attack_visual_serial = segment + 1
+			view._play_attack(segment + 1)
+			_expect(view._animation_player.current_animation == ["Spell1", "Spell1B", "Spell1"][segment], "Q三段实际播放器依次选择原版动作")
+			model.advance_ambient_visual(0.0)
+			_expect(model._swipes[1 if segment == 1 else 0].visible and not model._swipes[0 if segment == 1 else 1].visible, "Q第二段使用独立反向挥击粒子")
+		model.begin_visual_death(0.8)
+		model.advance_deployment_visual(0.75, 0.75, true)
+		model.advance_ambient_visual(0.05)
+		_expect(not model._emerge.visible and not model._swipes[0].visible and not model._swipes[1].visible, "死亡后不重新显示出土或Q粒子")
+		var presentation: BattlePresentation3D = _main._battle_presentation
+		var pending := [{"id":991,"card_id":"reksai","team":0,"pos":Vector2(500,400),"duration":3.25,"time_left":3.15}]
+		presentation.sync_pre_deployments(pending)
+		presentation.sync_pre_deployments(pending, 0.016)
+		var prior := float(presentation._pre_deploy_views[991].elapsed)
+		pending[0].time_left = 3.145
+		presentation.sync_pre_deployments(pending, 0.016)
+		var next := float(presentation._pre_deploy_views[991].elapsed)
+		_expect(is_equal_approx(next-prior,0.016), "计时样本更新不回跳、不丢失逐帧连续推进")
+		_expect(is_equal_approx(presentation._pre_deploy_views[991].view.duration,3.25), "表现使用权威下发实际时长")
+		presentation.sync_pre_deployments([])
+		var arrival: PreDeploymentVisual3D = load("res://assets/units/reksai/arrival.tscn").instantiate()
+		_main._battle_presentation._world_root.add_child(arrival)
+		arrival.setup(_main._battle_presentation._camera, Vector2(500,400),0)
+		arrival.advance_visual(0.7)
+		var last_point: Vector2 = arrival.audio_position
+		arrival.finish_visual()
+		_expect(arrival._ending and is_equal_approx(arrival._effect.emission_cutoff,arrival.duration*0.7), "潜行结束停止发射，已出生原版粒子自然收尾")
+		arrival._process(0.5)
+		_expect(arrival.audio_position == last_point, "取消部署收尾不向落点跳跃")
+		arrival._process(1.4)
+		_expect(arrival.is_queued_for_deletion(), "潜行尾部结束释放表现对象")
+		arrival.free()
+		var long_route: PreDeploymentVisual3D = load("res://assets/units/reksai/arrival.tscn").instantiate()
+		_main._battle_presentation._world_root.add_child(long_route)
+		long_route.duration=12.0
+		long_route.route=PackedVector2Array([Vector2(140,1000),Vector2(140,300)])
+		long_route.setup(_main._battle_presentation._camera,Vector2(140,300),0)
+		long_route.advance_visual(4.5/12.0)
+		_expect(long_route._layers.size()==2 and is_equal_approx(long_route._effect._age,0.5),"长路径接续新粒子，保留上一段自然尾部")
+		long_route.advance_visual(8.5/12.0)
+		_expect(long_route._layers.size()==2 and long_route._effect.visible,"超8秒路径不因采样窗口结束而消失，旧层有界回收")
+		long_route.finish_visual()
+		_expect(is_equal_approx(long_route._effect.emission_cutoff,0.5),"分段路径取消在本段正确年龄停发射")
+		long_route.free()
+		var buff: ActiveBuffVisual3D = load("res://assets/units/reksai/empowered.tscn").instantiate()
+		_main._battle_presentation._world_root.add_child(buff)
+		buff.configure(21.0, 0)
+		buff.bind_model(model)
+		buff.advance_status(true, true, 6.2)
+		_expect(buff._effect.visible and is_equal_approx(buff._effect._age, 2.2), "Q长期待发保留原版持续层但不重播启动帧")
+		_expect(buff._effect._sample_values[2].is_empty() and buff._effect._sample_values[3].is_empty(), "Q启动爆点不进入稳态循环")
+		_expect(buff._bones.size()==2 and buff._bones[0]>=0 and buff._bones[1]>=0,"Q挂载原模型左右手骨骼")
+		_expect(buff._hands[0].global_position.distance_to(buff._hands[1].global_position)>0.1,"Q双手效果独立定位，不落在模型中心")
+		buff.on_cue(&"active:cast")
+		_expect(is_zero_approx(buff._age), "Q刷新施放重新开始启动表现")
+		buff.advance_status(false, true, 0.0)
+		_expect(not buff._effect.visible, "Q消费结束关闭所有待发粒子")
+		buff.free()
+		view.free()
+	unit.free()
+
+func _check_predeployment_audio() -> void:
+	var audio := GameAudioManager.new()
+	_main.add_child(audio)
+	audio.set_process(false)
+	var samples: Array[Dictionary] = [{"id":17,"card_id":"reksai","team":0,"pos":Vector2(360,1100),"elapsed":0.0}]
+	audio.sync_pre_deployment_audio(samples)
+	_expect(audio._pre_deployment_players.size()==1,"W潜行队列创建独立移动持续声")
+	var player: AudioStreamPlayer2D = audio._pre_deployment_players[17]
+	samples[0].pos = Vector2(ArenaRules.BRIDGE_X_LEFT,ArenaRules.RIVER_Y)
+	audio.sync_pre_deployment_audio(samples)
+	_expect(audio._pre_deployment_players[17]==player and player.global_position==samples[0].pos,"重复快照不重播，音源跟随同一路径到桥面")
+	await _harness.process_frame
+	audio.set_battle_paused(true)
+	_expect(player.stream_paused,"工作台暂停同时暂停潜行声音")
+	audio.set_battle_paused(false)
+	audio.sync_pre_deployment_audio([])
+	_expect(not player.playing and audio._pre_deployment_players.is_empty(),"抵达或取消后潜行声立即结束")
+	audio.sync_pre_deployment_audio(samples)
+	audio.end_battle()
+	_expect(audio.battle_audio_stopped(),"终局清空潜行音且迟到队列不能重启")
+	audio.sync_pre_deployment_audio(samples)
+	_expect(audio._pre_deployment_players.is_empty(),"终局拒绝迟到潜行声音")
+	audio.free()

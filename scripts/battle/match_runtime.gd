@@ -275,6 +275,9 @@ func _tick_pending_card_pre_deployments(dt: float) -> void:
 	var ready := _commands.take_pre_deployments(dt, world.combatants(), _sim_tick_id)
 	_combat.commit_batch()
 	for deployment in ready:
+		if bool(deployment.get("waiting_for_route",false)):
+			_execute_card_deployment(int(deployment.team),String(deployment.card_id),deployment.pos,String(deployment.get("deployment_card_id","")),{},int(deployment.get("active_slot",-1)),int(deployment.get("mirror_generation",-1)))
+			continue
 		_spawn_card_units(
 			int(deployment.team), String(deployment.card_id), deployment.pos as Vector2,
 			-1.0, int(deployment.get("active_slot", -1)), int(deployment.get("id", -1)), String(deployment.get("deployment_card_id", "")), int(deployment.get("mirror_generation", -1))
@@ -288,10 +291,19 @@ func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2, deploy
 	var type: String = stats.get("type", "unit")
 	var active_slot := _active_card_slot_for_team(p_team, card_id) if slot_override == -2 else slot_override
 	var pre_deploy_time := maxf(float(stats.get("pre_deploy_time", 0.0)), 0.0)
+	var route := PackedVector2Array()
+	if stats.has("pre_deploy_burrow_speed"):
+		route = preload("res://scripts/battle/burrow_deployment_path.gd").plan(world,p_team,pos,float(stats.radius))
+		if route.is_empty():
+			# 无可达路线时等待，不穿建筑或在目的地凭空生成；成功规划后不再寻路。
+			_commands.enqueue_deployment(p_team,card_id,pos,FixedStepClock.STEP,active_slot,-1,-1.0,deployment_card_id,mirror_generation,_sim_tick_id if _sim_step_active else -1,route,true)
+			return
+		pos = route[-1]
+		pre_deploy_time = maxf(pre_deploy_time, preload("res://scripts/battle/burrow_deployment_path.gd").curve(route).get_baked_length() / float(stats.pre_deploy_burrow_speed))
 	if pre_deploy_time > 0.0 and type != "spell":
 		var pre_deploy_id := _commands.allocate_deployment_id()
-		_commands.enqueue_deployment(p_team, card_id, pos, pre_deploy_time, active_slot, pre_deploy_id, pre_deploy_time, deployment_card_id, mirror_generation, _sim_tick_id if _sim_step_active else -1)
-		event.emit("pre_deploy", {"id": pre_deploy_id, "card_id": card_id, "team": p_team, "pos": pos, "duration": pre_deploy_time})
+		_commands.enqueue_deployment(p_team, card_id, pos, pre_deploy_time, active_slot, pre_deploy_id, pre_deploy_time, deployment_card_id, mirror_generation, _sim_tick_id if _sim_step_active else -1, route)
+		event.emit("pre_deploy", {"id": pre_deploy_id, "card_id": card_id, "team": p_team, "pos": pos, "duration": pre_deploy_time, "route": route})
 		card_event(card_id, "pre_deploy:start", pos, p_team)
 		return
 	match type:

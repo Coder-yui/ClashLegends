@@ -9,7 +9,7 @@
 | 共享阶段、时钟、比赛、金币、简单单机 AI | `battle_simulation`、`fixed_step_clock`、`minion_wave_schedule`、`match_rules`、`elixir_manager`、`ai_opponent` |
 | 手牌、镜像、局内成长 | `card_cycle`、`client_hand_state`、`card_play_history`、`match_card_growth` |
 | 排程、付款、主动资格 | `command_schedule`、`command_payment`、`active_skill_roster`、`active_skill_lifecycle` |
-| 部署、预部署轨迹 | `unit_spawn_request`、`deployment_rules`、`pre_deployment_sweep` |
+| 部署、预部署轨迹 | `unit_spawn_request`、`deployment_rules`、`pre_deployment_sweep`、`burrow_deployment_path` |
 | 地图、导航、碰撞与落点 | `arena_rules`、`nav_lane_layout`、`nav_grid`、`battle_path_search`、`movement_system`、`unit_landing_query` |
 | 攻击与状态 | `attack_timeline`、`status_instances`、`control_state`、`shield_state`、`bleed_state`、`death_form_state` |
 | 特殊位移状态 | `knockback_state`、`movement_strike_state`、`structure_rush_state`、`terrain_traversal_state`、`dash_strike_state`、`ornn_charge_state` |

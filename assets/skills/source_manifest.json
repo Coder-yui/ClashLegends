@@ -1072,5 +1072,14 @@
     "source_path": "assets/characters/ivern/hud/icons2d/ivernr.dds",
     "source_sha256": "b87a1118c76a1da51d9cd2eef1f36df434628eb3b7154b8002c9adf0c82db7ef",
     "sha256": "9bd5e63ad0751bd8c8634d7ca93502d67d832c13ee386b654b48a8e61458e78e"
+  },
+  {
+    "card": "reksai",
+    "skill_index": 0,
+    "path": "res://assets/skills/reksai_q.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/RekSai.wad.client",
+    "source_path": "assets/characters/reksai/hud/icons2d/reksai_q1.dds",
+    "source_sha256": "91f434529f56b034151abf922e0b6add5fde27609cfa9d04c4b5e31264479701",
+    "sha256": "9737276f03a2bb2a562d023a9822d7794861cba3130fc93714304af8bc38b5f4"
   }
 ]

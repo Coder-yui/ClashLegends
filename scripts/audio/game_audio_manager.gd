@@ -43,6 +43,7 @@ var _unit_entries: Dictionary = {}
 # 状态声音归受影响对象，独立于其原卡音频、换形和被取消的动作。
 var _stasis_sources: Dictionary = {}
 var _spell_flight_players: Dictionary = {}
+var _pre_deployment_players: Dictionary = {}
 var _stream_pool_cache: Dictionary = {}
 var preparation_errors := PackedStringArray()
 var _preview_hit_queue: Array[Dictionary] = []
@@ -64,6 +65,7 @@ func end_battle(preserve_nexus: bool = false) -> void:
 	_battle_ended = true
 	_stasis_sources.clear()
 	clear_spell_flight_audio()
+	clear_pre_deployment_audio()
 	clear_zone_audio()
 	clear_projectile_launch_audio()
 	for key in _sustain_players.keys():
@@ -107,7 +109,7 @@ func set_battle_paused(paused: bool) -> void:
 		_paused_players.clear()
 
 func battle_audio_stopped() -> bool:
-	if not _spell_flight_players.is_empty() or not _sustain_players.is_empty() or not _zone_players.is_empty() or not _projectile_launch_players.is_empty() or not _building_audio.is_empty() or not _preview_hit_queue.is_empty():
+	if not _pre_deployment_players.is_empty() or not _spell_flight_players.is_empty() or not _sustain_players.is_empty() or not _zone_players.is_empty() or not _projectile_launch_players.is_empty() or not _building_audio.is_empty() or not _preview_hit_queue.is_empty():
 		return false
 	for player in _world_players:
 		if player.playing:
@@ -660,6 +662,11 @@ func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: i
 	var event: Dictionary = current_audio.get("events", {}).get(String(cue), {})
 	# 定时动作音由只读动作进度派发，忽略起手/伤害 RPC 的同名通知，避免双播。
 	if event.has("action_time") and not action_timed: return false
+	if cue == &"empowered_swing" and not current_audio.get("empowered_swing_by_segment", []).is_empty():
+		var segments: Array = current_audio.empowered_swing_by_segment
+		var serial := unit.get_attack_visual_serial() if attack_serial < 0 else attack_serial
+		if serial <= 0: return false
+		event = {"pool": segments[posmod(serial - 1, segments.size())], "volume_db": float(current_audio.get("attack_swing_volume_db", 0.0)), "bus": "Combat"}
 	if cue == &"attack_launch":
 		var segments: Array = current_audio.get("attack_launch_by_segment", [])
 		if not segments.is_empty():
@@ -672,6 +679,8 @@ func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: i
 	# 独立结果创建声由权威结果事件派发，不再随本体动作重复启动。
 	if event.get("owner", "") == "result": return false
 	var owner := _event_owner(unit, cue)
+	if cue == &"empowered_swing" and attack_serial >= 0:
+		owner = {"unit": unit.get_instance_id(), "kind": "attack", "serial": attack_serial}
 	# 可靠取消可能早于快照/不可靠音效到达；使用发出时身份，不借用当前新动作。
 	if action_serial >= 0:
 		if cue in [&"active:cast", &"active:spin", &"charge:step"]:
@@ -712,6 +721,10 @@ func play_attack_source(source: Dictionary, position: Vector2, first_strike: boo
 		configured = segments[(attack_serial - 1) % segments.size()]
 	if bool(source.get("empowered", false)) and not audio.get("empowered_hit", []).is_empty():
 		configured = audio.empowered_hit
+		cue = &"empowered_hit"
+	if bool(source.get("empowered", false)) and not audio.get("empowered_hit_by_segment", []).is_empty():
+		var empowered_segments: Array = audio.empowered_hit_by_segment
+		configured = empowered_segments[posmod(int(source.get("serial", 1)) - 1, empowered_segments.size())]
 		cue = &"empowered_hit"
 	var special = audio.get("first_strike_hit", [])
 	if first_strike and special is Array and not special.is_empty():
@@ -901,7 +914,7 @@ func prepare_audio(value: Variant, looping: bool = false) -> bool:
 			var paths := PackedStringArray(value.pool)
 			_randomized_stream(paths)
 			if looping: _randomized_stream(paths, true)
-		for key in value: prepare_audio(value[key], StringName(key) in UNIT_SUSTAIN_LAYERS.values() or key == "spell:flight")
+		for key in value: prepare_audio(value[key], StringName(key) in UNIT_SUSTAIN_LAYERS.values() or key in ["spell:flight", "pre_deploy:sustain"])
 	elif value is Array:
 		for child in value: prepare_audio(child)
 	return preparation_errors.is_empty()
@@ -1392,3 +1405,36 @@ func _stop_structure_haste_audio(instance_id: int) -> void:
 		if int(owner.get("unit", -1)) == instance_id and owner.get("kind", "") == "structure_haste":
 			player.stop()
 			player.stream = null
+
+## 预部署声音只读同一表现路径的采样位置；队列消失/取消/终局即停止，不创建战斗实体。
+func sync_pre_deployment_audio(samples: Array[Dictionary]) -> void:
+	if _battle_ended or _battle_paused: return
+	var present := {}
+	for sample in samples:
+		var id := int(sample.id)
+		present[id] = true
+		if not _pre_deployment_players.has(id):
+			var event: Dictionary = _card_audio(String(sample.card_id), int(sample.team)).get("events", {}).get("pre_deploy:sustain", {})
+			if event.is_empty() or _pre_deployment_players.size() >= SUSTAIN_PLAYER_COUNT: continue
+			var player := _new_world_player()
+			player.bus = StringName(event.get("bus", "Combat"))
+			player.volume_db = float(event.get("volume_db", 0.0))
+			player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])), true)
+			add_child(player)
+			player.global_position = sample.pos
+			_pre_deployment_players[id] = player
+			player.play(float(sample.get("elapsed", 0.0)))
+			cue_played.emit(String(sample.card_id), &"pre_deploy:sustain", sample.pos)
+		(_pre_deployment_players[id] as AudioStreamPlayer2D).global_position = sample.pos
+	for id in _pre_deployment_players.keys():
+		if not present.has(id): _stop_pre_deployment_audio(int(id))
+
+func _stop_pre_deployment_audio(id: int) -> void:
+	var player: AudioStreamPlayer2D = _pre_deployment_players.get(id)
+	if is_instance_valid(player):
+		player.stop()
+		player.queue_free()
+	_pre_deployment_players.erase(id)
+
+func clear_pre_deployment_audio() -> void:
+	for id in _pre_deployment_players.keys(): _stop_pre_deployment_audio(int(id))

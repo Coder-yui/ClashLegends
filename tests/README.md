@@ -258,3 +258,5 @@ ProjectileSuite 内的 view 子检查覆盖内容代次、同帧前后读取、�
 `SonaSuite`覆盖部署完成2秒首次、后续5秒周期/3秒光环、命中不触发、不刷新、受控只保留一轮、范围空地治疗、重伤/控制/凝滞/死亡、R穿透伤害与眩晕、付费次数冷却及非法快照。`ProjectileSuite`另含琴女普攻和R的纯表现变更权威轨迹对比。三进程附加场景使用`CLASH_TEST_SONA=1 python3 tools/dev.py verify --suite SonaSuite --network`，包含双方资源计划、双客户端两轮光环时钟、只读权威状态、水平R、普攻/R音频事件及到期停音；首次运行前按需加`--import`。
 
 翠神专项：`--suite IvernSuite`覆盖小菊三击循环、致盲/凝滞、召唤归属和独立存活、3费单次20秒冷却。`CLASH_TEST_IVERN=1 python3 tools/dev.py verify --suite IvernSuite --network`追加服务器与两客户端的弹体、召唤物、攻击段及眩晕同步。
+
+雷克塞路线专项：`CLASH_TEST_REKSAI=1 CLASH_TEST_TERMINAL_TICK=180 python3 tools/dev.py verify --suite ReksaiSuite --network`。覆盖主机与双客户端的冻结避建筑路线、实际时长、后建建筑不重算及双方出土；结果的路线哈希用于跨端对照。

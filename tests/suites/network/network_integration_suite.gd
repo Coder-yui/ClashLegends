@@ -44,6 +44,8 @@ func run(harness: SceneTree) -> void:
 		main._audio_manager.cue_played.connect(func(card, cue, _pos):
 			if card == "match" and cue in [&"victory", &"defeat"]: result_cues.append(cue))
 	var bomb_case = preload("res://tests/fixtures/mega_inferno_bomb_network_case.gd").new() if OS.get_environment("CLASH_TEST_MEGA_INFERNO_BOMB") == "1" else null
+	var reksai_case = preload("res://tests/fixtures/reksai_network_case.gd").new() if OS.get_environment("CLASH_TEST_REKSAI")=="1" else null
+	if reksai_case != null: terminal_not_before = maxi(terminal_not_before,160)
 	var ziggs_case = preload("res://tests/fixtures/ziggs_network_case.gd").new() if OS.get_environment("CLASH_TEST_ZIGGS") == "1" else null
 	if ziggs_case != null: terminal_not_before = maxi(terminal_not_before, 240)
 	var bear_case = preload("res://tests/fixtures/airdrop_bear_network_case.gd").new() if OS.get_environment("CLASH_TEST_AIRDROP_BEAR") == "1" else null
@@ -101,10 +103,11 @@ func run(harness: SceneTree) -> void:
 	var mist_pair_active := false
 	var mist_observation: Dictionary = {}
 	# 琴女场景须等待光环自然到期；包括正式30秒加载上限及20秒战斗观察预算。
-	var observation_limit := 50000 if sona_case != null or ivern_case != null else 20000
+	var observation_limit := 50000 if sona_case != null or ivern_case != null or reksai_case != null else 20000
 	while Time.get_ticks_msec() - start < observation_limit:
 		await harness.process_frame
 		if bomb_case != null: bomb_case.poll(main)
+		if reksai_case != null: reksai_case.poll(main)
 		if ziggs_case != null: ziggs_case.poll(main)
 		if bear_case != null: bear_case.poll(main)
 		if olaf_case != null: olaf_case.poll(main)
@@ -317,6 +320,9 @@ func run(harness: SceneTree) -> void:
 		if vine_case != null:
 			result["vine_lasher"] = vine_case.result()
 			result["passed"] = result.passed and result.vine_lasher.passed
+		if reksai_case != null:
+			result["reksai"] = reksai_case.result()
+			result["passed"] = result.passed and result.reksai.passed
 		if ziggs_case != null:
 			result["ziggs"] = ziggs_case.result()
 			result["passed"] = result.passed and result.ziggs.passed

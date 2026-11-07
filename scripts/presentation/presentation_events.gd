@@ -87,7 +87,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		return not spell
 	if cue in ["death", "death:voice"]:
 		return true
-	if cue == "pre_deploy:start":
+	if cue in ["pre_deploy:start", "pre_deploy:sustain"]:
 		return float(stats.get("pre_deploy_time", 0.0)) > 0.0
 	if cue == "deploy:hit":
 		return float(stats.get("deploy_sweep_damage", 0.0)) > 0.0 and float(stats.get("deploy_sweep_radius", 0.0)) > 0.0
