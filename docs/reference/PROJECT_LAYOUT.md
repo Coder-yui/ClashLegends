@@ -12,22 +12,9 @@
 
 ## 开发资料与历史归档
 
-- 开发素材库保留 `01-待开发` 至 `05-已完成` 的分类；既有中间产物本轮未清理、未重排。
-- 原先散落于 `Documents/Codex` 的游戏任务进入 `ClashLegends-开发素材库/04-中间产物/历史归档/Codex历史任务/<日期>/<任务>/`。
-- Godot 用户目录中的历史截图和旧配置备份进入同一归档下 `Godot历史输出/`；当前配置、日志和缓存保留在系统用户目录。
-- 下载目录的硬控规范草案进入 `需求文档/参考资料/`，保留个人需求目录的本地属性。
-- 宣传目录中的历史稿、历史脚本及旧归档已按用户要求移入系统废纸篓；恢复映射在游戏素材库 `04-中间产物/工程整理/2026-10-21_三板块归位/宣传目录简化/trash-map.json`，未清空废纸篓。
-- 回滚备份在游戏项目根目录 `ClashLegends-rollback-backups/`，由 `.gitignore` 和 `.gdignore` 排除；原校验和及备份正文保持原样。
+2026-11-09 已按用户要求清理游戏内旧开发素材、联调副本与回滚备份；素材库保留五阶段空目录供后续任务使用。当前恢复位置与边界见[本地素材索引](MATERIAL_LIBRARY.md)。2026-10-21 的归档路径和旧迁移脚本属于历史记录，文件随本次清理移入废纸篓。
 
-本轮搬迁是同卷移动，核对移动前后的 SHA-256，不因归档产生第二份源文件。清单、文本修改前备份和原有脏文件快照在开发素材库 `04-中间产物/工程整理/2026-10-21_三板块归位/`。历史交付和冻结副本中的旧绝对路径保留当时事实，查阅时使用以下映射：
-
-| 旧位置 | 当前位置 |
-| --- | --- |
-| `/Users/czh/Projects/Clash Legends/` | `/Users/czh/Projects/ClashLegends/` |
-| 旧游戏根目录内 `ClashLegends-promo-materials/` | `/Users/czh/Projects/ClashLegends-promo-materials/` |
-| `/Users/czh/Projects/ClashLegends-rollback-backups/` | 游戏根目录 `ClashLegends-rollback-backups/` |
-| 原 `Documents/Codex` 游戏任务及历史截图 | 逐项查本轮 `moves.json` |
-| Godot `app_userdata/Clash Legends/` | `app_userdata/ClashLegends/` |
+个人 `需求文档/`、游戏正式资源及运行缓存保留。旧游戏根路径 `/Users/czh/Projects/Clash Legends/` 对应当前 `/Users/czh/Projects/ClashLegends/`；历史记录保留当时拼写。
 
 ## 项目外保留项
 

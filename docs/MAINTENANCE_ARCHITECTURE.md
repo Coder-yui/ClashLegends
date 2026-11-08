@@ -102,6 +102,7 @@ flowchart LR
 | 生命状态 | ShieldState 每层生命/时间/衰减/恢复与爆炸资格；BleedState 来源叠层/窗口/余量；AssistConversionState 受击目标的参与击杀窗口与一次性转化；DeathFormState 致死换形资格、等待 Tick 与衰血 |
 | 位移 | MovementSystem 碰撞与移动；NavGrid 动态导航格、nav_lane_layout 静态路线场、BattlePathSearch 搜索；KnockbackState 普通击退；StructureRushState 建筑冲撞；TerrainTraversalState 穿地形门禁；UnitLandingQuery 连续几何落点 |
 | 命中与技能 | CombatInteraction/TargetProtectionState 准入与固定圣霭；CombatResolver 阶段命中/附带效果/收益/死亡队列；ProjectileSystem 弹体；SpellSystem 法术与可选速度配置的在途时钟；ActiveSkillEffectSystem 技能效果与 DashStrikeState、OrnnChargeState |
+| 持续范围光环 | HasteAuraSystem / DebuffAuraSystem 在自然生命周期之后、单位行动之前采样；来源部署、死亡、凝滞与目标准入决定贡献，Unit 写入既有倍率/软控容器，客户端复用快照 |
 | 周期队伍普攻增幅 | TeamAttackBoostSystem 主机固定 Tick 选择未增幅友军并写入 Unit 永久倍率；快照只复制倍率，不复制周期时钟 |
 | 主动资格 | ActiveSkillLifecycle 协调准备、起手、动作和排程，CommandSchedule 按身份结束/取消；ActiveSkillRoster 技能槽、编队转交、次数、冷却、免费追斩；效果执行身份归 CommandSchedule 与 Unit.active_skill_cast_serial |
 | 联网 | NetworkClock拥有RTT/时钟采样，NetworkCommandState拥有公开命令准备记录，visit仅提供只读字典，NetworkPlayback拥有客户端快照/事件播放时间轴，仅入队后重排，保持同Tick事件先于快照；NetworkEntityLifecycle 出生/销毁/快照屏障；NetworkSnapshotSystem 编解码与状态投影；RPC 保留在 Main 节点 |

@@ -301,14 +301,16 @@ def main() -> int:
     parser.add_argument('--total', type=int, choices=[12, 24], default=12)
     parser.add_argument('--samples', type=int, choices=[1, 2, 3], default=2)
     parser.add_argument('--seconds', type=float, default=20)
-    parser.add_argument('--reference', type=Path)
+    parser.add_argument('--reference', type=Path, required=True)
     parser.add_argument('--output', type=Path)
     args = parser.parse_args()
     if not 0 < args.seconds <= 20:
         parser.error('seconds must be positive and <=20, including startup and preparation')
     if args.probe == 'particle' and args.mode == 'timing':
         parser.error('particle supports contracts/capture with fixed low-load CPU diagnostics')
-    reference = args.reference or DEFAULT_ROOT / ('reference/scripts/presentation' if args.probe == 'geometry' else 'reference/void_spawn_player.gd')
+    reference = args.reference.resolve()
+    if not reference.exists():
+        parser.error('--reference must exist')
     output = (args.output or DEFAULT_ROOT / ('safe-' + args.probe) / datetime.now().strftime('%Y%m%d-%H%M%S-%f')).resolve()
     output.mkdir(parents=True, exist_ok=False)
     probe_output = output if args.probe == 'geometry' else output / 'probe'

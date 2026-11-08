@@ -2,7 +2,6 @@ extends SceneTree
 ## 仅对照虚空兽trail出生索引；不启动Main、不推进战斗、不度量FPS。
 const PLAYER = preload("res://assets/effects/void_spawn/player.gd")
 const HEARTBEAT = preload("res://tools/performance/safe_probe_heartbeat.gd")
-const DEFAULT_REFERENCE := "res://ClashLegends-开发素材库/04-中间产物/architecture_refactor/batch2b/reference/void_spawn_player.gd"
 const EMISSION_END := 34.0 / 30.0
 var failures: Array[String] = []
 var checks := 0
@@ -265,7 +264,11 @@ func run() -> void:
 		push_error("Diagnostic rounds/samples must each be in 1..3")
 		quit(2)
 		return
-	var reference := option("--reference", DEFAULT_REFERENCE)
+	var reference := option("--reference", "")
+	if reference.is_empty() or not FileAccess.file_exists(reference):
+		push_error("Provide --reference=<original particle script>")
+		quit(2)
+		return
 	legacy = source_script(FileAccess.get_file_as_string(reference))
 	if legacy == null:
 		quit(2)

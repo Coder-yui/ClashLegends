@@ -14,6 +14,7 @@
 | 攻击与状态 | `attack_timeline`、`status_instances`、`control_state`、`shield_state`、`bleed_state`、`death_form_state` |
 | 特殊位移状态 | `knockback_state`、`movement_strike_state`、`structure_rush_state`、`terrain_traversal_state`、`dash_strike_state`、`ornn_charge_state` |
 | 周期队伍普攻增幅、锻造时序与在途锤子 | `team_attack_boost_system` |
+| 持续范围光环 | `haste_aura_system`、`debuff_aura_system`；行动前采样，聚合后写入既有状态容器 |
 | 效果准入与结算 | `combat_interaction`、`target_protection_state`、`battle_numbers`、`combat_resolver` |
 | 弹体、法术、主动效果 | `projectile_system`、`spell_system`、`active_skill_effect_system` |
 | 会话与副本 | `match_session`、`network_entity_lifecycle`、`network_snapshot_system` |

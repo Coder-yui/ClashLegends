@@ -96,7 +96,12 @@ func cold(kind: String, side: String) -> Dictionary:
 func run() -> void:
 	output = option("output", "")
 	DirAccess.make_dir_recursive_absolute(output)
-	reference = load(option("reference", "res://ClashLegends-开发素材库/04-中间产物/architecture_refactor/batch2b/reference/scripts/presentation/effect_resource_manifest.gd"))
+	var reference_path := option("reference", "")
+	if reference_path.is_empty() or not FileAccess.file_exists(reference_path):
+		push_error("Provide --reference=<original parser script>")
+		quit(2)
+		return
+	reference = load(reference_path)
 	var phase := option("phase", "paired")
 	var kind := option("kind", "typical")
 	var rounds := int(option("rounds", "1"))

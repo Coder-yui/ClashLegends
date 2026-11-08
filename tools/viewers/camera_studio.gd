@@ -8,7 +8,7 @@ extends SceneTree
 ## 预览区左键拖拽环绕相机，滚轮推拉；右侧面板可细调相机、灯光、背景、动作、预设和拍摄。
 
 const PREVIEW := preload("res://scripts/ui/workbench/model_preview.gd")
-const PRESETS_PATH := "res://ClashLegends-开发素材库/04-中间产物/3D摄影棚/camera_studio_presets.json"
+const PRESETS_PATH := "user://camera_studio_presets.json"
 const SHOTS_DIR := "res://ClashLegends-开发素材库/04-中间产物/3D摄影棚/shots"
 const CARD_IMAGE_SIZE := Vector2i(308, 560)
 const PREVIEW_SIZE := Vector2(440, 800)

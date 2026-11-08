@@ -137,3 +137,6 @@ Main真实七消费者的共享视图对照与连续跨局窗口诊断保存在�
 ## 河岸寻路单Tick基准
 
 `Godot --headless --path . --script tools/performance/river_navigation_probe.gd` 使用无表现权威夹具，双方阵营的盖伦、武器大师和峡谷先锋各重复3次，每例最多700个固定Tick。每例创建新World，测量冷导航缓存；计时仅包含单位 `sim_tick` 和实际移动结算，位置合法性检查在计时外。输出每例首Tick、最慢Tick、P95、命中结果、身体合法性和追击停顿Tick数。它不加载模型、声音或联网，不是整场渲染帧率验收。对比时保持相同脚本和场景，不与其他引擎测试并发执行；日志重定向到素材库专项目录。
+
+
+2026-11-09 清理旧实验基线后，`safe_probe.py` 与 `effect_dependency_probe.py` 必须显式提供 `--reference`（前者geometry为脚本目录、particle为旧播放器；后者为旧依赖解析脚本）。不再默认读取已清理的实验副本；历史性能数据不代表当前测量。

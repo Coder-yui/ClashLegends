@@ -35,7 +35,7 @@ python3 tools/dev.py studio --cards garen,gnar --formation line
 python3 tools/dev.py studio --scene /绝对路径/model.glb
 ```
 
-预览区左键拖拽可环绕相机，滚轮可推拉。默认镜头自动朝向主体；右侧可在此基础上细调相机朝向的水平偏移、垂直偏移和滚转角，也可调水平环绕、俯仰、距离、目标高度、模型朝向、透视/正交投影、FOV/正交画幅，以及主光、辅光、轮廓光、环境光、背景色和透明背景。摄影灯关闭阴影，但地面默认可见，用来保留卡面构图中的落脚关系；需要纯背景时可手动关闭地面。预设按钮适合快速找方向，方案区可将当前参数写入 `ClashLegends-开发素材库/04-中间产物/3D摄影棚/camera_studio_presets.json`，以后在同一工具中复用。
+预览区左键拖拽可环绕相机，滚轮可推拉。默认镜头自动朝向主体；右侧可在此基础上细调相机朝向的水平偏移、垂直偏移和滚转角，也可调水平环绕、俯仰、距离、目标高度、模型朝向、透视/正交投影、FOV/正交画幅，以及主光、辅光、轮廓光、环境光、背景色和透明背景。摄影灯关闭阴影，但地面默认可见，用来保留卡面构图中的落脚关系；需要纯背景时可手动关闭地面。预设按钮适合快速找方向，方案区可将当前参数写入 `user://camera_studio_presets.json`，以后在同一工具中复用。
 
 ### 多单位卡面
 
@@ -110,3 +110,5 @@ python3 tools/dev.py effect --provider=res://assets/effects/ekko/player.gd --var
 特效展台支持 `--range-radius=130 --range-team=0`，以40像素/世界单位显示项目自绘地面范围边线，可开关显示、切换红蓝。与`--native-scale`配合检查特效与权威半径；范围线不会跟随诊断抬高。
 
 浪潮展台：`python3 tools/dev.py effect --provider=res://assets/effects/tidal_wave/player.gd --variants=wave --effect-rotation=-90,0,0 --native-scale=0.006666667 --zoom=8`。通用`--effect-rotation=X,Y,Z`以度为单位设置源特效刚性朝向，不修改源数据；展台为固定位置逐层观察，实际移动轨迹在工作台检查。
+
+凛冬之柱分层筛选：`python3 tools/dev.py effect --provider=res://assets/effects/pillar_of_ice/player.gd --variants=升起,常驻,死亡 --variant=常驻 --native-scale=0.009 --range-radius=110 --zoom=8`。三个模式复用正式采样及尺寸，中文复选框可独立隐藏各层；开关只作用于本次预览。播放器可提供`preview_duration`与各层`display_name`，不改变运行资源时间和层标识。

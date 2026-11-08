@@ -28,8 +28,8 @@
 
 重新用 wwiser -gv 0dB 生成 TXTP，关闭自动 master 音量补偿；vgmstream 解码为原增益 WAV，未归一化、未截短。已导出以下三个可听样例，暂未接入游戏：
 
-- [变体 1 · 1.764 秒](</Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r1}.wav>)
-- [变体 2 · 1.634 秒](</Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r2}.wav>)
-- [变体 3 · 1.906 秒](</Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r3}.wav>)
+- 变体 1 · 1.764 秒（历史产物已清理；原路径：`</Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r1}.wav>`）
+- 变体 2 · 1.634 秒（历史产物已清理；原路径：`</Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r2}.wav>`）
+- 变体 3 · 1.906 秒（历史产物已清理；原路径：`</Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r3}.wav>`）
 
 来源证据：/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/common.rito 第 2853 / 2866 行；生成清单和哈希在 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/manifest.json。此前“没找到小兵出生素材”的范围结论由此次找到共享兵线生成事件补充，不再列为完全缺素材。

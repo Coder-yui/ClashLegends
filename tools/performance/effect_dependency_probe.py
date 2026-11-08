@@ -37,6 +37,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--godot', default=find_godot())
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--reference', type=Path, required=True, help='Original parser script for the paired comparison')
     parser.add_argument('--rounds', type=int, default=1)
     parser.add_argument('--samples', type=int, default=1)
     parser.add_argument('--timeout', type=float, default=20)
@@ -48,12 +49,14 @@ def main():
         parser.error('Diagnostic rounds/samples must each be in 1..3.')
     if not 0 < args.timeout <= 20:
         parser.error('Timeout must be greater than zero and at most 20 seconds.')
+    reference = args.reference.resolve()
+    if not reference.is_file():
+        parser.error('--reference must be an existing parser script')
     out = args.output.resolve(); out.mkdir(parents=True, exist_ok=False)
-    reference = ROOT / 'ClashLegends-开发素材库/04-中间产物/architecture_refactor/batch2b/reference/scripts/presentation/effect_resource_manifest.gd'
     report = {'identity_before': verify.identity(ROOT), 'reference_sha256': hashlib.sha256(reference.read_bytes()).hexdigest(),
               'engine': None, 'steps': []}
     def record(folder, arguments):
-        step = run(args.godot, folder, arguments, args.timeout, args.render)
+        step = run(args.godot, folder, ["--reference=" + str(reference), *arguments], args.timeout, args.render)
         report['steps'].append(step)
         if not step['passed']:
             raise ValueError('Probe stopped or failed: ' + str(step['guard'].get('reason')))

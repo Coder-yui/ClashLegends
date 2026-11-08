@@ -142,6 +142,7 @@ func _build() -> void:
 	var material:=StandardMaterial3D.new();material.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;material.albedo_color=Color(0.20,0.28,0.22);floor_mesh.material_override=material;viewport.add_child(floor_mesh)
 	_build_range()
 	_camera();_load_variant(initial_variant if initial_variant in variants else variants[0])
+	root.grab_focus.call_deferred()
 	if not capture_dir.is_empty(): call_deferred("_captures")
 func _label(parent: Node,text: String) -> Label:
 	var label:=Label.new();label.text=text;parent.add_child(label);return label
@@ -163,7 +164,7 @@ func _load_variant(kind: String) -> void:
 	for method in ["load_kind","setup_native","seek"]:
 		if not player.has_method(method): push_error("Unsupported provider: "+method);player.free();return
 	viewport.add_child(player);player.load_kind(kind);player.setup_native(native_scale);player.position.y=height;player.rotation_degrees=effect_rotation
-	duration=float(player._data.duration);timeline.max_value=duration
+	duration=float(player._data.get("preview_duration", player._data.duration));timeline.max_value=duration
 	if not attachment_path.is_empty() and player.has_method("make_overlay") and player._data.emitters.any(func(e): return int(e.get("quadType",-1))in [5,11]):
 		attachment=load(attachment_path).instantiate()
 		viewport.add_child(attachment);attachment.scale=Vector3.ONE*model_scale
@@ -184,7 +185,7 @@ func _load_variant(kind: String) -> void:
 	for i in player._data.emitters.size():
 		var enabled := only_layers.is_empty() or String(player._data.emitters[i].name) in only_layers
 		hidden_layers[i] = not enabled
-		var toggle:=CheckBox.new();toggle.text=String(player._data.emitters[i].name);toggle.button_pressed=enabled;layer_box.add_child(toggle)
+		var toggle:=CheckBox.new();toggle.text=String(player._data.emitters[i].get("display_name", player._data.emitters[i].name));toggle.button_pressed=enabled;layer_box.add_child(toggle)
 		toggle.toggled.connect(func(v): hidden_layers[i]=not v;player._frame=-1;_seek())
 	if not card_id.is_empty():
 		var stats := CardDB.get_card(card_id)
