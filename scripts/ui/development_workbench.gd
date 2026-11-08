@@ -418,9 +418,13 @@ func _build_audio_page(page: Control) -> void:
 	_audio_list = ItemList.new()
 	_audio_list.add_theme_constant_override("v_separation", 12)
 	_audio_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_audio_list.item_activated.connect(func(index): _play_audio(int(_audio_list.get_item_metadata(index))))
+	_audio_list.item_activated.connect(func(index):
+		var audio_index := int(_audio_list.get_item_metadata(index))
+		if audio_index >= 0: _play_audio(audio_index))
 	_audio_list.item_selected.connect(func(index):
-		var entry: Dictionary = _audio_entries[int(_audio_list.get_item_metadata(index))]
+		var audio_index := int(_audio_list.get_item_metadata(index))
+		if audio_index < 0: return
+		var entry: Dictionary = _audio_entries[audio_index]
 		_audio_status.text = "%s · %.2fs · %s · %.1f dB\n%s" % [entry.cue, entry.duration, entry.bus, entry.volume, entry.path])
 	page.add_child(_audio_list)
 	var transport := _panel(page)
@@ -708,14 +712,39 @@ func _refresh_audio(audio: Dictionary) -> void:
 
 func _filter_audio(index: int) -> void:
 	_audio_list.clear()
-	var cue := _audio_cue.get_item_text(index) if index > 0 else ""
+	var selected_cue := _audio_cue.get_item_text(index) if index > 0 else ""
+	var groups: Dictionary = {}
 	for i in _audio_entries.size():
-		var entry := _audio_entries[i]
-		if not cue.is_empty() and String(entry.cue) != cue: continue
-		_audio_list.add_item("%s · %.2fs · %s" % [entry.cue, entry.duration, String(entry.path).get_file()])
-		_audio_list.set_item_metadata(_audio_list.item_count - 1, i)
-		_audio_list.set_item_tooltip(_audio_list.item_count - 1, entry.path)
-	if _audio_list.item_count > 0: _audio_list.select(0)
+		var cue := String(_audio_entries[i].cue)
+		if not selected_cue.is_empty() and cue != selected_cue: continue
+		if not groups.has(cue): groups[cue] = []
+		groups[cue].append(i)
+	var first_audio_row := -1
+	for cue in groups:
+		var indices: Array = groups[cue]
+		var header := _audio_list.item_count
+		_audio_list.add_item("%s  ·  %d 个变体" % [cue, indices.size()])
+		_audio_list.set_item_metadata(header, -1)
+		_audio_list.set_item_selectable(header, false)
+		var tint := _audio_event_color(String(cue))
+		_audio_list.set_item_custom_fg_color(header, tint)
+		_audio_list.set_item_custom_bg_color(header, Color(tint.r, tint.g, tint.b, 0.12))
+		for variant in indices.size():
+			var audio_index: int = indices[variant]
+			var entry := _audio_entries[audio_index]
+			var row := _audio_list.item_count
+			_audio_list.add_item("    %d.  %.2fs · %s" % [variant + 1, entry.duration, String(entry.path).get_file()])
+			_audio_list.set_item_metadata(row, audio_index)
+			_audio_list.set_item_tooltip(row, entry.path)
+			if first_audio_row < 0: first_audio_row = row
+	if first_audio_row >= 0: _audio_list.select(first_audio_row)
+
+func _audio_event_color(cue: String) -> Color:
+	if cue.begins_with("death"): return Color(1.0, 0.56, 0.55)
+	if cue.begins_with("deploy") or cue.begins_with("pre_deploy"): return Color(0.45, 0.88, 0.66)
+	if cue.begins_with("attack") or cue.begins_with("empowered"): return Color(1.0, 0.8, 0.4)
+	if cue.begins_with("active") or cue.begins_with("spell"): return Color(0.8, 0.65, 1.0)
+	return Color(0.5, 0.78, 1.0)
 
 func _play_audio(index: int) -> void:
 	_stop_audio()

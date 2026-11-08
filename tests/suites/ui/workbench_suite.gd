@@ -279,6 +279,16 @@ func _check_artdev_workbench() -> void:
 	panel._select_item("garen")
 	panel.show_workspace(2)
 	_expect(panel._audio_entries.all(func(entry): return float(entry.duration) > 0.0), "每个已接入音频变体均显示实际时长")
+	var headers := 0
+	var variants := 0
+	for row in panel._audio_list.item_count:
+		if int(panel._audio_list.get_item_metadata(row)) < 0:
+			headers += 1
+			_expect(not panel._audio_list.is_item_selectable(row), "事件标题不可作为音频播放")
+		else:
+			variants += 1
+	_expect(headers > 0 and variants == panel._audio_entries.size(), "事件分组标题与所有音频变体完整展示")
+	_expect(int(panel._audio_list.get_item_metadata(panel._audio_list.get_selected_items()[0])) >= 0, "分组列表默认选中音频而非事件标题")
 	panel._play_audio(0)
 	var audio_started := panel._audio_player.playing and panel._audio_player.stream != null
 	panel.show_workspace(0)
