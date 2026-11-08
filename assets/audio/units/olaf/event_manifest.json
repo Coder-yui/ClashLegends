@@ -96,54 +96,6 @@
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
   },
   {
-    "file": "play_sfx_olaf_olafbasicattack3_oncast_r1_d.wav",
-    "event": "Play_sfx_Olaf_OlafBasicAttack3_OnCast",
-    "event_id": 70708613,
-    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack3_OnCast {r1} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack3_OnCast {r1} {d}.txtp",
-    "media_ids": [
-      19270190,
-      149496691,
-      282464047
-    ],
-    "duration": 0.7344,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "ce9a2386bfa41be1213c2a6bf7e049b5a9dd7ef675d28eb6632ff3c80d0898af",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
-  },
-  {
-    "file": "play_sfx_olaf_olafbasicattack3_oncast_r2_d.wav",
-    "event": "Play_sfx_Olaf_OlafBasicAttack3_OnCast",
-    "event_id": 70708613,
-    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack3_OnCast {r2} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack3_OnCast {r2} {d}.txtp",
-    "media_ids": [
-      19270190,
-      149496691,
-      282464047
-    ],
-    "duration": 0.7344,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "a09c251d168c2d71bd19564872c01f8eb87549329281dc8ca06ca9174d63b9cd",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
-  },
-  {
-    "file": "play_sfx_olaf_olafbasicattack3_oncast_r3_d.wav",
-    "event": "Play_sfx_Olaf_OlafBasicAttack3_OnCast",
-    "event_id": 70708613,
-    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack3_OnCast {r3} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack3_OnCast {r3} {d}.txtp",
-    "media_ids": [
-      19270190,
-      149496691,
-      282464047
-    ],
-    "duration": 0.875,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "f8e67be86cbf8e20feb1b89ae9f0691c928e5a57f436aeb2acaf85bb794b6735",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
-  },
-  {
     "file": "play_sfx_olaf_olafbasicattack_onhit_1559186049_1153642577_r1_d.wav",
     "event": "Play_sfx_Olaf_OlafBasicAttack_OnHit",
     "event_id": 1028885150,
@@ -229,54 +181,6 @@
     "event_id": 2994283758,
     "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack2_OnHit [1559186049=1153642577] {r3}.wav",
     "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
-    "media_ids": [
-      16480700,
-      62339056,
-      171725186
-    ],
-    "duration": 1.5,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "19e76f9e5380f49d89ddf6394819d85da0c762fe2a68f555f72c2e30c436c9b5",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
-  },
-  {
-    "file": "play_sfx_olaf_olafbasicattack3_onhit_1559186049_1153642577_r1_d.wav",
-    "event": "Play_sfx_Olaf_OlafBasicAttack3_OnHit",
-    "event_id": 6214535,
-    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack3_OnHit [1559186049=1153642577] {r1} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack3_OnHit [1559186049=1153642577] {r1} {d}.txtp",
-    "media_ids": [
-      16480700,
-      62339056,
-      171725186
-    ],
-    "duration": 2.0,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "7a658f55d8b81a1ce9ed3be6229fe44314deb578355a5e9ad3167e89fc3abd32",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
-  },
-  {
-    "file": "play_sfx_olaf_olafbasicattack3_onhit_1559186049_1153642577_r2_d.wav",
-    "event": "Play_sfx_Olaf_OlafBasicAttack3_OnHit",
-    "event_id": 6214535,
-    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack3_OnHit [1559186049=1153642577] {r2} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack3_OnHit [1559186049=1153642577] {r2} {d}.txtp",
-    "media_ids": [
-      16480700,
-      62339056,
-      171725186
-    ],
-    "duration": 1.5,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "62d66236a4cabbb2785afbccdceb75950a7ebb5be55ab0e4611c208978c707a3",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
-  },
-  {
-    "file": "play_sfx_olaf_olafbasicattack3_onhit_1559186049_1153642577_r3_d.wav",
-    "event": "Play_sfx_Olaf_OlafBasicAttack3_OnHit",
-    "event_id": 6214535,
-    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack3_OnHit [1559186049=1153642577] {r3} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack3_OnHit [1559186049=1153642577] {r3} {d}.txtp",
     "media_ids": [
       16480700,
       62339056,
