@@ -83,15 +83,6 @@ static func definition() -> Dictionary:
 					"volume_db": 0.0,
 					"bus": "Combat"
 				},
-				"deploy:voice": {
-					"pool": [
-						"res://assets/audio/units/reksai/play_vo_reksai_move2dstandard_reksai_vo_2480312883_r10_zh_cn.wav",
-						"res://assets/audio/units/reksai/play_vo_reksai_move2dstandard_reksai_vo_2480312883_r11_zh_cn.wav",
-						"res://assets/audio/units/reksai/play_vo_reksai_move2dstandard_reksai_vo_2480312883_r12_zh_cn.wav"
-					],
-					"volume_db": 0.0,
-					"bus": "Voice"
-				}
 			},
 			"attack_swing": [
 				[
