@@ -6,6 +6,12 @@ var _preview: WorkbenchModelPreview
 var _time_slider: HSlider
 var _label: Label
 var _updating := false
+var _deploy_clock := 0.0
+var _deploy_duration := 1.0
+var _deploy_playing := false
+var _deploy_slider: HSlider
+var _deploy_label: Label
+var _last_frame_usec := 0
 
 func _initialize() -> void:
 	_run.call_deferred()
@@ -183,8 +189,52 @@ func _run() -> void:
 		if _options.has("time") or _options.has("capture") or _options.has("install-missing-art"):
 			_preview.seek_seconds(float(_options.get("time", "0")))
 	process_frame.connect(_update_time)
+	if _preview.model.has_method("advance_deployment_visual"):
+		_deploy_duration = float(CardDB.get_card(String(_options.card)).get("deploy_time", 1.0)) if _options.has("card") else 1.0
+		var deploy_row := HBoxContainer.new()
+		layout.add_child(deploy_row)
+		_button(deploy_row, "重播部署", func():
+			_seek_deployment(0.0)
+			_deploy_playing = true
+		)
+		_button(deploy_row, "暂停部署", func(): _deploy_playing = false)
+		_deploy_label = Label.new()
+		deploy_row.add_child(_deploy_label)
+		_deploy_slider = HSlider.new()
+		_deploy_slider.max_value = _deploy_duration + 1.0
+		_deploy_slider.step = 0.001
+		_deploy_slider.custom_minimum_size.x = 350
+		deploy_row.add_child(_deploy_slider)
+		_deploy_slider.value_changed.connect(func(value: float):
+			if not _updating:
+				_deploy_playing = false
+				_seek_deployment(value)
+		)
+		_seek_deployment(0.0)
+		_deploy_playing = true
+		_last_frame_usec = Time.get_ticks_usec()
+		process_frame.connect(_update_deployment)
 	if _options.has("capture") or _options.has("install-missing-art"):
+		if _deploy_slider != null:
+			_deploy_playing = false
+			_seek_deployment(float(_options.get("time", str(_deploy_duration))))
 		await _capture()
+
+func _seek_deployment(value: float) -> void:
+	if value <= _deploy_clock and _preview.model.has_method("reset_pool_visual"):
+		_preview.model.call("reset_pool_visual")
+	_deploy_clock = value
+	_preview.model.call("advance_deployment_visual", value, _deploy_duration, true)
+	_deploy_label.text = "部署 %.3f / %.3f 秒" % [value, _deploy_duration]
+	_deploy_slider.set_value_no_signal(value)
+
+func _update_deployment() -> void:
+	var now := Time.get_ticks_usec()
+	var delta := float(now - _last_frame_usec) / 1000000.0
+	_last_frame_usec = now
+	if not _deploy_playing: return
+	_seek_deployment(minf(_deploy_clock + delta, _deploy_slider.max_value))
+	if _deploy_clock >= _deploy_slider.max_value: _deploy_playing = false
 
 func _button(row: Node, title: String, callback: Callable) -> void:
 	var button := Button.new()

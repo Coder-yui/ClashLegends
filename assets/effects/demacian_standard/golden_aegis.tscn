@@ -1,0 +1,4 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="Script" path="res://assets/effects/demacian_standard/golden_aegis.gd" id="1"]
+[node name="GoldenAegis" type="Node3D"]
+script = ExtResource("1")

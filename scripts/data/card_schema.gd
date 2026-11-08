@@ -108,7 +108,7 @@ const TRANSITION_BLEND_FIELDS := [&"default", &"locomotion", &"action_in", &"act
 
 ## Validator 会检测未知或未登记字段。新增字段必须同时实现运行时读取逻辑、
 ## validator 登记和对应机制测试，防止只把配置写进 CardDB、却忘记接入权威模拟或表现层。
-const CARD_FIELDS := [&"returning_attack_distance", &"magazine_size", &"reload_duration", &"attack_pellets", &"attack_pellet_distance", &"attack_pellet_arc", &"attack_knockback_max_mass", &"ballistic_attack", &"structure_execute_ratio", &"tower_execute_ratio", &"inner_damage", &"shield_per_second", &"shield_duration", &"inner_radius", &"slow_multiplier", &"isolated_damage_multiplier", &"controlled_damage_multiplier",
+const CARD_FIELDS := [&"haste_aura_radius", &"haste_aura_multiplier", &"returning_attack_distance", &"magazine_size", &"reload_duration", &"attack_pellets", &"attack_pellet_distance", &"attack_pellet_arc", &"attack_knockback_max_mass", &"ballistic_attack", &"structure_execute_ratio", &"tower_execute_ratio", &"inner_damage", &"shield_per_second", &"shield_duration", &"inner_radius", &"slow_multiplier", &"isolated_damage_multiplier", &"controlled_damage_multiplier",
 	&"pull_speed", &"damage_interval", &"spell_windup", &"pull_distance", &"wave_width", &"deploy_half_only",
 	&"form_cycle_interval", &"form_first_attack_damage", &"form_first_attack_health_ratio", &"form_first_attack_tower_damage",
 	&"repeat_hit_count", &"repeat_hit_multiplier", &"repeat_hit_haste_duration", &"repeat_hit_speed_multiplier", &"position_history_duration",

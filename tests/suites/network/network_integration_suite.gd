@@ -52,6 +52,7 @@ func run(harness: SceneTree) -> void:
 	if bear_case != null: terminal_not_before = maxi(terminal_not_before, 150)
 	var olaf_case = preload("res://tests/fixtures/olaf_r_network_case.gd").new() if OS.get_environment("CLASH_TEST_OLAF_R") == "1" else null
 	if olaf_case != null: terminal_not_before = maxi(terminal_not_before, 165)
+	var flag_case = preload("res://tests/fixtures/demacian_standard_network_case.gd").new() if OS.get_environment("CLASH_TEST_DEMACIAN_STANDARD") == "1" else null
 	var ivern_case = preload("res://tests/fixtures/ivern_network_case.gd").new() if OS.get_environment("CLASH_TEST_IVERN") == "1" else null
 	if ivern_case != null: terminal_not_before = maxi(terminal_not_before, 190)
 	var sona_case = preload("res://tests/fixtures/sona_network_case.gd").new() if OS.get_environment("CLASH_TEST_SONA") == "1" else null
@@ -111,6 +112,7 @@ func run(harness: SceneTree) -> void:
 		if ziggs_case != null: ziggs_case.poll(main)
 		if bear_case != null: bear_case.poll(main)
 		if olaf_case != null: olaf_case.poll(main)
+		if flag_case != null: flag_case.poll(main)
 		if ivern_case != null: ivern_case.poll(main)
 		if sona_case != null: sona_case.poll(main)
 		if graves_case != null: graves_case.poll(main)
@@ -329,6 +331,9 @@ func run(harness: SceneTree) -> void:
 		if bear_case != null:
 			result["airdrop_bear"] = bear_case.result()
 			result["passed"] = result.passed and result.airdrop_bear.passed
+		if flag_case != null:
+			result["demacian_standard"] = flag_case.result()
+			result.passed = result.passed and result.demacian_standard.passed
 		if ivern_case != null:
 			result["ivern"] = ivern_case.result()
 			result["passed"] = result.passed and result.ivern.passed

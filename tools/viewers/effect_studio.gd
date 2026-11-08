@@ -18,6 +18,9 @@ var zoom := 10.0
 var height := 0.0
 var hidden_layers := {}
 var provider := "res://assets/effects/kassadin/player.gd"
+var card_id := ""
+var initial_variant := ""
+var range_label: CheckBox
 var variants := PackedStringArray(["appear", "vanish"])
 var range_radius := 0.0
 var range_team := 0
@@ -39,6 +42,8 @@ var attachment_base: CheckBox
 var attachment_meshes: Array[Dictionary]=[]
 func _initialize() -> void:
 	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--card="): card_id = arg.trim_prefix("--card=")
+		if arg.begins_with("--variant="): initial_variant = arg.trim_prefix("--variant=")
 		if arg == "--check-only": check_only=true
 		if arg.begins_with("--capture-time="): capture_time=maxf(float(arg.trim_prefix("--capture-time=")),0.0)
 		if arg.begins_with("--layers="): only_layers=arg.trim_prefix("--layers=").split(",")
@@ -54,11 +59,20 @@ func _initialize() -> void:
 		if arg.begins_with("--model-scale="): model_scale=float(arg.trim_prefix("--model-scale="))
 		if arg.begins_with("--attachment-model="): attachment_path=arg.trim_prefix("--attachment-model=")
 		if arg == "--help":
-			print("effect --provider=res://path/player.gd --variants=appear,vanish [--capture-dir=/absolute/path] [--attachment-model=res://model.glb] [--motion] [--range-radius=130] [--range-team=0|1]")
+			print("effect --card=ID [--variant=deployment|skill|aura|death] OR --provider=res://path/player.gd --variants=appear,vanish [--capture-dir=/absolute/path] [--attachment-model=res://model.glb] [--motion] [--range-radius=130] [--range-team=0|1]")
 			quit(); return
 		if arg.begins_with("--provider="): provider = arg.trim_prefix("--provider=")
 		if arg.begins_with("--variants="): variants = arg.trim_prefix("--variants=").split(",")
 		if arg.begins_with("--capture-dir="): capture_dir = arg.trim_prefix("--capture-dir=")
+	if not card_id.is_empty():
+		if not CardDB.has_card(card_id):
+			push_error("Unknown card: " + card_id); quit(2); return
+		var stats := CardDB.get_card(card_id)
+		if String(stats.get("visual_active_buff_scene", "")).is_empty() or stats.get("active_skills", []).is_empty() or String(stats.active_skills[0].get("kind", "")) != "area_shield":
+			push_error("Card composite preview currently requires an area-shield visual scene"); quit(2); return
+		provider = "res://tools/viewers/card_effect_preview.gd"
+		variants = PackedStringArray(["deployment", "skill", "aura", "death"])
+		range_radius = float(stats.radius) + float(stats.active_skills[0].radius)
 	if check_only: call_deferred("_check_variants")
 	else: call_deferred("_build")
 func _build() -> void:
@@ -67,6 +81,7 @@ func _build() -> void:
 	root.min_size = Vector2i(1100,760)
 	root.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
 	DisplayServer.window_set_title("特效展台 · 时间轴 / 分层 / 地面遮挡")
+	if not card_id.is_empty(): DisplayServer.window_set_title(String(CardDB.get_card(card_id).name) + " · 特效展台")
 	var layout := HBoxContainer.new(); layout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT); root.add_child(layout)
 	var scroll := ScrollContainer.new(); scroll.custom_minimum_size.x=340; scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL; layout.add_child(scroll)
 	var panel := VBoxContainer.new(); panel.custom_minimum_size.x=320; scroll.add_child(panel)
@@ -74,7 +89,8 @@ func _build() -> void:
 	_label(panel,"特效展台")
 	_label(panel,"拖动右侧旋转 · 滚轮缩放\n拖动时间轴会暂停，支持逐帧检查")
 	var select := OptionButton.new(); panel.add_child(select)
-	for variant in variants: select.add_item(variant)
+	for variant in variants: select.add_item({"deployment": "部署：下落 → 落地 → 待机", "skill": "技能：黄金圣盾", "aura": "常驻：攻速范围", "death": "死亡：旗面随旗杆下沉"}.get(variant, variant) if not card_id.is_empty() else variant)
+	if initial_variant in variants: select.select(variants.find(initial_variant))
 	select.item_selected.connect(func(i): _load_variant(variants[i]))
 	play_button = _button(panel,"播放",func(): playing=not playing; play_button.text="暂停" if playing else "播放")
 	_button(panel,"重播",func(): time=0; playing=true; play_button.text="暂停")
@@ -98,6 +114,7 @@ func _build() -> void:
 	attachment_base.toggled.connect(func(_value): _update_attachment_base())
 	if range_radius > 0.0:
 		var range_toggle := CheckBox.new()
+		range_label = range_toggle
 		range_toggle.text="显示范围边线 · %.0f像素" % range_radius
 		range_toggle.button_pressed=true
 		panel.add_child(range_toggle)
@@ -114,10 +131,17 @@ func _build() -> void:
 	container.gui_input.connect(_input_view)
 	camera=Camera3D.new();camera.projection=Camera3D.PROJECTION_ORTHOGONAL;camera.near=0.01;camera.far=100;viewport.add_child(camera);camera.current=true
 	var environment := WorldEnvironment.new();var env:=Environment.new();env.background_mode=Environment.BG_COLOR;env.background_color=Color(0.045,0.06,0.09);environment.environment=env;viewport.add_child(environment)
+	if not card_id.is_empty():
+		env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+		env.ambient_light_color = Color.WHITE
+		env.ambient_light_energy = 0.8
+		var light := DirectionalLight3D.new()
+		light.rotation_degrees = Vector3(-50, -30, 0)
+		viewport.add_child(light)
 	floor_mesh=MeshInstance3D.new();var plane:=PlaneMesh.new();plane.size=Vector2(20,20);floor_mesh.mesh=plane
 	var material:=StandardMaterial3D.new();material.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;material.albedo_color=Color(0.20,0.28,0.22);floor_mesh.material_override=material;viewport.add_child(floor_mesh)
 	_build_range()
-	_camera();_load_variant(variants[0])
+	_camera();_load_variant(initial_variant if initial_variant in variants else variants[0])
 	if not capture_dir.is_empty(): call_deferred("_captures")
 func _label(parent: Node,text: String) -> Label:
 	var label:=Label.new();label.text=text;parent.add_child(label);return label
@@ -135,6 +159,7 @@ func _load_variant(kind: String) -> void:
 	var script = load(provider)
 	if script == null: push_error("Cannot load provider: "+provider);return
 	player=script.new()
+	if not card_id.is_empty(): player.configure_card(card_id)
 	for method in ["load_kind","setup_native","seek"]:
 		if not player.has_method(method): push_error("Unsupported provider: "+method);player.free();return
 	viewport.add_child(player);player.load_kind(kind);player.setup_native(native_scale);player.position.y=height;player.rotation_degrees=effect_rotation
@@ -161,7 +186,15 @@ func _load_variant(kind: String) -> void:
 		hidden_layers[i] = not enabled
 		var toggle:=CheckBox.new();toggle.text=String(player._data.emitters[i].name);toggle.button_pressed=enabled;layer_box.add_child(toggle)
 		toggle.toggled.connect(func(v): hidden_layers[i]=not v;player._frame=-1;_seek())
-	_jump(0.15)
+	if not card_id.is_empty():
+		var stats := CardDB.get_card(card_id)
+		range_radius = float(stats.radius) + float(stats.active_skills[0].radius) if kind == "skill" else float(stats.get("haste_aura_radius", 0.0))
+		if is_instance_valid(range_view): range_view.free()
+		_build_range()
+		if range_label != null:
+			range_label.text = "显示%s边界 · %.0f像素" % ["技能" if kind == "skill" else "光环", range_radius]
+			range_view.visible = range_label.button_pressed
+	_jump(0.45 if not card_id.is_empty() and kind == "deployment" else 0.15)
 func _attach_layers(node: Node) -> void:
 	if node is AnimationPlayer:
 		for animation in node.get_animation_list():
@@ -288,5 +321,6 @@ func _build_range() -> void:
 	_update_range_color()
 
 func _update_range_color() -> void:
+	if is_instance_valid(player) and player.has_method("set_preview_team"): player.set_preview_team(range_team)
 	if is_instance_valid(range_view):
 		range_view.material_override.albedo_color=Color(0.25,0.65,1.0,0.72) if range_team==0 else Color(1.0,0.28,0.25,0.72)

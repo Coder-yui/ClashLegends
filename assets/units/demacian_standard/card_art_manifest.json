@@ -1,0 +1,6 @@
+{
+  "mode": "built-in imagegen",
+  "prompt": "Use case: stylized-concept. Create finished portrait fantasy collectible card artwork, aspect ratio 308:560. Reference image is Jarvan IV Demacian Standard E ability icon, use its blue and gold banner, ornate spear standard and golden landing flash concept. A single tall Demacian military standard planted firmly in cracked stone battlefield, royal blue cloth edged with rich gold streaming visibly from the upper pole, ornate silver and gold spearhead, dramatic golden impact dust and rays at the base. Heroic hand-painted fantasy game splash art, clear readable silhouette at thumbnail size, detailed fabric and metal, cool atmospheric background. Entire banner and spear fit within the central 80 percent of canvas, full pole and impact visible, slight low angle. No people, no text, no card frame, no UI, no watermark. The flag cloth must be substantial, clearly attached near top, not just a bare spear.",
+  "reference": "JarvanIV HUD icons2d/jarvanive.dds",
+  "output": "res://assets/cards/demacian_standard.png"
+}

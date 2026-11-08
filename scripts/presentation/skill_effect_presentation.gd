@@ -191,6 +191,12 @@ func present_area_shield(card_id: String, form: int, position: Vector2) -> void:
 	for skill in stats.get("active_skills", []):
 		if String(skill.get("kind", "")) != "area_shield":
 			continue
+		# 机制相同不代表共用美术；只播放明确声明的烈阳之匣。
+		var uses_locket := false
+		for effect in skill.get("resource_dependencies", {}).get("effects", []):
+			if String(effect.get("provider", "")) == "res://scripts/presentation/locket_effect_3d.gd":
+				uses_locket = true
+		if not uses_locket: continue
 		# 射程从自身表面起算；波前到达自身半径 + 技能射程。
 		var radius := float(stats.get("radius", 0.0)) + float(skill.get("radius", 0.0))
 		shield_effects.append({"pos":position,"radius":radius,"duration":2.8,"timer":2.8})

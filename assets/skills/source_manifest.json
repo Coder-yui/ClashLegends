@@ -1081,5 +1081,14 @@
     "source_path": "assets/characters/reksai/hud/icons2d/reksai_q1.dds",
     "source_sha256": "91f434529f56b034151abf922e0b6add5fde27609cfa9d04c4b5e31264479701",
     "sha256": "9737276f03a2bb2a562d023a9822d7794861cba3130fc93714304af8bc38b5f4"
+  },
+  {
+    "card": "demacian_standard",
+    "skill_index": 0,
+    "path": "res://assets/skills/demacian_standard_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/JarvanIV.wad.client",
+    "source_path": "assets/characters/jarvaniv/hud/icons2d/jarvanivw.dds",
+    "source_sha256": "fdc3b835ae339b48724290a678ebc21ab83d5b0e8bcddc8e48e904a85ceddc99",
+    "sha256": "a6f0c4a3093152f3044da1a2d5e064470458e4eacb7fb638328fb4ce46d2962b"
   }
 ]

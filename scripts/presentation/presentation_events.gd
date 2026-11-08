@@ -91,7 +91,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		return float(stats.get("pre_deploy_time", 0.0)) > 0.0
 	if cue == "deploy:hit":
 		return float(stats.get("deploy_sweep_damage", 0.0)) > 0.0 and float(stats.get("deploy_sweep_radius", 0.0)) > 0.0
-	if cue in ["deploy:start", "deploy:voice"]:
+	if cue in ["deploy:start", "deploy:voice", "deploy:release"]:
 		return float(stats.get("deploy_time", 1.0)) > 0.0
 	if cue in ["attack_launch", "attack_missile_cast"]:
 		return attacks and float(stats.get("projectile_speed", 0.0)) > 0.0

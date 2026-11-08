@@ -1,0 +1,260 @@
+{
+  "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/JarvanIV.wad.client",
+  "model_scale": 0.01,
+  "flag_scale": 0.01,
+  "nova_scale": 0.008711051367788448,
+  "sampling_fps": 120,
+  "sampling_seed": 79,
+  "definitions": {
+    "flag": {
+      "binary": "ClashLegends-开发素材库/03-制作中/德邦军旗/raw/data/characters/jarvaniv/jarvaniv_multi_skins_skin0_skins_skin1_skins_skin12_skins_skin2_skins_skin3_skins_skin4_skins_skin7.bin",
+      "sha256": "9095ab57b790f5ffdbfeb8f612e53c83df3b178816829fde83a58aec6f9b72fd",
+      "particle": "JarvanIV_Base_E_flag_hld_01"
+    },
+    "nova": {
+      "binary": "ClashLegends-开发素材库/03-制作中/德邦军旗/rebuild/source/data/characters/jarvaniv/jarvaniv_multi_skins_skin0_skins_skin1_skins_skin2_skins_skin3_skins_skin4_skins_skin6.bin",
+      "sha256": "eb63b0cb1a6e290a2ec6c4486d88e8559c57c57418f6cce35751843d6a7333a1",
+      "particle": "Characters/JarvanIV/Skins/Skin0/Particles/JarvanIV_Base_W_nova_01"
+    },
+    "shield": {
+      "binary": "ClashLegends-开发素材库/03-制作中/德邦军旗/rebuild/source/data/characters/jarvaniv/jarvaniv_multi_skins_skin0_skins_skin1_skins_skin2_skins_skin3_skins_skin4_skins_skin6.bin",
+      "sha256": "eb63b0cb1a6e290a2ec6c4486d88e8559c57c57418f6cce35751843d6a7333a1",
+      "particle": "Characters/JarvanIV/Skins/Skin0/Particles/JarvanIV_Base_W_buf_01"
+    },
+    "fall": {
+      "binary": "ClashLegends-开发素材库/03-制作中/德邦军旗/rebuild/source/data/characters/jarvaniv/skins/skin0.bin",
+      "sha256": "c5f0f79e12b1ed45146037546705bb75448a40cb1849e1b947be51c8615f81c6",
+      "particle": "Characters/JarvanIV/Skins/Skin0/Particles/JarvanIV_Base_E_tar_green"
+    },
+    "fall_red": {
+      "binary": "ClashLegends-开发素材库/03-制作中/德邦军旗/rebuild/source/data/characters/jarvaniv/skins/skin0.bin",
+      "sha256": "c5f0f79e12b1ed45146037546705bb75448a40cb1849e1b947be51c8615f81c6",
+      "particle": "Characters/JarvanIV/Skins/Skin0/Particles/JarvanIV_Base_E_tar_red"
+    },
+    "landing": {
+      "binary": "ClashLegends-开发素材库/03-制作中/德邦军旗/rebuild/source/data/characters/jarvaniv/jarvaniv_multi_skins_skin0_skins_skin1_skins_skin2_skins_skin3_skins_skin4_skins_skin6.bin",
+      "sha256": "eb63b0cb1a6e290a2ec6c4486d88e8559c57c57418f6cce35751843d6a7333a1",
+      "particle": "Characters/JarvanIV/Skins/Skin0/Particles/JarvanIV_Base_E_hit_01"
+    }
+  },
+  "runtime": {
+    "assets/effects/demacian_standard/golden_aegis.gd": "f5a40c77541a9b233eeb67dae573dae3ebfe83f59ee3792ae20a06b5eb2c9797",
+    "assets/effects/demacian_standard/aura.gdshader": "32e37da028f877e9427074c7ef0bb03b195a3889ecfd32767013dd9d0923329f",
+    "assets/effects/demacian_standard/player.gd": "e012424205dd972fbc81d834fd2a9a5c088ab1cb2de4ac0a0f47bd6cc0ae19c0",
+    "assets/effects/demacian_standard/README.md": "004b44e2a3a78cd302db9c2f27eb8ad8e73d784227d249650fca309ee54a8500",
+    "assets/effects/demacian_standard/golden_aegis.tscn": "6fd0ccfcc5ee07b244c127828a6b67a3a3eb0c8a08c0a8b383a3a390cbc1c998",
+    "assets/effects/demacian_standard/shield/sampled.json": "a4c75ae8853ac84f971ef828ee16e3f4d3a5b9d9c925e16e8710263cb3f5a48b",
+    "assets/effects/demacian_standard/flag/sampled.json": "08bd8fd1823d371dd901ae8eedb78880740de400369ae13fc9fc9659aa331919",
+    "assets/effects/demacian_standard/landing/sampled.json": "243d6ac38ad85ee21449dd80d36d42f440b18b29e2b9c0ce655fbdb030811024",
+    "assets/effects/demacian_standard/native/add.gdshader": "fe4caffd2db0e720d2833b0d2b3613d11f98c79f770240da190305b12c774c7b",
+    "assets/effects/demacian_standard/native/mix.gdshader": "ab11c4ec95a2d2742bbdc824e7a05ab982c073371e84fd5cad9f83bba60e7cd6",
+    "assets/effects/demacian_standard/native/add_no_depth.gdshader": "398932e821b5912c36843191a07afd5a2febbe37cc2d42cbe79d848edf3dfffa",
+    "assets/effects/demacian_standard/native/opaque.gdshader": "43b563ce661be7ffca19da6fc7eaeff534fe57f74fe5fb0a22e35867ad82ad6e",
+    "assets/effects/demacian_standard/native/mix_no_depth.gdshader": "ef617ab5a6d7ca264de5fa9ffe533bea15b987a712fb3db6477d7b45f684b450",
+    "assets/effects/demacian_standard/native/particle.gdshaderinc": "a948af386152e73808b3f7cdf38e1351aeaaef866e2c866d97145da04041e164",
+    "assets/effects/demacian_standard/fall_red/sampled.json": "609829851944ebc508d2507c2f403f2b9a57737badf2206938626dee085515c8",
+    "assets/effects/demacian_standard/nova/sampled.json": "e992a4a960e3dc111009f801722e72f72b545910f5862e1ab3d1863dbd84c69d",
+    "assets/effects/demacian_standard/fall/sampled.json": "da313371bd1d05d922fe6ed19fd9224fef215875ddcf0d4795ff2250c7411052",
+    "assets/effects/demacian_standard/fall/assets/characters/jarvaniv/skins/base/jarvaniv_base_tx_cm.png": "ee85fd7b6eb714c5e36fb047a45bd636ee96c042a2a93d0987e938aa13276a0d",
+    "assets/effects/demacian_standard/fall/assets/characters/jarvaniv/skins/base/particles/jarvaniv_fivedotcircle32.png": "3605dd52b67583b447962d56818e30e0caaeb0b1df87b0e7c3c8036085d7c814",
+    "assets/effects/demacian_standard/fall/assets/characters/jarvaniv/skins/base/particles/jarvaniv_weapon.mesh.json": "bb1cbce4ddae7e410fd96d54035603746f1ca0b8ea0b52ba9e4a27ed36dfcba7",
+    "assets/effects/demacian_standard/fall/assets/characters/jarvaniv/skins/base/particles/jarvaniv_color-teams32.png": "dba4ea6940b00143b26aba21e3fe66d8750a49d234475f2cf465eb25d8c437bf",
+    "assets/effects/demacian_standard/fall/assets/characters/jarvaniv/skins/base/particles/jarvaniv_color-hold.png": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8",
+    "assets/effects/demacian_standard/nova/assets/characters/jarvaniv/skins/base/particles/jarvaniv_base_q_swirlring_tx.png": "2bb497ad523e00286ce70c79f32b4bb21c2711f719e4c2443e8c5f5d7f7da47c",
+    "assets/effects/demacian_standard/nova/assets/characters/jarvaniv/skins/base/particles/jarvaniv_base_w_ringmesh03.mesh.json": "bebbd1578c33461508c5e1bafcb51c7680bd4c64bfff0f181b6b963834410978",
+    "assets/effects/demacian_standard/nova/assets/characters/jarvaniv/skins/base/particles/jarvaniv_base_q_globalhit_blue_tar_outerring_p-rgba.png": "470a327f9088d1f0601d8a2f84dd17014326d337b62bf9758f88706826ba68ba",
+    "assets/effects/demacian_standard/nova/assets/characters/jarvaniv/skins/base/particles/jarvaniv_base_r_smoke.png": "d55e09e52b4a06de560a01c8e5787a1319ae91f7569887968cd53b09525cf6fd",
+    "assets/effects/demacian_standard/fall_red/assets/characters/jarvaniv/skins/base/jarvaniv_base_tx_cm.png": "ee85fd7b6eb714c5e36fb047a45bd636ee96c042a2a93d0987e938aa13276a0d",
+    "assets/effects/demacian_standard/fall_red/assets/characters/jarvaniv/skins/base/particles/jarvaniv_fivedotcircle32.png": "3605dd52b67583b447962d56818e30e0caaeb0b1df87b0e7c3c8036085d7c814",
+    "assets/effects/demacian_standard/fall_red/assets/characters/jarvaniv/skins/base/particles/jarvaniv_weapon.mesh.json": "bb1cbce4ddae7e410fd96d54035603746f1ca0b8ea0b52ba9e4a27ed36dfcba7",
+    "assets/effects/demacian_standard/fall_red/assets/characters/jarvaniv/skins/base/particles/jarvaniv_color-teams32.png": "dba4ea6940b00143b26aba21e3fe66d8750a49d234475f2cf465eb25d8c437bf",
+    "assets/effects/demacian_standard/fall_red/assets/characters/jarvaniv/skins/base/particles/jarvaniv_color-hold.png": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8",
+    "assets/effects/demacian_standard/landing/assets/characters/jarvaniv/skins/base/particles/saucer5.mesh.json": "0a5dff9914c6fd35f76367da78542a8988864f6aec8ff6392a6522b9f404c360",
+    "assets/effects/demacian_standard/landing/assets/characters/jarvaniv/skins/base/particles/jarvaniv_smokepuffs.png": "84b611866e5810a989752b2d7390973f26d3619fb490c2dcfa98d98490964e0c",
+    "assets/effects/demacian_standard/landing/assets/characters/jarvaniv/skins/base/particles/jarvaniv_color-dust32.png": "48e56d537e15372ffcc74c14da6ee8427c634c46c461c670bb5e7d2bbbfa6b80",
+    "assets/effects/demacian_standard/landing/assets/characters/jarvaniv/skins/base/particles/jarvaniv_base_r_smoke.png": "d55e09e52b4a06de560a01c8e5787a1319ae91f7569887968cd53b09525cf6fd",
+    "assets/effects/demacian_standard/landing/assets/characters/jarvaniv/skins/base/particles/jarvaniv_base_e_blastshapes.png": "740fd872a65adde47ebb733f88576c5502cd8fef4de67407a0e8522cbf56c58b",
+    "assets/effects/demacian_standard/flag/assets/characters/jarvaniv/skins/base/particles/jarvaniv_base_e_flag.png": "b052c92f9bf00e3177075009076df115408d72f659a46fea39446bce78c4f8f4",
+    "assets/effects/demacian_standard/flag/assets/characters/jarvaniv/skins/base/particles/jarvaniv_color-distortbell32.png": "7b580fba174ec0eb15a4cc989e53ab0677183d13e5e8d9a5911c17e0740d87b6",
+    "assets/effects/demacian_standard/shield/assets/characters/jarvaniv/skins/base/particles/jarvaniv_base_w_color-rainbowbell.png": "34ba76b1a2f4d5282afc2d3750e92c3c4edd67a333ac390df3ae6a70b770d031",
+    "assets/effects/demacian_standard/shield/assets/characters/jarvaniv/skins/base/particles/jarvaniv_base_w_spiritwheel1.mesh.json": "8c6bb93b8372fc2af37c38fc8d03a8c43e84ea605b42610ebb8e82fdd2605d75",
+    "assets/effects/demacian_standard/shield/assets/characters/jarvaniv/skins/base/particles/jarvaniv_base_q_webfluid32.png": "3ed6b1c6d63a70c56b55640587409bf6bb0ce7c01b3c80cfb4060069b042354c",
+    "assets/effects/demacian_standard/shield/assets/characters/jarvaniv/skins/base/particles/jarvaniv_glow-soft.png": "6b0e534c1e284e0956fd7b694cde7531d05b837d52092e2c005589e77e4e5222",
+    "assets/effects/demacian_standard/shield/assets/characters/jarvaniv/skins/base/particles/jarvaniv_base_w_template_shield.png": "c62981688ffe138c0d5374233c2bcfe7a48aa8b14114a4819933e6da3be32af6",
+    "assets/effects/demacian_standard/shield/assets/characters/jarvaniv/skins/base/particles/jarvaniv_base_q_armordebuff.png": "c089da707731e0479ce4ef3c908eb907052c5cefe19fc561b510d5043153f906",
+    "assets/effects/demacian_standard/shield/assets/characters/jarvaniv/skins/base/particles/jarvaniv_base_q_ball01.png": "a556ad10266abbb6935859f964f5d6eed9004a59255a62882c1c82eba55a21f2"
+  },
+  "deployment_seconds": 1.0,
+  "landing_seconds": 0.5,
+  "authored_aura": "Subtle stationary ring at gameplay haste_aura_radius; original E/W particle data unchanged.",
+  "nova_final_expansion": 3.06,
+  "skill_center_radius": 160,
+  "source_event_origin_seconds": 0.016666666666666666,
+  "rebuild": {
+    "fall": {
+      "binary": "data/characters/jarvaniv/skins/skin0.bin",
+      "particle": "Characters/JarvanIV/Skins/Skin0/Particles/JarvanIV_Base_E_tar_green",
+      "source_sha256": "c5f0f79e12b1ed45146037546705bb75448a40cb1849e1b947be51c8615f81c6",
+      "last_visible_sample": 1.0083333333333333,
+      "emitters": [
+        {
+          "name": "Weapon",
+          "blend": 3,
+          "quad": 3
+        },
+        {
+          "name": "teamcircle-green",
+          "blend": 1,
+          "quad": 1
+        }
+      ]
+    },
+    "fall_red": {
+      "binary": "data/characters/jarvaniv/skins/skin0.bin",
+      "particle": "Characters/JarvanIV/Skins/Skin0/Particles/JarvanIV_Base_E_tar_red",
+      "source_sha256": "c5f0f79e12b1ed45146037546705bb75448a40cb1849e1b947be51c8615f81c6",
+      "last_visible_sample": 1.0083333333333333,
+      "emitters": [
+        {
+          "name": "Weapon",
+          "blend": 3,
+          "quad": 3
+        },
+        {
+          "name": "teamcircle-red",
+          "blend": 1,
+          "quad": 1
+        }
+      ]
+    },
+    "landing": {
+      "binary": "data/characters/jarvaniv/jarvaniv_multi_skins_skin0_skins_skin1_skins_skin2_skins_skin3_skins_skin4_skins_skin6.bin",
+      "particle": "Characters/JarvanIV/Skins/Skin0/Particles/JarvanIV_Base_E_hit_01",
+      "source_sha256": "eb63b0cb1a6e290a2ec6c4486d88e8559c57c57418f6cce35751843d6a7333a1",
+      "last_visible_sample": 1.0833333333333333,
+      "emitters": [
+        {
+          "name": "Dustring",
+          "blend": 1,
+          "quad": 0
+        },
+        {
+          "name": "dustRing1",
+          "blend": 1,
+          "quad": 3
+        },
+        {
+          "name": "dustRing2",
+          "blend": 1,
+          "quad": 3
+        },
+        {
+          "name": "smoke",
+          "blend": 1,
+          "quad": 0
+        },
+        {
+          "name": "Hit",
+          "blend": 4,
+          "quad": 1
+        },
+        {
+          "name": "Hit1",
+          "blend": 4,
+          "quad": 1
+        },
+        {
+          "name": "dustRing3",
+          "blend": 1,
+          "quad": 3
+        }
+      ]
+    },
+    "nova": {
+      "binary": "data/characters/jarvaniv/jarvaniv_multi_skins_skin0_skins_skin1_skins_skin2_skins_skin3_skins_skin4_skins_skin6.bin",
+      "particle": "Characters/JarvanIV/Skins/Skin0/Particles/JarvanIV_Base_W_nova_01",
+      "source_sha256": "eb63b0cb1a6e290a2ec6c4486d88e8559c57c57418f6cce35751843d6a7333a1",
+      "last_visible_sample": 0.5833333333333334,
+      "emitters": [
+        {
+          "name": "shockwave2",
+          "blend": 4,
+          "quad": 3
+        },
+        {
+          "name": "shockwave3",
+          "blend": 1,
+          "quad": 3
+        },
+        {
+          "name": "Edge02",
+          "blend": 1,
+          "quad": 3
+        },
+        {
+          "name": "Edge01",
+          "blend": 1,
+          "quad": 3
+        },
+        {
+          "name": "shockwave4",
+          "blend": 1,
+          "quad": 3
+        }
+      ]
+    },
+    "shield": {
+      "binary": "data/characters/jarvaniv/jarvaniv_multi_skins_skin0_skins_skin1_skins_skin2_skins_skin3_skins_skin4_skins_skin6.bin",
+      "particle": "Characters/JarvanIV/Skins/Skin0/Particles/JarvanIV_Base_W_buf_01",
+      "source_sha256": "eb63b0cb1a6e290a2ec6c4486d88e8559c57c57418f6cce35751843d6a7333a1",
+      "last_visible_sample": 5.083333333333333,
+      "emitters": [
+        {
+          "name": "spritwheel1",
+          "blend": 4,
+          "quad": 3
+        },
+        {
+          "name": "outerring",
+          "blend": 4,
+          "quad": 0
+        },
+        {
+          "name": "outerring1",
+          "blend": 1,
+          "quad": 0
+        },
+        {
+          "name": "outerring2",
+          "blend": 4,
+          "quad": 0
+        },
+        {
+          "name": "outerring3",
+          "blend": 4,
+          "quad": 0
+        },
+        {
+          "name": "outerring4",
+          "blend": 4,
+          "quad": 0
+        }
+      ]
+    }
+  },
+  "shield_time_mapping": {
+    "source_seconds": 5.1,
+    "project_seconds": 3.0,
+    "playback_rate": 1.0,
+    "project_fade_out_seconds": 0.35
+  },
+  "native_rendering": "Source blend 3 is opaque/depth-writing; blends 1/4 retain alpha/add and per-emitter depth flags. Native XYZ preserved.",
+  "runtime_adaptations": {
+    "smoke_fixed_alpha_uv": "Source uvMode=2 now connected",
+    "landing_soft_intersection_source_units": 35,
+    "nova_palette": "Unmodified source BIN colors; no legacy video recoloring",
+    "aura": "160 radius; team-colored rim; identical low-opacity flowing interior for both teams",
+    "flag_attachment": "Source root bone; vertical pinned seam at pole; follow death animation until visual completion",
+    "range_alignment": "Visible W expansion at scale3 reaches160; radial clip160; nova plane matches aura0.025; interior fade only final1 battlefield pixel"
+  }
+}

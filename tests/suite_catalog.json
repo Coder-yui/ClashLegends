@@ -887,5 +887,12 @@
     "method": "run",
     "scene": "none",
     "group": "cards"
+  },
+  {
+    "id": "DemacianStandardSuite",
+    "script": "res://tests/suites/combat/demacian_standard_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "combat"
   }
 ]

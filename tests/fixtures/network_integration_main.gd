@@ -60,6 +60,7 @@ func _ready() -> void:
 	if OS.get_environment("CLASH_TEST_SONA") == "1":
 		runtime._deck[4] = "sona"
 		runtime._active_skill_choices["sona"] = 0
+	if OS.get_environment("CLASH_TEST_DEMACIAN_STANDARD") == "1": runtime._deck[4] = "demacian_standard"
 	if OS.get_environment("CLASH_TEST_IVERN") == "1": runtime._deck[4] = "ivern"
 	super._ready()
 	_queue_trace_output = OS.get_environment("CLASH_QUEUE_TRACE_DIR")

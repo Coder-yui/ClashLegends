@@ -305,8 +305,10 @@ var active_speed_multiplier: float:
 	get: return maxf(sacrifice_stats.z, maxf(buffs.strongest(&"buff", &"speed", 1.0), 1.0 + buffs.strongest(&"structure_haste", &"speed_bonus", 0.0) * buffs.remaining(&"structure_haste") / maxf(float(_base_form_stats.get("structure_haste_duration", 1.0)), 0.01)))
 var active_damage_multiplier: float:
 	get: return buffs.strongest(&"buff", &"damage", 1.0) * buffs.strongest(&"blood_rage", &"damage", 1.0) * team_attack_boost_multiplier
+var haste_aura_multiplier := 1.0
+
 var active_attack_speed_multiplier: float:
-	get: return maxf(maxf(buffs.strongest(&"buff", &"attack_speed", 1.0), buffs.strongest(&"hit_haste", &"attack_speed", 1.0)), buffs.strongest(&"structure_haste", &"attack_speed", 1.0))
+	get: return maxf(haste_aura_multiplier if not CombatInteraction.in_stasis(self) else 1.0, maxf(maxf(buffs.strongest(&"buff", &"attack_speed", 1.0), buffs.strongest(&"hit_haste", &"attack_speed", 1.0)), buffs.strongest(&"structure_haste", &"attack_speed", 1.0)))
 var active_buff_ignores_movement_slow: bool:
 	get: return buffs.any_flag(&"buff", &"ignore_movement_slow")
 var active_buff_ignores_attack_speed_slow: bool:
@@ -3481,6 +3483,12 @@ func _receive_apply_attack_speed_slow(duration: float, multiplier: float, source
 
 ## 任何攻速增益开始/刷新都保持前摇、后摇、间隔及额外攻击的归一化进度。
 ## 到期和减攻速入口仍由旧新有效速率调用同一 _rescale_attack_phase 合同。
+func set_haste_aura_multiplier(value: float) -> void:
+	if is_equal_approx(haste_aura_multiplier, value): return
+	var previous_speed := _effective_attack_speed_multiplier()
+	haste_aura_multiplier = value
+	_rescale_attack_phase(previous_speed)
+
 func apply_attack_speed_buff(family: StringName, source: StringName, duration: float, potency: Dictionary) -> void:
 	var previous_speed := _effective_attack_speed_multiplier()
 	buffs.apply(family, source, duration, potency)

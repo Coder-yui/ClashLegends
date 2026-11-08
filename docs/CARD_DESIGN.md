@@ -432,3 +432,9 @@ nova可配置`attack_slow_multiplier`，要求正数slow_duration及[0.1,1)倍�
 ### 近战攻击循环附带眩晕
 
 `attack_stun_durations`与`attack_pattern`、基础攻击动作列表等长，每段时长有限且非负；目前只允许离散近战。出手按权威攻击段固化效果，真实命中存活单位后经CombatResolver施加通用眩晕。致盲无命中效果，取消前摇不推进段数；不会依赖动画事件。小菊配置三段0、0、1秒，第三段伤害倍率由已有`attack_damage_multipliers`定义。
+
+## 持续攻速光环
+
+`haste_aura_radius / haste_aura_multiplier`成组定义正半径及大于1的攻速倍率。自然生命周期结束后、行动批次前统一采样；活着、部署完成且非凝滞的来源向同队Unit贡献，包含空军及卡牌建筑，不包含Tower。按来源中心到目标身体圆接触判定，同类取最强；离开/死亡/凝滞在下一行动边界停止，无定时增益残留，客户端复用有效攻速快照。
+
+`area_shield`可成组配置`slow_duration / slow_multiplier`，对同范围敌方Unit施加减速，友方仍按原独立盾层逻辑获得护盾。

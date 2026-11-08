@@ -350,10 +350,13 @@ func apply_area_shield(source: Unit, skill: Dictionary) -> void:
 		if not is_instance_valid(combatant) or not combatant is Node2D or combatant.hp <= 0.0:
 			continue
 		var ally = combatant
-		if ally.team != source.team:
-			continue
 		if source.surface_gap_to_circle(ally.global_position, ally.body_radius) > radius:
 			continue
+		if ally.team != source.team:
+			if ally is Unit and float(skill.get("slow_duration", 0.0)) > 0.0:
+				ally.apply_slow(float(skill.slow_duration), float(skill.slow_multiplier), source.status_source("area_shield_slow"), CombatInteraction.effect_context(source))
+			continue
+		if not CombatInteraction.allows_effect(ally, CombatInteraction.effect_context(source, source.team, source.global_position, true)): continue
 		ally.add_shield(amount, duration, bool(skill.get("shield_decay", false)), source.status_source("shield"))
 		_controller.notify_unit_audio_event(source, &"shield:applied", ally.global_position)
 

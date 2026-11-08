@@ -1,0 +1,134 @@
+[
+  {
+    "file": "play_sfx_jarvaniv_jarvanivdemacianstandard_fall_r1.wav",
+    "event": "Play_sfx_JarvanIV_JarvanIVDemacianStandard_fall",
+    "event_id": 310947878,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/event_wav/Play_sfx_JarvanIV_JarvanIVDemacianStandard_fall {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/txtp/Play_sfx_JarvanIV_JarvanIVDemacianStandard_fall {r1}.txtp",
+    "media_ids": [
+      417242555,
+      530141880,
+      684259351,
+      746519693
+    ],
+    "duration": 0.8574,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "fdc739809211690828c8d91aa061561de2517ad9d28a3611337d148726536498",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jarvaniv_jarvanivdemacianstandard_fall_r2.wav",
+    "event": "Play_sfx_JarvanIV_JarvanIVDemacianStandard_fall",
+    "event_id": 310947878,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/event_wav/Play_sfx_JarvanIV_JarvanIVDemacianStandard_fall {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/txtp/Play_sfx_JarvanIV_JarvanIVDemacianStandard_fall {r2}.txtp",
+    "media_ids": [
+      417242555,
+      530141880,
+      684259351,
+      746519693
+    ],
+    "duration": 0.9539,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "916f89866648568325e1fb0c765d65ac2495b307831fab5d6c4f8be86cc18887",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jarvaniv_jarvanivdemacianstandard_fall_r3.wav",
+    "event": "Play_sfx_JarvanIV_JarvanIVDemacianStandard_fall",
+    "event_id": 310947878,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/event_wav/Play_sfx_JarvanIV_JarvanIVDemacianStandard_fall {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/txtp/Play_sfx_JarvanIV_JarvanIVDemacianStandard_fall {r3}.txtp",
+    "media_ids": [
+      417242555,
+      530141880,
+      684259351,
+      746519693
+    ],
+    "duration": 0.8104,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3322d700a978621641c3ce02093538b39d4082243aa6fe0f711b8c263bb134b7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jarvaniv_jarvanivgoldenaegis_oncast_r1.wav",
+    "event": "Play_sfx_JarvanIV_JarvanIVGoldenAegis_OnCast",
+    "event_id": 726397562,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/event_wav/Play_sfx_JarvanIV_JarvanIVGoldenAegis_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/txtp/Play_sfx_JarvanIV_JarvanIVGoldenAegis_OnCast {r1}.txtp",
+    "media_ids": [
+      477822558,
+      653779386
+    ],
+    "duration": 1.6628,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9a18ef7dee54756a388d6f0580d7dda9bca482e538cfce4a2eb9ae20db7bccd2",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jarvaniv_jarvanivgoldenaegis_oncast_r2.wav",
+    "event": "Play_sfx_JarvanIV_JarvanIVGoldenAegis_OnCast",
+    "event_id": 726397562,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/event_wav/Play_sfx_JarvanIV_JarvanIVGoldenAegis_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/txtp/Play_sfx_JarvanIV_JarvanIVGoldenAegis_OnCast {r2}.txtp",
+    "media_ids": [
+      477822558,
+      653779386
+    ],
+    "duration": 1.7345,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f762ae3ddd92a3176b763801f09c02d3b1ca0b9b843a1714b4484243d7de847d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jarvaniv_jarvanivdemacianstandard_hit_r1.wav",
+    "event": "Play_sfx_JarvanIV_JarvanIVDemacianStandard_hit",
+    "event_id": 1117149444,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/event_wav/Play_sfx_JarvanIV_JarvanIVDemacianStandard_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/txtp/Play_sfx_JarvanIV_JarvanIVDemacianStandard_hit {r1}.txtp",
+    "media_ids": [
+      173108838,
+      710629146,
+      808921989,
+      972963497
+    ],
+    "duration": 1.1609,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0728e10c9afbc1c32ac385cb4daf9c91a5b692d06ae3431c02bcf6e8346ac115",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jarvaniv_jarvanivdemacianstandard_hit_r2.wav",
+    "event": "Play_sfx_JarvanIV_JarvanIVDemacianStandard_hit",
+    "event_id": 1117149444,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/event_wav/Play_sfx_JarvanIV_JarvanIVDemacianStandard_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/txtp/Play_sfx_JarvanIV_JarvanIVDemacianStandard_hit {r2}.txtp",
+    "media_ids": [
+      173108838,
+      710629146,
+      808921989,
+      972963497
+    ],
+    "duration": 1.29,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "04f87e2b9d13c08f1413a1dda4ae0a3429547c5455e1149ac280e65fc53d9225",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jarvaniv_jarvanivdemacianstandard_hit_r3.wav",
+    "event": "Play_sfx_JarvanIV_JarvanIVDemacianStandard_hit",
+    "event_id": 1117149444,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/event_wav/Play_sfx_JarvanIV_JarvanIVDemacianStandard_hit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德邦军旗/audio/jarvaniv/txtp/Play_sfx_JarvanIV_JarvanIVDemacianStandard_hit {r3}.txtp",
+    "media_ids": [
+      173108838,
+      710629146,
+      808921989,
+      972963497
+    ],
+    "duration": 1.3484,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b811d3b8ba027617fd37d1d81f64d6e3a7611931fbc1275e53197e1fee87d83b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  }
+]

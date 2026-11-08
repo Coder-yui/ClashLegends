@@ -110,6 +110,7 @@
 | `thorn_spitter` · [荆棘喷射者](../units/thorn_spitter.md) | 25秒衰血；原版尖刺，6秒生命/体型强化与150%伤害 | [动作](../units/animations/thorn_spitter.md) · [声音](../units/audio/thorn_spitter.md) · [特效](../units/effects/thorn_spitter.md) |
 | `vine_lasher` · [藤蔓鞭击者](../units/vine_lasher.md) | 24秒衰血，近战减速30%，强化攻速60% | [动作](../units/animations/vine_lasher.md) · [声音](../units/audio/vine_lasher.md) · [特效](../units/effects/vine_lasher.md) |
 | `jack_in_the_box` · [惊吓魔盒](../units/jack_in_the_box.md) | 一次性埋伏、全目标齐射及群体眩晕 | [动作](../units/animations/jack_in_the_box.md) · [声音](../units/audio/jack_in_the_box.md) |
+| `demacian_standard` · [德邦军旗](../units/demacian_standard.md) | 攻速光环、范围护盾与减速 | [动作](../units/animations/demacian_standard.md) · [声音](../units/audio/demacian_standard.md) |
 | `gold_ward` · [金币守卫](../units/gold_ward.md) | 周期产金币、死亡收益及自身凝滞 | [动作](../units/animations/gold_ward.md) · [声音](../units/audio/gold_ward.md) |
 | `target_dummy` · [训练木桩（建筑卡）](../units/target_dummy.md) | 15秒衰血、不可普攻；余震减伤及到期爆炸，与工作台木桩独立 | [动作](../units/animations/target_dummy.md) · [声音](../units/audio/target_dummy.md) |
 | `teemo` · [提莫](../units/teemo.md) | 强化致盲两次；无持续毒伤 | [动作](../units/animations/teemo.md) · [声音](../units/audio/teemo.md) |

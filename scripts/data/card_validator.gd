@@ -121,6 +121,7 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 				errors.append(card_id + ".active_skills.piercing_distance: 穿透普攻必须配置正数固定飞行距离")
 			if skill.has("piercing_distance") and not bool(skill.get("piercing_attacks", false)):
 				errors.append(card_id + ".active_skills.piercing_distance: 仅穿透普攻使用")
+	_validate_haste_aura(card_id, stats, errors)
 	_validate_heal_aura(card_id, stats, errors)
 	_validate_hit_haste(card_id, stats, errors)
 	_validate_structure_haste(card_id, stats, errors)
@@ -294,6 +295,7 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			_validate_combat_stats("%s.transformed_stats" % card_id, transformed, true, errors)
 			var form_capabilities := stats.duplicate()
 			form_capabilities.merge(transformed, true)
+			_validate_haste_aura("%s.transformed_stats" % card_id, form_capabilities, errors)
 			_validate_heal_aura("%s.transformed_stats" % card_id, form_capabilities, errors)
 			_validate_hit_haste("%s.transformed_stats" % card_id, form_capabilities, errors)
 			_validate_visual_config("%s.transformed_stats" % card_id, transformed, errors, inspect_resources)
@@ -1323,6 +1325,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				if float(skill.get("shield", 0.0)) <= 0.0 or float(skill.get("shield_duration", 0.0)) <= 0.0:
 					errors.append("%s: 恢复护盾值与持续时间必须 > 0" % label)
 			&"area_shield":
+				if skill.has("slow_duration") or skill.has("slow_multiplier"):
+					if not is_finite(float(skill.get("slow_duration", 0.0))) or float(skill.get("slow_duration", 0.0)) <= 0.0 or not is_finite(float(skill.get("slow_multiplier", 1.0))) or float(skill.get("slow_multiplier", 1.0)) < 0.1 or float(skill.get("slow_multiplier", 1.0)) >= 1.0:
+						errors.append(label + ": 范围护盾减速需要正时长和[0.1,1)倍率")
 				_require_fields(label, skill, [&"radius", &"shield", &"shield_duration"], errors)
 				for positive_field in [&"radius", &"shield", &"shield_duration"]:
 					if float(skill.get(positive_field, 0.0)) <= 0.0:
@@ -2028,3 +2033,11 @@ static func _validate_heal_aura(label: String, stats: Dictionary, errors: Packed
 
 	if float(stats.get("heal_aura_trigger_interval", 0.0)) < float(stats.get("heal_aura_duration", 0.0)):
 		errors.append(label + ": 治疗触发周期不能短于光环持续时间")
+
+static func _validate_haste_aura(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	if not stats.has("haste_aura_radius") and not stats.has("haste_aura_multiplier"): return
+	for field in ["haste_aura_radius", "haste_aura_multiplier"]:
+		var value = stats.get(field)
+		if not (value is int or value is float) or not is_finite(float(value)) or float(value) <= (1.0 if field == "haste_aura_multiplier" else 0.0):
+			errors.append(label + "." + field + ": 光环需要正半径与大于1的有限攻速倍率")
+	if String(stats.get("type", "")) == "spell": errors.append(label + ": 攻速光环需要单位实体")

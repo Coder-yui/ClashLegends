@@ -74,3 +74,7 @@ python3 -m unittest discover -s tools/tests
 python3 -m unittest discover -s tools/maintenance -p 'test_*.py'
 python3 tools/dev.py audit
 ```
+
+模型动作展台遇到提供 `advance_deployment_visual` 的包装场景时，会显示部署重播、暂停及独立时间轴；`--capture --time` 可定位部署阶段，部署时长优先读取 `--card` 定义。
+
+`python3 tools/dev.py effect --card=demacian_standard` 打开卡牌组合特效展台，切换部署、技能与常驻范围；`--variant=skill` 可指定初始模式。当前组合适配支持带主动盾场景的范围护盾卡，仍使用正式包装场景与特效。
