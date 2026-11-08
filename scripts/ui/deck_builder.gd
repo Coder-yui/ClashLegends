@@ -653,7 +653,7 @@ func _open_card_info(card_id: String) -> void:
 		details.add_child(_make_card_info_subheading("%s（%d金币部署）" % [upgrade_stats.name, upgrade_stats.cost]))
 		details.add_child(_make_card_attribute_grid(upgrade_stats))
 	var transformed_stats: Dictionary = stats.get("transformed_stats", {})
-	if not transformed_stats.is_empty():
+	if not transformed_stats.is_empty() and not preload("res://scripts/ui/workbench/card_catalog.gd").is_summon_spent_state(stats):
 		details.add_child(_make_card_info_subheading("%s（变形后）" % String(transformed_stats.get("name", "变形形态"))))
 		details.add_child(_make_card_attribute_grid(transformed_stats))
 	var periodic_spawn_id := String(stats.get("spawn_id", ""))

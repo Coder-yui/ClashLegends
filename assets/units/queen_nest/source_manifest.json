@@ -1,0 +1,41 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/RekSai.wad.client",
+  "tunnel_source_path": "assets/characters/reksaitunnel/skins/base/",
+  "reksai_source": "ClashLegends-开发素材库/01-待开发/卡牌模型/虚空遁地兽.glb",
+  "working_directory": "ClashLegends-开发素材库/05-已完成/女王巢穴",
+  "tunnel_scale": 0.0117,
+  "tunnel_forward_yaw": "PI",
+  "reksai_scale": 0.008,
+  "processing": "原版洞穴SKN/SKL及动画由lol2gltf转换；雷克塞完整GLB只保留运行所需8个动画，网格/骨骼/采样和内嵌纹理不改。",
+  "files": {
+    "tunnel.glb": {
+      "sha256": "4296a4927c29f826bdc5a38b57b2c1b76d9d31b77620d047b37cfaaf07893d5e",
+      "animations": {
+        "reksaitunnel_death_closed": 1,
+        "reksaitunnel_idle1": 0,
+        "reksaitunnel_open": 0.5,
+        "reksaitunnel_spell4_winddown": 0.4333333671092987,
+        "reksaitunnel_spell4_windup": 0.4333333671092987,
+        "reksaitunnel_spawn": 0.5,
+        "reksaitunnel_close": 0.5,
+        "reksaitunnel_spell4_loop": 1,
+        "reksaitunnel_death_open": 1
+      }
+    },
+    "reksai_nest.glb": {
+      "sha256": "41f98d48f82a3cbf6ef271f0bf0c5dd11a4e01c52af407ff3e07cef2b1679a5e",
+      "animations": {
+        "Death": 3.933333396911621,
+        "Idle1_Base": 9.333344459533691,
+        "Spell1": 1.9999994039535522,
+        "Attack1": 2.0333333015441895,
+        "Attack2": 2,
+        "Spell1B": 1.9999994039535522,
+        "Run1": 1.0000003576278687,
+        "Respawn": 1.0666669607162476
+      }
+    }
+  },
+  "card_art_source": "ClashLegends-开发素材库/04-中间产物/3D摄影棚/shots/女王巢穴_20261108_201031.png",
+  "card_art_sha256": "8b0c2fb1cfe10dcc163683bd7a802d2d62838231fba6c3fad7c50d8167cdbcc3"
+}

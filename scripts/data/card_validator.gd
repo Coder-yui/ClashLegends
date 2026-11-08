@@ -97,6 +97,8 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 	if not SHAPES.validate(card_id, stats, errors):
 		return
 	_require_fields(card_id, stats, [&"name", &"cost", &"type", &"description", &"color"], errors)
+	if bool(stats.get("summon_prefer_outward", false)) and (String(stats.get("type", "")) != "unit" or bool(stats.get("is_building", false))):
+		errors.append(card_id + ".summon_prefer_outward: 仅支持召唤单位落点")
 	if not stats.has("spawn_plan"): _require_fields(card_id, stats, [&"radius"], errors)
 	if stats.has("stealth_delay") and (float(stats.stealth_delay) <= 0.0 or stats.get("type", "") != "unit" or bool(stats.get("is_building", false)) or bool(stats.get("is_continuous_attack", false))):
 		errors.append(card_id + ".stealth_delay: 仅普通单位支持正数脱战隐身时间")
@@ -292,7 +294,9 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			errors.append("%s.transformed_stats: 必须是非空 Dictionary" % card_id)
 		else:
 			_validate_known_fields("%s.transformed_stats" % card_id, transformed, CARD_FIELDS, errors)
-			_validate_combat_stats("%s.transformed_stats" % card_id, transformed, true, errors)
+			_validate_combat_stats("%s.transformed_stats" % card_id, transformed, not bool(transformed.get("is_building", false)), errors)
+			if bool(transformed.get("is_building", false)):
+				_validate_building("%s.transformed_stats" % card_id, transformed, errors)
 			var form_capabilities := stats.duplicate()
 			form_capabilities.merge(transformed, true)
 			_validate_haste_aura("%s.transformed_stats" % card_id, form_capabilities, errors)
@@ -800,8 +804,8 @@ static func _validate_rush(card_id: String, stats: Dictionary, errors: PackedStr
 
 static func _validate_references(card_id: String, stats: Dictionary, cards: Dictionary, errors: PackedStringArray) -> void:
 	_validate_rush(card_id, stats, errors)
-	if stats.has("death_spawn_side") and (stats.death_spawn_side != "map_side" or int(stats.get("death_spawn_count", 0)) <= 0 or float(stats.get("death_spawn_spread", 0.0)) > 0.0):
-		errors.append(card_id + ".death_spawn_side: 仅支持非散开死亡召唤的map_side")
+	if stats.has("death_spawn_side") and (stats.death_spawn_side not in ["map_side", "center"] or int(stats.get("death_spawn_count", 0)) <= 0 or float(stats.get("death_spawn_spread", 0.0)) > 0.0):
+		errors.append(card_id + ".death_spawn_side: 仅支持非散开死亡召唤的map_side/center")
 	if stats.has("death_spawn_deploy_time"):
 		if float(stats.death_spawn_deploy_time) < 0.0 or int(stats.get("death_spawn_count", 0)) <= 0:
 			errors.append(card_id + ".death_spawn_deploy_time: 需要非负时长与死亡召唤数量")
@@ -1225,6 +1229,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append(label + "." + field + ": 需要正持续时间与正生命增量/大于1的体型倍率")
 		if skill.has("visual_scale_multiplier") and kind != &"sacrifice_empower":
 			errors.append(label + ".visual_scale_multiplier: 仅用于牺牲强化表现")
+		if skill.has("transform_source"):
+			if typeof(skill.transform_source) != TYPE_BOOL or kind != &"summon" or stats.get("transformed_stats", {}).is_empty() or bool(skill.get("sacrifice_source", false)):
+				errors.append(label + ".transform_source: 仅支持具有变形定义且不牺牲来源的召唤技能")
 		if skill.has("sacrifice_source") and (typeof(skill.sacrifice_source) != TYPE_BOOL or kind != &"summon"):
 			errors.append(label + ".sacrifice_source: 仅召唤技能支持布尔值")
 		if skill.has("radius_from_attack_range") and kind != &"nova":

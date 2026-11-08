@@ -554,6 +554,9 @@ func activate_summon(source: Unit, skill: Dictionary) -> void:
 	if String(skill.get("spawn_side", "")) == "below":
 		source.begin_summon_sequence(spawn_id, count, float(skill.spawn_sequence_interval), 0.0)
 		return
+	if bool(skill.get("transform_source", false)):
+		if source.form_index != 0: return
+		source.toggle_weapon_form()
 	var summon_radius := float(summon_stats.get("radius", 14.0))
 	var summon_team := source.team
 	var summon_center := source.global_position
@@ -566,7 +569,7 @@ func activate_summon(source: Unit, skill: Dictionary) -> void:
 		if skill.has("spawn_forward_distance"):
 			offset = frontal_forward(source) * float(skill.spawn_forward_distance)
 		var spawn_position := source.map_side_summon_position(summon_radius, index, count) if skill.get("spawn_side", "") == "map_side" else summon_center + offset
-		_controller.spawn_summoned(summon_team, spawn_id, spawn_position, float(skill.get("spawn_deploy_time", -1.0)), "", -1, summon_center)
+		_controller.spawn_summoned(summon_team, spawn_id, spawn_position, float(skill.get("spawn_deploy_time", -1.0)), "", -1, summon_center, Vector2.INF, 0.0, summon_center)
 
 
 ## 扇形/梯形主动统一按施法开始时锁定的朝向结算。目标碰撞圆会扩张边界，

@@ -2620,8 +2620,8 @@ func _show_registered_skill(id: int) -> void:
 	var unit: Unit = entry.unit
 	_active_skill_bar.show_skill(int(entry.slot), id, String(skill.name), CardDB.get_card(String(entry.card_id)).get("color", CardArt.DEFAULT_ACCENT), float(skill.get("cost", 0.0)), 0 if bool(skill.get("unlimited_uses", false)) else int(entry.max_uses), int(entry.max_uses), float(skill.get("cooldown", 0.0)), unit.is_deployed(), CardArt.skill_icon(skill), CardDetails.active_skill_description(skill))
 
-func spawn_summoned(p_team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, visual_transition: String = "", death_replacement_charges_override: int = -1, summon_visual_origin: Vector2 = Vector2.INF, limit_center: Vector2 = Vector2.INF, limit_radius: float = 0.0) -> Unit:
-	return runtime.spawn_summoned(p_team, card_id, pos, deploy_time_override, visual_transition, death_replacement_charges_override, summon_visual_origin, limit_center, limit_radius)
+func spawn_summoned(p_team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, visual_transition: String = "", death_replacement_charges_override: int = -1, summon_visual_origin: Vector2 = Vector2.INF, limit_center: Vector2 = Vector2.INF, limit_radius: float = 0.0, spawn_preference_origin: Vector2 = Vector2.INF) -> Unit:
+	return runtime.spawn_summoned(p_team, card_id, pos, deploy_time_override, visual_transition, death_replacement_charges_override, summon_visual_origin, limit_center, limit_radius, spawn_preference_origin)
 
 func get_authoritative_hand(p_team: int) -> Array:
 	if is_net_client(): return _client_hand.hand.duplicate() if p_team == runtime.local_team else []

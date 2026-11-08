@@ -185,7 +185,8 @@ func _check_artdev_workbench() -> void:
 	var search_ok: bool = panel._library.entries.size() == 1 and panel._library.entries[0].id == "gwen"
 	panel._filter_cards("")
 	panel._select_item("pix")
-	var extra_forms := CardDB.all().values().filter(func(card): return card.has("transformed_stats")).size()
+	var extra_forms := CardDB.all().values().filter(func(card): return card.has("transformed_stats") and not preload("res://scripts/ui/workbench/card_catalog.gd").is_summon_spent_state(card)).size()
+	_expect(panel._library.entries.any(func(entry): return entry.id == "queen_nest") and not panel._library.entries.any(func(entry): return entry.id == "queen_nest:1"), "空巢状态不作为独立衍生对象列入目录")
 	var all_cards: bool = panel._library.entries.size() == CardDB.all().size() + extra_forms and panel._selected_id == "pix"
 	panel.show_workspace(1)
 	var battle_input := panel.accepts_battle_input()

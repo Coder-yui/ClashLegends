@@ -259,12 +259,26 @@ func nearest_valid_building_spawn(team: int, card_id: String, requested: Vector2
 
 ## 召唤不受手牌阵营区域限制：建筑按完整网格占地，兵种按连续地面几何。
 ## 合法原点保留，非法原点找最近可行点；无解返回INF，由生成入口拒绝非法落地。
-func resolve_summoned_spawn(team: int, card_id: String, stats: Dictionary, desired: Vector2, limit_center: Vector2 = Vector2.INF, limit_radius: float = 0.0) -> Vector2:
+func resolve_summoned_spawn(team: int, card_id: String, stats: Dictionary, desired: Vector2, limit_center: Vector2 = Vector2.INF, limit_radius: float = 0.0, spawn_preference_origin: Vector2 = Vector2.INF) -> Vector2:
 	if bool(stats.get("is_building", false)):
 		return nearest_valid_building_spawn(team, card_id, desired, false)
 	var radius := float(stats.get("radius", 14.0))
 	var air := bool(stats.get("is_air", false))
-	return UnitLandingQuery.find_spawn_position(desired, radius, air, team, combatants.call(), UnitLandingQuery._regions(radius, air), limit_center, limit_radius)
+	var bodies: Array = combatants.call()
+	var regions := UnitLandingQuery._regions(radius, air)
+	var nearest := UnitLandingQuery.find_spawn_position(desired, radius, air, team, bodies, regions, limit_center, limit_radius)
+	if not bool(stats.get("summon_prefer_outward", false)) or not spawn_preference_origin.is_finite() or nearest == desired: return nearest
+	# 主动出巢受阻时，以来源的权威位置为界，优先战场外侧；死亡原地生成不传偏好。
+	var half_width := ArenaRules.FIELD_W * 0.5
+	if is_equal_approx(spawn_preference_origin.x, half_width): return nearest
+	var origin_x := clampf(spawn_preference_origin.x, 0.0, ArenaRules.FIELD_W)
+	var half := Rect2(0.0, 0.0, origin_x, ArenaRules.FIELD_H) if origin_x < half_width else Rect2(origin_x, 0.0, ArenaRules.FIELD_W - origin_x, ArenaRules.FIELD_H)
+	var preferred: Array[Rect2] = []
+	for region in regions:
+		var clipped := region.intersection(half)
+		if clipped.has_area(): preferred.append(clipped)
+	var same_side := UnitLandingQuery.find_spawn_position(desired, radius, air, team, bodies, preferred, limit_center, limit_radius)
+	return same_side if same_side.is_finite() else nearest
 
 ## 碰撞存在不等于不可推动；冰冻和普通军队不在此过滤。
 func anchored_spawn_clear(pos: Vector2, stats: Dictionary) -> bool:

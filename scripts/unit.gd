@@ -1523,6 +1523,7 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool) -> void:
 
 ## 仅装载定义属性，不操作生命、动作代次、落点或奖励。
 func _load_form_attributes(next_stats: Dictionary) -> void:
+	death_spawn_count = maxi(int(next_stats.get("death_spawn_count", death_spawn_count)), 0)
 	is_building = bool(next_stats.get("is_building", is_building))
 	continuous_attack = bool(next_stats.get("is_continuous_attack", continuous_attack))
 	_drain_duration = float(next_stats.get("drain_duration", 0.0))
@@ -3898,7 +3899,7 @@ func _spawn_death_summons() -> void:
 	for index in range(death_spawn_count):
 		var direction: Vector2 = SPAWN_DIRECTIONS[index % SPAWN_DIRECTIONS.size()]
 		var scattering := death_spawn_spread > 0.0 and death_spawn_duration > 0.0
-		var spawn_pos := global_position if scattering else global_position + direction * spawn_distance
+		var spawn_pos := global_position if scattering or death_spawn_side == "center" else global_position + direction * spawn_distance
 		if not scattering and death_spawn_side == "map_side":
 			spawn_pos = map_side_summon_position(summon_radius, index, death_spawn_count)
 		var summoned: Unit = battle_context.spawn_summoned(team, death_spawn_id, spawn_pos, 0.0 if scattering else death_spawn_deploy_time)

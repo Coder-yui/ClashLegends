@@ -154,3 +154,10 @@
 数值表中的时间为配置秒数，按 20Hz 固定 Tick 执行；“首次出手”对近战指结算、对远程指发射，“效果执行”不保证弹体已命中目标。详见[动作时序与术语](../ANIMATION_STATE_SYSTEM.md)。
 
 - [爆破鬼才](ziggs.md)：3金币非追踪范围投弹，建筑斩杀与三次弹跳强化。
+
+## 女王巢穴及关联单位
+
+- [女王巢穴](queen_nest.md)（`queen_nest`）
+- [巢穴雷克塞](nest_reksai.md)（`nest_reksai`）
+- [暴怒雷克塞](enraged_reksai.md)（`enraged_reksai`）
+- [空巢穴](queen_nest_empty.md)（女王巢穴主动后的形态）

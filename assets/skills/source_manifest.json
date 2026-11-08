@@ -1090,5 +1090,14 @@
     "source_path": "assets/characters/jarvaniv/hud/icons2d/jarvanivw.dds",
     "source_sha256": "fdc3b835ae339b48724290a678ebc21ab83d5b0e8bcddc8e48e904a85ceddc99",
     "sha256": "a6f0c4a3093152f3044da1a2d5e064470458e4eacb7fb638328fb4ce46d2962b"
+  },
+  {
+    "card": "queen_nest",
+    "skill_index": 0,
+    "path": "res://assets/skills/queen_nest_e.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/RekSai.wad.client",
+    "source_path": "assets/characters/reksai/hud/icons2d/reksai_e2.dds",
+    "source_sha256": "55d34f1291f5795a94570b7cb702fadc28b862c960a036242581f954832cff7b",
+    "sha256": "c3caa6f4370e9e282bac871b30513b2d67d8cfd8a71232005766fa9b583b2a7b"
   }
 ]

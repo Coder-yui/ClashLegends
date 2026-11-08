@@ -164,12 +164,12 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -
 	if CardPlayHistory.is_mirror(card_id) and _card_history.get_last(p_team).is_empty(): return false
 	return _deployment_rules.is_card_deploy_position_valid(p_team, resolved_card_for_team(p_team, card_id), pos)
 
-func spawn_summoned(p_team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, visual_transition: String = "", death_replacement_charges_override: int = -1, summon_visual_origin: Vector2 = Vector2.INF, limit_center: Vector2 = Vector2.INF, limit_radius: float = 0.0) -> Unit:
+func spawn_summoned(p_team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, visual_transition: String = "", death_replacement_charges_override: int = -1, summon_visual_origin: Vector2 = Vector2.INF, limit_center: Vector2 = Vector2.INF, limit_radius: float = 0.0, spawn_preference_origin: Vector2 = Vector2.INF) -> Unit:
 	var stats: Dictionary = CardDB.get_unit_stats(card_id)
 	if stats.is_empty():
 		push_error("尝试生成不存在的召唤单位：%s" % card_id)
 		return null
-	var resolved := _deployment_rules.resolve_summoned_spawn(p_team, card_id, stats, pos, limit_center, limit_radius)
+	var resolved := _deployment_rules.resolve_summoned_spawn(p_team, card_id, stats, pos, limit_center, limit_radius, spawn_preference_origin)
 	if not resolved.is_finite():
 		push_warning("召唤物没有合法出生点：%s team=%d pos=%s" % [card_id, p_team, pos])
 		return null

@@ -75426,6 +75426,72 @@
         "curve": "linear_amplitude"
       },
       "duration": 1.5
+    },
+    {
+      "file": "assets/audio/units/queen_nest/nest_death.wav",
+      "sha256": "020496124550cbd5e49919643c3b592aa62bfe6f348b9c7971c2ed4d6ec09a80",
+      "source_events": [
+        {
+          "event": "Play_sfx_Reksai_ReksaiE_burrowed_tunnel_destroyed",
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiE_burrowed_tunnel_destroyed {r1}.txtp"
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/女王巢穴/候选与来源/audio-prepared/nest_death.wav"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/queen_nest/nest_deploy.wav",
+      "sha256": "cdf490fb6d25c3daa11487ebbfed280e3cccda399be717badd0d88a6827d2e01",
+      "source_events": [
+        {
+          "event": "Play_sfx_Reksai_ReksaiE_burrowed_endsound",
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/虚空遁地兽/audio/reksai/txtp/Play_sfx_Reksai_ReksaiE_burrowed_endsound {r1}.txtp"
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/女王巢穴/候选与来源/audio-prepared/nest_deploy.wav"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/queen_nest/w_burrow_voice.wav",
+      "sha256": "f6172a1becd0fb85d8cea5ab8f08eae0a2c74cdf503151ab9ecad24bfd0d17c5",
+      "source_events": [
+        {
+          "event": "Play_vo_Reksai_RekSaiW_OnBuffActivate",
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/女王巢穴/候选与来源/w-burrow-voice/txtp/Play_vo_Reksai_RekSaiW_OnBuffActivate [reksai_vo=2480312883] {r1}.txtp"
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/05-已完成/女王巢穴/候选与来源/w-burrow-voice/wav/Play_vo_Reksai_RekSaiW_OnBuffActivate [reksai_vo=2480312883] {r1}.wav"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false
+      },
+      "selection": "用户指定1.68秒r1"
     }
   ]
 }

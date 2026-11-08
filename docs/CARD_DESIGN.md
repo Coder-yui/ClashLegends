@@ -438,3 +438,7 @@ nova可配置`attack_slow_multiplier`，要求正数slow_duration及[0.1,1)倍�
 `haste_aura_radius / haste_aura_multiplier`成组定义正半径及大于1的攻速倍率。自然生命周期结束后、行动批次前统一采样；活着、部署完成且非凝滞的来源向同队Unit贡献，包含空军及卡牌建筑，不包含Tower。按来源中心到目标身体圆接触判定，同类取最强；离开/死亡/凝滞在下一行动边界停止，无定时增益残留，客户端复用有效攻速快照。
 
 `area_shield`可成组配置`slow_duration / slow_multiplier`，对同范围敌方Unit施加减速，友方仍按原独立盾层逻辑获得护盾。
+
+### 召唤后来源换形
+
+召唤技能可声明 `transform_source: true`，要求来源具有 `transformed_stats`，并与 `sacrifice_source` 互斥。只允许基础形态执行一次，先瞬时换形再从原位置计算召唤落点。女王巢穴借此切换空巢，保留当前生命、建筑占地和自然衰血进度；空巢覆盖 `death_spawn_count: 0`，通过既有形态快照同步睡眠提示关闭。

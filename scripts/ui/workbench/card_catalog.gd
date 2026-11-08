@@ -49,7 +49,11 @@ static func form_index(id: String) -> int:
 static func selection_id(base_id: String, form: int) -> String:
 	return base_id + (":" + str(form) if form > 0 else "")
 
+static func is_summon_spent_state(base: Dictionary) -> bool:
+	return bool(base.get("is_building", false)) and base.get("active_skills", []).any(func(skill): return bool(skill.get("transform_source", false)))
+
 static func form_labels(base: Dictionary) -> Array[String]:
+	if is_summon_spent_state(base): return ["基础状态"]
 	if base.get("name", "") == "金克丝": return ["火箭炮", "轻机枪"]
 	if base.has("growth_ranged_id"): return ["凯隐", "影流刺客", "拉亚斯特"]
 	if base.has("deployment_upgrade_id"): return ["近战形态", "远程形态"]

@@ -894,5 +894,12 @@
     "method": "run",
     "scene": "none",
     "group": "combat"
+  },
+  {
+    "id": "QueenNestSuite",
+    "script": "res://tests/suites/combat/queen_nest_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "combat"
   }
 ]

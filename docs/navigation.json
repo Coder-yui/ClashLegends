@@ -86,6 +86,10 @@
     "scarecrow": [
       "scarecrow",
       "fiddlesticks"
+    ],
+    "queen_nest": [
+      "queen_nest",
+      "queen_nest_empty"
     ]
   }
 }

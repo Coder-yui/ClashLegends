@@ -179,3 +179,8 @@
 
 | `airdrop_bear` / [空投熊](../units/airdrop_bear.md) | 己方半场、延迟落地、衍生召唤、强化眩晕与常驻灼烧 | [特效](../units/effects/airdrop_bear.md) / [音频](../units/audio/airdrop_bear.md) |
 | `tibbers` / [提伯斯](../units/tibbers.md) | 衍生近战、无寿命、用户摄影卡面 | [动画](../units/animations/tibbers.md) / [音频](../units/audio/tibbers.md) |
+
+| `queen_nest` · [女王巢穴](../units/queen_nest.md) | 巢穴与两类出巢 | [动画](../units/animations/queen_nest.md) / [音频](../units/audio/queen_nest.md) |
+| `nest_reksai` · [巢穴雷克塞](../units/nest_reksai.md) | 巢穴与两类出巢 | [动画](../units/animations/queen_nest.md) / [音频](../units/audio/queen_nest.md) |
+| `enraged_reksai` · [暴怒雷克塞](../units/enraged_reksai.md) | 巢穴与两类出巢 | [动画](../units/animations/queen_nest.md) / [音频](../units/audio/queen_nest.md) |
+| `queen_nest` 空巢形态 · [空巢穴](../units/queen_nest_empty.md) | 保留血量占地、取消死亡召唤 | [动画](../units/animations/queen_nest.md) / [音频](../units/audio/queen_nest.md) |
