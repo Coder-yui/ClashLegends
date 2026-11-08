@@ -3,9 +3,9 @@ extends "res://scripts/data/card_schema.gd"
 static func definition() -> Dictionary:
 	return {
 		"gameplay": {
-			"name": "峡谷先锋", "cost": 8, "type": "unit",
+			"name": "峡谷先锋", "cost": 9, "type": "unit",
 			"description": "极大体型推进坦克，只攻击建筑。一生一次冲撞：接近建筑且直线路径无河水阻挡后准备，冲撞挤开沿途地面敌军并造成伤害；撞击建筑后扣除自身当前生命30%，爆发6只虚空蠕虫。桥面允许冲撞，水域不可穿越。",
-			"hp": 1800, "damage": 120, "range": 40.0,
+			"hp": 2000, "damage": 130, "range": 40.0,
 			"speed": SPEED_EXTREMELY_SLOW, "interval": 2.00, "first_hit": 0.50,
 			"size_tier": SIZE_EXTREMELY_LARGE, "radius": RADIUS_EXTREMELY_LARGE,
 			"mass": 12.0, "sight": 260.0, "deploy_time": 3.0,

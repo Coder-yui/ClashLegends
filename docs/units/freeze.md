@@ -6,7 +6,7 @@
 
 全图选点的范围控制法术，冻结落点附近的敌方单位、建筑卡和防御塔，水晶免疫。放入主动槽后，施放当刻同时生成更大的移速与攻速降低区域，比冻结多持续 2 秒。
 
-[查看卡面原画](../../assets/cards/freeze_loading.png)
+[查看卡面原画](../../assets/cards/freeze_loading.png) · [生成提示词与来源](../../assets/cards/freeze_source.md)
 
 ## 数值
 

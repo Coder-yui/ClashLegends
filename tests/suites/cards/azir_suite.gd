@@ -102,7 +102,7 @@ func _check_instant_attack() -> void:
 			for tick in 4: source._attack(0.05)
 			_expect(target.hp == hp, "命中节点前不提前扣血")
 			source._attack(0.05)
-			_expect(target.hp == hp-130, "近远距离均在第5Tick直接扣130生命")
+			_expect(target.hp == hp-145, "近远距离均在第5Tick直接扣145生命")
 			_expect(_main._projectile_system.projectiles.size() == count, "沙皇普攻不创建飞行弹体")
 			var views = _main._projectile_system._hit_visuals
 			_expect(views._views.size() == 1, "真实命中生成单层原版光束")
@@ -110,7 +110,7 @@ func _check_instant_attack() -> void:
 			_expect(views._views.size() == 1, "0.24秒仍有光束")
 			views.advance(0.02)
 			_expect(views._views.is_empty(), "光束0.25秒后释放且不重复扣血")
-			_expect(target.hp == hp-130, "表现推进不再次结算伤害")
+			_expect(target.hp == hp-145, "表现推进不再次结算伤害")
 			_clear()
 	var source := _spawn_ready_unit("azir", 0, Vector2(320, 900))
 	var target := _spawn_ready_unit("ashe", 1, Vector2(500, 900))

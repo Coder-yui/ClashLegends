@@ -3,9 +3,9 @@ extends "res://scripts/data/card_schema.gd"
 static func definition() -> Dictionary:
 	return {
 		"gameplay": {
-			"name": "沙漠皇帝", "cost": 8, "type": "unit",
+			"name": "沙漠皇帝", "cost": 10, "type": "unit",
 			"description": "慢速远程后排，可对地对空。命中后2秒内死亡的敌军化为黄沙士兵，敌方建筑和防御塔化为会衰减生命的太阳圆盘。",
-			"hp": 900, "damage": 130, "range": 240.0,
+			"hp": 1000, "damage": 145, "range": 240.0,
 			"speed": SPEED_SLIGHTLY_SLOW, "interval": 1.6, "first_hit": 0.25,
 			"projectile_speed": 0.0, "deploy_time": 2.0,
 			"size_tier": SIZE_SLIGHTLY_LARGE, "radius": RADIUS_SLIGHTLY_LARGE, "mass": 4.0, "sight": 280.0,

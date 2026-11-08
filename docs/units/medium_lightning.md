@@ -30,6 +30,6 @@ E的2秒落雷与敌方最后1秒预警对应[Sky Splitter时序说明](https://
 
 法术没有单位模型。[动画说明](animations/medium_lightning.md) · [狗熊E/R特效](effects/medium_lightning.md) · [原版声音](audio/medium_lightning.md)。
 
-[AI卡面](../../assets/cards/medium_lightning_loading.png)采用雷暴压塔构图：厚重风暴云、冰蓝主雷和完整暗色防御塔。主动图标为狗熊原版E。
+[AI卡面](../../assets/cards/medium_lightning_loading.png)采用「风暴眼下的塔」构图：巨大旋涡风暴、猛烈的斜向蓝白落雷、完整暗色防御塔与风中松树岩坡；[生成提示词与来源](../../assets/cards/medium_lightning_source.md)。主动图标为狗熊原版E。
 
 关联：[电击法术](zap.md) · [大型电击法术](lightning.md)。
