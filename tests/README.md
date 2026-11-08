@@ -260,3 +260,5 @@ ProjectileSuite 内的 view 子检查覆盖内容代次、同帧前后读取、�
 翠神专项：`--suite IvernSuite`覆盖小菊三击循环、致盲/凝滞、召唤归属和独立存活、3费单次20秒冷却。`CLASH_TEST_IVERN=1 python3 tools/dev.py verify --suite IvernSuite --network`追加服务器与两客户端的弹体、召唤物、攻击段及眩晕同步。
 
 雷克塞路线专项：`CLASH_TEST_REKSAI=1 CLASH_TEST_TERMINAL_TICK=180 python3 tools/dev.py verify --suite ReksaiSuite --network`。覆盖主机与双客户端的冻结避建筑路线、实际时长、后建建筑不重算及双方出土；结果的路线哈希用于跨端对照。
+
+凛冬之柱专项：`--suite PillarOfIceSuite`覆盖双减速光环、3×3占地、稍大体型、全图部署、主动扩圈、来源/目标控制边界与死亡清理。`CLASH_TEST_PILLAR_OF_ICE=1 python3 tools/dev.py verify --suite PillarOfIceSuite --network`检查主机和双客户端的双减速、扩圈与移除同步；复用现有Buff和减益快照，无新增协议。

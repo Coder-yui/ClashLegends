@@ -4193,3 +4193,14 @@ func returning_attack_distance() -> float:
 func heal_aura_state_visual() -> Vector2:
 	if hp <= 0.0: return Vector2.ZERO
 	return net_heal_aura if _in_client_mode() else heal_aura.state()
+
+## 光环聚合结果放入既有软控容器，与其他来源取最强并复用快照/通用提示。
+func set_debuff_aura_multipliers(move: float, attack: float) -> void:
+	var previous_speed := _effective_attack_speed_multiplier()
+	control.modifiers.remove_source(&"slow", &"debuff_aura")
+	control.modifiers.remove_source(&"attack_slow", &"debuff_aura")
+	if move < 1.0 and not active_buff_ignores_movement_slow:
+		control.refresh_slow(0.1, move, &"debuff_aura")
+	if attack < 1.0 and not active_buff_ignores_attack_speed_slow:
+		control.refresh_attack_slow(0.1, attack, &"debuff_aura")
+	_rescale_attack_phase(previous_speed)

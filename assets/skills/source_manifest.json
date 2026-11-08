@@ -1099,5 +1099,14 @@
     "source_path": "assets/characters/reksai/hud/icons2d/reksai_e2.dds",
     "source_sha256": "55d34f1291f5795a94570b7cb702fadc28b862c960a036242581f954832cff7b",
     "sha256": "c3caa6f4370e9e282bac871b30513b2d67d8cfd8a71232005766fa9b583b2a7b"
+  },
+  {
+    "card": "pillar_of_ice",
+    "skill_index": 0,
+    "path": "res://assets/skills/pillar_of_ice_w.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Trundle.wad.client",
+    "source_path": "assets/characters/trundle/hud/icons2d/trundle_w.dds",
+    "source_sha256": "354fe3b6c9466731b09ba844825705739eafb359cff12d674d33ec0add4f2c90",
+    "sha256": "1fe72645f3d5a65708db87fb207eaa355a00c894037b87dd6849ef2ac2f84db8"
   }
 ]

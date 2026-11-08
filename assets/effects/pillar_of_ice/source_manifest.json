@@ -1,0 +1,196 @@
+{
+  "pillar": {
+    "system": "Trundle_Base_E_PlagueBlock",
+    "binary": "effect_source/data/characters/trundle/skins/skin0.bin",
+    "binary_sha256": "37df23179efaa2fa925c507298866702b719213e26449e424f31b6666667fa4f",
+    "assets": {
+      "assets/characters/trundle/skins/base/particles/trundle_e_pillar_base.scb": {
+        "source_sha256": "a9d1b854fb3a991d9d74224545bc0feac046d7cd664b47ffe041e1669b9dc35c",
+        "output_sha256": "ccbfa9efe8fed12e4e4dac51a33f573f0d42fab1522d883a9a6b1701bfe70c65"
+      },
+      "assets/characters/trundle/skins/base/particles/common_color-hold.tex": {
+        "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+        "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+      },
+      "assets/shared/particles/aatrox_cubemap.dds": {
+        "source_sha256": "057d147fc7e25067a1793d504868c25e91c7ab5274af5c1d0d5f062d5bd77749",
+        "output_sha256": "65e560f32dc88cbb434333be1f1d9b32c1498c3b66c6c8b46869e6356b83815f"
+      },
+      "assets/characters/trundle/skins/base/particles/trundle_e_pillar_base.tex": {
+        "source_sha256": "5903e9be8dbc8b420c2df70e308253d2e196b5d99c7cea678cc5b796dda01cbd",
+        "output_sha256": "5f99bd2834cb0a3413ca7755f88a35df7a9c58e099f434295ce97eeaaaa148db"
+      },
+      "assets/characters/trundle/skins/base/particles/common_color-waterfade32_02.tex": {
+        "source_sha256": "ae19d93512664dda5875cce52729e5fa111db3cc03a870dbe0fadf42fffd7351",
+        "output_sha256": "5fdebbcd4bb778fc602e2665bbf0b631d68ec0f3541faede05a3e20dc85896a7"
+      },
+      "assets/characters/trundle/skins/base/particles/common_waterspike32.tex": {
+        "source_sha256": "31619e685ce6256af4ca386c667de6e7e0851f45e80fbb087a1a76f2fb480a66",
+        "output_sha256": "05c60d33a52615fe49d6871bfc8b350d7f875ec14fbaa34c8ba34daeaaf7869c"
+      },
+      "assets/characters/trundle/skins/base/particles/trundle_w_ground_cracks.tex": {
+        "source_sha256": "42a3be7ad4dc05e1067c717634b3bfe276ed93218e611f959820bf4a271bec0b",
+        "output_sha256": "4a4d431e6d027f01118a2c23962b88d06c2b31dad05ffb6e3ab515641c6beb7c"
+      },
+      "assets/characters/trundle/skins/base/particles/trundle_ember.tex": {
+        "source_sha256": "0dfc2af360e7b61f97884fbc15300bd92de8fe99bb2a304786f3b24c9c7819d6",
+        "output_sha256": "219aac9c6a1d066c36fe4a546bc1fe4b852ea1f5eb358f93ee7352eb18e5c59d"
+      },
+      "assets/characters/trundle/skins/base/particles/common_alpha_20.tex": {
+        "source_sha256": "33f3f834ff89266709f07f46f8ad945111717e2fe93d76ca7a0a162a60ce38b0",
+        "output_sha256": "a99ba326fbad4eefe549f0625041db8c98f641eb177b73b48418c52d7cb25a63"
+      },
+      "assets/characters/trundle/skins/base/particles/trundle_e_pillar_smoke_2x2.tex": {
+        "source_sha256": "deaadd12c6579c960b57229cc275b2e080da8eab0fd0064df11e8d1ef099ac73",
+        "output_sha256": "af8d6e3873072448c41bd0c98aba488bed4ac4b1eea8eda22983a1d309b0682f"
+      },
+      "assets/characters/trundle/skins/base/particles/common_alpha_12.tex": {
+        "source_sha256": "01bfc2cebd91b2a3b4397afcc5357395b9aecdc72b0018a428e2b89d19def43b",
+        "output_sha256": "97ff2694b3a5267661f7388b78d634f3f34659bd936a1fb833c69d675ef2c934"
+      },
+      "assets/characters/trundle/skins/base/particles/trundle_e_black_water_spike.tex": {
+        "source_sha256": "fe30243ed92e33928f099e7ddd3eb0d78a1c3e8a29f661bbc45d7fb4a794966d",
+        "output_sha256": "1b21da36d36c4e71115524ba712187d4bb3a28d433e76b27aff86af674b2ddc2"
+      },
+      "assets/characters/trundle/skins/base/particles/common_color-rampup.tex": {
+        "source_sha256": "6788756b7c67e0372fce37d521f03597ee19d62fd535a936ad0f0b942789d6a8",
+        "output_sha256": "ce6270d0faa6164ab3ae3e67949b4a1abda0d5f125227220218c83bdba3b70a7"
+      },
+      "assets/characters/trundle/skins/base/particles/trundle_e_pillar_rays.tex": {
+        "source_sha256": "0672a6e1ca549adefc56e1bb268c8000610b6bb3414534d25d4d9ad49873c400",
+        "output_sha256": "28b3dda9cc04464161b5d044b50257a82e3e75be6f7439aae1ae6820bf8a477d"
+      },
+      "assets/characters/trundle/skins/base/particles/trundle_e_pillar_glow.tex": {
+        "source_sha256": "ba3fb07451d798f69d2c52dae21dc6b21ae4969e38254fe68e12355f3f5aa56e",
+        "output_sha256": "8f24cfea5f7f781d2cbe85067d669c01475178808898e4ae3f7038a510e4b079"
+      },
+      "assets/characters/trundle/skins/base/particles/trundle_rocks.tex": {
+        "source_sha256": "c10f4481c1376359793f3ccc3a75705f504e2e75de743662c909620c1329e6eb",
+        "output_sha256": "b917f39b38353a73cd8d5366f5ec88d907dffa83f1838a00906fa22f6b23ac76"
+      },
+      "assets/characters/trundle/skins/base/particles/common_color-rampdown.tex": {
+        "source_sha256": "3fac764e02b2cb8dc91ff01feb7401681e8dffd631f9661a3452d210eea43220",
+        "output_sha256": "9e89131a3255bff92c4488d6c42d9461d416efadf75ca9909b549ed05bdefb50"
+      },
+      "assets/characters/trundle/skins/base/particles/trundle_r_verts.tex": {
+        "source_sha256": "3050c88c980d9a2d50a18bbf28344e441922c0c1e0e090d8f4f1c52513a47f89",
+        "output_sha256": "66681a1c088c0ee26bbdcfe037f7d8b597d9701821928cb695eb785a834c7c5a"
+      },
+      "assets/characters/trundle/skins/base/particles/common_color-bellcurve32.tex": {
+        "source_sha256": "e82fa00ed0aea98ab6229d0b27f37a57249db6b0ad4d17c9efbe1f658a641e4a",
+        "output_sha256": "ee239ba9869e1a7ccb91d0248dd2c822db98275f6a68b39c87c8e48e256e8823"
+      },
+      "assets/characters/trundle/skins/base/particles/trundle_e_black_background.tex": {
+        "source_sha256": "b9c63af678196ad509e3e951af7aae05357159fe18ba06752fb50964a4c55db7",
+        "output_sha256": "c29028a7a15d80eefaef8319cc2e08ad55eddcea898717300f5b3ad33fc440fb"
+      }
+    },
+    "emitters": [
+      {
+        "name": "ice_pillar",
+        "blend": 3,
+        "quad": 3,
+        "reflection": {
+          "fresnel": 1,
+          "fresnelColor": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "reflectionFresnel": 0.6000000238418579,
+          "reflectionFresnelColor": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "opacityDirect": 0.30000001192092896,
+          "opacityGlancing": 0.4000000059604645,
+          "map": {
+            "path": "ASSETS/Shared/Particles/Aatrox_CubeMap.dds",
+            "asset": {
+              "standaloneUrl": "assets/shared/particles/aatrox_cubemap.png"
+            }
+          }
+        }
+      },
+      {
+        "name": "Splash_Out",
+        "blend": 1,
+        "quad": 0,
+        "reflection": null
+      },
+      {
+        "name": "ice_cracks",
+        "blend": 0,
+        "quad": 1,
+        "reflection": null
+      },
+      {
+        "name": "smoke_fall",
+        "blend": 1,
+        "quad": 0,
+        "reflection": null
+      },
+      {
+        "name": "rays",
+        "blend": 4,
+        "quad": 2,
+        "reflection": null
+      },
+      {
+        "name": "base_glow",
+        "blend": 4,
+        "quad": 1,
+        "reflection": null
+      },
+      {
+        "name": "black_circle",
+        "blend": 1,
+        "quad": 1,
+        "reflection": null
+      }
+    ]
+  },
+  "adaptation": {
+    "model_scale": 0.009,
+    "base_radius": 110,
+    "active_radius": 200,
+    "native_field_radius": 450,
+    "continuous_emitter_lifetime": 27,
+    "hold_ground_source_time": 4,
+    "ring_shader": "res://assets/effects/freeze/range_ring.gdshader",
+    "reference_video": "https://lol.dyn.riotcdn.net/x/videos/champion-abilities/0048/ability_0048_E1.mp4",
+    "loop": {
+      "start": 27,
+      "period": 20,
+      "first_transition": 24,
+      "source_birth_interval": [
+        4,
+        24
+      ],
+      "tail_trajectories_until": 27
+    },
+    "selected_layers": [
+      "ice_pillar",
+      "Splash_Out",
+      "ice_cracks",
+      "smoke_fall",
+      "rays",
+      "base_glow",
+      "black_circle"
+    ],
+    "body_layers": [
+      "ice_pillar",
+      "Splash_Out",
+      "rays",
+      "base_glow"
+    ],
+    "field_source_radii": {
+      "ice_cracks": 330,
+      "smoke_fall": 400,
+      "black_circle": 425
+    }
+  }
+}

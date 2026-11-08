@@ -901,5 +901,12 @@
     "method": "run",
     "scene": "none",
     "group": "combat"
+  },
+  {
+    "id": "PillarOfIceSuite",
+    "script": "res://tests/suites/combat/pillar_of_ice_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "combat"
   }
 ]

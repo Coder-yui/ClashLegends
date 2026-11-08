@@ -25,6 +25,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_team_audio_routes(harness, main)
 	_check_match_announcements(harness, main)
 	_check_tombstone_sustain(harness, main)
+	_check_pillar_split_audio(harness, main)
 	_check_tombstone_active_cast(harness, main)
 	_check_tower_damage_audio(harness, main)
 	_check_building_audio_lifecycle(harness, main)
@@ -1515,3 +1516,42 @@ func _check_scarecrow_audio(harness: Object, main: Node2D) -> void:
 		unit.free()
 		target.free()
 		audio._process(0.0)
+
+
+func _check_pillar_split_audio(harness: Object, main: Node2D) -> void:
+	var audio: GameAudioManager = main._audio_manager
+	var unit := Unit.new()
+	var stats := CardDB.get_card("pillar_of_ice")
+	unit.card_id = "pillar_of_ice"
+	unit.setup(0, stats, stats.name)
+	main.add_child(unit)
+	unit.set_battle_context(main.battle_context)
+	var cues: Array[StringName] = []
+	var observe := func(card, cue, _pos):
+		if card == "pillar_of_ice": cues.append(cue)
+	audio.cue_played.connect(observe)
+	audio.attach_unit(unit, stats)
+	audio._process(0.0)
+	var key := audio._sustain_key(unit.get_instance_id(), &"idle")
+	harness._expect(cues.count(&"deploy:start") == 1 and not audio._sustain_players.has(key), "冰柱部署立即播放升起单段，尚未开启W环境循环")
+	unit._deploy_timer = 0.0
+	audio._process(0.0)
+	var loop: AudioStreamPlayer2D = audio._sustain_players.get(key)
+	harness._expect(loop != null and cues.count(&"idle:sustain") == 1, "部署完成启动W持续循环一次")
+	audio.play_event(unit, &"active_buff:start", unit.position)
+	var owned: Array[AudioStreamPlayer2D] = []
+	for player in audio._world_players:
+		var owner: Dictionary = player.get_meta("action_owner", {})
+		if owner.get("kind", "") == "unit" and int(owner.get("unit", -1)) == unit.get_instance_id() and player.playing: owned.append(player)
+	harness._expect(owned.size() >= 1, "W开启声归属冰柱实例")
+	unit.hp = 0.0
+	audio._on_unit_death(unit.get_instance_id())
+	harness._expect(owned.all(func(player): return not player.playing or player.get_meta("action_owner", {}).get("kind", "") != "unit") and cues.count(&"death") == 1, "死亡停止未播完的形成/技能音，同时播放落下声一次")
+	harness._expect(not audio._sustain_players.has(key) and audio._sustain_players.has(key + ":tail"), "死亡把W循环转为淡出尾音")
+	audio._tick_sustain_fades(0.16)
+	harness._expect(not audio._sustain_players.has(key + ":tail"), "0.15秒淡出后释放W循环")
+	harness._expect(not audio.play_event(unit, &"active_buff:start", unit.position), "死亡后晚到的W开启事件不补播")
+	audio._detach_unit(unit.get_instance_id())
+	harness._expect(cues.count(&"death") == 1, "对象移除不重复播放落下声")
+	audio.cue_played.disconnect(observe)
+	unit.free()

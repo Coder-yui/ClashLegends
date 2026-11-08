@@ -627,11 +627,13 @@ func _on_action_cancelled(payload: Dictionary, instance_id: int) -> void:
 
 
 func _detach_unit(instance_id: int) -> void:
+	_stop_unit_owned_audio(instance_id)
 	_stop_structure_haste_audio(instance_id)
 	_stop_forge_audio(instance_id)
 	_stop_sustain(instance_id)
 	_unit_entries.erase(instance_id)
 func _on_unit_death(instance_id: int) -> void:
+	_stop_unit_owned_audio(instance_id)
 	_stop_structure_haste_audio(instance_id)
 	_stop_forge_audio(instance_id)
 	_stop_sustain(instance_id, &"", true)
@@ -679,6 +681,9 @@ func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: i
 	# 独立结果创建声由权威结果事件派发，不再随本体动作重复启动。
 	if event.get("owner", "") == "result": return false
 	var owner := _event_owner(unit, cue)
+	if event.get("owner", "") == "unit":
+		if unit.hp <= 0.0 or unit.cancelled_deployment: return false
+		owner = {"unit": unit.get_instance_id(), "kind": "unit"}
 	if cue == &"empowered_swing" and attack_serial >= 0:
 		owner = {"unit": unit.get_instance_id(), "kind": "attack", "serial": attack_serial}
 	# 可靠取消可能早于快照/不可靠音效到达；使用发出时身份，不借用当前新动作。
@@ -1303,6 +1308,14 @@ func _cancel_terminal_audio() -> void:
 	_nexus_players.clear()
 	_nexus_seen.clear()
 
+## Explicit unit-owned one-shots end with their source; death-result sounds remain independent.
+func _stop_unit_owned_audio(instance_id: int) -> void:
+	for player in _world_players:
+		var owner: Dictionary = player.get_meta("action_owner", {})
+		if int(owner.get("unit", -1)) == instance_id and owner.get("kind", "") == "unit":
+			player.stop()
+			player.stream = null
+
 func _stop_forge_audio(instance_id: int) -> void:
 	for player in _world_players:
 		var owner: Dictionary = player.get_meta("action_owner", {})
@@ -1313,7 +1326,7 @@ func _stop_forge_audio(instance_id: int) -> void:
 func _tick_attached_result_positions() -> void:
 	for player in _world_players:
 		var owner: Dictionary = player.get_meta("action_owner", {})
-		if owner.get("kind", "") not in ["forge", "structure_haste", "heal_aura"] or not player.playing: continue
+		if owner.get("kind", "") not in ["forge", "structure_haste", "heal_aura", "unit"] or not player.playing: continue
 		var unit = instance_from_id(int(owner.unit))
 		if not is_instance_valid(unit) or unit.hp <= 0.0 or (owner.kind == "structure_haste" and not unit.structure_haste_visual()) or (owner.kind == "heal_aura" and (unit.heal_aura_state_visual().y <= 0.0 or CombatInteraction.in_stasis(unit))):
 			player.stop()

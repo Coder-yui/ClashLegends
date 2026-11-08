@@ -442,3 +442,7 @@ nova可配置`attack_slow_multiplier`，要求正数slow_duration及[0.1,1)倍�
 ### 召唤后来源换形
 
 召唤技能可声明 `transform_source: true`，要求来源具有 `transformed_stats`，并与 `sacrifice_source` 互斥。只允许基础形态执行一次，先瞬时换形再从原位置计算召唤落点。女王巢穴借此切换空巢，保留当前生命、建筑占地和自然衰血进度；空巢覆盖 `death_spawn_count: 0`，通过既有形态快照同步睡眠提示关闭。
+
+### 常驻敌方减益光环
+
+`debuff_aura_radius`与`debuff_aura_active_radius`分别定义基础/主动Buff窗口内的中心半径；`debuff_aura_move_multiplier`和`debuff_aura_attack_multiplier`取[0.1,1)倍率。四字段成组校验，扩大半径必须大于基础值，且需要buff主动技能。凛冬之柱使用120/200、0.7/0.75。行动批次前统一采样存活且部署完成、未凝滞的来源，按敌方Unit身体圆接触判定，复用交互准入和软控容器。同类取最强，移除光环贡献不清除其他来源；通用快照和状态提示无需新增协议。

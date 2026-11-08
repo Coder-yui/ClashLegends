@@ -53,6 +53,7 @@ func run(harness: SceneTree) -> void:
 	var olaf_case = preload("res://tests/fixtures/olaf_r_network_case.gd").new() if OS.get_environment("CLASH_TEST_OLAF_R") == "1" else null
 	if olaf_case != null: terminal_not_before = maxi(terminal_not_before, 165)
 	var nest_case = preload("res://tests/fixtures/queen_nest_network_case.gd").new() if OS.get_environment("CLASH_TEST_QUEEN_NEST") == "1" else null
+	var pillar_case = preload("res://tests/fixtures/pillar_of_ice_network_case.gd").new() if OS.get_environment("CLASH_TEST_PILLAR_OF_ICE") == "1" else null
 	var flag_case = preload("res://tests/fixtures/demacian_standard_network_case.gd").new() if OS.get_environment("CLASH_TEST_DEMACIAN_STANDARD") == "1" else null
 	var ivern_case = preload("res://tests/fixtures/ivern_network_case.gd").new() if OS.get_environment("CLASH_TEST_IVERN") == "1" else null
 	if ivern_case != null: terminal_not_before = maxi(terminal_not_before, 190)
@@ -114,6 +115,7 @@ func run(harness: SceneTree) -> void:
 		if bear_case != null: bear_case.poll(main)
 		if olaf_case != null: olaf_case.poll(main)
 		if nest_case != null: nest_case.poll(main)
+		if pillar_case != null: pillar_case.poll(main)
 		if flag_case != null: flag_case.poll(main)
 		if ivern_case != null: ivern_case.poll(main)
 		if sona_case != null: sona_case.poll(main)
@@ -336,6 +338,9 @@ func run(harness: SceneTree) -> void:
 		if nest_case != null:
 			result["queen_nest"] = nest_case.result()
 			result.passed = result.passed and result.queen_nest.passed
+		if pillar_case != null:
+			result["pillar_of_ice"] = pillar_case.result()
+			result.passed = result.passed and result.pillar_of_ice.passed
 		if flag_case != null:
 			result["demacian_standard"] = flag_case.result()
 			result.passed = result.passed and result.demacian_standard.passed

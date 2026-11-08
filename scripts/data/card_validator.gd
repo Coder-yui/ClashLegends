@@ -124,6 +124,7 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			if skill.has("piercing_distance") and not bool(skill.get("piercing_attacks", false)):
 				errors.append(card_id + ".active_skills.piercing_distance: 仅穿透普攻使用")
 	_validate_haste_aura(card_id, stats, errors)
+	_validate_debuff_aura(card_id, stats, errors)
 	_validate_heal_aura(card_id, stats, errors)
 	_validate_hit_haste(card_id, stats, errors)
 	_validate_structure_haste(card_id, stats, errors)
@@ -300,6 +301,7 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			var form_capabilities := stats.duplicate()
 			form_capabilities.merge(transformed, true)
 			_validate_haste_aura("%s.transformed_stats" % card_id, form_capabilities, errors)
+			_validate_debuff_aura("%s.transformed_stats" % card_id, form_capabilities, errors)
 			_validate_heal_aura("%s.transformed_stats" % card_id, form_capabilities, errors)
 			_validate_hit_haste("%s.transformed_stats" % card_id, form_capabilities, errors)
 			_validate_visual_config("%s.transformed_stats" % card_id, transformed, errors, inspect_resources)
@@ -382,7 +384,10 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 				for skill in stats.get("active_skills", []):
 					if bool(skill.get("independent_on_creation", false)) and String(cue).get_slice(":", 0) in [String(skill.get("visual_action", "")), String(skill.get("full_resource_visual_action", ""))]:
 						independent = true
-				if event.owner != "result" or not independent or not String(cue).ends_with(":start") or event.has("action_time"):
+				if event.owner == "unit":
+					if String(stats.get("type", "")) == "spell" or not String(cue).ends_with(":start") or event.has("action_time"):
+						errors.append("%s.audio.events.%s.owner: unit仅支持单位单次start，不绑定动作时间" % [label, cue])
+				elif event.owner != "result" or not independent or not String(cue).ends_with(":start") or event.has("action_time"):
 					errors.append("%s.audio.events.%s.owner: result 仅用于独立结果创建声，不绑定动作时间" % [label, cue])
 			if event.has("action_time"):
 				var action := String(cue).get_slice(":", 0)
@@ -2048,3 +2053,21 @@ static func _validate_haste_aura(label: String, stats: Dictionary, errors: Packe
 		if not (value is int or value is float) or not is_finite(float(value)) or float(value) <= (1.0 if field == "haste_aura_multiplier" else 0.0):
 			errors.append(label + "." + field + ": 光环需要正半径与大于1的有限攻速倍率")
 	if String(stats.get("type", "")) == "spell": errors.append(label + ": 攻速光环需要单位实体")
+
+static func _validate_debuff_aura(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	var fields := ["debuff_aura_radius", "debuff_aura_active_radius", "debuff_aura_move_multiplier", "debuff_aura_attack_multiplier"]
+	if not fields.any(func(field): return stats.has(field)): return
+	for field in fields:
+		var value = stats.get(field)
+		if not (value is int or value is float) or not is_finite(float(value)) or float(value) <= 0.0:
+			errors.append(label + "." + field + ": 减益光环字段必须为有限正数")
+		elif field.ends_with("multiplier") and (float(value) < 0.1 or float(value) >= 1.0):
+			errors.append(label + "." + field + ": 减益倍率必须在[0.1, 1)内")
+	if not fields.all(func(field): return (stats.get(field) is int or stats.get(field) is float) and is_finite(float(stats[field]))): return
+	if float(stats.get("debuff_aura_active_radius", 0.0)) <= float(stats.get("debuff_aura_radius", 0.0)):
+		errors.append(label + ": 主动光环半径必须大于基础半径")
+	if String(stats.get("type", "")) == "spell": errors.append(label + ": 减益光环需要单位实体")
+	var has_buff := false
+	for skill in stats.get("active_skills", []):
+		if String(skill.get("kind", "")) == "buff": has_buff = true
+	if not has_buff: errors.append(label + ": 扩大光环需要buff主动技能读取持续窗口")

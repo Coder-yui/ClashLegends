@@ -56,6 +56,7 @@ func step(dt: float) -> void:
 		if c is Unit: c.prepare_natural_lifecycle(dt)
 		if _runtime.game_over: return
 	preload("res://scripts/battle/haste_aura_system.gd").update(combatants)
+	preload("res://scripts/battle/debuff_aura_system.gd").update(combatants)
 	_runtime._combat.begin_batch(_runtime._sim_tick_id, "combatants")
 	for c in combatants:
 		c.bleeding.advance(c, dt)

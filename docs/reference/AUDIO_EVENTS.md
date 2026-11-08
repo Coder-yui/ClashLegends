@@ -118,3 +118,5 @@
 建筑待机：`dormant:enter` / `dormant:exit` 仅由 `dormant_without_targets` 建筑的权威待机变化派发一次；客户端消费可靠表现事件，不根据本地索敌猜测。
 
 `pre_deploy:sustain`由预部署表现队列按ID持有，位置使用对应路径的同一采样点；重复快照只更新位置，不重启声音。队列消失或终局即停止，普通预部署开始声仍走`pre_deploy:start`，两者不互相替代。
+
+单次单位声音支持`audio.events.<cue>:start.owner: "unit"`，不与`action_time`同时使用。音源跟随单位位置，死亡/移除时停止且拒绝死亡后的晚到事件；不改变未声明此归属的旧事件。死亡音不能使用此归属，仍作为独立结果声播放。

@@ -75492,6 +75492,106 @@
         "normalization": false
       },
       "selection": "用户指定1.68秒r1"
+    },
+    {
+      "file": "assets/audio/units/pillar_of_ice/e_rise.wav",
+      "sha256": "6aed0125bab43cd25defd7a65b4ef20f41476f87bc1bdb39f309e06f93034d9c",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/凛冬之柱/audio/trundle/txtp/Play_sfx_Trundle_TrundleCircle_buffactivate {r1}.txtp",
+          "master_gain_db": 0,
+          "decoded_sha256": "17704ae25c880cd6dce91323930308bb2a22ea5c139069fae6de315736be1e9d"
+        }
+      ],
+      "master_gain_db": 0,
+      "post_gain_db": 0,
+      "processing": {
+        "source_interval_seconds": [
+          0,
+          3.25
+        ],
+        "fade_in_seconds": 0.005,
+        "fade_out_seconds": 0.15,
+        "time_stretch": 1,
+        "normalization": false
+      },
+      "duration": 3.25,
+      "peak": 0.179229736328125
+    },
+    {
+      "file": "assets/audio/units/pillar_of_ice/e_fall.wav",
+      "sha256": "1ccb00970d282f580b4c3b7b182b44248e0ea248fb6966936560d6bd0fc55226",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/凛冬之柱/audio/trundle/txtp/Play_sfx_Trundle_TrundleCircle_buffactivate {r1}.txtp",
+          "master_gain_db": 0,
+          "decoded_sha256": "17704ae25c880cd6dce91323930308bb2a22ea5c139069fae6de315736be1e9d"
+        }
+      ],
+      "master_gain_db": 0,
+      "post_gain_db": 0,
+      "processing": {
+        "source_interval_seconds": [
+          4.5,
+          8.105034013605442
+        ],
+        "fade_in_seconds": 0.005,
+        "fade_out_seconds": 0.15,
+        "time_stretch": 1,
+        "normalization": false
+      },
+      "duration": 3.605034013605442,
+      "peak": 0.1258544921875
+    },
+    {
+      "file": "assets/audio/units/pillar_of_ice/w_loop.wav",
+      "sha256": "255e32170d9a440cd806e62298c352c73717d9f59f648d56e8d5837caf2c64d2",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/凛冬之柱/audio/trundle/txtp/Play_sfx_Trundle_TrundleDesecrate_buffactivate {r1}.txtp",
+          "master_gain_db": 0,
+          "decoded_sha256": "255e32170d9a440cd806e62298c352c73717d9f59f648d56e8d5837caf2c64d2"
+        }
+      ],
+      "master_gain_db": 0,
+      "post_gain_db": 0,
+      "processing": {
+        "source_interval_seconds": [
+          0,
+          4.999773242630385
+        ],
+        "fade_in_seconds": 0,
+        "fade_out_seconds": 0,
+        "time_stretch": 1,
+        "normalization": false
+      },
+      "duration": 4.999773242630385,
+      "peak": 0.067047119140625
+    },
+    {
+      "file": "assets/audio/units/pillar_of_ice/w_cast.wav",
+      "sha256": "a0627c4791f411bd628338eb4cf4502216135b66fffc96c90a5f876a67b05000",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/凛冬之柱/audio/trundle/txtp/Play_sfx_Trundle_TrundleDesecrate_OnCast {r1}.txtp",
+          "master_gain_db": 0,
+          "decoded_sha256": "a0627c4791f411bd628338eb4cf4502216135b66fffc96c90a5f876a67b05000"
+        }
+      ],
+      "master_gain_db": 0,
+      "post_gain_db": 0,
+      "processing": {
+        "source_interval_seconds": [
+          0,
+          5.81031746031746
+        ],
+        "fade_in_seconds": 0,
+        "fade_out_seconds": 0,
+        "time_stretch": 1,
+        "normalization": false
+      },
+      "duration": 5.81031746031746,
+      "peak": 0.1717529296875
     }
   ]
 }
