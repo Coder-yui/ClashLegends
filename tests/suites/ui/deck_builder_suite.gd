@@ -17,7 +17,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(layout.default_client_size(Vector2i(2940,1688), Vector2i(0,64), 2.0) == Vector2i(900,1600), "本机Retina可用桌面扣除标题栏和边距后得到精确9:16窗口")
 	_expect(layout.default_client_size(Vector2i(1470,844), Vector2i(0,32), 1.0) == Vector2i(450,800), "1倍屏幕也按9:16像素整数单位尽量填充可用桌面")
 	_main.runtime._deck = []
-	_main._pick_deck_ui(func() -> void: return)
+	(menu.find_child("Solo", true, false) as Button).pressed.emit()
 	await _main.get_tree().process_frame
 	await _main.get_tree().process_frame
 	var builder: DeckBuilder = _main._deck_builder

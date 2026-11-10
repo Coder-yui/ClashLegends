@@ -3,6 +3,7 @@ extends SceneTree
 ## Godot --path . --script tools/capture/capture_ui_art.gd -- --output=<absolute directory> [--size=720x1280]
 var output := ""
 var details_only := false
+var menu_only := false
 var main: Node2D
 var dimensions := Vector2i(720, 1280)
 const DECK := ["garen", "ashe", "final_spark", "soul_tentacle", "mirror", "heal", "medium_lightning", "kayle"]
@@ -17,6 +18,7 @@ func capture() -> void:
 		return
 	for argument in OS.get_cmdline_user_args():
 		if argument == "--details-only": details_only = true
+		if argument == "--menu-only": menu_only = true
 		if argument.begins_with("--output="): output = argument.trim_prefix("--output=")
 		if argument.begins_with("--size="):
 			var parts := argument.trim_prefix("--size=").split("x")
@@ -36,6 +38,23 @@ func capture() -> void:
 	root.add_child(main)
 	current_scene = main
 	main.set_process(false)
+	if menu_only:
+		await save_frame("menu")
+		var menu: Control = main._menu_layer.get_node("ModeMenu")
+		var solo: Button = menu.find_child("Solo", true, false)
+		solo.grab_focus()
+		await save_frame("menu_focus")
+		solo.pressed.emit()
+		await save_frame("menu_to_deck")
+		assert(main._deck_builder != null)
+		main._deck_builder._clear_deck_ui()
+		main._menu_status.text = "连接失败：请检查服务器地址后重试"
+		await save_frame("menu_status")
+		main.free()
+		await process_frame
+		print("[UI_ART] menu completed ", dimensions)
+		quit()
+		return
 	main.runtime._deck = DECK.duplicate()
 	# Fail explicitly if the curated capture deck changes.
 	for i in main.runtime._deck.size():

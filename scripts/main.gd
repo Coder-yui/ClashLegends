@@ -234,85 +234,14 @@ func _parse_cli() -> Dictionary:
 func _show_menu() -> void:
 	_menu_layer = CanvasLayer.new()
 	add_child(_menu_layer)
-	var root := Control.new()
-	root.name = "ModeMenu"
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_menu_layer.add_child(root)
-	# 菜单图片属于屏幕层，与战场取景/红方翻转无关；峡谷沿原图中心等比裁切。
-	var background := TextureRect.new()
-	background.name = "MenuBackground"
-	background.texture = load(ARENA_BACKGROUND_PATH)
-	background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(background)
-	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var shade := ColorRect.new()
-	shade.name = "MenuShade"
-	shade.color = Color(0, 0, 0, 0.20)
-	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(shade)
-	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var margin := MarginContainer.new()
-	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	for side in ["left", "right", "top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 48)
-	root.add_child(margin)
-	var scroll := ScrollContainer.new()
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	margin.add_child(scroll)
-	var center := CenterContainer.new()
-	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	center.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	scroll.add_child(center)
-	var vbox := VBoxContainer.new()
-	vbox.name = "ModeOptions"
-	vbox.add_theme_constant_override("separation", 16)
-	center.add_child(vbox)
-	var resize_menu := func(): vbox.custom_minimum_size.x = minf(560.0, maxf(0.0, root.size.x - 96.0))
-	root.resized.connect(resize_menu)
-	resize_menu.call()
-	var title := Label.new()
-	title.name = "Title"
-	title.text = "ClashLegends"
-	title.add_theme_font_size_override("font_size", 48)
-	title.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.75))
-	title.add_theme_constant_override("outline_size", 4)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(title)
-	var btn_solo := _make_menu_button("单机对战 AI")
-	btn_solo.name = "Solo"
-	btn_solo.pressed.connect(func(): _pick_deck_ui(_start_local_with_loading))
-	vbox.add_child(btn_solo)
-	var btn_art_dev := _make_menu_button("卡牌开发工作台")
-	btn_art_dev.name = "Workbench"
-	btn_art_dev.pressed.connect(_start_art_dev)
-	vbox.add_child(btn_art_dev)
-	_ip_input = LineEdit.new()
-	_ip_input.name = "ServerIP"
-	_ip_input.text = "127.0.0.1"
-	_ip_input.custom_minimum_size = Vector2(0, 60)
-	_ip_input.add_theme_font_size_override("font_size", 24)
-	_ip_input.placeholder_text = "服务器 IP 地址"
-	vbox.add_child(_ip_input)
-	var btn_join := _make_menu_button("连接服务器")
-	btn_join.name = "Join"
-	btn_join.pressed.connect(func(): _pick_deck_ui(func(): _start_client(_ip_input.text.strip_edges())))
-	vbox.add_child(btn_join)
-	_menu_status = Label.new()
-	_menu_status.name = "Status"
-	_menu_status.custom_minimum_size.y = 48.0
-	_menu_status.add_theme_font_size_override("font_size", 20)
-	_menu_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_menu_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(_menu_status)
-
-func _make_menu_button(text: String) -> Button:
-	var b := Button.new()
-	b.text = text
-	b.custom_minimum_size = Vector2(0, 72)
-	b.add_theme_font_size_override("font_size", 26)
-	return b
+	var menu := preload("res://scripts/ui/main_menu.gd").new()
+	_menu_layer.add_child(menu)
+	menu.build(load(ARENA_BACKGROUND_PATH))
+	_ip_input = menu.server_ip
+	_menu_status = menu.status
+	menu.solo_requested.connect(func(): _pick_deck_ui(_start_local_with_loading))
+	menu.workbench_requested.connect(_start_art_dev)
+	menu.join_requested.connect(func(): _pick_deck_ui(func(): _start_client(_ip_input.text.strip_edges())))
 
 func _pick_deck_ui(after_start: Callable) -> void:
 	if _network_peer != null: return
