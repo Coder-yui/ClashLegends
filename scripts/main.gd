@@ -77,6 +77,8 @@ var _deployment_preview_tile := Vector2i(-1, -1)
 var _deployment_preview_valid := false
 var _deployment_preview_visible := false
 var _skin_choices: Dictionary = {}
+var _recorder: Node
+var _returning_to_menu := false
 var _deck_builder: DeckBuilder
 var _timer_label: Label
 var _battle_presentation: Node
@@ -170,6 +172,9 @@ func _ready() -> void:
 	runtime._simulation_clock.running = can_advance_simulation
 	_snapshot_system = NetworkSnapshotSystem.new(self, _projectile_system)
 	if has_presentation():
+		_recorder = preload("res://scripts/recording/match_recorder.gd").new()
+		add_child(_recorder)
+		_recorder.setup(self)
 		_audio_manager = AUDIO_MANAGER_SCRIPT.new()
 		add_child(_audio_manager)
 		_projectile_system.launch_audio_cleared.connect(_audio_manager.clear_projectile_launch_audio)
@@ -248,6 +253,7 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	if _deck_builder != null and is_instance_valid(_deck_builder):
 		_deck_builder.queue_free()
 	_deck_builder = DeckBuilder.new()
+	if is_instance_valid(_recorder): _deck_builder.recording_options = _recorder.options
 	add_child(_deck_builder)
 	_deck_builder.open(runtime._deck, runtime._active_skill_choices, _skin_choices, func(selected_deck: Array, active_choices: Dictionary, skin_choices: Dictionary) -> void:
 		runtime._deck = selected_deck
@@ -346,6 +352,7 @@ func _load_battle(start_battle: Callable, network: bool = false) -> void:
 	loading.queue_free()
 	_battle_loading = false
 	tree.paused = false
+	if not runtime.game_over and is_instance_valid(_recorder): _recorder.begin()
 
 ## SceneTree 暂停时仍检查加载超时；准备和等待对手共用同一截止时间。
 func _watch_network_loading(epoch: String) -> void:
@@ -796,7 +803,7 @@ func _refresh_display_layout() -> void:
 	var transform := BATTLE_LAYOUT.canvas(size, runtime.local_team == 1)
 	get_viewport().canvas_transform = transform
 	if is_instance_valid(_battle_presentation):
-		_battle_presentation.set_view_rect(BATTLE_LAYOUT.visible_world(size, transform))
+		_battle_presentation.set_view_rect(BATTLE_LAYOUT.visible_world(size, transform), _recorder.density() if is_instance_valid(_recorder) else 1.0)
 	if is_instance_valid(_hand): _hand.apply_layout(size)
 	if is_instance_valid(_active_skill_bar): _active_skill_bar.apply_layout(size)
 	if is_instance_valid(_timer_label):
@@ -1637,6 +1644,7 @@ func _end_game(winner_team: int, reason: String) -> void:
 		var result_cue := ("victory" if _is_local_player_team(winner_team) else "defeat") if winner_team >= 0 else ""
 		_audio_manager.finish_match_audio(result_cue, destroyed_nexuses)
 	_show_stop_overlay(_match_result_text(winner_team, reason), "MatchResult")
+	if is_instance_valid(_recorder): _recorder.finish_after_result()
 
 ## 准备失败没有胜负、比分或终局快照；可在场景装配前后重复调用。
 func _fail_startup(message: String) -> void:
@@ -1664,6 +1672,7 @@ func _fail_with_error(message: String, overlay_name: String, title: String) -> v
 	if is_instance_valid(_audio_manager): _audio_manager.end_battle()
 	print("[%s] %s" % [overlay_name, message])
 	_show_stop_overlay(title + "\n" + message, overlay_name)
+	if is_instance_valid(_recorder): _recorder.finish_after_result()
 
 ## 失败与正常终局复用已有停止边界，表现与权威排程均不能继续。
 func _stop_battle_activity() -> void:
@@ -2458,6 +2467,9 @@ func _rpc_corrosion_fx(epoch: String, event_id: int, pos: Vector2, radius: float
 
 ## 返回菜单不能再次执行 CLI 的 join/local 自动启动，服务器进程的自动重建不走此入口。
 func return_to_main_menu() -> void:
+	if _returning_to_menu: return
+	_returning_to_menu = true
+	if is_instance_valid(_recorder): await _recorder.finish_and_wait()
 	get_tree().set_meta("return_to_main_menu", true)
 	get_tree().reload_current_scene()
 

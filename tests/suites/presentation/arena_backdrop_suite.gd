@@ -34,6 +34,14 @@ func run(harness: Object) -> void:
 					and world.z >= ground.position.z-.02 and world.z <= ground.end.z+.02, "取景地面有实际几何覆盖：%s/%s" % [size,point])
 				var drawn := view._render_camera.unproject_position(world)*view._overlay.scale+rect.position
 				harness._expect(drawn.distance_to(point)<.02, "外围扩展不改变桥头、水晶和输入投影")
+			# 录像提高纹理密度时仍保持相同世界坐标与输入投影。
+			view.set_view_rect(rect, 1.5)
+			for point in [Vector2(140,600), Vector2(580,680), Vector2(360,1160)]:
+				var origin := BattleGroundProjection.ray_origin(view._camera, point)
+				var ray := BattleGroundProjection.ray_normal(view._camera, point)
+				var world := origin + ray * (-origin.y/ray.y)
+				var drawn := view._render_camera.unproject_position(world)*view._overlay.scale+rect.position
+				harness._expect(drawn.distance_to(point)<.02, "1080p录像密度不改变战场投影")
 		view.free()
 
 class Well extends Node3D:

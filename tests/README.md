@@ -262,3 +262,7 @@ ProjectileSuite 内的 view 子检查覆盖内容代次、同帧前后读取、�
 雷克塞路线专项：`CLASH_TEST_REKSAI=1 CLASH_TEST_TERMINAL_TICK=180 python3 tools/dev.py verify --suite ReksaiSuite --network`。覆盖主机与双客户端的冻结避建筑路线、实际时长、后建建筑不重算及双方出土；结果的路线哈希用于跨端对照。
 
 凛冬之柱专项：`--suite PillarOfIceSuite`覆盖双减速光环、3×3占地、稍大体型、全图部署、主动扩圈、来源/目标控制边界与死亡清理。`CLASH_TEST_PILLAR_OF_ICE=1 python3 tools/dev.py verify --suite PillarOfIceSuite --network`检查主机和双客户端的双减速、扩圈与移除同步；复用现有Buff和减益快照，无新增协议。
+
+### 对局录像
+
+`RecordingSuite` 验证有界视频/音频队列、停止后的拒绝写入和编码尺寸/格式契约；无需系统 FFmpeg。图形与真实编码另用 [recording_smoke](../tools/capture/README.md) 验收，检查 MP4 尺寸、帧率、音轨、固定构图、补帧、提前停止、返回菜单与错误收尾。无图形套件不能代替实际录像验收。

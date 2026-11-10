@@ -3,6 +3,7 @@ extends CanvasLayer
 ## 备战卡组、卡牌详情、主动技能选择和皮肤选择的独立 UI 模块。
 
 
+var recording_options: RefCounted
 var _deck: Array = []
 # 详情浏览/编辑偏好可包含组外卡；交付对局时另按最终卡组投影。
 var _active_skill_choices: Dictionary = {}
@@ -225,6 +226,10 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	grid_center.add_child(grid)
 	scroll.add_child(grid_center)
 	_refresh_deck_pool()
+	if recording_options != null:
+		var recording := preload("res://scripts/ui/recording_controls.gd").new()
+		recording.setup(recording_options)
+		layout.add_child(recording)
 	var footer := CenterContainer.new()
 	layout.add_child(footer)
 	_deck_confirm = _toolbar_button("开始游戏", "", "使用当前八张卡牌开始游戏")

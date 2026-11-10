@@ -28,6 +28,13 @@
     "group": "ui"
   },
   {
+    "id": "RecordingSuite",
+    "script": "res://tests/suites/ui/recording_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "ui"
+  },
+  {
     "id": "maintenance_contracts",
     "script": "res://tests/suites/contracts/maintenance_suite.gd",
     "method": "check_contracts",

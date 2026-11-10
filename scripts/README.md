@@ -42,3 +42,7 @@
 联机时间与操作：`battle/network_clock.gd`校准服务器时钟，`battle/network_command_state.gd`保存出牌/技能的公开准备与完成身份，`battle/network_playback.gd`按同一Tick时间轴应用快照/表现事件。只有CommandSchedule/BattleSimulation执行真实命令，客户端时间轴不能驱动战斗规则。
 
 战场实体与空间的实际所有者为 [BattleWorld](battle/battle_world.gd)：塔/水晶、主机网络ID与副本索引、导航占位与连续空间/体型交接。Main保留节点挂载、资源与表现/RPC适配，Runtime负责生成配置；BattleContext的空间调用直接进入World。
+
+## 对局录像
+
+本机录像入口为 `recording/match_recorder.gd`，备战设置在 `ui/recording_controls.gd`。固定画布共享已有表现，后台线程负责有界编码，不参与权威 Tick 或网络协议；配置、依赖和边界见 [对局录像](../docs/MATCH_RECORDING.md)。

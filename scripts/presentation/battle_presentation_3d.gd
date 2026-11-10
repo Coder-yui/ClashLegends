@@ -337,14 +337,14 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	set_view_rect(Rect2(Vector2.ZERO, field_size))
 
 ## 仅扩大绘制取景；投影基准和世界模型位置不随窗口变化。
-func set_view_rect(rect: Rect2) -> void:
+func set_view_rect(rect: Rect2, density: float = 1.0) -> void:
 	if _render_camera == null: return
-	_viewport.size = Vector2i(roundi(rect.size.x), ceili(rect.size.y * BattleGroundProjection.Q))
-	_overlay.scale.y = 1.0 / BattleGroundProjection.Q
+	_viewport.size = Vector2i(roundi(rect.size.x * density), ceili(rect.size.y * BattleGroundProjection.Q * density))
+	_overlay.scale = Vector2(1.0, 1.0 / BattleGroundProjection.Q) / density
 	# Keep exact projection scale despite integer texture dimensions; extend coverage by <1 pixel.
 	var rendered_center := rect.position + Vector2(_viewport.size) * _overlay.scale * 0.5
 	_overlay.position = rect.position
-	_render_camera.size = _base_camera_size * float(_viewport.size.y) / _field_size.y
+	_render_camera.size = _base_camera_size * float(_viewport.size.y) / (_field_size.y * density)
 	_camera.force_update_transform()
 	_render_camera.global_transform = _camera.global_transform
 	_render_camera.global_position += BattleGroundProjection.ray_origin(_camera, rendered_center) - BattleGroundProjection.ray_origin(_camera, _field_size * 0.5)

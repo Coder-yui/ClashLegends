@@ -21,6 +21,7 @@ func run(harness: Object, main: Node2D) -> void:
 	await _main.get_tree().process_frame
 	await _main.get_tree().process_frame
 	var builder: DeckBuilder = _main._deck_builder
+	_expect(builder.find_child("RecordingControls", true, false) != null, "备战页提供本机对局录制设置")
 	_expect(not builder._deck_slot_buttons[0].disabled and builder._deck_slot_buttons[0].text == "+", "空卡组位置显示加号并可点击选择位置")
 	builder._deck_slot_buttons[0].emit_signal("pressed")
 	_expect(builder._deck_pending_slot == 0 and not builder._deck_context_popup.visible, "点击空卡槽后进入指定位置添加状态")
@@ -343,6 +344,11 @@ func _check_context_scroll(builder: DeckBuilder) -> void:
 	var anchor := builder._deck_pool_grid.get_child(4) as Button
 	var id := String(anchor.get_meta("card_id"))
 	builder._on_deck_pool_card_pressed(id)
+	for i in 3: await _main.get_tree().process_frame
+	# 此项验证同侧跟随：先留足菜单下方余量，避免新底栏使32px滚动恰好触发上下翻转。
+	# 空间不足时翻到上方的行为由本方法末尾单独验证。
+	var margin := anchor.get_global_rect().end.y + builder._deck_context_popup.size.y + 46.0 - builder._deck_pool_scroll.get_global_rect().end.y
+	builder._deck_pool_scroll.scroll_vertical += maxi(0, ceili(margin))
 	for i in 3: await _main.get_tree().process_frame
 	var before := builder._deck_context_popup.global_position
 	var anchor_before := anchor.global_position
