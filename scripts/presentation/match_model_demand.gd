@@ -272,7 +272,9 @@ static func _validate_graph(id: String, definitions: Dictionary, chain: Array, s
 	for form in range(2 if base.has("transformed_stats") else 1):
 		var stats := PresentationConfig.for_form(base, form)
 		for field in ["deployment_count", "spawn_count", "death_spawn_count", "rush_spawn_count"]:
-			if int(stats.get(field, 1)) > MAX_DECLARED_BATCH or int(stats.get(field, 1)) < 1:
+			# 空巢等形态显式以0关闭亡语召唤；没有目标时不产生模型需求。
+			var minimum := 0 if field == "death_spawn_count" and not stats.has("death_spawn_id") else 1
+			if int(stats.get(field, 1)) > MAX_DECLARED_BATCH or int(stats.get(field, 1)) < minimum:
 				failures.append("Model declared batch requires development review: %s.%s" % [id, field])
 		var members: Array = stats.get("spawn_plan", {}).get("members", [])
 		if members.size() > MAX_DECLARED_BATCH: failures.append("Model deployment members exceed development batch budget: " + id)
